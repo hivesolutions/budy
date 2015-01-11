@@ -34,8 +34,6 @@ __copyright__ = "Copyright (c) 2008-2015 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-from . import controllers
-from . import main
+from . import base
 
-from .controllers import *
-from .main import BudyApp
+from .base import BaseController
