@@ -1,7 +1,0 @@
-*.pyc
-*.debug
-
-session.shelve*
-
-/dist
-/src/budy_api.egg-info
