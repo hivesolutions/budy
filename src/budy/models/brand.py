@@ -42,5 +42,3 @@ from . import base
 class Brand(base.BudyBase):
 
     name = dict()
-
-    description = dict()
