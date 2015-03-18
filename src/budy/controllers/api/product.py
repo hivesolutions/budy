@@ -19,6 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Budy. If not, see <http://www.gnu.org/licenses/>.
 
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
 __version__ = "1.0.0"
 """ The version of the module """
 
@@ -34,12 +37,19 @@ __copyright__ = "Copyright (c) 2008-2015 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-from . import api
-from . import base
-from . import brand
-from . import product
+import appier
 
-from .api import *
-from .base import BaseController
-from .brand import BrandController
-from .product import ProductController
+import budy
+
+class ProductApiController(appier.Controller):
+
+    @appier.route("/api/products", "GET", json = True)
+    def list_json(self):
+        object = appier.get_object(alias = True, find = True)
+        products = budy.Product.find(map = True, **object)
+        return products
+
+    @appier.route("/api/products/<int:id>", "GET", json = True)
+    def show(self, id):
+        product = budy.Product.get(id = id, map = True)
+        return product
