@@ -40,9 +40,4 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import appier_extras
 
 class BudyBase(appier_extras.admin.Base):
-
-    id = dict(
-        type = int,
-        index = True,
-        increment = True
-    )
+    pass
