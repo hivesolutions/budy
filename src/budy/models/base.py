@@ -42,5 +42,7 @@ import appier_extras
 class BudyBase(appier_extras.admin.Base):
 
     id = dict(
-        type = int
+        type = int,
+        index = True,
+        increment = True
     )
