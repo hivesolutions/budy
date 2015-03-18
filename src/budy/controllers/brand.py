@@ -39,5 +39,5 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import appier
 
-class BandController(appier.Controller):
+class BrandController(appier.Controller):
     pass
