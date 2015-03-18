@@ -40,4 +40,7 @@ __license__ = "GNU General Public License (GPL), Version 3"
 from . import base
 
 class Product(base.BudyBase):
-    pass
+
+    description = dict()
+
+    description_short = dict()
