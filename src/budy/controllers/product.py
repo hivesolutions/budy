@@ -39,5 +39,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import appier
 
+import budy
+
 class ProductController(appier.Controller):
-    pass
+
+    @appier.route("/products.json", "GET", json = True)
+    def list_json(self):
+        object = appier.get_object(alias = True, find = True)
+        products = budy.Product.find(map = True, **object)
+        return products
