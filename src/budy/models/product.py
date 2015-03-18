@@ -41,8 +41,6 @@ from . import base
 
 class Product(base.BudyBase):
 
-    description = dict()
-
     short_description = dict()
 
     gender = dict()
