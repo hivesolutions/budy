@@ -11,3 +11,8 @@ take care of all the transactional details like:
 *  [ACID](http://en.wikipedia.org/wiki/ACID) compliant transactions/operations
 *  Financial secure transactions
 *  Secure customer data
+
+## Unit Testing
+
+Test driven development should be a concern on the development of the Budy infra-structure
+so that all the use cases are proper validated before implementation.
