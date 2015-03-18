@@ -35,7 +35,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 from . import base
+from . import brand
 from . import product
 
 from .base import BudyBase
+from .brand import Brand
 from .product import Product

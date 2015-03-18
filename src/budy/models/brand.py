@@ -37,10 +37,10 @@ __copyright__ = "Copyright (c) 2008-2015 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-import appier_extras
+from . import base
 
-class BudyBase(appier_extras.admin.Base):
+class Brand(base.BudyBase):
 
-    id = dict(
-        type = int
-    )
+    name = dict()
+
+    description = dict()

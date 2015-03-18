@@ -43,4 +43,26 @@ class Product(base.BudyBase):
 
     description = dict()
 
-    description_short = dict()
+    short_description = dict()
+
+    gender = dict()
+
+    tag = dict()
+
+    tag_descritpion = dict()
+
+    categories = dict() #@todo many relations
+
+    variants = dict() #@todo many relations
+
+    images = dict() #@todo many relations
+
+    brand = dict() #@todo one relations
+
+    season = dict() #@todo one relation
+
+    measurements = dict() #@todo many relation
+
+    compositions = dict() #@todo many relation
+
+    live_movel = dict() #@todo one relation
