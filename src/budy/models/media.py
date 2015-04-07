@@ -66,7 +66,7 @@ class Media(base.BudyBase):
 
             appier.not_null("priority"),
 
-            appier.not_null("file"),
+            appier.not_null("file")
         ]
 
     @classmethod
