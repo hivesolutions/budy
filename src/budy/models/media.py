@@ -56,3 +56,19 @@ class Media(base.BudyBase):
         type = appier.File,
         private = True
     )
+
+    @classmethod
+    def validate(cls):
+        return super(Media, cls).validate() + [
+            appier.not_null("label"),
+            appier.not_empty("label"),
+            appier.string_gt("label", 3),
+
+            appier.not_null("priority"),
+
+            appier.not_null("file"),
+        ]
+
+    @classmethod
+    def list_names(cls):
+        return ["id", "label", "priority"]
