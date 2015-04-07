@@ -55,7 +55,12 @@ class Product(base.BudyBase):
 
     variants = dict() #@todo many relations
 
-    images = dict() #@todo many relations
+    images = dict(
+        type = appier.reference(
+            "Media",
+            name = "id"
+        )
+    )
 
     brand = dict() #@todo one relations
 
