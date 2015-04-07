@@ -56,7 +56,7 @@ class Product(base.BudyBase):
     variants = dict() #@todo many relations
 
     images = dict(
-        type = appier.reference(
+        type = appier.references(
             "Media",
             name = "id"
         )

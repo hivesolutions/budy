@@ -44,7 +44,8 @@ from . import base
 class Media(base.BudyBase):
 
     label = dict(
-        index = True
+        index = True,
+        default = True
     )
 
     priority = dict(
