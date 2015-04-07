@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008-2015 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import appier
+
 from . import base
 
 class Product(base.BudyBase):
@@ -64,3 +66,17 @@ class Product(base.BudyBase):
     compositions = dict() #@todo many relation
 
     live_movel = dict() #@todo one relation
+
+    @classmethod
+    def validate(cls):
+        return super(Product, cls).validate() + [
+            appier.not_null("short_description"),
+            appier.not_empty("short_description"),
+
+            appier.not_null("gender"),
+            appier.not_empty("gender")
+        ]
+
+    @classmethod
+    def list_names(cls):
+        return ["id", "short_description", "gender", "tag"]
