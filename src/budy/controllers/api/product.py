@@ -46,7 +46,11 @@ class ProductApiController(appier.Controller):
     @appier.route("/api/products", "GET", json = True)
     def list_json(self):
         object = appier.get_object(alias = True, find = True)
-        products = budy.Product.find(map = True, **object)
+        products = budy.Product.find(
+            eager = ("images", "thumbnail", "brand"),
+            map = True,
+            **object
+        )
         return products
 
     @appier.route("/api/products/<int:id>", "GET", json = True)

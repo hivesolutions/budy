@@ -59,6 +59,11 @@ class Product(base.BudyBase):
         enum = GENDER_S
     )
 
+    price = appier.field(
+        type = float,
+        index = True
+    )
+
     tag = appier.field()
 
     tag_descritpion = appier.field()
@@ -133,7 +138,10 @@ class Product(base.BudyBase):
             appier.not_empty("short_description"),
 
             appier.not_null("gender"),
-            appier.not_empty("gender")
+            appier.not_empty("gender"),
+
+            appier.not_null("price"),
+            appier.gt("price", 0.0)
         ]
 
     @classmethod
