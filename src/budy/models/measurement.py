@@ -19,6 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Budy. If not, see <http://www.gnu.org/licenses/>.
 
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
 __version__ = "1.0.0"
 """ The version of the module """
 
@@ -34,18 +37,31 @@ __copyright__ = "Copyright (c) 2008-2015 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
-from . import base
-from . import brand
-from . import category
-from . import measurement
-from . import media
-from . import product
-from . import season
+import appier
 
-from .base import BudyBase
-from .brand import Brand
-from .category import Category
-from .measurement import Measurement
-from .media import Media
-from .product import Product
-from .season import Season
+from . import base
+
+class Measurement(base.BudyBase):
+
+    name = appier.field(
+        index = True,
+        default = True
+    )
+
+    value = appier.field(
+        type = int,
+        index = True
+    )
+
+    @classmethod
+    def validate(cls):
+        return super(Measurement, cls).validate() + [
+            appier.not_null("name"),
+            appier.not_empty("name"),
+
+            appier.not_null("value")
+        ]
+
+    @classmethod
+    def list_names(cls):
+        return ["id", "name", "value"]
