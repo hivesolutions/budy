@@ -19,6 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Hive Budy. If not, see <http://www.gnu.org/licenses/>.
 
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
 __version__ = "1.0.0"
 """ The version of the module """
 
@@ -35,21 +38,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
 from . import base
-from . import brand
-from . import category
-from . import composition
-from . import live_model
-from . import measurement
-from . import media
-from . import product
-from . import season
 
-from .base import BudyBase
-from .brand import Brand
-from .category import Category
-from .composition import Composition
-from .live_model import LiveModel
-from .measurement import Measurement
-from .media import Media
-from .product import Product
-from .season import Season
+class LiveModel(base.BudyBase):
+
+    @classmethod
+    def list_names(cls):
+        return ["id", "part", "material", "value"]

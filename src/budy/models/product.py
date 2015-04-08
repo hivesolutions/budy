@@ -48,7 +48,10 @@ class Product(base.BudyBase):
         "Female" : "Female"
     }
 
-    short_description = appier.field()
+    short_description = appier.field(
+        index = True,
+        default = True
+    )
 
     gender = appier.field(
         index = True,
@@ -116,7 +119,12 @@ class Product(base.BudyBase):
         )
     )
 
-    live_movel = appier.field()
+    live_movel = appier.field(
+        type = appier.references(
+            "LiveModel",
+            name = "id"
+        )
+    )
 
     @classmethod
     def validate(cls):
