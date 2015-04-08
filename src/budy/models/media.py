@@ -46,8 +46,7 @@ BASE_URL = "http://localhost:8080/"
 class Media(base.BudyBase):
 
     label = appier.field(
-        index = True,
-        default = True
+        index = True
     )
 
     order = appier.field(
@@ -67,6 +66,9 @@ class Media(base.BudyBase):
     @classmethod
     def validate(cls):
         return super(Media, cls).validate() + [
+            appier.not_null("description"),
+            appier.not_empty("description"),
+
             appier.not_null("label"),
             appier.not_empty("label"),
             appier.string_gt("label", 3),
@@ -79,7 +81,7 @@ class Media(base.BudyBase):
 
     @classmethod
     def list_names(cls):
-        return ["id", "label", "order", "size"]
+        return ["id", "description", "label", "order", "size"]
 
     @classmethod
     def _build(cls, model, map):
