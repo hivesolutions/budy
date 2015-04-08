@@ -48,8 +48,12 @@ class Media(base.BudyBase):
         default = True
     )
 
-    priority = appier.field(
+    order = appier.field(
         type = int,
+        index = True
+    )
+
+    size = appier.field(
         index = True
     )
 
@@ -65,11 +69,11 @@ class Media(base.BudyBase):
             appier.not_empty("label"),
             appier.string_gt("label", 3),
 
-            appier.not_null("priority"),
+            appier.not_null("order"),
 
             appier.not_null("file")
         ]
 
     @classmethod
     def list_names(cls):
-        return ["id", "label", "priority"]
+        return ["id", "label", "order", "size"]
