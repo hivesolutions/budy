@@ -104,12 +104,17 @@ class Product(base.BudyBase):
 
     measurements = appier.field(
         type = appier.references(
-            "Measurements",
+            "Measurement",
             name = "id"
         )
     )
 
-    compositions = appier.field()
+    compositions = appier.field(
+        type = appier.references(
+            "Composition",
+            name = "id"
+        )
+    )
 
     live_movel = appier.field()
 
