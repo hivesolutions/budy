@@ -44,6 +44,6 @@ import budy
 class MediaApiController(appier.Controller):
 
     @appier.route("/api/media/<int:id>/data", "GET", json = True)
-    def data_json(self):
+    def data_json(self, id):
         media = budy.Product.get(id = id, map = True)
         return media
