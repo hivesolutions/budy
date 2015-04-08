@@ -43,17 +43,17 @@ from . import base
 
 class Media(base.BudyBase):
 
-    label = appier.field((
+    label = appier.field(
         index = True,
         default = True
     )
 
-    priority = appier.field((
+    priority = appier.field(
         type = int,
         index = True
     )
 
-    file = appier.field((
+    file = appier.field(
         type = appier.File,
         private = True
     )
