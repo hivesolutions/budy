@@ -82,8 +82,8 @@ class Media(base.BudyBase):
 
     @classmethod
     def _build(cls, model, map):
-        id = model["id"]
-        model["url"] = cls._get_url(id)
+        id = model.get("id", None)
+        if id: model["url"] = cls._get_url(id)
 
     @classmethod
     def _get_url(cls, id):
