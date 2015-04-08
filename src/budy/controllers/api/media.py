@@ -45,5 +45,18 @@ class MediaApiController(appier.Controller):
 
     @appier.route("/api/media/<int:id>/data", "GET", json = True)
     def data_json(self, id):
-        media = budy.Product.get(id = id, map = True)
-        return media
+        media = budy.Media.get(
+            fields = ("file",),
+            rules = False,
+            id = id
+        )
+        file = media.file
+        if not file: raise appier.NotFoundError(
+            message = "File not found for media '%d'" % id,
+            code = 404
+        )
+        return self.send_file(
+            file.data,
+            content_type = file.mime,
+            etag = file.etag
+        )
