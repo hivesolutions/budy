@@ -73,7 +73,8 @@ class Media(base.BudyBase):
 
             appier.not_null("order"),
 
-            appier.not_null("file")
+            appier.not_null("file"),
+            appier.not_empty("file")
         ]
 
     @classmethod
