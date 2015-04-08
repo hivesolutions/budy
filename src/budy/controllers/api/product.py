@@ -55,5 +55,9 @@ class ProductApiController(appier.Controller):
 
     @appier.route("/api/products/<int:id>", "GET", json = True)
     def show(self, id):
-        product = budy.Product.get(id = id, map = True)
+        product = budy.Product.get(
+            id = id,
+            eager = ("images", "thumbnail", "brand"),
+            map = True
+        )
         return product
