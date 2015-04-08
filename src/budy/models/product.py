@@ -94,13 +94,6 @@ class Product(base.BudyBase):
         )
     )
 
-    thumbnail = appier.field(
-        type = appier.references(
-            "Media",
-            name = "id"
-        )
-    )
-
     brand = appier.field(
         type = appier.reference(
             "Brand",
