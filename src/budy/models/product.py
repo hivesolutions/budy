@@ -51,9 +51,19 @@ class Product(base.BudyBase):
 
     tag_descritpion = appier.field()
 
-    categories = appier.field() #@todo many relations
+    categories = appier.field(
+        type = appier.references(
+            "Category",
+            name = "id"
+        )
+    )
 
-    variants = appier.field() #@todo many relations
+    variants = appier.field(
+        type = appier.references(
+            "Product",
+            name = "id"
+        )
+    )
 
     images = appier.field(
         type = appier.references(

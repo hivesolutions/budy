@@ -41,7 +41,7 @@ import appier
 
 from . import base
 
-class Brand(base.BudyBase):
+class Category(base.BudyBase):
 
     name = appier.field(
         index = True,
@@ -50,7 +50,7 @@ class Brand(base.BudyBase):
 
     @classmethod
     def validate(cls):
-        return super(Brand, cls).validate() + [
+        return super(Category, cls).validate() + [
             appier.not_null("name"),
             appier.not_empty("name")
         ]

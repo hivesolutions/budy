@@ -39,7 +39,5 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 import appier
 
-import budy
-
 class ProductController(appier.Controller):
     pass

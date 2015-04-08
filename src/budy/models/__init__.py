@@ -36,10 +36,12 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 from . import base
 from . import brand
+from . import category
 from . import media
 from . import product
 
 from .base import BudyBase
 from .brand import Brand
+from .category import Category
 from .media import Media
 from .product import Product
