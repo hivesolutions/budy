@@ -62,7 +62,19 @@ class Product(base.BudyBase):
         )
     )
 
-    brand = appier.field() #@todo one relations
+    thumbnail = appier.field(
+        type = appier.references(
+            "Media",
+            name = "id"
+        )
+    )
+
+    brand = appier.field(
+        type = appier.reference(
+            "Brand",
+            name = "id"
+        )
+    )
 
     season = appier.field() #@todo one relation
 
