@@ -41,6 +41,8 @@ import appier
 
 from . import base
 
+BASE_URL = "http://localhost:8080/"
+
 class Media(base.BudyBase):
 
     label = appier.field(
@@ -77,3 +79,17 @@ class Media(base.BudyBase):
     @classmethod
     def list_names(cls):
         return ["id", "label", "order", "size"]
+
+    @classmethod
+    def _build(cls, model, map):
+        id = model["id"]
+        model["url"] = cls._get_url(id)
+
+    @classmethod
+    def _get_url(cls, id):
+        base_url = appier.conf("BASE_URL", BASE_URL)
+        url = base_url + "api/media/" + str(id) + "/content"
+        return url
+
+    def get_url(self):
+        return self.__class__.get_url(self.id)
