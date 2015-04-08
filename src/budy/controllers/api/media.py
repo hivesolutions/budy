@@ -52,9 +52,9 @@ class MediaApiController(appier.Controller):
     @appier.route("/api/media/<int:id>/data", "GET", json = True)
     def data_json(self, id):
         media = budy.Media.get(
+            id = id,
             fields = ("file",),
-            rules = False,
-            id = id
+            rules = False
         )
         file = media.file
         if not file: raise appier.NotFoundError(
