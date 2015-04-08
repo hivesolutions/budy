@@ -37,10 +37,12 @@ __copyright__ = "Copyright (c) 2008-2015 Hive Solutions Lda."
 __license__ = "GNU General Public License (GPL), Version 3"
 """ The license for the module """
 
+import appier
+
 from . import base
 
 class Brand(base.BudyBase):
 
-    name = dict(
+    name = appier.field(
         index = True
     )

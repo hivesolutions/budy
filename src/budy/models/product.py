@@ -43,34 +43,34 @@ from . import base
 
 class Product(base.BudyBase):
 
-    short_description = dict()
+    short_description = appier.field()
 
-    gender = dict()
+    gender = appier.field()
 
-    tag = dict()
+    tag = appier.field()
 
-    tag_descritpion = dict()
+    tag_descritpion = appier.field()
 
-    categories = dict() #@todo many relations
+    categories = appier.field() #@todo many relations
 
-    variants = dict() #@todo many relations
+    variants = appier.field() #@todo many relations
 
-    images = dict(
+    images = appier.field(
         type = appier.references(
             "Media",
             name = "id"
         )
     )
 
-    brand = dict() #@todo one relations
+    brand = appier.field() #@todo one relations
 
-    season = dict() #@todo one relation
+    season = appier.field() #@todo one relation
 
-    measurements = dict() #@todo many relation
+    measurements = appier.field() #@todo many relation
 
-    compositions = dict() #@todo many relation
+    compositions = appier.field() #@todo many relation
 
-    live_movel = dict() #@todo one relation
+    live_movel = appier.field() #@todo one relation
 
     @classmethod
     def validate(cls):
