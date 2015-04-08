@@ -43,9 +43,18 @@ from . import base
 
 class Product(base.BudyBase):
 
+    GENDER_S = {
+        "Male" : "Male",
+        "Female" : "Female"
+    }
+
     short_description = appier.field()
 
-    gender = appier.field()
+    gender = appier.field(
+        index = True,
+        meta = "enum",
+        enum = GENDER_S
+    )
 
     tag = appier.field()
 
@@ -86,13 +95,18 @@ class Product(base.BudyBase):
         )
     )
 
-    season = appier.field() #@todo one relation
+    season = appier.field(
+        type = appier.reference(
+            "Season",
+            name = "id"
+        )
+    )
 
-    measurements = appier.field() #@todo many relation
+    measurements = appier.field()
 
-    compositions = appier.field() #@todo many relation
+    compositions = appier.field()
 
-    live_movel = appier.field() #@todo one relation
+    live_movel = appier.field()
 
     @classmethod
     def validate(cls):
