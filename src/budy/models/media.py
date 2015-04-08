@@ -87,9 +87,8 @@ class Media(base.BudyBase):
 
     @classmethod
     def _get_url(cls, id):
-        base_url = appier.conf("BASE_URL", BASE_URL)
-        url = base_url + "api/media/" + str(id) + "/content"
-        return url
+        app = appier.get_app()
+        return app.url_for("media_api.data_json", id = id, absolute = True)
 
     def get_url(self):
         return self.__class__.get_url(self.id)
