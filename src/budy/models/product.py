@@ -68,6 +68,11 @@ class Product(base.BudyBase):
 
     tag_descritpion = appier.field()
 
+    farfetch_url = appier.field(
+        index = True,
+        meta = "url"
+    )
+
     categories = appier.field(
         type = appier.references(
             "Category",
