@@ -45,7 +45,8 @@ class Product(base.BudyBase):
 
     GENDER_S = {
         "Male" : "Male",
-        "Female" : "Female"
+        "Female" : "Female",
+        "Both" : "Both"
     }
 
     short_description = appier.field(
