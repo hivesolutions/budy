@@ -54,6 +54,10 @@ class Product(base.BudyBase):
         default = True
     )
 
+    product_id = appier.field(
+        index = True
+    )
+
     gender = appier.field(
         index = True,
         meta = "enum",
