@@ -47,6 +47,7 @@ class ProductApiController(appier.Controller):
     def list_json(self):
         object = appier.get_object(alias = True, find = True)
         products = budy.Product.find(
+            find_t = "right",
             eager = ("images", "brand"),
             map = True,
             **object
