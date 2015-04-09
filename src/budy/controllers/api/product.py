@@ -47,7 +47,7 @@ class ProductApiController(appier.Controller):
     def list_json(self):
         object = appier.get_object(alias = True, find = True)
         products = budy.Product.find(
-            eager = ("images", "thumbnail", "brand"),
+            eager = ("images", "brand"),
             map = True,
             **object
         )
@@ -57,7 +57,7 @@ class ProductApiController(appier.Controller):
     def show(self, id):
         product = budy.Product.get(
             id = id,
-            eager = ("images", "thumbnail", "brand"),
+            eager = ("images", "brand"),
             map = True
         )
         return product
