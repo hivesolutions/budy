@@ -40,4 +40,9 @@ __license__ = "GNU General Public License (GPL), Version 3"
 import appier
 
 class BaseController(appier.Controller):
-    pass
+
+    @appier.route("/", "GET")
+    def index(self):
+        return self.redirect(
+            self.url_for("admin.index")
+        )
