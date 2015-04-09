@@ -149,4 +149,4 @@ class Product(base.BudyBase):
 
     @classmethod
     def list_names(cls):
-        return ["id", "short_description", "gender", "tag"]
+        return ["id", "product_id", "short_description", "gender", "tag"]
