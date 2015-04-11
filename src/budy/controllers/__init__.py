@@ -36,10 +36,6 @@ __license__ = "GNU General Public License (GPL), Version 3"
 
 from . import api
 from . import base
-from . import brand
-from . import product
 
 from .api import *
 from .base import BaseController
-from .brand import BrandController
-from .product import ProductController
