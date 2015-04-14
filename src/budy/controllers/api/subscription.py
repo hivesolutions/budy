@@ -41,7 +41,7 @@ import appier
 
 import budy
 
-class SubscriptionController(appier.Controller):
+class SubscriptionApiController(appier.Controller):
 
     @appier.route("/api/subscription", "POST", json = True)
     def create_json(self):
