@@ -52,5 +52,11 @@ class Subscription(base.BudyBase):
     def validate(cls):
         return super(Subscription, cls).validate() + [
             appier.not_null("email"),
-            appier.not_empty("email")
+            appier.not_empty("email"),
+            appier.is_email("email")
         ]
+
+    def pre_validate(self):
+        base.BudyBase.pre_validate(self)
+
+        if hasattr(self, "email"): self.email = self.email.lower()
