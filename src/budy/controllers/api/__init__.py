@@ -37,11 +37,13 @@ __license__ = "GNU General Public License (GPL), Version 3"
 from . import base
 from . import brand
 from . import category
+from . import color
 from . import media
 from . import product
 
 from .base import BaseApiController
 from .brand import BrandApiController
 from .category import CategoryApiController
+from .color import ColorApiController
 from .media import MediaApiController
 from .product import ProductApiController

@@ -69,6 +69,11 @@ class Product(base.BudyBase):
         index = True
     )
 
+    order = appier.field(
+        type = int,
+        index = True
+    )
+
     tag = appier.field()
 
     tag_descritpion = appier.field()
@@ -76,6 +81,13 @@ class Product(base.BudyBase):
     farfetch_url = appier.field(
         index = True,
         meta = "url"
+    )
+
+    colors = appier.field(
+        type = appier.references(
+            "Color",
+            name = "id"
+        )
     )
 
     categories = appier.field(
