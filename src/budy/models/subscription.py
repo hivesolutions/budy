@@ -57,6 +57,10 @@ class Subscription(base.BudyBase):
             appier.not_duplicate("email", cls._name())
         ]
 
+    @classmethod
+    def list_names(cls):
+        return ["id", "created", "email"]
+
     def pre_validate(self):
         base.BudyBase.pre_validate(self)
 

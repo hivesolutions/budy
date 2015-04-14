@@ -43,7 +43,7 @@ import budy
 
 class SubscriptionApiController(appier.Controller):
 
-    @appier.route("/api/subscription", "POST", json = True)
+    @appier.route("/api/subscriptions", "POST", json = True)
     def create_json(self):
         subscription = budy.Subscription.new()
         subscription.save()
