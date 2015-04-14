@@ -44,6 +44,7 @@ from . import measurement
 from . import media
 from . import product
 from . import season
+from . import subscription
 
 from .base import BudyBase
 from .brand import Brand
@@ -55,3 +56,4 @@ from .measurement import Measurement
 from .media import Media
 from .product import Product
 from .season import Season
+from .subscription import Subscription
