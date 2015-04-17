@@ -71,7 +71,6 @@ class Media(base.BudyBase):
 
             appier.not_null("label"),
             appier.not_empty("label"),
-            appier.string_gt("label", 3),
 
             appier.not_null("order"),
 
