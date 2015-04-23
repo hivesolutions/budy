@@ -83,6 +83,16 @@ class Product(base.BudyBase):
         meta = "url"
     )
 
+    farfetch_male_url = appier.field(
+        index = True,
+        meta = "url"
+    )
+
+    farfetch_female_url = appier.field(
+        index = True,
+        meta = "url"
+    )
+
     colors = appier.field(
         type = appier.references(
             "Color",
