@@ -44,7 +44,7 @@ import budy
 class CategoryApiController(appier.Controller):
 
     @appier.route("/api/categories", "GET", json = True)
-    def list_json(self):
+    def list(self):
         object = appier.get_object(alias = True, find = True)
         categories = budy.Category.find(map = True, **object)
         return categories

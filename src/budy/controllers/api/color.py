@@ -44,7 +44,7 @@ import budy
 class ColorApiController(appier.Controller):
 
     @appier.route("/api/colors", "GET", json = True)
-    def list_json(self):
+    def list(self):
         object = appier.get_object(alias = True, find = True)
         colors = budy.Color.find(map = True, **object)
         return colors

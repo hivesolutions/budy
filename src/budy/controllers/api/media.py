@@ -44,13 +44,13 @@ import budy
 class MediaApiController(appier.Controller):
 
     @appier.route("/api/media", "GET", json = True)
-    def list_json(self):
+    def list(self):
         object = appier.get_object(alias = True, find = True)
         media = budy.Media.find(map = True, **object)
         return media
 
     @appier.route("/api/media/<int:id>/data", "GET", json = True)
-    def data_json(self, id):
+    def data(self, id):
         media = budy.Media.get(
             id = id,
             fields = ("file",),

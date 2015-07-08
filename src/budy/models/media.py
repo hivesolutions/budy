@@ -90,7 +90,7 @@ class Media(base.BudyBase):
     @classmethod
     def _get_url(cls, id):
         app = appier.get_app()
-        return app.url_for("media_api.data_json", id = id, absolute = True)
+        return app.url_for("media_api.data", id = id, absolute = True)
 
     def get_url(self):
         return self.__class__.get_url(self.id)

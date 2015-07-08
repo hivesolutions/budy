@@ -44,7 +44,7 @@ import budy
 class ProductApiController(appier.Controller):
 
     @appier.route("/api/products", "GET", json = True)
-    def list_json(self):
+    def list(self):
         object = appier.get_object(alias = True, find = True)
         products = budy.Product.find(
             find_t = "right",
