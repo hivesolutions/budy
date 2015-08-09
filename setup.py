@@ -54,7 +54,8 @@ setuptools.setup(
         "budy",
         "budy.controllers",
         "budy.controllers.api",
-        "budy.models"
+        "budy.models",
+        "budy.test"
     ],
     test_suite = "budy.test",
     package_dir = {
