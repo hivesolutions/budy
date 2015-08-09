@@ -45,7 +45,7 @@ setuptools.setup(
     version = "0.1.0",
     author = "Hive Solutions Lda.",
     author_email = "development@hive.pt",
-    description = "Budy",
+    description = "Budy Simple E-commerce",
     license = "Apache License, Version 2.0",
     keywords = "budy e-commerce engine web json",
     url = "http://budy.hive.pt",
