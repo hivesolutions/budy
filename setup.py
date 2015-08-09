@@ -61,7 +61,8 @@ setuptools.setup(
         "" : os.path.normpath("src")
     },
     install_requires = [
-        "appier"
+        "appier",
+        "appier_extras"
     ],
     classifiers = [
         "Development Status :: 3 - Alpha",
