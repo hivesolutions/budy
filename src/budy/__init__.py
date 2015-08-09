@@ -36,4 +36,6 @@ __license__ = "Apache License, Version 2.0"
 
 from . import main
 
+from .controllers import *
+from .models import *
 from .main import BudyApp
