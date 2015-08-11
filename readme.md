@@ -23,6 +23,6 @@ Budy is currently licensed under the [Apache License, Version 2.0](http://www.ap
 
 ## Build Automation
 
-[![Build Status](https://travis-ci.org/hivesolutions/budy.png?branch=master)](https://travis-ci.org/hivesolutions/budy)
-[![Coverage Status](https://coveralls.io/repos/hivesolutions/budy/badge.png?branch=master)](https://coveralls.io/r/hivesolutions/budy?branch=master)
-[![PyPi Status](https://img.shields.io/pypi/v/budy.png)](https://pypi.python.org/pypi/budy)
+[![Build Status](https://travis-ci.org/hivesolutions/budy.svg?branch=master)](https://travis-ci.org/hivesolutions/budy)
+[![Coverage Status](https://coveralls.io/repos/hivesolutions/budy/badge.svg?branch=master)](https://coveralls.io/r/hivesolutions/budy?branch=master)
+[![PyPi Status](https://img.shields.io/pypi/v/budy.svg)](https://pypi.python.org/pypi/budy)
