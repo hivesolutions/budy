@@ -94,3 +94,11 @@ class Media(base.BudyBase):
 
     def get_url(self):
         return self.__class__.get_url(self.id)
+
+    @appier.link(name = "View")
+    def view_url(self, absolute = False):
+        return self.owner.url_for(
+            "media_api.data",
+            absolute = absolute,
+            id = self.id
+        )
