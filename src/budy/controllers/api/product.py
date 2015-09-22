@@ -51,7 +51,7 @@ class ProductApiController(appier.Controller):
             eager = ("images", "brand"),
             map = True,
             **object
-        )
+        ) 
         return products
 
     @appier.route("/api/products/<int:id>", "GET", json = True)
