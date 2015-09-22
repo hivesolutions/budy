@@ -61,7 +61,7 @@ class Media(base.BudyBase):
     file = appier.field(
         type = appier.File,
         private = True
-    )
+    ) 
 
     @classmethod
     def validate(cls):
