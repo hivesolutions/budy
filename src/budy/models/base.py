@@ -37,7 +37,36 @@ __copyright__ = "Copyright (c) 2008-2015 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import csv
+
+import appier
 import appier_extras
 
 class BudyBase(appier_extras.admin.Base):
-    pass
+
+    @classmethod
+    def _csv_import(
+        cls,
+        file,
+        callback,
+        strict = False,
+        delimiter = ",",
+        escapechar = "\"",
+        quoting = csv.QUOTE_MINIMAL
+    ):
+        _file_name, mime_type, data = file
+        is_csv = mime_type in ("text/csv", "application/vnd.ms-excel")
+        if not is_csv and strict:
+            raise appier.OperationalError(
+                message = "Invalid mime type '%s'" % mime_type
+            )
+        data = data.decode("utf-8")
+        buffer = appier.legacy.StringIO(data)
+        csv_reader = csv.reader(
+            buffer,
+            delimiter = delimiter,
+            escapechar = escapechar,
+            quoting = quoting
+        )
+        _header = next(csv_reader)
+        for line in csv_reader: callback(line)
