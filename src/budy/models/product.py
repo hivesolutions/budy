@@ -187,7 +187,7 @@ class Product(base.BudyBase):
             from . import category
             from . import composition
             from . import measurement
-            
+
             short_description,\
             product_id,\
             gender,\
@@ -214,22 +214,22 @@ class Product(base.BudyBase):
             farfetch_url = farfetch_url or None
             farfetch_male_url = farfetch_male_url or None
             farfetch_female_url = farfetch_female_url or None
-            
+
             colors = colors.split(";") if colors else []
             colors = color.Color.find(name = {"$in" : colors})
-            
+
             categories = categories.split(";") if categories else []
             categories = category.Category.find(name = {"$in" : categories})
-            
+
             variants = variants.split(";") if variants else []
             variants = Product.find(product_id = {"$in" : variants})
-            
+
             _brand = brand.Brand.find(name = _brand) if _brand else None
             _season = season.Season.find(name = _season) if _season else None
-            
+
             measurements = measurements.split(";") if measurements else []
             measurements = measurement.Measurement.find(name = {"$in" : measurements})
-            
+
             compositions = compositions.split(";") if compositions else []
             compositions = composition.Composition.find(name = {"$in" : compositions})
 
