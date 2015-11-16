@@ -39,11 +39,13 @@ __license__ = "Apache License, Version 2.0"
 
 import os
 import zipfile
+import tempfile
 import mimetypes
 
 import appier
 
 from . import base
+from . import product
 
 BASE_URL = "http://localhost:8080/"
 
@@ -100,7 +102,7 @@ class Media(base.BudyBase):
             )
         buffer = appier.legacy.BytesIO(data)
         file = zipfile.ZipFile(buffer, "r")
-        target = "c:/tobias"
+        target = tempfile.mkdtemp()
         try: file.extractall(target)
         finally: file.close()
 
@@ -115,19 +117,18 @@ class Media(base.BudyBase):
 
                 content_type, _encoding = mimetypes.guess_type(image_name, strict = False)
 
-                product_id_s = base
+                product_id = base
                 label = "undefined"
                 order = 0
                 size = "large"
 
                 base_s = base.split("_")
-                if len(base_s) >= 1: product_id_s = base_s[0]
+                if len(base_s) >= 1: product_id = base_s[0]
                 if len(base_s) >= 2: order = int(base_s[1])
                 if len(base_s) >= 3: label = base_s[2]
                 if len(base_s) >= 4: size = base_s[3]
 
-                product_id = int(product_id_s)
-                description = "%s_%s_%s" % (product_id_s, label, size)
+                description = "%s_%s_%s" % (product_id, label, size)
 
                 image_path = os.path.join(path, image_name)
                 image_file = open(image_path, "rb")
@@ -139,9 +140,15 @@ class Media(base.BudyBase):
                     label = label,
                     order = order,
                     size = size,
-                    file = appier.File((product_id_s, content_type, image_data))
+                    file = appier.File((product_id, content_type, image_data))
                 )
                 media.save()
+
+                _product = product.Product.get(product_id = product_id, raise_e = False)
+                if not _product: continue
+
+                _product.images.append(media)
+                _product.save()
 
     @classmethod
     def _build(cls, model, map):
