@@ -47,4 +47,5 @@ class SubscriptionApiController(appier.Controller):
     def create(self):
         subscription = budy.Subscription.new()
         subscription.save()
+        subscription = subscription.map()
         return subscription
