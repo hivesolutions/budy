@@ -89,7 +89,7 @@ class Bag(base.BudyBase):
         self._calculate()
 
     def empty_s(self):
-        for line in self.lines: line.remove()
+        for line in self.lines: line.delete()
         self.lines = []
         self.save()
 
