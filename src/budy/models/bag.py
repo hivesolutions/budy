@@ -49,7 +49,9 @@ class Bag(base.BudyBase):
     )
 
     currency = appier.field(
-        index = True
+        index = True,
+        initial = "EUR",
+        default = "EUR"
     )
 
     total = appier.field(
@@ -65,6 +67,17 @@ class Bag(base.BudyBase):
         ),
         safe = True
     )
+
+    def __init__(self, *args, **kwargs):
+        base.BudyBase.__init__(self, *args, **kwargs)
+        self.currency = "EUR"
+
+    @classmethod
+    def validate(cls):
+        return super(Bag, cls).validate() + [
+            appier.not_null("currency"),
+            appier.not_empty("currency")
+        ]
 
     @classmethod
     def list_names(cls):

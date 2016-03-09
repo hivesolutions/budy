@@ -50,15 +50,20 @@ class BagApiController(appier.Controller):
         bag = bag.map()
         return bag
 
-    @appier.route("/api/bags/<int:id>", "GET", json = True)
-    def show(self, id):
+    @appier.route("/api/bags/<str:key>", "GET", json = True)
+    def show(self, key):
         bag = budy.Bag.get(
-            id = id,
+            key = key,
             eager = ("lines",),
             map = True
         )
         return bag
 
-    @appier.route("/api/bags/<int:id>/lines", "POST", json = True)
-    def add_line(self, id):
-        pass
+    @appier.route("/api/bags/<str:key>/lines", "POST", json = True)
+    def add_line(self, key):
+        bag_line = budy.BagLine.new()
+        bag_line.save()
+        bag = budy.Bag.get(key = key)
+        bag.lines.append(bag_line)
+        bag.save()
+        return bag_line
