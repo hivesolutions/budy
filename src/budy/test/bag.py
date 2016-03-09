@@ -53,6 +53,18 @@ class BagTest(unittest.TestCase):
         adapter.drop_db()
 
     def test_basic(self):
+        product = budy.Product.new(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0,
+            form = False
+        )
+        product.save()
+
+        self.assertEqual(product.short_description, "product")
+        self.assertEqual(product.gender, "Male")
+        self.assertEqual(product.price, 10.0)
+
         bag = budy.Bag.new(form = False)
         bag.save()
 
@@ -63,7 +75,7 @@ class BagTest(unittest.TestCase):
         self.assertEqual(bag.currency, "EUR")
         self.assertEqual(bag.total >= 0.0, True)
 
-        bag_line = budy.BagLine()
+        bag_line = budy.BagLine.new(form = False)
         bag_line.save()
         bag.add_line_s(bag_line)
 
