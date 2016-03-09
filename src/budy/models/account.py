@@ -54,3 +54,12 @@ class BudyAccount(appier_extras.admin.Account):
             name = "id"
         )
     )
+
+    def post_create(self):
+        appier_extras.admin.Account.post_create(self)
+        self.ensure_bag_s()
+
+    def ensure_bag_s(self):
+        #@todo tenho de criar um bag para este gajo
+        #URGENTE MENTE
+        pass
