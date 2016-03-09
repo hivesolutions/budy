@@ -43,22 +43,41 @@ from . import base
 
 class Bag(base.BudyBase):
 
+    key = appier.field(
+        index = True,
+        safe = True
+    )
+
     currency = appier.field(
         index = True
     )
 
     total = appier.field(
         type = float,
-        index = True
+        index = True,
+        safe = True
     )
 
     lines = appier.field(
         type = appier.references(
             "BagLine",
             name = "id"
-        )
+        ),
+        safe = True
     )
 
     @classmethod
     def list_names(cls):
-        return ["id", "currency", "total"]
+        return ["id", "key", "currency", "total"]
+
+    def pre_create(self):
+        base.BudyBase.pre_create(self)
+        self.key = self.secret()
+
+    def pre_save(self):
+        base.BudyBase.pre_save(self)
+        self._calculate()
+
+    def _calculate(self):
+        lines = self.lines if hasattr(self, "lines") else []
+        self.total = sum(line.total for line in lines)
