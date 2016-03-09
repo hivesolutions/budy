@@ -92,3 +92,20 @@ class BagTest(unittest.TestCase):
 
         self.assertEqual(bag.total, 50.0)
         self.assertEqual(len(bag.lines), 1)
+
+        product_expensive = budy.Product.new(
+            short_description = "product_expensive",
+            gender = "Female",
+            price = 100.0,
+            form = False
+        )
+        product_expensive.save()
+
+        self.assertEqual(product_expensive.short_description, "product_expensive")
+        self.assertEqual(product_expensive.gender, "Female")
+        self.assertEqual(product_expensive.price, 100.0)
+
+        bag.add_product_s(product_expensive, 1.0)
+
+        self.assertEqual(bag.total, 150.0)
+        self.assertEqual(len(bag.lines), 2)
