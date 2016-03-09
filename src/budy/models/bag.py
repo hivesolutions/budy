@@ -68,6 +68,13 @@ class Bag(base.BudyBase):
         )
     )
 
+    account = appier.field(
+        type = appier.references(
+            "BudyAccount",
+            name = "id"
+        )
+    )
+
     @classmethod
     def validate(cls):
         return super(Bag, cls).validate() + [
@@ -101,8 +108,6 @@ class Bag(base.BudyBase):
         return bag_line
 
     def add_product_s(self, product, quantity = 1.0):
-        self.reload()
-
         _bag_line = None
 
         for line in self.lines:
