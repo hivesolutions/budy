@@ -75,8 +75,20 @@ class BagTest(unittest.TestCase):
         self.assertEqual(bag.currency, "EUR")
         self.assertEqual(bag.total >= 0.0, True)
 
-        bag_line = budy.BagLine.new(form = False)
+        bag_line = budy.BagLine.new(
+            quantity = 2.0,
+            form = False
+        )
+        bag_line.product = product
         bag_line.save()
         bag.add_line_s(bag_line)
 
+        self.assertEqual(bag_line.quantity, 2.0)
+        self.assertEqual(bag_line.total, 20.0)
+        self.assertEqual(bag.total, 20.0)
+        self.assertEqual(len(bag.lines), 1)
+
+        bag.add_product_s(product, 3.0)
+
+        self.assertEqual(bag.total, 50.0)
         self.assertEqual(len(bag.lines), 1)

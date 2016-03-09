@@ -64,6 +64,20 @@ class BagLine(base.BudyBase):
         )
     )
 
+    bag = appier.field(
+        type = appier.reference(
+            "Bag",
+            name = "id"
+        )
+    )
+
     @classmethod
     def list_names(cls):
         return ["id", "quantity", "total", "product"]
+
+    def pre_save(self):
+        base.BudyBase.pre_save(self)
+        self._calculate()
+
+    def _calculate(self):
+        self.total = self.quantity * self.product.price

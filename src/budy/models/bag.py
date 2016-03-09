@@ -40,6 +40,7 @@ __license__ = "Apache License, Version 2.0"
 import appier
 
 from . import base
+from . import bag_line
 
 class Bag(base.BudyBase):
 
@@ -86,10 +87,34 @@ class Bag(base.BudyBase):
         self._calculate()
 
     def add_line_s(self, bag_line):
+        bag_line.bag = self
+        bag_line.save()
         self.lines.append(bag_line)
         self.save()
         return bag_line
 
+    def add_product_s(self, product, quantity = 1.0):
+        self.reload()
+
+        _bag_line = None
+
+        for line in self.lines:
+            is_same = line.product.id == product.id
+            if not is_same: continue
+            _bag_line = line
+
+        if _bag_line:
+            _bag_line.quantity += quantity
+            _bag_line.save()
+            self.save()
+            return
+
+        _bag_line = bag_line.BagLine(
+            product = product,
+            quantity = quantity
+        )
+        self.add_line_s(_bag_line)
+
     def _calculate(self):
         lines = self.lines if hasattr(self, "lines") else []
-        self.total = sum(line.total or 0.0 for line in lines)
+        self.total = sum(line.total for line in lines)
