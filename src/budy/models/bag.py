@@ -46,7 +46,8 @@ class Bag(base.BudyBase):
 
     key = appier.field(
         index = True,
-        safe = True
+        safe = True,
+        immutable = True
     )
 
     currency = appier.field(
@@ -81,6 +82,7 @@ class Bag(base.BudyBase):
     def pre_create(self):
         base.BudyBase.pre_create(self)
         self.key = self.secret()
+        self.description = self.key
 
     def pre_save(self):
         base.BudyBase.pre_save(self)
