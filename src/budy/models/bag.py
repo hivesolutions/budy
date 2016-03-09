@@ -43,8 +43,13 @@ from . import base
 
 class Bag(base.BudyBase):
 
-    count = appier.field(
-        type = int
+    currency = appier.field(
+        index = True
+    )
+
+    total = appier.field(
+        type = float,
+        index = True
     )
 
     lines = appier.field(
@@ -56,4 +61,4 @@ class Bag(base.BudyBase):
 
     @classmethod
     def list_names(cls):
-        return ["id", "count"]
+        return ["id", "currency", "total"]

@@ -43,9 +43,19 @@ from . import base
 
 class BagLine(base.BudyBase):
 
-    count = appier.field(
-        type = int
+    quantity = appier.field(
+        type = float
     )
+
+    total = appier.field(
+        type = float
+    )
+
+    meta = appier.field(
+        type = dict
+    )
+
+    meta_j = appier.field()
 
     product = appier.field(
         type = appier.reference(
@@ -56,4 +66,4 @@ class BagLine(base.BudyBase):
 
     @classmethod
     def list_names(cls):
-        return ["id", "count", "product"]
+        return ["id", "quantity", "total", "product"]
