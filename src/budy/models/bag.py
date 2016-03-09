@@ -89,7 +89,7 @@ class Bag(base.BudyBase):
     def pre_create(self):
         base.BudyBase.pre_create(self)
         self.key = self.secret()
-        self.description = self.key
+        self.description = self.key[:8]
 
     def pre_save(self):
         base.BudyBase.pre_save(self)
