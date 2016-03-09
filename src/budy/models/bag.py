@@ -50,8 +50,7 @@ class Bag(base.BudyBase):
 
     currency = appier.field(
         index = True,
-        initial = "EUR",
-        default = "EUR"
+        initial = "EUR"
     )
 
     total = appier.field(
@@ -64,13 +63,8 @@ class Bag(base.BudyBase):
         type = appier.references(
             "BagLine",
             name = "id"
-        ),
-        safe = True
+        )
     )
-
-    def __init__(self, *args, **kwargs):
-        base.BudyBase.__init__(self, *args, **kwargs)
-        self.currency = "EUR"
 
     @classmethod
     def validate(cls):
@@ -91,6 +85,11 @@ class Bag(base.BudyBase):
         base.BudyBase.pre_save(self)
         self._calculate()
 
+    def add_line_s(self, bag_line):
+        self.lines.append(bag_line)
+        self.save()
+        return bag_line
+
     def _calculate(self):
         lines = self.lines if hasattr(self, "lines") else []
-        self.total = sum(line.total for line in lines)
+        self.total = sum(line.total or 0.0 for line in lines)
