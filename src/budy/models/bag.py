@@ -88,6 +88,11 @@ class Bag(base.BudyBase):
         base.BudyBase.pre_save(self)
         self._calculate()
 
+    def empty_s(self):
+        for line in self.lines: line.remove()
+        self.lines = []
+        self.save()
+
     def add_line_s(self, bag_line):
         bag_line.bag = self
         bag_line.save()

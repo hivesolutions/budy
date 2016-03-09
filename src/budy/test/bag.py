@@ -109,3 +109,8 @@ class BagTest(unittest.TestCase):
 
         self.assertEqual(bag.total, 150.0)
         self.assertEqual(len(bag.lines), 2)
+
+        bag.empty_s()
+
+        self.assertEqual(bag.total, 0.0)
+        self.assertEqual(len(bag.lines), 0)
