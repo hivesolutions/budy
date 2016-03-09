@@ -1,3 +1,4 @@
 appier
 appier_extras
 pymongo
+tinydb
