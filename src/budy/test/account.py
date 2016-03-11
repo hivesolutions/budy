@@ -55,6 +55,7 @@ class AccountTest(unittest.TestCase):
 
     def test_basic(self):
         account = budy.BudyAccount.new(
+            name = "name",
             username = "username",
             email = "email@email.com",
             password = "password",
@@ -64,9 +65,30 @@ class AccountTest(unittest.TestCase):
         account.save()
 
         self.assertEqual(account.username, "username")
-        self.assertNotEqual(account.get_bag(), None)
+        self.assertEqual(account.get_bag().__class__, budy.Bag)
+        self.assertEqual(account.get_bag().total, 0.0)
 
         account.reload()
 
         self.assertEqual(account.username, "username")
-        self.assertNotEqual(account.get_bag(), None)
+        self.assertEqual(account.get_bag().__class__, budy.Bag)
+        self.assertEqual(account.get_bag().total, 0.0)
+
+        account = budy.BudyAccount.new(
+            username = "username",
+            email = "email@email.com",
+            password = "password",
+            password_confirm = "password",
+            form = False
+        )
+        self.assertRaises(appier.ValidationError, account.save)
+
+        account = budy.BudyAccount.new(
+            name = "name",
+            username = "username",
+            email = "email@email.com",
+            password = "password",
+            password_confirm = "password_error",
+            form = False
+        )
+        self.assertRaises(appier.ValidationError, account.save)

@@ -50,6 +50,13 @@ class BudyAccount(appier_extras.admin.Account):
 
     name = appier.field()
 
+    @classmethod
+    def validate(cls):
+        return super(BudyAccount, cls).validate() + [
+            appier.not_null("name"),
+            appier.not_empty("name")
+        ]
+
     def post_create(self):
         appier_extras.admin.Account.post_create(self)
         self.ensure_bag_s()
