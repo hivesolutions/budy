@@ -43,12 +43,28 @@ import budy
 
 class BagApiController(appier.Controller):
 
+    @appier.route("/api/bags", "GET", json = True)
+    @appier.ensure(token = "admin")
+    def list(self):
+        object = appier.get_object(alias = True, find = True)
+        products = budy.Bag.find(
+            eager = ("lines",),
+            map = True,
+            **object
+        )
+        return products
+
     @appier.route("/api/bags", "POST", json = True)
     def create(self):
         bag = budy.Bag.new()
         bag.save()
         bag = bag.map()
         return bag
+
+    @appier.route("/api/bags/key", "GET", json = True)
+    def key(self):
+        bag = budy.Bag.from_session()
+        return dict(key = bag.key)
 
     @appier.route("/api/bags/<str:key>", "GET", json = True)
     def show(self, key):

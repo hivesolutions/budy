@@ -75,6 +75,10 @@ class Bag(base.BudyBase):
         )
     )
 
+    def __init__(self, *args, **kwargs):
+        base.BudyBase.__init__(self, *args, **kwargs)
+        self.currency = kwargs.get("currency", "EUR")
+
     @classmethod
     def validate(cls):
         return super(Bag, cls).validate() + [
@@ -85,6 +89,21 @@ class Bag(base.BudyBase):
     @classmethod
     def list_names(cls):
         return ["id", "key", "currency", "total"]
+
+    @classmethod
+    def from_session(cls, ensure = True, raise_e = False):
+        from . import BudyAccount
+        account = BudyAccount.from_session(raise_e = raise_e)
+        if account: return account.get_bag()
+        session = appier.get_session()
+        key = session.get("bag", None)
+        bag = cls.get(key = key, raise_e = raise_e)
+        if bag: return bag
+        if not ensure: return None
+        bag = cls()
+        bag.save()
+        session["bag"] = bag.key
+        return bag
 
     def pre_create(self):
         base.BudyBase.pre_create(self)
