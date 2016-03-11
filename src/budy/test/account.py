@@ -64,3 +64,4 @@ class AccountTest(unittest.TestCase):
         account.save()
 
         self.assertEqual(account.username, "username")
+        self.assertNotEqual(account.bag, None)

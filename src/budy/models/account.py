@@ -67,4 +67,6 @@ class BudyAccount(appier_extras.admin.Account):
         _bag = bag.Bag.new(form = False)
         _bag.account = self
         _bag.save()
+        self.bag = _bag
+        self.save()
         return _bag
