@@ -64,6 +64,7 @@ class BudyAccount(appier_extras.admin.Account):
     def ensure_bag_s(self):
         _bag = bag.Bag.get(account = self.id, raise_e = False)
         if _bag: return _bag
-        _bag = bag.Bag.new(account = self, form = False)
+        _bag = bag.Bag.new(form = False)
+        _bag.account = self
         _bag.save()
         return _bag

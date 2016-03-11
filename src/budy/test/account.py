@@ -56,6 +56,9 @@ class AccountTest(unittest.TestCase):
     def test_basic(self):
         account = budy.BudyAccount.new(
             username = "username",
+            email = "email@email.com",
+            password = "password",
+            password_confirm = "password",
             form = False
         )
         account.save()
