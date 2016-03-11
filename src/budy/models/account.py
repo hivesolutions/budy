@@ -50,23 +50,17 @@ class BudyAccount(appier_extras.admin.Account):
 
     name = appier.field()
 
-    bag = appier.field(
-        type = appier.reference(
-            "Bag",
-            name = "id"
-        )
-    )
-
     def post_create(self):
         appier_extras.admin.Account.post_create(self)
         self.ensure_bag_s()
 
     def ensure_bag_s(self):
-        _bag = bag.Bag.get(account = self.id, raise_e = False)
+        _bag = self.get_bag()
         if _bag: return _bag
         _bag = bag.Bag.new(form = False)
         _bag.account = self
         _bag.save()
-        self.bag = _bag
-        self.save()
         return _bag
+
+    def get_bag(self):
+        return bag.Bag.get(account = self.id, raise_e = False)
