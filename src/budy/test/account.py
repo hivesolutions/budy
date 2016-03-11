@@ -37,33 +37,27 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+
+import unittest
+
 import appier
-import appier_extras
 
-from . import bag
+import budy
 
-class BudyAccount(appier_extras.admin.Account):
+class AccountTest(unittest.TestCase):
 
-    PREFIXES = appier_extras.admin.Account.PREFIXES + [
-        "budy."
-    ]
+    def setUp(self):
+        budy.BudyApp()
 
-    name = appier.field()
+    def tearDown(self):
+        adapter = appier.get_adapter()
+        adapter.drop_db()
 
-    bag = appier.field(
-        type = appier.reference(
-            "Bag",
-            name = "id"
+    def test_basic(self):
+        account = budy.BudyAccount.new(
+            username = "username",
+            form = False
         )
-    )
+        account.save()
 
-    def post_create(self):
-        appier_extras.admin.Account.post_create(self)
-        self.ensure_bag_s()
-
-    def ensure_bag_s(self):
-        _bag = bag.Bag.get(account = self.id, raise_e = False)
-        if _bag: return _bag
-        _bag = bag.Bag.new(account = self, form = False)
-        _bag.save()
-        return _bag
+        self.assertEqual(account.username, "username")
