@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import logging
 import unittest
 
 import appier
@@ -46,7 +47,7 @@ import budy
 class BagTest(unittest.TestCase):
 
     def setUp(self):
-        budy.BudyApp()
+        budy.BudyApp(level = logging.ERROR)
 
     def tearDown(self):
         adapter = appier.get_adapter()
