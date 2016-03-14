@@ -39,5 +39,20 @@ __license__ = "Apache License, Version 2.0"
 
 import appier
 
+import budy
+
 class BaseApiController(appier.Controller):
-    pass
+
+    @appier.route("/api/login", ("GET", "POST"), json = True)
+    def login(self):
+        username = self.field("username")
+        password = self.field("password")
+        account = budy.BudyAccount.login(username, password)
+        account._set_session()
+        sid = self.session.sid
+        return dict(
+            sid = sid,
+            session_id = sid,
+            username = username,
+            tokens = account.tokens()
+        )

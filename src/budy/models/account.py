@@ -50,12 +50,9 @@ class BudyAccount(appier_extras.admin.Account):
 
     name = appier.field()
 
-    @classmethod
-    def validate(cls):
-        return super(BudyAccount, cls).validate() + [
-            appier.not_null("name"),
-            appier.not_empty("name")
-        ]
+    def pre_create(self):
+        appier_extras.admin.Account.pre_create(self)
+        if not hasattr(self, "name"): self.name = self.username
 
     def post_create(self):
         appier_extras.admin.Account.post_create(self)
