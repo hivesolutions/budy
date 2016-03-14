@@ -146,6 +146,18 @@ class Bag(base.BudyBase):
         )
         self.add_line_s(_bag_line)
 
+    def add_update_line_s(self, bag_line):
+        self.add_product_s(
+            bag_line.product,
+            quantity = bag_line.quantity
+        )
+
+    def merge_s(self, bag_id):
+        bag = Bag.get(id = bag_id)
+        for line in bag.lines:
+            line = line.clone()
+            self.add_update_line_s(line)
+
     def _calculate(self):
         lines = self.lines if hasattr(self, "lines") else []
         self.total = sum(line.total for line in lines)
