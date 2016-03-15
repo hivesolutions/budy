@@ -58,6 +58,28 @@ class Bag(base.BudyBase):
     total = appier.field(
         type = float,
         index = True,
+        initial = 0.0,
+        safe = True
+    )
+
+    discount = appier.field(
+        type = float,
+        index = True,
+        initial = 0.0,
+        safe = True
+    )
+
+    taxes = appier.field(
+        type = float,
+        index = True,
+        initial = 0.0,
+        safe = True
+    )
+
+    shipping_cost = appier.field(
+        type = float,
+        index = True,
+        initial = 0.0,
         safe = True
     )
 
@@ -78,6 +100,10 @@ class Bag(base.BudyBase):
     def __init__(self, *args, **kwargs):
         base.BudyBase.__init__(self, *args, **kwargs)
         self.currency = kwargs.get("currency", "EUR")
+        self.total = kwargs.get("total", 0.0)
+        self.discount = kwargs.get("discount", 0.0)
+        self.taxes = kwargs.get("taxes", 0.0)
+        self.shipping_cost = kwargs.get("shipping_cost", 0.0)
 
     @classmethod
     def validate(cls):
