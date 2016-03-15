@@ -51,11 +51,15 @@ class BagLine(base.BudyBase):
         type = float
     )
 
-    meta = appier.field(
-        type = dict
+    size = appier.field(
+        type = int
     )
 
-    meta_j = appier.field()
+    scale = appier.field(
+        type = int
+    )
+
+    attributes = appier.field()
 
     product = appier.field(
         type = appier.reference(

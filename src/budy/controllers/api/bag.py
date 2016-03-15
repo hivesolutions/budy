@@ -82,7 +82,10 @@ class BagApiController(appier.Controller):
         bag = budy.Bag.get(key = key)
         bag.lines.append(bag_line)
         bag.save()
-        bag_line = bag_line.map()
+        bag_line = bag_line.reload(
+            eager = ("product",),
+            map = True
+        )
         return bag_line
 
     @appier.route("/api/bags/<str:key>/lines/add_update", "POST", json = True)
@@ -90,5 +93,8 @@ class BagApiController(appier.Controller):
         bag_line = budy.BagLine.new()
         bag = budy.Bag.get(key = key)
         bag_line = bag.add_update_line_s(bag_line)
-        bag_line = bag_line.map()
+        bag_line = bag_line.reload(
+            eager = ("product",),
+            map = True
+        )
         return bag_line

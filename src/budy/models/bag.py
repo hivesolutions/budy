@@ -152,11 +152,21 @@ class Bag(base.BudyBase):
         self.save()
         return bag_line
 
-    def add_product_s(self, product, quantity = 1.0):
+    def add_product_s(
+        self,
+        product,
+        quantity = 1.0,
+        size = None,
+        scale = None,
+        attributes = None
+    ):
         _bag_line = None
 
         for line in self.lines:
             is_same = line.product.id == product.id
+            is_same &= line.size == size
+            is_same &= line.scale == scale
+            is_same &= line.attributes == attributes
             if not is_same: continue
             _bag_line = line
 
@@ -168,7 +178,10 @@ class Bag(base.BudyBase):
 
         _bag_line = bag_line.BagLine(
             product = product,
-            quantity = quantity
+            quantity = quantity,
+            size = size,
+            scale = scale,
+            attributes = attributes
         )
         self.add_line_s(_bag_line)
 
@@ -177,7 +190,10 @@ class Bag(base.BudyBase):
     def add_update_line_s(self, bag_line):
         return self.add_product_s(
             bag_line.product,
-            quantity = bag_line.quantity
+            quantity = bag_line.quantity,
+            size = bag_line.size,
+            scale = bag_line.scale,
+            attributes = bag_line.attributes
         )
 
     def merge_s(self, bag_id):
