@@ -164,7 +164,7 @@ class Bag(base.BudyBase):
             _bag_line.quantity += quantity
             _bag_line.save()
             self.save()
-            return
+            return _bag_line
 
         _bag_line = bag_line.BagLine(
             product = product,
@@ -172,8 +172,10 @@ class Bag(base.BudyBase):
         )
         self.add_line_s(_bag_line)
 
+        return _bag_line
+
     def add_update_line_s(self, bag_line):
-        self.add_product_s(
+        return self.add_product_s(
             bag_line.product,
             quantity = bag_line.quantity
         )
