@@ -48,7 +48,7 @@ class BagApiController(appier.Controller):
     def list(self):
         object = appier.get_object(alias = True, find = True)
         products = budy.Bag.find(
-            eager = ("lines",),
+            eager = ("lines", "lines.product"),
             map = True,
             **object
         )
@@ -70,7 +70,7 @@ class BagApiController(appier.Controller):
     def show(self, key):
         bag = budy.Bag.get(
             key = key,
-            eager = ("lines",),
+            eager = ("lines", "lines.product"),
             map = True
         )
         return bag
