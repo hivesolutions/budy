@@ -138,7 +138,7 @@ class Bag(base.BudyBase):
 
     def pre_save(self):
         base.BudyBase.pre_save(self)
-        self._calculate()
+        self.calculate()
 
     def empty_s(self):
         for line in self.lines: line.delete()
@@ -213,6 +213,23 @@ class Bag(base.BudyBase):
             line = line.clone()
             self.add_update_line_s(line)
 
-    def _calculate(self):
+    def refresh_s(self, currency = None, country = None, force = False):
+        is_dirty = self.is_dirty(currency = currency, country = country)
+        if not is_dirty and not force: return
+        lines = self.lines if hasattr(self, "lines") else []
+        for line in lines:
+            if not line.is_dirty(): continue
+            line.save()
+        self.save()
+
+    def calculate(self):
         lines = self.lines if hasattr(self, "lines") else []
         self.total = sum(line.total for line in lines)
+
+    def is_dirty(self, currency = None, country = None):
+        dirty = False
+        lines = self.lines if hasattr(self, "lines") else []
+        for line in lines: dirty &= line.is_dirty(
+            currency = currency,
+            country = country
+        )

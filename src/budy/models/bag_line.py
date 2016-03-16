@@ -43,6 +43,14 @@ from . import base
 
 class BagLine(base.BudyBase):
 
+    price = appier.field(
+        type = float
+    )
+
+    currency = appier.field()
+
+    country = appier.field()
+
     quantity = appier.field(
         type = float
     )
@@ -81,7 +89,29 @@ class BagLine(base.BudyBase):
 
     def pre_save(self):
         base.BudyBase.pre_save(self)
-        self._calculate()
+        self.calculate()
 
-    def _calculate(self):
-        self.total = self.quantity * self.product.get_price(self.attributes)
+    def calculate(self, currency = None, country = None, force = False):
+        self.total = self.quantity * self.get_price(
+            currency = currency,
+            country = country,
+            force = force
+        )
+
+    def get_price(self, currency = None, country = None, force = False):
+        is_dirty = self.is_dirty(currency = currency, country = country)
+        if not is_dirty and not force: return self.price
+        self.price = self.product.get_price(
+            currency = currency,
+            country = country,
+            attributes = self.attributes
+        )
+        self.currency = currency
+        self.country = country
+        return self.price
+
+    def is_dirty(self, currency = None, country = None):
+        is_clean = not self.currency == currency
+        is_clean &= self.country == country
+        is_clean &= not self.price == None
+        return not is_clean

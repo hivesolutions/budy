@@ -267,13 +267,28 @@ class Product(base.BudyBase):
 
         cls._csv_import(file, callback)
 
-    def get_price(self, attributes = None):
+    def get_price(
+        self,
+        currency = None,
+        country = None,
+        attributes = None
+    ):
         if not self.price_provider: return self.price
         method = getattr(self, "get_price_%s" % self.price_provider)
-        return method(attributes = attributes)
+        return method(
+            currency = currency,
+            country = country,
+            attributes = attributes
+        )
 
-    def get_price_ripe(self, attributes = None):
+    def get_price_ripe(
+        self,
+        currency = None,
+        country = None,
+        attributes = None
+    ):
         if not self.price_url: return self.price
+        print(attributes)
         attributes_m = json.loads(attributes)
         p = []
         parts = attributes_m.get("parts", {})
@@ -283,12 +298,16 @@ class Product(base.BudyBase):
             triplet = "%s:%s:%s" % (key, material, color)
             p.append(triplet)
 
+        params = dict(
+            product_id = self.product_id,
+            p = p
+        )
+        if currency: params["currency"] = currency
+        if country: params["country"] = country
+
         result = appier.get(
             self.price_url,
-            params = dict(
-                product_id = self.product_id,
-                p = p
-            )
+            params = params
         )
         total = result["total"]
         return total["price_final"]

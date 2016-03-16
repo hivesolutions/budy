@@ -68,7 +68,9 @@ class BagApiController(appier.Controller):
 
     @appier.route("/api/bags/<str:key>", "GET", json = True)
     def show(self, key):
-        bag = budy.Bag.get(
+        bag = budy.Bag.get(key = key)
+        bag.refresh_s()
+        bag = bag.reload(
             key = key,
             eager = ("lines", "lines.product"),
             map = True
