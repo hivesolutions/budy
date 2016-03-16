@@ -229,14 +229,12 @@ class Bag(base.BudyBase):
 
     def to_order_s(self):
         #@todo must complete this with proper creation of order
-        #order.Order(
-        #    product = product,
-        #    quantity = quantity,
-        #    size = size,
-        #    scale = scale,
-        #    attributes = attributes
-        #)
-        pass
+        order = order.Order(
+            currency = self.currency,
+            country = self.country
+        )
+        order.save()
+        return order
 
     def calculate(self):
         lines = self.lines if hasattr(self, "lines") else []

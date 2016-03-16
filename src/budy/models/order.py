@@ -50,6 +50,5 @@ class Order(base.BudyBase):
     )
 
     currency = appier.field(
-        index = True,
-        initial = "EUR"
+        index = True
     )
