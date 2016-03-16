@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import json
+
 import appier
 
 from . import base
@@ -265,15 +267,16 @@ class Product(base.BudyBase):
 
         cls._csv_import(file, callback)
 
-    def get_price(self, attributes = {}):
+    def get_price(self, attributes = None):
         if not self.price_provider: return self.price
-        method = getattr(self, "build_price_%s" % self.price_provider)
+        method = getattr(self, "get_price_%s" % self.price_provider)
         return method(attributes = attributes)
 
-    def get_price_ripe(self, attributes = {}):
+    def get_price_ripe(self, attributes = None):
         if not self.price_url: return self.price
+        attributes_m = json.loads(attributes)
         p = []
-        parts = attributes.get("parts", {})
+        parts = attributes_m.get("parts", {})
         for key, value in appier.legacy.iteritems(parts):
             material = value["material"]
             color = value["color"]
@@ -284,7 +287,7 @@ class Product(base.BudyBase):
             self.price_url,
             params = dict(
                 product_id = self.product_id,
-                p = parts
+                p = p
             )
         )
         total = result["total"]
