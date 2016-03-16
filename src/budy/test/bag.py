@@ -116,7 +116,7 @@ class BagTest(unittest.TestCase):
         self.assertEqual(bag.total, 0.0)
         self.assertEqual(len(bag.lines), 0)
 
-    def test_remove(self):
+    def test_remove_line(self):
         product = budy.Product.new(
             short_description = "product",
             gender = "Male",
