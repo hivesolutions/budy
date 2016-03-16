@@ -152,6 +152,17 @@ class Bag(base.BudyBase):
         self.save()
         return bag_line
 
+    def remove_line_s(self, bag_line_id):
+        match = None
+        for bag_line in self.lines:
+            if not bag_line.id == bag_line_id: continue
+            match = bag_line
+            break
+        if not match: return
+        self.lines.remove(match)
+        self.save()
+        match.delete()
+
     def add_product_s(
         self,
         product,
