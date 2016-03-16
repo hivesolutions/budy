@@ -78,6 +78,15 @@ class Product(base.BudyBase):
 
     tag_descritpion = appier.field()
 
+    price_provider = appier.field(
+        index = True
+    )
+
+    price_url = appier.field(
+        index = True,
+        meta = "url"
+    )
+
     farfetch_url = appier.field(
         index = True,
         meta = "url"
@@ -255,3 +264,28 @@ class Product(base.BudyBase):
             product.save()
 
         cls._csv_import(file, callback)
+
+    def get_price(self, attributes = {}):
+        if not self.price_provider: return self.price
+        method = getattr(self, "build_price_%s" % self.price_provider)
+        return method(attributes = attributes)
+
+    def get_price_ripe(self, attributes = {}):
+        if not self.price_url: return self.price
+        p = []
+        parts = attributes.get("parts", {})
+        for key, value in appier.legacy.iteritems(parts):
+            material = value["material"]
+            color = value["color"]
+            triplet = "%s:%s:%s" % (key, material, color)
+            p.append(triplet)
+
+        result = appier.get(
+            self.price_url,
+            params = dict(
+                product_id = self.product_id,
+                p = parts
+            )
+        )
+        total = result["total"]
+        return total["price_final"]

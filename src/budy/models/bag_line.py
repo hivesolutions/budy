@@ -84,4 +84,4 @@ class BagLine(base.BudyBase):
         self._calculate()
 
     def _calculate(self):
-        self.total = self.quantity * self.product.price
+        self.total = self.quantity * self.product.get_price(self.attributes)
