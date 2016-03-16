@@ -41,7 +41,9 @@ import appier
 
 import budy
 
-class ColorApiController(appier.Controller):
+from . import root
+
+class ColorApiController(root.RootApiController):
 
     @appier.route("/api/colors", "GET", json = True)
     def list(self):

@@ -41,7 +41,9 @@ import appier
 
 import budy
 
-class ProductApiController(appier.Controller):
+from . import root
+
+class ProductApiController(root.RootApiController):
 
     @appier.route("/api/products", "GET", json = True)
     def list(self):

@@ -111,7 +111,7 @@ class BagLine(base.BudyBase):
         return self.price
 
     def is_dirty(self, currency = None, country = None):
-        is_clean = not self.currency == currency
-        is_clean &= self.country == country
-        is_clean &= not self.price == None
-        return not is_clean
+        is_dirty = not self.currency == currency
+        is_dirty |= not self.country == country
+        is_dirty |= self.price == None
+        return is_dirty

@@ -41,7 +41,9 @@ import appier
 
 import budy
 
-class BaseApiController(appier.Controller):
+from . import root
+
+class BaseApiController(root.RootApiController):
 
     @appier.route("/api/login", ("GET", "POST"), json = True)
     def login(self):

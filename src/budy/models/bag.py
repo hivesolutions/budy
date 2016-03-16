@@ -229,7 +229,8 @@ class Bag(base.BudyBase):
     def is_dirty(self, currency = None, country = None):
         dirty = False
         lines = self.lines if hasattr(self, "lines") else []
-        for line in lines: dirty &= line.is_dirty(
+        for line in lines: dirty |= line.is_dirty(
             currency = currency,
             country = country
         )
+        return dirty

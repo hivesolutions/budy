@@ -288,7 +288,6 @@ class Product(base.BudyBase):
         attributes = None
     ):
         if not self.price_url: return self.price
-        print(attributes)
         attributes_m = json.loads(attributes)
         p = []
         parts = attributes_m.get("parts", {})

@@ -39,14 +39,12 @@ __license__ = "Apache License, Version 2.0"
 
 import appier
 
-import budy
+class RootApiController(appier.Controller):
 
-from . import root
+    @property
+    def country(self):
+        return self.request.get_header("X-Budy-Country", None)
 
-class CategoryApiController(root.RootApiController):
-
-    @appier.route("/api/categories", "GET", json = True)
-    def list(self):
-        object = appier.get_object(alias = True, find = True)
-        categories = budy.Category.find(map = True, **object)
-        return categories
+    @property
+    def currency(self):
+        return self.request.get_header("X-Budy-Currency", None)

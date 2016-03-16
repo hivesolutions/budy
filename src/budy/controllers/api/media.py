@@ -41,7 +41,9 @@ import appier
 
 import budy
 
-class MediaApiController(appier.Controller):
+from . import root
+
+class MediaApiController(root.RootApiController):
 
     @appier.route("/api/media", "GET", json = True)
     def list(self):

@@ -41,6 +41,7 @@ from . import category
 from . import color
 from . import media
 from . import product
+from . import root
 from . import subscription
 
 from .bag import BagApiController
@@ -50,4 +51,5 @@ from .category import CategoryApiController
 from .color import ColorApiController
 from .media import MediaApiController
 from .product import ProductApiController
+from .root import RootApiController
 from .subscription import SubscriptionApiController

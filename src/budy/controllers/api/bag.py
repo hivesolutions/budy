@@ -41,7 +41,9 @@ import appier
 
 import budy
 
-class BagApiController(appier.Controller):
+from . import root
+
+class BagApiController(root.RootApiController):
 
     @appier.route("/api/bags", "GET", json = True)
     @appier.ensure(token = "admin")
@@ -69,7 +71,10 @@ class BagApiController(appier.Controller):
     @appier.route("/api/bags/<str:key>", "GET", json = True)
     def show(self, key):
         bag = budy.Bag.get(key = key)
-        bag.refresh_s()
+        bag.refresh_s(
+            currency = self.currency,
+            country = self.country
+        )
         bag = bag.reload(
             key = key,
             eager = ("lines", "lines.product"),
