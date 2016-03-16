@@ -51,8 +51,11 @@ class Bag(base.BudyBase):
     )
 
     currency = appier.field(
-        index = True,
-        initial = "EUR"
+        index = True
+    )
+
+    country = appier.field(
+        index = True
     )
 
     total = appier.field(
@@ -99,7 +102,8 @@ class Bag(base.BudyBase):
 
     def __init__(self, *args, **kwargs):
         base.BudyBase.__init__(self, *args, **kwargs)
-        self.currency = kwargs.get("currency", "EUR")
+        self.currency = kwargs.get("currency", None)
+        self.country = kwargs.get("country", None)
         self.total = kwargs.get("total", 0.0)
         self.discount = kwargs.get("discount", 0.0)
         self.taxes = kwargs.get("taxes", 0.0)
@@ -218,8 +222,15 @@ class Bag(base.BudyBase):
         if not is_dirty and not force: return
         lines = self.lines if hasattr(self, "lines") else []
         for line in lines:
-            if not line.is_dirty(): continue
+            is_dirty = line.is_dirty(
+                currency = currency,
+                country = country
+            )
+            if not is_dirty: continue
+            line.calculate(currency = currency, country = country)
             line.save()
+        self.currency = currency
+        self.country = country
         self.save()
 
     def calculate(self):

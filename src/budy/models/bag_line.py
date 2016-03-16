@@ -83,6 +83,11 @@ class BagLine(base.BudyBase):
         )
     )
 
+    def __init__(self, *args, **kwargs):
+        base.BudyBase.__init__(self, *args, **kwargs)
+        self.currency = kwargs.get("currency", None)
+        self.country = kwargs.get("country", None)
+
     @classmethod
     def list_names(cls):
         return ["id", "quantity", "total", "product"]
@@ -92,6 +97,8 @@ class BagLine(base.BudyBase):
         self.calculate()
 
     def calculate(self, currency = None, country = None, force = False):
+        currency = currency or self.currency
+        country = country or self.country
         self.total = self.quantity * self.get_price(
             currency = currency,
             country = country,
@@ -113,5 +120,5 @@ class BagLine(base.BudyBase):
     def is_dirty(self, currency = None, country = None):
         is_dirty = not self.currency == currency
         is_dirty |= not self.country == country
-        is_dirty |= self.price == None
+        is_dirty |= not hasattr(self, "price") or self.price == None
         return is_dirty
