@@ -40,6 +40,7 @@ __license__ = "Apache License, Version 2.0"
 import appier
 
 from . import base
+from . import order
 from . import bag_line
 
 class Bag(base.BudyBase):
@@ -232,6 +233,17 @@ class Bag(base.BudyBase):
         self.currency = currency
         self.country = country
         self.save()
+
+    def to_order_s(self):
+        #@todo must complete this with proper creation of order
+        #order.Order(
+        #    product = product,
+        #    quantity = quantity,
+        #    size = size,
+        #    scale = scale,
+        #    attributes = attributes
+        #)
+        pass
 
     def calculate(self):
         lines = self.lines if hasattr(self, "lines") else []
