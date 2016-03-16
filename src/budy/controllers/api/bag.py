@@ -77,24 +77,34 @@ class BagApiController(appier.Controller):
 
     @appier.route("/api/bags/<str:key>/lines", "POST", json = True)
     def add_line(self, key):
-        bag_line = budy.BagLine.new()
-        bag_line.save()
+        line = budy.BagLine.new()
+        line.save()
         bag = budy.Bag.get(key = key)
-        bag.lines.append(bag_line)
+        bag.lines.append(line)
         bag.save()
-        bag_line = bag_line.reload(
+        line = line.reload(
             eager = ("product",),
             map = True
         )
-        return bag_line
+        return line
+
+    @appier.route("/api/bags/<str:key>/lines/<int:line_id>", "DELETE", json = True)
+    def remove_line(self, key, line_id):
+        bag = budy.Bag.get(key = key)
+        bag.remove_line_s(line_id)
+        bag = bag.reload(
+            eager = ("lines", "lines.product"),
+            map = True,
+        )
+        return bag
 
     @appier.route("/api/bags/<str:key>/lines/add_update", "POST", json = True)
     def add_update_line(self, key):
-        bag_line = budy.BagLine.new()
+        line = budy.BagLine.new()
         bag = budy.Bag.get(key = key)
-        bag_line = bag.add_update_line_s(bag_line)
-        bag_line = bag_line.reload(
+        line = bag.add_update_line_s(line)
+        line = line.reload(
             eager = ("product",),
             map = True
         )
-        return bag_line
+        return line

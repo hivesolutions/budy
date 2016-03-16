@@ -145,18 +145,18 @@ class Bag(base.BudyBase):
         self.lines = []
         self.save()
 
-    def add_line_s(self, bag_line):
-        bag_line.bag = self
-        bag_line.save()
-        self.lines.append(bag_line)
+    def add_line_s(self, line):
+        line.bag = self
+        line.save()
+        self.lines.append(line)
         self.save()
-        return bag_line
+        return line
 
-    def remove_line_s(self, bag_line_id):
+    def remove_line_s(self, line_id):
         match = None
-        for bag_line in self.lines:
-            if not bag_line.id == bag_line_id: continue
-            match = bag_line
+        for line in self.lines:
+            if not line.id == line_id: continue
+            match = line
             break
         if not match: return
         self.lines.remove(match)
@@ -171,7 +171,7 @@ class Bag(base.BudyBase):
         scale = None,
         attributes = None
     ):
-        _bag_line = None
+        _line = None
 
         for line in self.lines:
             is_same = line.product.id == product.id
@@ -179,32 +179,32 @@ class Bag(base.BudyBase):
             is_same &= line.scale == scale
             is_same &= line.attributes == attributes
             if not is_same: continue
-            _bag_line = line
+            _line = line
 
-        if _bag_line:
-            _bag_line.quantity += quantity
-            _bag_line.save()
+        if _line:
+            _line.quantity += quantity
+            _line.save()
             self.save()
-            return _bag_line
+            return _line
 
-        _bag_line = bag_line.BagLine(
+        _line = bag_line.BagLine(
             product = product,
             quantity = quantity,
             size = size,
             scale = scale,
             attributes = attributes
         )
-        self.add_line_s(_bag_line)
+        self.add_line_s(_line)
 
-        return _bag_line
+        return _line
 
-    def add_update_line_s(self, bag_line):
+    def add_update_line_s(self, line):
         return self.add_product_s(
-            bag_line.product,
-            quantity = bag_line.quantity,
-            size = bag_line.size,
-            scale = bag_line.scale,
-            attributes = bag_line.attributes
+            line.product,
+            quantity = line.quantity,
+            size = line.size,
+            scale = line.scale,
+            attributes = line.attributes
         )
 
     def merge_s(self, bag_id):
