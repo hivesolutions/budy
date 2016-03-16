@@ -70,10 +70,9 @@ class BagTest(unittest.TestCase):
         bag.save()
 
         self.assertEqual(type(bag.key), appier.legacy.UNICODE)
-        self.assertEqual(type(bag.currency), appier.legacy.UNICODE)
         self.assertEqual(type(bag.total), float)
         self.assertEqual(len(bag.lines), 0)
-        self.assertEqual(bag.currency, "EUR")
+        self.assertEqual(bag.currency, None)
         self.assertEqual(bag.total >= 0.0, True)
 
         bag_line = budy.BagLine.new(

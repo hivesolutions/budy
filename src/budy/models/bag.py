@@ -111,13 +111,6 @@ class Bag(base.BudyBase):
         self.shipping_cost = kwargs.get("shipping_cost", 0.0)
 
     @classmethod
-    def validate(cls):
-        return super(Bag, cls).validate() + [
-            appier.not_null("currency"),
-            appier.not_empty("currency")
-        ]
-
-    @classmethod
     def list_names(cls):
         return ["id", "key", "currency", "total"]
 
