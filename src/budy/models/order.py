@@ -41,7 +41,7 @@ import appier
 
 from . import base
 
-class Checkout(base.BudyBase):
+class Order(base.BudyBase):
 
     key = appier.field(
         index = True,

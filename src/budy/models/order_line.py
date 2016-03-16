@@ -41,7 +41,7 @@ import appier
 
 from . import base
 
-class CheckoutLine(base.BudyBase):
+class OrderLine(base.BudyBase):
 
     quantity = appier.field(
         type = float
