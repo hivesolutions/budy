@@ -71,7 +71,7 @@ class Bag(bundle.Bundle):
     def from_session(cls, ensure = True, raise_e = False):
         from . import BudyAccount
         account = BudyAccount.from_session(raise_e = raise_e)
-        if account: return account.get_bag()
+        if account: return account.ensure_bag_s()
         session = appier.get_session()
         key = session.get("bag", None)
         bag = cls.get(key = key, raise_e = raise_e) if key else None
