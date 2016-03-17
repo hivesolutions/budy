@@ -219,3 +219,7 @@ class BagTest(unittest.TestCase):
         self.assertEqual(len(bag.lines), 1)
 
         order = bag.to_order_s()
+
+        self.assertEqual(order.currency, bag.currency)
+        self.assertEqual(order.total, 20.0)
+        self.assertEqual(len(order.lines), 1)

@@ -74,7 +74,7 @@ class Bag(bundle.Bundle):
         if account: return account.get_bag()
         session = appier.get_session()
         key = session.get("bag", None)
-        bag = cls.get(key = key, raise_e = raise_e)
+        bag = cls.get(key = key, raise_e = raise_e) if key else None
         if bag: return bag
         if not ensure: return None
         bag = cls()
