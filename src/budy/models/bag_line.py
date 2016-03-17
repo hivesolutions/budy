@@ -56,7 +56,7 @@ class BagLine(bundle_line.BundleLine):
         return ["id", "quantity", "total", "product", "bag"]
 
     def to_order_line_s(self):
-        return order_line.OrderLine(
+        _order_line = order_line.OrderLine(
             price = self.price,
             currency = self.currency,
             country = self.country,
@@ -65,5 +65,7 @@ class BagLine(bundle_line.BundleLine):
             size = self.size,
             scale = self.scale,
             attributes = self.attributes,
-            product = self.product
+            product = self.product.id
         )
+        _order_line.save()
+        return _order_line

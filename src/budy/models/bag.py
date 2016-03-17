@@ -53,7 +53,7 @@ class Bag(bundle.Bundle):
     )
 
     account = appier.field(
-        type = appier.references(
+        type = appier.reference(
             "BudyAccount",
             name = "id"
         )
