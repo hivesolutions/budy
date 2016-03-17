@@ -291,6 +291,9 @@ class Product(base.BudyBase):
         attributes_m = json.loads(attributes)
         p = []
         parts = attributes_m.get("parts", {})
+        embossing = attributes_m.get("embossing", None)
+        letters = attributes_m.get("letters", None)
+
         for key, value in appier.legacy.iteritems(parts):
             material = value["material"]
             color = value["color"]
@@ -303,6 +306,8 @@ class Product(base.BudyBase):
         )
         if currency: params["currency"] = currency
         if country: params["country"] = country
+        if embossing: params["embossing"] = embossing
+        if letters: params["letters"] = letters
 
         result = appier.get(
             self.price_url,
