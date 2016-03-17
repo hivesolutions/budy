@@ -39,6 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 import appier
 
+from . import order_line
 from . import bundle_line
 
 class BagLine(bundle_line.BundleLine):
@@ -53,3 +54,16 @@ class BagLine(bundle_line.BundleLine):
     @classmethod
     def list_names(cls):
         return ["id", "quantity", "total", "product", "bag"]
+
+    def to_order_line_s(self):
+        return order_line.OrderLine(
+            price = self.price,
+            currency = self.currency,
+            country = self.country,
+            quantity = self.quantity,
+            total = self.total,
+            size = self.size,
+            scale = self.scale,
+            attributes = self.attributes,
+            product = self.product
+        )

@@ -84,7 +84,7 @@ class Bag(bundle.Bundle):
 
     def to_order_s(self):
         self.refresh_s()
-        order = order.Order(
+        _order = order.Order(
             currency = self.currency,
             country = self.country,
             total = self.total,
@@ -93,9 +93,9 @@ class Bag(bundle.Bundle):
             shipping_cost = self.shipping_cost,
             account = self.account
         )
-        order.lines = []
+        _order.lines = []
         for line in self.lines:
             order_line = line.to_order_line_s()
-            order.lines.append(order_line)
-        order.save()
-        return order
+            _order.lines.append(order_line)
+        _order.save()
+        return _order

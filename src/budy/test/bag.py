@@ -192,3 +192,30 @@ class BagTest(unittest.TestCase):
 
         self.assertEqual(extra.total, 40.0)
         self.assertEqual(len(extra.lines), 1)
+
+    def test_order(self):
+        product = budy.Product.new(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0,
+            form = False
+        )
+        product.save()
+
+        bag = budy.Bag.new(form = False)
+        bag.save()
+
+        bag_line = budy.BagLine.new(
+            quantity = 2.0,
+            form = False
+        )
+        bag_line.product = product
+        bag_line.save()
+        bag.add_line_s(bag_line)
+
+        self.assertEqual(bag_line.quantity, 2.0)
+        self.assertEqual(bag_line.total, 20.0)
+        self.assertEqual(bag.total, 20.0)
+        self.assertEqual(len(bag.lines), 1)
+
+        order = bag.to_order_s()
