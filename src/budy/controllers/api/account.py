@@ -46,6 +46,7 @@ from . import root
 class AccountApiController(root.RootApiController):
 
     @appier.route("/api/accounts/me", "GET", json = True)
+    @appier.ensure(token = "user")
     def me(self):
         account = budy.BudyAccount.from_session(map = True)
         return account
