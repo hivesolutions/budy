@@ -39,6 +39,8 @@ from . import bag_line
 from . import bag
 from . import base
 from . import brand
+from . import bundle_line
+from . import bundle
 from . import category
 from . import color
 from . import composition
@@ -57,6 +59,8 @@ from .bag_line import BagLine
 from .bag import Bag
 from .base import BudyBase
 from .brand import Brand
+from .bundle import Bundle
+from .bundle_line import BundleLine
 from .category import Category
 from .color import Color
 from .composition import Composition

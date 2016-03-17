@@ -39,10 +39,17 @@ __license__ = "Apache License, Version 2.0"
 
 import appier
 
-from . import base
+from . import bundle_line
 
-class OrderLine(base.BudyBase):
+class OrderLine(bundle_line.BundleLine):
 
-    quantity = appier.field(
-        type = float
+    order = appier.field(
+        type = appier.reference(
+            "Order",
+            name = "id"
+        )
     )
+
+    @classmethod
+    def list_names(cls):
+        return ["id", "quantity", "total", "product", "order"]

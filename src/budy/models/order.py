@@ -40,15 +40,28 @@ __license__ = "Apache License, Version 2.0"
 import appier
 
 from . import base
+from . import order_line
 
 class Order(base.BudyBase):
 
-    key = appier.field(
-        index = True,
-        safe = True,
-        immutable = True
+    lines = appier.field(
+        type = appier.references(
+            "OrderLine",
+            name = "id"
+        )
     )
 
-    currency = appier.field(
-        index = True
+    account = appier.field(
+        type = appier.references(
+            "BudyAccount",
+            name = "id"
+        )
     )
+
+    @classmethod
+    def list_names(cls):
+        return ["id", "key", "currency", "total", "account"]
+
+    @classmethod
+    def line_cls(cls):
+        return order_line.OrderLine

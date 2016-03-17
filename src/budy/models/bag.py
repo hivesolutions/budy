@@ -39,53 +39,11 @@ __license__ = "Apache License, Version 2.0"
 
 import appier
 
-from . import base
 from . import order
+from . import bundle
 from . import bag_line
 
-class Bag(base.BudyBase):
-
-    key = appier.field(
-        index = True,
-        safe = True,
-        immutable = True
-    )
-
-    currency = appier.field(
-        index = True
-    )
-
-    country = appier.field(
-        index = True
-    )
-
-    total = appier.field(
-        type = float,
-        index = True,
-        initial = 0.0,
-        safe = True
-    )
-
-    discount = appier.field(
-        type = float,
-        index = True,
-        initial = 0.0,
-        safe = True
-    )
-
-    taxes = appier.field(
-        type = float,
-        index = True,
-        initial = 0.0,
-        safe = True
-    )
-
-    shipping_cost = appier.field(
-        type = float,
-        index = True,
-        initial = 0.0,
-        safe = True
-    )
+class Bag(bundle.Bundle):
 
     lines = appier.field(
         type = appier.references(
@@ -101,18 +59,13 @@ class Bag(base.BudyBase):
         )
     )
 
-    def __init__(self, *args, **kwargs):
-        base.BudyBase.__init__(self, *args, **kwargs)
-        self.currency = kwargs.get("currency", None)
-        self.country = kwargs.get("country", None)
-        self.total = kwargs.get("total", 0.0)
-        self.discount = kwargs.get("discount", 0.0)
-        self.taxes = kwargs.get("taxes", 0.0)
-        self.shipping_cost = kwargs.get("shipping_cost", 0.0)
-
     @classmethod
     def list_names(cls):
-        return ["id", "key", "currency", "total"]
+        return ["id", "key", "currency", "total", "account"]
+
+    @classmethod
+    def line_cls(cls):
+        return bag_line.BagLine
 
     @classmethod
     def from_session(cls, ensure = True, raise_e = False):
@@ -129,128 +82,20 @@ class Bag(base.BudyBase):
         session["bag"] = bag.key
         return bag
 
-    def pre_create(self):
-        base.BudyBase.pre_create(self)
-        if not hasattr(self, "key"): self.key = self.secret()
-        self.description = self.key[:8]
-
-    def pre_save(self):
-        base.BudyBase.pre_save(self)
-        self.calculate()
-
-    def empty_s(self):
-        for line in self.lines: line.delete()
-        self.lines = []
-        self.save()
-
-    def add_line_s(self, line):
-        line.bag = self
-        line.save()
-        self.lines.append(line)
-        self.save()
-        return line
-
-    def remove_line_s(self, line_id):
-        match = None
-        for line in self.lines:
-            if not line.id == line_id: continue
-            match = line
-            break
-        if not match: return
-        self.lines.remove(match)
-        self.save()
-        match.delete()
-
-    def add_product_s(
-        self,
-        product,
-        quantity = 1.0,
-        size = None,
-        scale = None,
-        attributes = None,
-        increment = True
-    ):
-        _line = None
-
-        for line in self.lines:
-            is_same = line.product.id == product.id
-            is_same &= line.size == size
-            is_same &= line.scale == scale
-            is_same &= line.attributes == attributes
-            if not is_same: continue
-            _line = line
-
-        if _line:
-            if not increment: return _line
-            _line.quantity += quantity
-            _line.save()
-            self.save()
-            return _line
-
-        _line = bag_line.BagLine(
-            product = product,
-            quantity = quantity,
-            size = size,
-            scale = scale,
-            attributes = attributes
-        )
-        self.add_line_s(_line)
-
-        return _line
-
-    def add_update_line_s(self, line, increment = False):
-        return self.add_product_s(
-            line.product,
-            quantity = line.quantity,
-            size = line.size,
-            scale = line.scale,
-            attributes = line.attributes,
-            increment = increment
-        )
-
-    def merge_s(self, bag_id, increment = False):
-        bag = Bag.get(id = bag_id)
-        for line in bag.lines:
-            line = line.clone()
-            self.add_update_line_s(line, increment = increment)
-        self.refresh_s()
-
-    def refresh_s(self, currency = None, country = None, force = False):
-        currency = currency or self.currency
-        country = country or self.country
-        is_dirty = self.is_dirty(currency = currency, country = country)
-        if not is_dirty and not force: return
-        lines = self.lines if hasattr(self, "lines") else []
-        for line in lines:
-            is_dirty = line.is_dirty(
-                currency = currency,
-                country = country
-            )
-            if not is_dirty: continue
-            line.calculate(currency = currency, country = country)
-            line.save()
-        self.currency = currency
-        self.country = country
-        self.save()
-
     def to_order_s(self):
-        #@todo must complete this with proper creation of order
+        self.refresh_s()
         order = order.Order(
             currency = self.currency,
-            country = self.country
+            country = self.country,
+            total = self.total,
+            discount = self.discount,
+            taxes = self.taxes,
+            shipping_cost = self.shipping_cost,
+            account = self.account
         )
+        order.lines = []
+        for line in self.lines:
+            order_line = line.to_order_line_s()
+            order.lines.append(order_line)
         order.save()
         return order
-
-    def calculate(self):
-        lines = self.lines if hasattr(self, "lines") else []
-        self.total = sum(line.total for line in lines)
-
-    def is_dirty(self, currency = None, country = None):
-        dirty = False
-        lines = self.lines if hasattr(self, "lines") else []
-        for line in lines: dirty |= line.is_dirty(
-            currency = currency,
-            country = country
-        )
-        return dirty

@@ -39,42 +39,9 @@ __license__ = "Apache License, Version 2.0"
 
 import appier
 
-from . import base
+from . import bundle_line
 
-class BagLine(base.BudyBase):
-
-    price = appier.field(
-        type = float
-    )
-
-    currency = appier.field()
-
-    country = appier.field()
-
-    quantity = appier.field(
-        type = float
-    )
-
-    total = appier.field(
-        type = float
-    )
-
-    size = appier.field(
-        type = int
-    )
-
-    scale = appier.field(
-        type = int
-    )
-
-    attributes = appier.field()
-
-    product = appier.field(
-        type = appier.reference(
-            "Product",
-            name = "id"
-        )
-    )
+class BagLine(bundle_line.BundleLine):
 
     bag = appier.field(
         type = appier.reference(
@@ -83,42 +50,6 @@ class BagLine(base.BudyBase):
         )
     )
 
-    def __init__(self, *args, **kwargs):
-        base.BudyBase.__init__(self, *args, **kwargs)
-        self.currency = kwargs.get("currency", None)
-        self.country = kwargs.get("country", None)
-
     @classmethod
     def list_names(cls):
-        return ["id", "quantity", "total", "product"]
-
-    def pre_save(self):
-        base.BudyBase.pre_save(self)
-        self.calculate()
-
-    def calculate(self, currency = None, country = None, force = False):
-        currency = currency or self.currency
-        country = country or self.country
-        self.total = self.quantity * self.get_price(
-            currency = currency,
-            country = country,
-            force = force
-        )
-
-    def get_price(self, currency = None, country = None, force = False):
-        is_dirty = self.is_dirty(currency = currency, country = country)
-        if not is_dirty and not force: return self.price
-        self.price = self.product.get_price(
-            currency = currency,
-            country = country,
-            attributes = self.attributes
-        )
-        self.currency = currency
-        self.country = country
-        return self.price
-
-    def is_dirty(self, currency = None, country = None):
-        is_dirty = not self.currency == currency
-        is_dirty |= not self.country == country
-        is_dirty |= not hasattr(self, "price") or self.price == None
-        return is_dirty
+        return ["id", "quantity", "total", "product", "bag"]
