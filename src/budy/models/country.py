@@ -19,6 +19,9 @@
 # You should have received a copy of the Apache License along with
 # Hive Budy. If not, see <http://www.apache.org/licenses/>.
 
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
 __version__ = "1.0.0"
 """ The version of the module """
 
@@ -34,38 +37,40 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
-from . import account
-from . import bag_line
-from . import bag
-from . import base
-from . import brand
-from . import category
-from . import color
-from . import composition
-from . import country
-from . import live_model
-from . import measurement
-from . import media
-from . import order_line
-from . import order
-from . import product
-from . import season
-from . import subscription
+import appier
 
-from .account import BudyAccount
-from .bag_line import BagLine
-from .bag import Bag
-from .base import BudyBase
-from .brand import Brand
-from .category import Category
-from .color import Color
-from .composition import Composition
-from .country import Country
-from .live_model import LiveModel
-from .measurement import Measurement
-from .media import Media
-from .order_line import OrderLine
-from .order import Order
-from .product import Product
-from .season import Season
-from .subscription import Subscription
+from . import base
+
+class Country(base.BudyBase):
+
+    name = appier.field(
+        index = True
+    )
+
+    country_code = appier.field(
+        index = True
+    )
+
+    currency_code = appier.field(
+        index = True
+    )
+
+    locale = appier.field(
+        index = True
+    )
+
+    @classmethod
+    def validate(cls):
+        return super(Country, cls).validate() + [
+            appier.not_null("name"),
+            appier.not_empty("name"),
+
+            appier.not_null("country_code"),
+            appier.not_empty("country_code"),
+
+            appier.not_null("currency_code"),
+            appier.not_empty("currency_code"),
+
+            appier.not_null("locale"),
+            appier.not_empty("locale")
+        ]
