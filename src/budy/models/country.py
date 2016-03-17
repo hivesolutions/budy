@@ -74,3 +74,7 @@ class Country(base.BudyBase):
             appier.not_null("locale"),
             appier.not_empty("locale")
         ]
+
+    @classmethod
+    def list_names(cls):
+        return ["id", "name", "country_code", "currency_code", "locale"]
