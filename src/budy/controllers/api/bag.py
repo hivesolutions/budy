@@ -70,7 +70,9 @@ class BagApiController(root.RootApiController):
 
     @appier.route("/api/bags/<str:key>", "GET", json = True)
     def show(self, key):
-        bag = budy.Bag.get(key = key)
+        ensure = self.field("ensure", True)
+        bag = budy.Bag.get(key = key, raise_e = not ensure)
+        if not bag: bag = budy.Bag(key = key).save()
         bag.refresh_s(
             currency = self.currency,
             country = self.country
