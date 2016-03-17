@@ -37,7 +37,15 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import appier
+
+import budy
+
 from . import root
 
 class AccountApiController(root.RootApiController):
-    pass
+
+    @appier.route("/api/accounts/me", "GET", json = True)
+    def me(self):
+        account = budy.BudyAccount.from_session(map = True)
+        return account

@@ -50,6 +50,17 @@ class BudyAccount(appier_extras.admin.Account):
 
     name = appier.field()
 
+    @classmethod
+    def _build(cls, model, map):
+        id = model.get("id", None)
+        if id: model["bag_key"] = cls._get_bag_key(id)
+    
+    @classmethod
+    def _get_bag_key(cls, id):
+        _bag = bag.Bag.get(account = id, raise_e = False)
+        if not bag: return None
+        return _bag.key
+
     def pre_create(self):
         appier_extras.admin.Account.pre_create(self)
         if not hasattr(self, "name"): self.name = self.username
