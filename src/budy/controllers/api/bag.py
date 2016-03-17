@@ -84,6 +84,19 @@ class BagApiController(root.RootApiController):
         )
         return bag
 
+    @appier.route("/api/bags/<str:key>/merge/<str:target>", "GET", json = True)
+    def merge(self, key, target):
+        increment = self.field("increment", False)
+        bag = budy.Bag.get(key = key)
+        target = budy.Bag.get(key = target)
+        bag.merge_s(target.id, increment = increment)
+        bag = bag.reload(
+            key = key,
+            eager = ("lines", "lines.product"),
+            map = True
+        )
+        return bag
+
     @appier.route("/api/bags/<str:key>/lines", "POST", json = True)
     def add_line(self, key):
         line = budy.BagLine.new()

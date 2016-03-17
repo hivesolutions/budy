@@ -167,7 +167,8 @@ class Bag(base.BudyBase):
         quantity = 1.0,
         size = None,
         scale = None,
-        attributes = None
+        attributes = None,
+        increment = True
     ):
         _line = None
 
@@ -180,6 +181,7 @@ class Bag(base.BudyBase):
             _line = line
 
         if _line:
+            if not increment: return _line
             _line.quantity += quantity
             _line.save()
             self.save()
@@ -196,22 +198,26 @@ class Bag(base.BudyBase):
 
         return _line
 
-    def add_update_line_s(self, line):
+    def add_update_line_s(self, line, increment = False):
         return self.add_product_s(
             line.product,
             quantity = line.quantity,
             size = line.size,
             scale = line.scale,
-            attributes = line.attributes
+            attributes = line.attributes,
+            increment = increment
         )
 
-    def merge_s(self, bag_id):
+    def merge_s(self, bag_id, increment = False):
         bag = Bag.get(id = bag_id)
         for line in bag.lines:
             line = line.clone()
-            self.add_update_line_s(line)
+            self.add_update_line_s(line, increment = increment)
+        self.refresh_s()
 
     def refresh_s(self, currency = None, country = None, force = False):
+        currency = currency or self.currency
+        country = country or self.country
         is_dirty = self.is_dirty(currency = currency, country = country)
         if not is_dirty and not force: return
         lines = self.lines if hasattr(self, "lines") else []

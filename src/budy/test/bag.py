@@ -185,5 +185,10 @@ class BagTest(unittest.TestCase):
 
         extra.merge_s(bag.id)
 
+        self.assertEqual(extra.total, 20.0)
+        self.assertEqual(len(extra.lines), 1)
+
+        extra.merge_s(bag.id, increment = True)
+
         self.assertEqual(extra.total, 40.0)
         self.assertEqual(len(extra.lines), 1)
