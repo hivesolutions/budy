@@ -78,7 +78,6 @@ class BagApiController(root.RootApiController):
             country = self.country
         )
         bag = bag.reload(
-            key = key,
             eager = ("lines", "lines.product"),
             map = True
         )
@@ -91,7 +90,6 @@ class BagApiController(root.RootApiController):
         target = budy.Bag.get(key = target)
         bag.merge_s(target.id, increment = increment)
         bag = bag.reload(
-            key = key,
             eager = ("lines", "lines.product"),
             map = True
         )
@@ -130,3 +128,13 @@ class BagApiController(root.RootApiController):
             map = True
         )
         return line
+
+    @appier.route("/api/bags/<str:key>/order", "GET", json = True)
+    def order(self, key):
+        bag = budy.Bag.get(key = key)
+        order = bag.to_order_s()
+        order = order.reload(
+            eager = ("lines", "lines.product"),
+            map = True
+        )
+        return order

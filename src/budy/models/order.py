@@ -39,10 +39,10 @@ __license__ = "Apache License, Version 2.0"
 
 import appier
 
-from . import base
+from . import bundle
 from . import order_line
 
-class Order(base.BudyBase):
+class Order(bundle.Bundle):
 
     lines = appier.field(
         type = appier.references(
