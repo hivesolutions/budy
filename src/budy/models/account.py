@@ -50,6 +50,13 @@ class BudyAccount(appier_extras.admin.Account):
 
     name = appier.field()
 
+    addresses = appier.field(
+        type = appier.references(
+            "Address",
+            name = "id"
+        )
+    )
+
     @classmethod
     def _build(cls, model, map):
         id = model.get("id", None)

@@ -61,10 +61,16 @@ class Address(base.BudyBase):
 
     state = appier.field()
 
-    country = appier.field()
+    country = appier.field(
+        meta = "country"
+    )
 
     phone_number = appier.field()
 
     vat_number = appier.field()
 
     neighborhood = appier.field()
+
+    @classmethod
+    def list_names(cls):
+        return ["id", "first_name", "last_name", "address", "country"]
