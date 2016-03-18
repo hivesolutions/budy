@@ -52,12 +52,22 @@ class AddressApiController(root.RootApiController):
         addresses = budy.Address.find(map = True, **object)
         return addresses
 
+    @appier.route("/api/addresses", "POST", json = True)
+    @appier.ensure(token = "user")
+    def create(self, key):
+        address = budy.Address.new()
+        address.save()
+        address = address.map()
+        return address
+
     @appier.route("/api/addresses/<str:key>", "GET", json = True)
+    @appier.ensure(token = "user")
     def show(self, key):
         address = budy.Address.get(key = key, map = True)
         return address
 
     @appier.route("/api/addresses/<str:key>", "PUT", json = True)
+    @appier.ensure(token = "user")
     def update(self, key):
         address = budy.Address.get(key = key, rules = False)
         address.apply()

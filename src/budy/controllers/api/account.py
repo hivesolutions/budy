@@ -59,3 +59,14 @@ class AccountApiController(root.RootApiController):
             map = True
         )
         return account["addresses"]
+
+    @appier.route("/api/accounts/me/addresses", "POST", json = True)
+    @appier.ensure(token = "user")
+    def create_address_me(self):
+        address = budy.Address.new()
+        address.save()
+        account = budy.BudyAccount.from_session(rules = False)
+        account.addresses.append(address)
+        account.save()
+        address = address.map()
+        return address
