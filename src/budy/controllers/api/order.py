@@ -53,7 +53,8 @@ class OrderApiController(root.RootApiController):
             eager = (
                 "lines",
                 "lines.product",
-                "shipping_address"
+                "shipping_address",
+                "billing_address"
             ),
             map = True,
             **object
@@ -72,7 +73,8 @@ class OrderApiController(root.RootApiController):
             eager = (
                 "lines",
                 "lines.product",
-                "shipping_address"
+                "shipping_address",
+                "billing_address"
             ),
             map = True
         )
@@ -90,7 +92,27 @@ class OrderApiController(root.RootApiController):
             eager = (
                 "lines",
                 "lines.product",
-                "shipping_address"
+                "shipping_address",
+                "billing_address"
+            ),
+            map = True
+        )
+        return order
+
+    @appier.route("/api/orders/<str:key>/billing_address", "PUT", json = True)
+    @appier.ensure(token = "user")
+    def set_billing_address(self, key):
+        address = budy.Address.new()
+        address.save()
+        order = budy.Order.get(key = key, rules = False)
+        order.billing_address = address
+        order.save()
+        order = order.reload(
+            eager = (
+                "lines",
+                "lines.product",
+                "shipping_address",
+                "billing_address"
             ),
             map = True
         )
