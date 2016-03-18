@@ -109,8 +109,9 @@ class Media(base.BudyBase):
         names = os.listdir(target)
         for name in names:
             path = os.path.join(target, name)
-            if not os.path.isdir(path): continue
-            image_names = os.listdir(path)
+            is_dir = os.path.isdir(path)
+            if is_dir: image_names = os.listdir(path)
+            else: path = target; image_names = [name]
             for image_name in image_names:
                 base, extension = os.path.splitext(image_name)
                 if not extension in (".png", ".jpeg", ".jpg"): continue
