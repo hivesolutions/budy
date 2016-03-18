@@ -19,6 +19,9 @@
 # You should have received a copy of the Apache License along with
 # Hive Budy. If not, see <http://www.apache.org/licenses/>.
 
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
 __version__ = "1.0.0"
 """ The version of the module """
 
@@ -34,28 +37,34 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
-from . import account
-from . import bag
-from . import base
-from . import brand
-from . import category
-from . import color
-from . import country
-from . import media
-from . import order
-from . import product
-from . import root
-from . import subscription
+import appier
 
-from .account import AccountApiController
-from .bag import BagApiController
-from .base import BaseApiController
-from .brand import BrandApiController
-from .category import CategoryApiController
-from .color import ColorApiController
-from .country import CountryApiController
-from .media import MediaApiController
-from .order import OrderApiController
-from .product import ProductApiController
-from .root import RootApiController
-from .subscription import SubscriptionApiController
+import budy
+
+from . import root
+
+class OrderApiController(root.RootApiController):
+
+    @appier.route("/api/orders", "GET", json = True)
+    @appier.ensure(token = "admin")
+    def list(self):
+        object = appier.get_object(alias = True, find = True)
+        products = budy.Order.find(
+            eager = ("lines", "lines.product"),
+            map = True,
+            **object
+        )
+        return products
+
+    @appier.route("/api/orders/<str:key>", "GET", json = True)
+    def show(self, key):
+        order = budy.Order.get(key = key)
+        order.refresh_s(
+            currency = self.currency,
+            country = self.country
+        )
+        order = order.reload(
+            eager = ("lines", "lines.product"),
+            map = True
+        )
+        return order
