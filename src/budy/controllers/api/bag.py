@@ -49,12 +49,12 @@ class BagApiController(root.RootApiController):
     @appier.ensure(token = "admin")
     def list(self):
         object = appier.get_object(alias = True, find = True)
-        products = budy.Bag.find(
+        bags = budy.Bag.find(
             eager = ("lines", "lines.product"),
             map = True,
             **object
         )
-        return products
+        return bags
 
     @appier.route("/api/bags", "POST", json = True)
     def create(self):

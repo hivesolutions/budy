@@ -43,28 +43,16 @@ import budy
 
 from . import root
 
-class OrderApiController(root.RootApiController):
+class AddressApiController(root.RootApiController):
 
-    @appier.route("/api/orders", "GET", json = True)
+    @appier.route("/api/addresses", "GET", json = True)
     @appier.ensure(token = "admin")
     def list(self):
         object = appier.get_object(alias = True, find = True)
-        orders = budy.Order.find(
-            eager = ("lines", "lines.product"),
-            map = True,
-            **object
-        )
-        return orders
+        addresses = budy.Address.find(map = True, **object)
+        return addresses
 
-    @appier.route("/api/orders/<str:key>", "GET", json = True)
+    @appier.route("/api/addresses/<str:key>", "GET", json = True)
     def show(self, key):
-        order = budy.Order.get(key = key)
-        order.refresh_s(
-            currency = self.currency,
-            country = self.country
-        )
-        order = order.reload(
-            eager = ("lines", "lines.product"),
-            map = True
-        )
-        return order
+        address = budy.Address.get(key = key, map = True)
+        return address

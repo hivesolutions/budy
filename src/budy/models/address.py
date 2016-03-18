@@ -43,6 +43,12 @@ from . import base
 
 class Address(base.BudyBase):
 
+    key = appier.field(
+        index = True,
+        safe = True,
+        immutable = True
+    )
+
     first_name = appier.field(
         index = True
     )
@@ -74,3 +80,8 @@ class Address(base.BudyBase):
     @classmethod
     def list_names(cls):
         return ["id", "first_name", "last_name", "address", "country"]
+
+    def pre_create(self):
+        base.BudyBase.pre_create(self)
+        if not hasattr(self, "key"): self.key = self.secret()
+        self.description = self.key[:8]

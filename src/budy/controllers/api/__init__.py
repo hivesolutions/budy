@@ -35,6 +35,7 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 from . import account
+from . import address
 from . import bag
 from . import base
 from . import brand
@@ -48,6 +49,7 @@ from . import root
 from . import subscription
 
 from .account import AccountApiController
+from .address import AddressApiController
 from .bag import BagApiController
 from .base import BaseApiController
 from .brand import BrandApiController
