@@ -74,3 +74,8 @@ class AddressApiController(root.RootApiController):
         address.save()
         address = address.map()
         return address
+
+    @appier.route("/api/addresses/<str:key>", "DELETE", json = True)
+    def delete(self, key):
+        address = budy.Address.get(key = key)
+        address.delete()

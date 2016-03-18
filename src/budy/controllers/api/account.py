@@ -70,3 +70,12 @@ class AccountApiController(root.RootApiController):
         account.save()
         address = address.map()
         return address
+
+    @appier.route("/api/accounts/me/addresses/<str:key>", "DELETE", json = True)
+    @appier.ensure(token = "user")
+    def delete_address_me(self, key):
+        address = budy.Address.get(key = key)
+        account = budy.BudyAccount.from_session(rules = False)
+        account.addresses.remove(address.id)
+        account.save()
+        address.delete()
