@@ -50,13 +50,18 @@ class OrderApiController(root.RootApiController):
     def list(self):
         object = appier.get_object(alias = True, find = True)
         orders = budy.Order.find(
-            eager = ("lines", "lines.product"),
+            eager = (
+                "lines",
+                "lines.product",
+                "shipping_address"
+            ),
             map = True,
             **object
         )
         return orders
 
     @appier.route("/api/orders/<str:key>", "GET", json = True)
+    @appier.ensure(token = "user")
     def show(self, key):
         order = budy.Order.get(key = key)
         order.refresh_s(
@@ -64,7 +69,29 @@ class OrderApiController(root.RootApiController):
             country = self.country
         )
         order = order.reload(
-            eager = ("lines", "lines.product"),
+            eager = (
+                "lines",
+                "lines.product",
+                "shipping_address"
+            ),
+            map = True
+        )
+        return order
+
+    @appier.route("/api/orders/<str:key>/shipping_address", "PUT", json = True)
+    @appier.ensure(token = "user")
+    def set_shipping_address(self, key):
+        address = budy.Address.new()
+        address.save()
+        order = budy.Order.get(key = key, rules = False)
+        order.shipping_address = address
+        order.save()
+        order = order.reload(
+            eager = (
+                "lines",
+                "lines.product",
+                "shipping_address"
+            ),
             map = True
         )
         return order
