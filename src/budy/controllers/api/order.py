@@ -117,3 +117,8 @@ class OrderApiController(root.RootApiController):
             map = True
         )
         return order
+
+    @appier.route("/api/orders/<str:key>/pay", "PUT", json = True)
+    @appier.ensure(token = "user")
+    def pay(self, key):
+        pass
