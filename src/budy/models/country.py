@@ -44,7 +44,8 @@ from . import base
 class Country(base.BudyBase):
 
     name = appier.field(
-        index = True
+        index = True,
+        default = True
     )
 
     country_code = appier.field(
