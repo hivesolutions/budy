@@ -83,5 +83,6 @@ class Address(base.BudyBase):
 
     def pre_create(self):
         base.BudyBase.pre_create(self)
-        if not hasattr(self, "key"): self.key = self.secret()
+        if not hasattr(self, "key") or not self.key:
+            self.key = self.secret()
         self.description = self.key[:8]
