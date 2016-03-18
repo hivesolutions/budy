@@ -52,8 +52,22 @@ class Order(bundle.Bundle):
     )
 
     account = appier.field(
-        type = appier.references(
+        type = appier.reference(
             "BudyAccount",
+            name = "id"
+        )
+    )
+
+    shipping_address = appier.field(
+        type = appier.reference(
+            "Address",
+            name = "id"
+        )
+    )
+
+    billing_address = appier.field(
+        type = appier.reference(
+            "Address",
             name = "id"
         )
     )
