@@ -56,3 +56,11 @@ class AddressApiController(root.RootApiController):
     def show(self, key):
         address = budy.Address.get(key = key, map = True)
         return address
+
+    @appier.route("/api/addresses/<str:key>", "PUT", json = True)
+    def update(self, key):
+        address = budy.Address.get(key = key, rules = False)
+        address.apply()
+        address.save()
+        address = address.map()
+        return address
