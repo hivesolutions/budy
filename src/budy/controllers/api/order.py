@@ -66,8 +66,8 @@ class OrderApiController(root.RootApiController):
     def show(self, key):
         order = budy.Order.get(key = key)
         order.refresh_s(
-            currency = self.currency,
-            country = self.country
+            currency = order.shipping_currency or self.currency,
+            country = order.shipping_country or self.country
         )
         order = order.reload(
             eager = (

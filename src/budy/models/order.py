@@ -40,6 +40,7 @@ __license__ = "Apache License, Version 2.0"
 import appier
 
 from . import bundle
+from . import country
 from . import order_line
 
 class Order(bundle.Bundle):
@@ -79,3 +80,16 @@ class Order(bundle.Bundle):
     @classmethod
     def line_cls(cls):
         return order_line.OrderLine
+
+    @property
+    def shipping_country(self):
+        has_shipping = hasattr(self, "shipping_address")
+        if not has_shipping: return None
+        if not self.shipping_address: return None
+        return self.shipping_address.country
+
+    @property
+    def shipping_currency(self):
+        if not self.shipping_country: return None
+        shipping_country = country.Country.get_by_code(self.shipping_country)
+        return shipping_country.currency_code

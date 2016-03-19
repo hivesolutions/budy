@@ -79,3 +79,7 @@ class Country(base.BudyBase):
     @classmethod
     def list_names(cls):
         return ["id", "name", "country_code", "currency_code", "locale"]
+
+    @classmethod
+    def get_by_code(cls, country_code, *args, **kwargs):
+        return cls.get(country_code = country_code, *args, **kwargs)
