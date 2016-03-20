@@ -51,6 +51,23 @@ class AccountApiController(root.RootApiController):
         account = budy.BudyAccount.from_session(map = True)
         return account
 
+    @appier.route("/api/accounts/me/orders", "GET", json = True)
+    @appier.ensure(token = "user")
+    def orders_me(self):
+        account = budy.BudyAccount.from_session()
+        orders = budy.Order.find(
+            account = account.id,
+            paid = True,
+            eager = (
+                "lines",
+                "lines.product",
+                "shipping_address",
+                "billing_address"
+            ),
+            map = True
+        )
+        return orders
+
     @appier.route("/api/accounts/me/addresses", "GET", json = True)
     @appier.ensure(token = "user")
     def addresses_me(self):
