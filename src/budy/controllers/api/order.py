@@ -122,9 +122,8 @@ class OrderApiController(root.RootApiController):
     @appier.ensure(token = "user")
     def pay(self, key):
         data = appier.request_json()
-        payment_data = data.get("payment_data", {})
         order = budy.Order.get(key = key, rules = False)
-        order.pay_s(payment_data)
+        order.pay_s(data)
         order = order.reload(
             eager = (
                 "lines",
