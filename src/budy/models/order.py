@@ -97,7 +97,7 @@ class Order(bundle.Bundle):
 
     def pay_s(self, payment_data):
         self.verify()
-        self.pay_stripe(payment_data)
+        self._pay_stripe(payment_data)
         self.paid = True
         self.save()
 
@@ -114,16 +114,18 @@ class Order(bundle.Bundle):
         shipping_country = country.Country.get_by_code(self.shipping_country)
         return shipping_country.currency_code
 
-    def pay_stripe(self, payment_data):
+    def _pay_stripe(self, payment_data):
         import stripe
         api = stripe.Api()
         number = payment_data["card_number"]
         exp_month = int(payment_data["expiration_month"])
         exp_year = int(payment_data["expiration_year"])
+        name = payment_data.get("card_name", None)
         api.create_charge(
             int(self.total * 100),
             self.currency,
             exp_month,
             exp_year,
-            number
+            number,
+            name = name
         )
