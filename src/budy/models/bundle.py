@@ -149,6 +149,10 @@ class Bundle(base.BudyBase):
 
         _line = None
 
+        if not product: raise appier.OperationalError(
+            message = "No product defined"
+        )
+
         for line in self.lines:
             is_same = line.product.id == product.id
             is_same &= line.size == size
