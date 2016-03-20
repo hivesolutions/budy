@@ -45,6 +45,31 @@ from . import order_line
 
 class Order(bundle.Bundle):
 
+    STATUS_S = dict(
+        created = "created",
+        paid = "paid",
+        sent = "sent",
+        received = "received",
+        returned = "returned",
+        canceled = "canceled"
+    )
+
+    STATUS_C = dict(
+        created = "grey",
+        paid = "blue",
+        sent = "blue",
+        received = "green",
+        returned = "red",
+        canceled = "red"
+    )
+
+    status = appier.field(
+        initial = "created",
+        meta = "enum",
+        enum = STATUS_S,
+        colors = STATUS_C
+    )
+
     paid = appier.field(
         type = bool,
         initial = False
@@ -84,7 +109,7 @@ class Order(bundle.Bundle):
 
     @classmethod
     def list_names(cls):
-        return ["id", "key", "currency", "total", "account"]
+        return ["id", "currency", "total", "account", "status"]
 
     @classmethod
     def line_cls(cls):
@@ -93,11 +118,13 @@ class Order(bundle.Bundle):
     def verify(self):
         appier.verify(not self.shipping_address == None)
         appier.verify(not self.billing_address == None)
+        appier.verify(self.status == "created")
         appier.verify(self.paid == False)
 
     def pay_s(self, payment_data):
         self.verify()
         self._pay_stripe(payment_data)
+        self.status = "paid"
         self.paid = True
         self.save()
 
