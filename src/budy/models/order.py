@@ -45,6 +45,11 @@ from . import order_line
 
 class Order(bundle.Bundle):
 
+    paid = appier.field(
+        type = bool,
+        initial = False
+    )
+
     lines = appier.field(
         type = appier.references(
             "OrderLine",
@@ -73,6 +78,10 @@ class Order(bundle.Bundle):
         )
     )
 
+    def __init__(self, *args, **kwargs):
+        bundle.Bundle.__init__(self, *args, **kwargs)
+        self.paid = kwargs.get("paid", False)
+
     @classmethod
     def list_names(cls):
         return ["id", "key", "currency", "total", "account"]
@@ -80,6 +89,17 @@ class Order(bundle.Bundle):
     @classmethod
     def line_cls(cls):
         return order_line.OrderLine
+
+    def verify(self):
+        appier.verify(not self.shipping_address == None)
+        appier.verify(not self.billing_address == None)
+        appier.verify(self.paid == False)
+
+    def pay_s(self, payment_data):
+        self.verify()
+        self.pay_stripe(payment_data)
+        self.paid = True
+        self.save()
 
     @property
     def shipping_country(self):
@@ -93,3 +113,17 @@ class Order(bundle.Bundle):
         if not self.shipping_country: return None
         shipping_country = country.Country.get_by_code(self.shipping_country)
         return shipping_country.currency_code
+
+    def pay_stripe(self, payment_data):
+        import stripe
+        api = stripe.Api()
+        number = payment_data["card_number"]
+        exp_month = int(payment_data["expiration_month"])
+        exp_year = int(payment_data["expiration_year"])
+        api.create_charge(
+            int(self.total * 100),
+            self.currency,
+            exp_month,
+            exp_year,
+            number
+        )
