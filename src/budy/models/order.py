@@ -128,7 +128,6 @@ class Order(bundle.Bundle):
         return order_line.OrderLine
 
     def verify(self):
-        appier.verify(not self.shipping_address == None)
         appier.verify(not self.billing_address == None)
         appier.verify(self.status == "created")
         appier.verify(self.paid == False)
