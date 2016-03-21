@@ -54,7 +54,7 @@ class AccountApiController(root.RootApiController):
     @appier.route("/api/accounts/me", "PUT", json = True)
     @appier.ensure(token = "user")
     def update_me(self):
-        account = budy.BudyAccount.from_session(map = True)
+        account = budy.BudyAccount.from_session()
         account.apply()
         account.save()
         account = account.map()
