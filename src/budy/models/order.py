@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import time
+
 import appier
 
 from . import bundle
@@ -65,6 +67,8 @@ class Order(bundle.Bundle):
 
     status = appier.field(
         initial = "created",
+        index = True,
+        safe = True,
         meta = "enum",
         enum = STATUS_S,
         colors = STATUS_C
@@ -72,7 +76,15 @@ class Order(bundle.Bundle):
 
     paid = appier.field(
         type = bool,
-        initial = False
+        initial = False,
+        safe = True
+    )
+
+    date = appier.field(
+        type = int,
+        index = True,
+        safe = True,
+        meta = "datetime"
     )
 
     lines = appier.field(
@@ -126,6 +138,7 @@ class Order(bundle.Bundle):
         self._pay_stripe(payment_data)
         self.status = "paid"
         self.paid = True
+        self.date = time.time()
         self.save()
 
     @property
