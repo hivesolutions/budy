@@ -48,7 +48,40 @@ class BudyAccount(appier_extras.admin.Account):
         "budy."
     ]
 
-    name = appier.field()
+    GENDER_S = dict(
+        Male = "Male",
+        Female = "Female"
+    )
+
+    first_name = appier.field(
+        index = True
+    )
+
+    last_name = appier.field(
+        index = True
+    )
+
+    gender = appier.field(
+        meta = "enum",
+        enum = GENDER_S
+    )
+
+    birth_date = appier.field(
+        type = int,
+        index = True,
+        meta = "datetime"
+    )
+
+    country = appier.field(
+        meta = "country"
+    )
+
+    phone_number = appier.field()
+
+    receive_newsletters = appier.field(
+        type = bool,
+        initial = False
+    )
 
     addresses = appier.field(
         type = appier.references(
@@ -70,7 +103,7 @@ class BudyAccount(appier_extras.admin.Account):
 
     def pre_create(self):
         appier_extras.admin.Account.pre_create(self)
-        if not hasattr(self, "name"): self.name = self.username
+        if not hasattr(self, "first_name"): self.first_name = self.username
 
     def post_create(self):
         appier_extras.admin.Account.post_create(self)
