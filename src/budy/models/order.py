@@ -87,6 +87,11 @@ class Order(bundle.Bundle):
         meta = "datetime"
     )
 
+    email = appier.field(
+        index = True,
+        safe = True
+    )
+
     lines = appier.field(
         type = appier.references(
             "OrderLine",
