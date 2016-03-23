@@ -215,7 +215,9 @@ class Product(base.BudyBase):
             _brand,\
             _season,\
             measurements,\
-            compositions = line
+            compositions, \
+            price_provider, \
+            price_url = line
 
             product_id = product_id or None
             price = float(price) if price else None
@@ -225,6 +227,8 @@ class Product(base.BudyBase):
             farfetch_url = farfetch_url or None
             farfetch_male_url = farfetch_male_url or None
             farfetch_female_url = farfetch_female_url or None
+            price_provider = price_provider or None
+            price_url = price_url or None
 
             colors = colors.split(";") if colors else []
             colors = color.Color.find(name = {"$in" : colors})
@@ -261,7 +265,9 @@ class Product(base.BudyBase):
                 brand = _brand,
                 season = _season,
                 measurements = measurements,
-                compositions = compositions
+                compositions = compositions,
+                price_provider = price_provider,
+                price_url = price_url
             )
             product.save()
 
