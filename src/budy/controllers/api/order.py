@@ -49,16 +49,7 @@ class OrderApiController(root.RootApiController):
     @appier.ensure(token = "admin")
     def list(self):
         object = appier.get_object(alias = True, find = True)
-        orders = budy.Order.find(
-            eager = (
-                "lines",
-                "lines.product",
-                "shipping_address",
-                "billing_address"
-            ),
-            map = True,
-            **object
-        )
+        orders = budy.Order.find(eager_l = True, map = True, **object)
         return orders
 
     @appier.route("/api/orders/<str:key>", "GET", json = True)
@@ -80,15 +71,7 @@ class OrderApiController(root.RootApiController):
         order = budy.Order.get(key = key, rules = False)
         order.shipping_address = address
         order.save()
-        order = order.reload(
-            eager = (
-                "lines",
-                "lines.product",
-                "shipping_address",
-                "billing_address"
-            ),
-            map = True
-        )
+        order = order.reload(map = True)
         return order
 
     @appier.route("/api/orders/<str:key>/billing_address", "PUT", json = True)
@@ -99,15 +82,7 @@ class OrderApiController(root.RootApiController):
         order = budy.Order.get(key = key, rules = False)
         order.billing_address = address
         order.save()
-        order = order.reload(
-            eager = (
-                "lines",
-                "lines.product",
-                "shipping_address",
-                "billing_address"
-            ),
-            map = True
-        )
+        order = order.reload(map = True)
         return order
 
     @appier.route("/api/orders/<str:key>/email", "PUT", json = True)
@@ -118,15 +93,7 @@ class OrderApiController(root.RootApiController):
         order = budy.Order.get(key = key, rules = False)
         order.email = email
         order.save()
-        order = order.reload(
-            eager = (
-                "lines",
-                "lines.product",
-                "shipping_address",
-                "billing_address"
-            ),
-            map = True
-        )
+        order = order.reload(map = True)
         return order
 
     @appier.route("/api/orders/<str:key>/pay", "PUT", json = True)
@@ -138,13 +105,5 @@ class OrderApiController(root.RootApiController):
         order.pay_s(data)
         bag = budy.Bag.from_session()
         if empty_bag and bag: bag.empty_bag_s()
-        order = order.reload(
-            eager = (
-                "lines",
-                "lines.product",
-                "shipping_address",
-                "billing_address"
-            ),
-            map = True
-        )
+        order = order.reload(map = True)
         return order
