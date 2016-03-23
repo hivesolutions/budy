@@ -69,7 +69,7 @@ class BudyAccount(appier_extras.admin.Account):
     birth_date = appier.field(
         type = int,
         index = True,
-        meta = "datetime"
+        meta = "date"
     )
 
     country = appier.field(

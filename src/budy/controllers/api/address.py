@@ -54,7 +54,7 @@ class AddressApiController(root.RootApiController):
 
     @appier.route("/api/addresses", "POST", json = True)
     @appier.ensure(token = "user")
-    def create(self, key):
+    def create(self):
         address = budy.Address.new()
         address.save()
         address = address.map()

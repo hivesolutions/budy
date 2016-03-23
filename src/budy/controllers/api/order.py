@@ -118,6 +118,25 @@ class OrderApiController(root.RootApiController):
         )
         return order
 
+    @appier.route("/api/orders/<str:key>/email", "PUT", json = True)
+    @appier.ensure(token = "user")
+    def set_email(self, key):
+        data = appier.request_json()
+        email = data["email"]
+        order = budy.Order.get(key = key, rules = False)
+        order.email = email
+        order.save()
+        order = order.reload(
+            eager = (
+                "lines",
+                "lines.product",
+                "shipping_address",
+                "billing_address"
+            ),
+            map = True
+        )
+        return order
+
     @appier.route("/api/orders/<str:key>/pay", "PUT", json = True)
     @appier.ensure(token = "user")
     def pay(self, key):
