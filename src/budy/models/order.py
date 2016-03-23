@@ -94,8 +94,9 @@ class Order(bundle.Bundle):
 
     notification_sent = appier.field(
         type = bool,
-        safe = True,
-        index = True
+        index = True,
+        initial = False,
+        safe = True
     )
 
     lines = appier.field(
@@ -131,7 +132,10 @@ class Order(bundle.Bundle):
 
     def __init__(self, *args, **kwargs):
         bundle.Bundle.__init__(self, *args, **kwargs)
+        self.created = kwargs.get("status", "created")
         self.paid = kwargs.get("paid", False)
+        self.date = kwargs.get("date", None)
+        self.notification_sent = kwargs.get("notification_sent", False)
 
     @classmethod
     def list_names(cls):
