@@ -99,3 +99,9 @@ class Bag(bundle.Bundle):
             _order.lines.append(order_line)
         _order.save()
         return _order
+
+    @appier.operation(name = "Empty Bag")
+    def empty_bag_s(self):
+        for line in self.lines: line.delete()
+        self.lines = []
+        self.save()
