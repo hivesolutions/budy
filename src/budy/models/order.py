@@ -92,11 +92,18 @@ class Order(bundle.Bundle):
         safe = True
     )
 
+    notification_sent = appier.field(
+        type = bool,
+        safe = True,
+        index = True
+    )
+
     lines = appier.field(
         type = appier.references(
             "OrderLine",
             name = "id"
-        )
+        ),
+        eager = True
     )
 
     account = appier.field(
@@ -110,14 +117,16 @@ class Order(bundle.Bundle):
         type = appier.reference(
             "Address",
             name = "id"
-        )
+        ),
+        eager = True
     )
 
     billing_address = appier.field(
         type = appier.reference(
             "Address",
             name = "id"
-        )
+        ),
+        eager = True
     )
 
     def __init__(self, *args, **kwargs):
@@ -140,7 +149,7 @@ class Order(bundle.Bundle):
     def _build(cls, model, map):
         prefix = appier.conf("BUDY_ORDER_REF", "BD-%05d")
         id = model.get("id", None)
-        if id: model["refernce"] = prefix % id
+        if id: model["reference"] = prefix % id
 
     def verify(self):
         appier.verify(not self.billing_address == None)
@@ -153,6 +162,15 @@ class Order(bundle.Bundle):
         self.status = "paid"
         self.paid = True
         self.date = time.time()
+        self.save()
+
+    def notify_s(self):
+        _order = self.reload()
+        self.send_notification(
+            "order.new",
+            order = self.map()
+        )
+        self.notification_sent = True
         self.save()
 
     @property

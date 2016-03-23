@@ -69,15 +69,7 @@ class OrderApiController(root.RootApiController):
             currency = order.shipping_currency or self.currency,
             country = order.shipping_country or self.country
         )
-        order = order.reload(
-            eager = (
-                "lines",
-                "lines.product",
-                "shipping_address",
-                "billing_address"
-            ),
-            map = True
-        )
+        order = order.reload(map = True)
         return order
 
     @appier.route("/api/orders/<str:key>/shipping_address", "PUT", json = True)

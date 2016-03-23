@@ -73,7 +73,8 @@ class BundleLine(base.BudyBase):
         type = appier.reference(
             "Product",
             name = "id"
-        )
+        ),
+        eager = True
     )
 
     def __init__(self, *args, **kwargs):

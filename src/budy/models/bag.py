@@ -49,7 +49,8 @@ class Bag(bundle.Bundle):
         type = appier.references(
             "BagLine",
             name = "id"
-        )
+        ),
+        eager = True
     )
 
     account = appier.field(
