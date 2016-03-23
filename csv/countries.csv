@@ -1,0 +1,228 @@
+name,country_code,currency_code,locale
+Afghanistan,AF,USD,ps-AF
+Albania,AL,USD,sq-AL
+Algeria,DZ,USD,ar-DZ
+Andorra,AD,EUR,en-AD
+Angola,AO,USD,pt-AO
+Anguilla,AI,USD,en-AI
+Antartica,AQ,USD,en-AQ
+Antigua and Barbuda,AG,USD,en-AG
+Argentina,AR,USD,es-AR
+Armenia,AM,USD,hy-AM
+Aruba,AW,USD,en-AW
+Australia,AU,AUD,en-AU
+Austria,AT,EUR,de-AT
+Azerbaijan,AZ,USD,az-AZ
+Bahamas,BS,USD,en-BS
+Bahrain,BH,USD,ar-BH
+Bangladesh,BD,USD,bn-BD
+Barbados,BB,USD,en-BB
+Belarus,BY,USD,be-BY
+Belgium,BE,EUR,fr-BE
+Belize,BZ,USD,en-BZ
+Benin,BJ,USD,en-BJ
+Bermuda,BM,USD,en-BM
+Bhutan,BT,USD,en-BT
+Bolivia,BO,USD,es-BO
+Bosnia and Herzegovina,BA,EUR,en-BA
+Botswana,BW,USD,en-BW
+Bouvet Island,BV,USD,en-BV
+Brazil,BR,BRL,pt-BR
+British Indian Ocean Territory,IO,USD,en-IO
+Brunei Darussalam,BN,USD,ms-BN
+Bulgaria,BG,EUR,bg-BG
+Burkina Faso,BF,USD,en-BF
+Burundi,BI,USD,en-BI
+Cambodia,KH,USD,km-KH
+Cameroon,CM,USD,en-CM
+Canada,CA,CAD,en-CA
+Cape Verde,CV,USD,pt-CV
+Cayman Islands,KY,USD,en-KY
+Central African Republic,CF,USD,en-CF
+Chad,TD,USD,en-TD
+Chile,CL,USD,es-CL
+China,CN,USD,zh-CN
+Christmas Island,CX,USD,en-CX
+Cocos (Keeling) Islands,CC,USD,en-CC
+Colombia,CO,USD,es-CO
+Comoros,KM,USD,en-KM
+Congo,CG,USD,en-CG
+Cook Islands,CK,USD,en-CK
+Costa Rica,CR,USD,es-CR
+Cote D`Ivoire,CI,USD,en-CI
+Croatia,HR,EUR,hr-HR
+Curacao,XC,USD,en-XC
+Cyprus,CY,EUR,en-CY
+Czech Republic,CZ,EUR,cs-CZ
+Denmark,DK,EUR,da-DK
+Djibouti,DJ,USD,en-DJ
+Dominica,DM,USD,en-DM
+Dominican Republic,DO,USD,es-DO
+East Timor,TL,USD,en-TL
+Ecuador,EC,USD,es-EC
+Egypt,EG,USD,ar-EG
+El Salvador,SV,USD,es-SV
+Equatorial Guinea,GQ,USD,en-GQ
+Estonia,EE,EUR,et-EE
+Ethiopia,ET,USD,am-ET
+Faeroe Islands,FO,USD,en-FO
+Falkland Islands (Malvinas),FK,GBP,en-FK
+Fiji,FJ,USD,en-FJ
+Finland,FI,EUR,fi-FI
+France,FR,EUR,fr-FR
+French Guiana,GF,EUR,fr-GF
+French Polynesia,PF,EUR,en-PF
+Gabon,GA,USD,en-GA
+Gambia,GM,USD,en-GM
+Georgia,GE,USD,ka-GE
+Germany,DE,EUR,de-DE
+Ghana,GH,USD,en-GH
+Gibraltar,GI,GBP,en-GI
+Greece,GR,EUR,el-GR
+Greenland,GL,USD,kl-GL
+Grenada,GD,USD,en-GD
+Guadeloupe,GP,EUR,fr-GP
+Guam,GU,USD,en-GU
+Guatemala,GT,USD,es-GT
+Guernsey, C.I.,GG,GBP,en-GG
+Guinea,GN,USD,en-GN
+Guinea-Bissau,GW,USD,en-GW
+Guyana,GY,USD,en-GY
+Haiti,HT,USD,en-HT
+Heard and McDonald Islands,HM,USD,en-HM
+Honduras,HN,USD,es-HN
+Hong Kong,HK,USD,zh-HK
+Hungary,HU,EUR,hu-HU
+Iceland,IS,USD,is-IS
+India,IN,USD,en-IN
+Indonesia,ID,USD,id-ID
+Iraq,IQ,USD,ar-IQ
+Ireland,IE,EUR,en-IE
+Israel,IL,USD,he-IL
+Italy,IT,EUR,it-IT
+Jamaica,JM,USD,en-JM
+Japan,JP,JPY,ja-JP
+Jersey, C.I.,JE,GBP,en-JE
+Jordan,JO,USD,ar-JO
+Kazakhstan,KZ,USD,kk-KZ
+Kenya,KE,USD,sw-KE
+Kiribati,KI,USD,en-KI
+Korea, Republic of,KR,KRW,ko-KR
+Kosovo,KV,USD,en-KV
+Kuwait,KW,USD,ar-KW
+Kyrgyzstan,KG,USD,ky-KG
+Lao Peoples Democratic Republic,LA,USD,en-LA
+Latvia,LV,EUR,lv-LV
+Lebanon,LB,USD,ar-LB
+Lesotho,LS,USD,en-LS
+Liechtenstein,LI,CHF,de-LI
+Lithuania,LT,EUR,lt-LT
+Luxembourg,LU,EUR,fr-LU
+Macau,MO,USD,zh-MO
+Madagascar,MG,USD,en-MG
+Malawi,MW,USD,en-MW
+Malaysia,MY,USD,ms-MY
+Maldives,MV,USD,dv-MV
+Mali,ML,USD,en-ML
+Malta,MT,EUR,mt-MT
+Marshall Islands,MH,USD,en-MH
+Martinique,MQ,EUR,fr-MQ
+Mauritania,MR,USD,en-MR
+Mauritius,MU,USD,en-MU
+Mexico,MX,MXN,es-MX
+Micronesia, Fed. States of,FM,USD,en-FM
+Moldova, Republic of,MD,USD,en-MD
+Monaco,MC,EUR,fr-MC
+Mongolia,MN,USD,mn-MN
+Montenegro,ME,EUR,en-ME
+Montserrat,MS,USD,en-MS
+Morocco,MA,USD,ar-MA
+Mozambique,MZ,USD,pt-MZ
+Namibia,NA,USD,en-NA
+Nauru,NR,USD,en-NR
+Nepal,NP,USD,ne-NP
+Netherland Antilles,AN,USD,en-AN
+Netherlands,NL,EUR,nl-NL
+New Caledonia,NC,USD,en-NC
+New Zealand,NZ,USD,en-NZ
+Nicaragua,NI,USD,es-NI
+Niger,NE,USD,en-NE
+Nigeria,NG,USD,yo-NG
+Niue,NU,USD,en-NU
+Norfolk Island,NF,USD,en-NF
+Northern Mariana Islands,MP,USD,en-MP
+Norway,NO,USD,nb-NO
+Oman,OM,USD,ar-OM
+Pakistan,PK,USD,ur-PK
+Palau,PW,USD,en-PW
+Panama,PA,USD,es-PA
+Papua New Guinea,PG,USD,en-PG
+Paraguay,PY,USD,es-PY
+Peru,PE,USD,es-PE
+Philippines,PH,USD,en-PH
+Pitcairn,PN,USD,en-PN
+Poland,PL,EUR,pl-PL
+Portugal,PT,EUR,pt-PT
+Puerto Rico,PR,USD,es-PR
+Qatar,QA,USD,ar-QA
+Republic of Macedonia,MK,EUR,en-MK
+Reunion,RE,EUR,fr-RE
+Romania,RO,EUR,ro-RO
+Russian Federation,RU,RUB,ru-RU
+Rwanda,RW,USD,rw-RW
+Saint Kitts and Nevis,KN,USD,en-KN
+Saint Lucia,LC,USD,en-LC
+San Marino,SM,EUR,en-SM
+Sao Tome and Principe,ST,USD,en-ST
+Saudi Arabia,SA,USD,ar-SA
+Senegal,SN,USD,wo-SN
+Serbia,RS,EUR,sr-RS
+Seychelles,SC,USD,fr-SC
+Sierra Leone,SL,USD,en-SL
+Singapore,SG,SGD,en-SG
+Slovakia,SK,EUR,sk-SK
+Slovenia,SI,EUR,sl-SI
+Solomon Islands,SB,USD,en-SB
+Somalia,SO,USD,en-SO
+South Africa,ZA,USD,en-ZA
+Spain,ES,EUR,es-ES
+Spain - Canary Islands,IC,EUR,en-IC
+Sri Lanka,LK,USD,si-LK
+St. Helena,SH,USD,en-SH
+St. Pierre and Miquelon,PM,USD,en-PM
+St. Vincent and the Grenadines,VC,USD,en-VC
+Suriname,SR,USD,en-SR
+Swaziland,SZ,USD,en-SZ
+Sweden,SE,EUR,sv-SE
+Switzerland,CH,CHF,de-CH
+Taiwan,TW,USD,zh-TW
+Tajikistan,TJ,USD,en-TJ
+Tanzania, United Republic of,TZ,USD,en-TZ
+Thailand,TH,USD,th-TH
+Togo,TG,USD,en-TG
+Tokelau,TK,USD,en-TK
+Tonga,TO,USD,en-TO
+Trinidad and Tobago,TT,USD,en-TT
+Tunisia,TN,USD,ar-TN
+Turkey,TR,EUR,tr-TR
+Turks and Caicos Islands,TC,USD,en-TC
+Tuvalu,TV,USD,en-TV
+UAE,AE,USD,ar-AE
+Uganda,UG,USD,en-UG
+Ukraine,UA,EUR,uk-UA
+United Kingdom,GB,GBP,en-GB
+United States,US,USD,en-US
+Uruguay,UY,USD,es-UY
+Uzbekistan,UZ,USD,uz-UZ
+Vanuatu,VU,USD,en-VU
+Vatican City State,VA,EUR,en-VA
+Venezuela,VE,USD,es-VE
+Viet Nam,VN,USD,en-VN
+Virgin Islands (British),VG,USD,en-VG
+Virgin Islands, U.S.,VI,USD,en-VI
+Wallis and Futuna Islands,WF,USD,en-WF
+Western Sahara,EH,USD,en-EH
+Yemen, Republic of,YE,USD,en-YE
+Zaire,ZR,USD,en-ZR
+Zambia,ZM,USD,en-ZM
+Zimbabwe,ZW,USD,en-ZW
