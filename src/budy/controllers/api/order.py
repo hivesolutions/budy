@@ -141,8 +141,11 @@ class OrderApiController(root.RootApiController):
     @appier.ensure(token = "user")
     def pay(self, key):
         data = appier.request_json()
+        empty_bag = self.field("empty_bag", True, cast = bool)
         order = budy.Order.get(key = key, rules = False)
         order.pay_s(data)
+        bag = budy.Bag.from_session()
+        if empty_bag and bag: bag.empty_bag_s()
         order = order.reload(
             eager = (
                 "lines",
