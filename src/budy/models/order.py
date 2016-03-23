@@ -65,6 +65,11 @@ class Order(bundle.Bundle):
         canceled = "red"
     )
 
+    reference = appier.field(
+        index = True,
+        safe = True
+    )
+
     status = appier.field(
         initial = "created",
         index = True,
