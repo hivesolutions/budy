@@ -173,6 +173,11 @@ class BagTest(unittest.TestCase):
         self.assertEqual(bag.total, 20.0)
         self.assertEqual(len(bag.lines), 1)
 
+        bag = bag.reload()
+
+        self.assertEqual(bag.total, 20.0)
+        self.assertEqual(len(bag.lines), 1)
+
         extra = budy.Bag.new(form = False)
         extra.save()
 
