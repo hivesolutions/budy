@@ -65,11 +65,6 @@ class Order(bundle.Bundle):
         canceled = "red"
     )
 
-    reference = appier.field(
-        index = True,
-        safe = True
-    )
-
     status = appier.field(
         initial = "created",
         index = True,
@@ -136,6 +131,12 @@ class Order(bundle.Bundle):
     @classmethod
     def line_cls(cls):
         return order_line.OrderLine
+
+    @classmethod
+    def _build(cls, model, map):
+        prefix = appier.conf("BUDY_ORDER_REF", "BD-%05d")
+        id = model.get("id", None)
+        if id: model["refernce"] = prefix % id
 
     def verify(self):
         appier.verify(not self.billing_address == None)
