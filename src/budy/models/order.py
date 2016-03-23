@@ -155,14 +155,12 @@ class Order(bundle.Bundle):
         appier.verify(not self.billing_address == None)
         appier.verify(self.status == "created")
         appier.verify(self.paid == False)
+        appier.verify(self.date == None)
 
     def pay_s(self, payment_data):
         self.verify()
         self._pay_stripe(payment_data)
-        self.status = "paid"
-        self.paid = True
-        self.date = time.time()
-        self.save()
+        self.mark_paid_s()
 
     def notify_s(self):
         _order = self.reload()
@@ -171,6 +169,14 @@ class Order(bundle.Bundle):
             order = self.map()
         )
         self.notification_sent = True
+        self.save()
+
+    @appier.operation(name = "Mark Paid")
+    def mark_paid_s(self):
+        self.verify()
+        self.status = "paid"
+        self.paid = True
+        self.date = time.time()
         self.save()
 
     @property
