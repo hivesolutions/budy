@@ -64,6 +64,10 @@ class Bag(bundle.Bundle):
         return ["id", "key", "currency", "total", "account"]
 
     @classmethod
+    def order_name(self):
+        return ["id", -1]
+
+    @classmethod
     def line_cls(cls):
         return bag_line.BagLine
 
