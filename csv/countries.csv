@@ -84,7 +84,7 @@ Grenada,GD,USD,en-GD
 Guadeloupe,GP,EUR,fr-GP
 Guam,GU,USD,en-GU
 Guatemala,GT,USD,es-GT
-Guernsey, C.I.,GG,GBP,en-GG
+Guernsey C.I.,GG,GBP,en-GG
 Guinea,GN,USD,en-GN
 Guinea-Bissau,GW,USD,en-GW
 Guyana,GY,USD,en-GY
@@ -102,12 +102,12 @@ Israel,IL,USD,he-IL
 Italy,IT,EUR,it-IT
 Jamaica,JM,USD,en-JM
 Japan,JP,JPY,ja-JP
-Jersey, C.I.,JE,GBP,en-JE
+Jersey C.I.,JE,GBP,en-JE
 Jordan,JO,USD,ar-JO
 Kazakhstan,KZ,USD,kk-KZ
 Kenya,KE,USD,sw-KE
 Kiribati,KI,USD,en-KI
-Korea, Republic of,KR,KRW,ko-KR
+Korea Republic of,KR,KRW,ko-KR
 Kosovo,KV,USD,en-KV
 Kuwait,KW,USD,ar-KW
 Kyrgyzstan,KG,USD,ky-KG
@@ -130,8 +130,8 @@ Martinique,MQ,EUR,fr-MQ
 Mauritania,MR,USD,en-MR
 Mauritius,MU,USD,en-MU
 Mexico,MX,MXN,es-MX
-Micronesia, Fed. States of,FM,USD,en-FM
-Moldova, Republic of,MD,USD,en-MD
+Micronesia Fed. States of,FM,USD,en-FM
+Moldova Republic of,MD,USD,en-MD
 Monaco,MC,EUR,fr-MC
 Mongolia,MN,USD,mn-MN
 Montenegro,ME,EUR,en-ME
@@ -197,7 +197,7 @@ Sweden,SE,EUR,sv-SE
 Switzerland,CH,CHF,de-CH
 Taiwan,TW,USD,zh-TW
 Tajikistan,TJ,USD,en-TJ
-Tanzania, United Republic of,TZ,USD,en-TZ
+Tanzania United Republic of,TZ,USD,en-TZ
 Thailand,TH,USD,th-TH
 Togo,TG,USD,en-TG
 Tokelau,TK,USD,en-TK
@@ -219,10 +219,10 @@ Vatican City State,VA,EUR,en-VA
 Venezuela,VE,USD,es-VE
 Viet Nam,VN,USD,en-VN
 Virgin Islands (British),VG,USD,en-VG
-Virgin Islands, U.S.,VI,USD,en-VI
+Virgin Islands U.S.,VI,USD,en-VI
 Wallis and Futuna Islands,WF,USD,en-WF
 Western Sahara,EH,USD,en-EH
-Yemen, Republic of,YE,USD,en-YE
+Yemen Republic of,YE,USD,en-YE
 Zaire,ZR,USD,en-ZR
 Zambia,ZM,USD,en-ZM
 Zimbabwe,ZW,USD,en-ZW

@@ -83,3 +83,30 @@ class Country(base.BudyBase):
     @classmethod
     def get_by_code(cls, country_code, *args, **kwargs):
         return cls.get(country_code = country_code, *args, **kwargs)
+
+    @classmethod
+    @appier.operation(
+        name = "Import CSV",
+        parameters = (
+            ("CSV File", "file", "file"),
+            ("Empty source", "empty", bool, True)
+        )
+    )
+    def import_csv_s(cls, file, empty):
+
+        def callback(line):
+            name, country_code, currency_code, locale = line
+            name = name or None
+            country_code = country_code or None
+            currency_code = currency_code or None
+            locale = locale or None
+            country = Country(
+                name = name,
+                country_code = country_code,
+                currency_code = currency_code,
+                locale = locale
+            )
+            country.save()
+
+        if empty: Country.delete_c()
+        cls._csv_import(file, callback)
