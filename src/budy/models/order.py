@@ -168,7 +168,6 @@ class Order(bundle.Bundle):
         self.mark_paid_s()
 
     def notify_s(self):
-        _order = self.reload()
         appier_extras.admin.Event.notify_g(
             "order.new",
             arguments = dict(
