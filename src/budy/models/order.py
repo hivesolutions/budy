@@ -169,7 +169,7 @@ class Order(bundle.Bundle):
 
     def notify_s(self):
         _order = self.reload()
-        appier_extras.admin.Event.handle_g(
+        appier_extras.admin.Event.notify_g(
             "order.new",
             arguments = dict(
                 title = "New Order",
