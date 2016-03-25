@@ -40,6 +40,7 @@ __license__ = "Apache License, Version 2.0"
 import time
 
 import appier
+import appier_extras
 
 from . import bundle
 from . import country
@@ -168,9 +169,14 @@ class Order(bundle.Bundle):
 
     def notify_s(self):
         _order = self.reload()
-        self.send_notification(
+        appier_extras.admin.Event.handle_g(
             "order.new",
-            order = self.map()
+            arguments = dict(
+                title = "New Order",
+                params = dict(
+                    order = self.map()
+                )
+            )
         )
         self.notification_sent = True
         self.save()
