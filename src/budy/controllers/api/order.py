@@ -53,7 +53,6 @@ class OrderApiController(root.RootApiController):
         return orders
 
     @appier.route("/api/orders/<str:key>", "GET", json = True)
-    @appier.ensure(token = "user")
     def show(self, key):
         order = budy.Order.get(key = key)
         order.refresh_s(
