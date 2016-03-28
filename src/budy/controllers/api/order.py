@@ -48,7 +48,7 @@ class OrderApiController(root.RootApiController):
     @appier.route("/api/orders", "GET", json = True)
     @appier.ensure(token = "admin")
     def list(self):
-        object = appier.get_object(alias = True, find = True)
+        object = appier.get_object(alias = True, find = True, sort = [("id", -1)])
         orders = budy.Order.find(eager_l = True, map = True, **object)
         return orders
 

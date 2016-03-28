@@ -112,7 +112,8 @@ class Order(bundle.Bundle):
         type = appier.reference(
             "BudyAccount",
             name = "id"
-        )
+        ),
+        eager = True
     )
 
     shipping_address = appier.field(
