@@ -167,13 +167,15 @@ class Order(bundle.Bundle):
         self._pay_stripe(payment_data)
         self.mark_paid_s()
 
+    @appier.operation(name = "Notify")
     def notify_s(self):
+        order = self.reload(map = True)
         appier_extras.admin.Event.notify_g(
             "order.new",
             arguments = dict(
                 title = "New Order",
                 params = dict(
-                    order = self.map()
+                    order = order
                 )
             )
         )
