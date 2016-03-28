@@ -163,10 +163,11 @@ class Order(bundle.Bundle):
         appier.verify(self.paid == False)
         appier.verify(self.date == None)
 
-    def pay_s(self, payment_data):
+    def pay_s(self, payment_data, notify = False):
         self.verify()
         self._pay_stripe(payment_data)
         self.mark_paid_s()
+        if notify: self.notify_s()
 
     @appier.operation(name = "Notify")
     def notify_s(self):
