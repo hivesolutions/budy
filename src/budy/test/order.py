@@ -80,6 +80,21 @@ class OrderTest(unittest.TestCase):
 
         self.assertRaises(appier.AssertionError, order.mark_paid_s)
 
+        order = order.reload()
+
+        self.assertEqual(type(order.key), appier.legacy.UNICODE)
+        self.assertEqual(type(order.total), float)
+        self.assertEqual(len(order.lines), 0)
+        self.assertEqual(len(order.reference), 9)
+        self.assertEqual(order.currency, None)
+        self.assertEqual(order.total >= 0.0, True)
+        self.assertEqual(order.paid, False)
+        self.assertEqual(order.date, None)
+        self.assertEqual(order.notification_sent, False)
+        self.assertEqual(order.reference.startswith("BD-"), True)
+
+        self.assertRaises(appier.AssertionError, order.mark_paid_s)
+
         order_line = budy.OrderLine.new(
             quantity = 2.0,
             form = False
