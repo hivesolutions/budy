@@ -116,3 +116,8 @@ class BundleLine(base.BudyBase):
         is_dirty |= not self.country == country
         is_dirty |= not hasattr(self, "price") or self.price == None
         return is_dirty
+
+    @appier.operation(name = "Calculate")
+    def calculate_s(self):
+        self.calculate(force = True)
+        self.save()
