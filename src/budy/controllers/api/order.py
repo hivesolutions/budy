@@ -73,6 +73,7 @@ class OrderApiController(root.RootApiController):
         orders_s = [(
             "id",
             "reference",
+            "date",
             "status",
             "email",
             "account",
@@ -87,6 +88,7 @@ class OrderApiController(root.RootApiController):
                 order_s = (
                     order.id,
                     order.reference,
+                    order.created_d.strftime("%d/%m/%Y"),
                     order.status,
                     order.email,
                     order.account.username,
