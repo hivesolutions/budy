@@ -321,3 +321,27 @@ class Product(base.BudyBase):
         )
         total = result["total"]
         return total["price_final"]
+
+    def get_size(self, currency = None, country = None, attributes = None):
+        if not self.price_provider: return self.price
+        method = getattr(self, "get_size_%s" % self.price_provider)
+        return method(
+            country = country,
+            attributes = attributes
+        )
+
+    def get_size_ripe(
+        self,
+        currency = None,
+        country = None,
+        attributes = None
+    ):
+        attributes_m = json.loads(attributes)
+        size = attributes_m["size"]
+        scale = attributes_m["scale"]
+        gender = attributes_m["gender"]
+
+        if gender == "male": converter = lambda native: ((native - 17) / 2) + 36
+        else: converter = lambda native: ((native - 17) / 2) + 34
+
+        return converter(size), scale

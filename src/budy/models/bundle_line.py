@@ -89,11 +89,20 @@ class BundleLine(base.BudyBase):
     def pre_save(self):
         base.BudyBase.pre_save(self)
         self.calculate()
+        self.measure()
 
     def calculate(self, currency = None, country = None, force = False):
         currency = currency or self.currency
         country = country or self.country
         self.total = self.quantity * self.get_price(
+            currency = currency,
+            country = country,
+            force = force
+        )
+
+    def measure(self, currency = None, country = None, force = False):
+        if self.size and self.scale and not force: return
+        self.size, self.scale = self.get_size(
             currency = currency,
             country = country,
             force = force
@@ -111,6 +120,13 @@ class BundleLine(base.BudyBase):
         self.country = country
         return self.price
 
+    def get_size(self, currency = None, country = None, force = False):
+        return self.product.get_size(
+            currency = currency,
+            country = country,
+            attributes = self.attributes
+        )
+
     def is_dirty(self, currency = None, country = None):
         is_dirty = not self.currency == currency
         is_dirty |= not self.country == country
@@ -120,4 +136,9 @@ class BundleLine(base.BudyBase):
     @appier.operation(name = "Calculate")
     def calculate_s(self):
         self.calculate(force = True)
+        self.save()
+
+    @appier.operation(name = "Measure")
+    def measure_s(self):
+        self.measure(force = True)
         self.save()
