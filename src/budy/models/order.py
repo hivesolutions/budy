@@ -152,6 +152,22 @@ class Order(bundle.Bundle):
         return order_line.OrderLine
 
     @classmethod
+    @appier.link(
+        name = "Export Complex",
+        parameters = (
+            ("Start Id", "start", int),
+            ("End Id", "end", int),
+        )
+    )
+    def complex_csv_url(cls, start = None, end = None, absolute = False):
+        return appier.get_app().url_for(
+            "order_api.complex_csv",
+            start = start,
+            end = end,
+            absolute = absolute
+        )
+
+    @classmethod
     def _build(cls, model, map):
         prefix = appier.conf("BUDY_ORDER_REF", "BD-%06d")
         id = model.get("id", None)

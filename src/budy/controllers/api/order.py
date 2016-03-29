@@ -52,6 +52,52 @@ class OrderApiController(root.RootApiController):
         orders = budy.Order.find(eager_l = True, map = True, **object)
         return orders
 
+    @appier.route("/api/orders/complex.csv", "GET")
+    @appier.ensure(token = "admin")
+    def complex_csv(self):
+        start = self.field("start", cast = int)
+        end = self.field("end", cast = int)
+        paid = self.field("paid", True, cast = bool)
+        object = appier.get_object(
+            alias = True,
+            find = True,
+            limit = 0,
+            sort = [("id", -1)]
+        )
+        id = object.get("id", {})
+        if start: id["$gte"] = start
+        if end: id["$lte"] = end
+        if start or end: object["id"] = id
+        if paid: object["paid"] = True
+        orders = budy.Order.find(**object)
+        orders_s = [(
+            "id",
+            "reference",
+            "email",
+            "account",
+            "product",
+            "total",
+            "currency",
+            "quantity"
+        )]
+        for order in orders:
+            for line in order.lines:
+                if not line.product: continue
+                order_s = (
+                    order.id,
+                    order.reference,
+                    order.email,
+                    order.account.username,
+                    line.product.short_description,
+                    line.total,
+                    line.currency,
+                    line.quantity
+                )
+                orders_s.append(order_s)
+        result = appier.serialize_csv(orders_s, delimiter = ",")
+        self.content_type("text/csv")
+        return result
+
     @appier.route("/api/orders/<str:key>", "GET", json = True)
     def show(self, key):
         order = budy.Order.get(key = key)
