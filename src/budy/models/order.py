@@ -151,6 +151,10 @@ class Order(bundle.Bundle):
     def line_cls(cls):
         return order_line.OrderLine
 
+    def pre_delete(self):
+        bundle.Bundle.pre_delete(self)
+        for line in self.lines: line.delete()
+
     @classmethod
     @appier.link(
         name = "Export Complex",
@@ -211,6 +215,11 @@ class Order(bundle.Bundle):
         self.paid = True
         self.date = time.time()
         self.save()
+
+    @appier.operation(name = "Garbage Collect")
+    def collect_s(self):
+        if self.paid: return
+        self.delete()
 
     @property
     def shipping_country(self):
