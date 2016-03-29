@@ -88,6 +88,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(len(order.reference), 9)
         self.assertEqual(order.currency, None)
         self.assertEqual(order.total >= 0.0, True)
+        self.assertEqual(order.status, "created")
         self.assertEqual(order.paid, False)
         self.assertEqual(order.date, None)
         self.assertEqual(order.notification_sent, False)
@@ -107,3 +108,22 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order_line.total, 20.0)
         self.assertEqual(order.total, 20.0)
         self.assertEqual(len(order.lines), 1)
+
+        self.assertRaises(appier.AssertionError, order.mark_paid_s)
+
+        address = budy.Address.new(
+            first_name = "first name",
+            last_name = "last name",
+            address = "address",
+            city = "city",
+            form = False
+        )
+        address.save()
+
+        order.billing_address = address
+        order.save()
+
+        order.mark_paid_s()
+
+        self.assertEqual(order.status, "paid")
+        self.assertEqual(order.paid, True)
