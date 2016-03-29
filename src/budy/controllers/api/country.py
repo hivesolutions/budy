@@ -48,5 +48,10 @@ class CountryApiController(root.RootApiController):
     @appier.route("/api/countries", "GET", json = True)
     def list(self):
         object = appier.get_object(alias = True, find = True)
-        countries = budy.Country.find(map = True, **object)
+        countries = budy.Country.find(
+            find_i = True,
+            find_t = "right",
+            map = True,
+            **object
+        )
         return countries
