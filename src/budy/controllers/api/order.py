@@ -73,6 +73,7 @@ class OrderApiController(root.RootApiController):
         orders_s = [(
             "id",
             "reference",
+            "status",
             "email",
             "account",
             "product",
@@ -86,6 +87,7 @@ class OrderApiController(root.RootApiController):
                 order_s = (
                     order.id,
                     order.reference,
+                    order.status,
                     order.email,
                     order.account.username,
                     line.product.short_description,
