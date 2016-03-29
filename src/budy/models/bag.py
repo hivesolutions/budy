@@ -62,7 +62,7 @@ class Bag(bundle.Bundle):
 
     @classmethod
     def list_names(cls):
-        return ["id", "key", "currency", "total", "account"]
+        return ["id", "key", "total", "currency", "account"]
 
     @classmethod
     def order_name(self):

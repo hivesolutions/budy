@@ -104,7 +104,7 @@ class Bundle(base.BudyBase):
 
     @classmethod
     def list_names(cls):
-        return ["id", "key", "currency", "total"]
+        return ["id", "key", "total", "currency"]
 
     @classmethod
     def line_cls(cls):

@@ -53,7 +53,7 @@ class BagLine(bundle_line.BundleLine):
 
     @classmethod
     def list_names(cls):
-        return ["id", "quantity", "total", "product", "bag"]
+        return ["id", "quantity", "total", "currency", "product", "bag"]
 
     def to_order_line_s(self):
         _order_line = order_line.OrderLine(
