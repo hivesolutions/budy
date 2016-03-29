@@ -65,7 +65,7 @@ class BagLine(bundle_line.BundleLine):
             size = self.size,
             scale = self.scale,
             attributes = self.attributes,
-            product = self.product.id
+            product = self.product
         )
         _order_line.save()
         return _order_line

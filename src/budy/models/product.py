@@ -323,7 +323,7 @@ class Product(base.BudyBase):
         return total["price_final"]
 
     def get_size(self, currency = None, country = None, attributes = None):
-        if not self.price_provider: return self.price
+        if not self.price_provider: return None, None
         method = getattr(self, "get_size_%s" % self.price_provider)
         return method(
             country = country,
