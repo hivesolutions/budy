@@ -114,3 +114,9 @@ class Bag(bundle.Bundle):
         for line in self.lines: line.delete()
         self.lines = []
         self.save()
+
+    @appier.operation(name = "Fix Orphans")
+    def fix_orphans_s(self):
+        for line in self.lines:
+            line.bag = self
+            line.save()

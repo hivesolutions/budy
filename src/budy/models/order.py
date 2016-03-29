@@ -225,6 +225,12 @@ class Order(bundle.Bundle):
         if self.paid: return
         self.delete()
 
+    @appier.operation(name = "Fix Orphans")
+    def fix_orphans_s(self):
+        for line in self.lines:
+            line.order = self
+            line.save()
+
     @property
     def shipping_country(self):
         has_shipping = hasattr(self, "shipping_address")
