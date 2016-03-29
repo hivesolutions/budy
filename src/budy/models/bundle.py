@@ -96,6 +96,13 @@ class Bundle(base.BudyBase):
         self.shipping_cost = kwargs.get("shipping_cost", 0.0)
 
     @classmethod
+    def validate(cls):
+        return super(Bundle, cls).validate() + [
+            appier.not_null("total"),
+            appier.gte("total", 0)
+        ]
+
+    @classmethod
     def list_names(cls):
         return ["id", "key", "currency", "total"]
 

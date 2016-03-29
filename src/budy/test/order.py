@@ -127,3 +127,5 @@ class OrderTest(unittest.TestCase):
 
         self.assertEqual(order.status, "paid")
         self.assertEqual(order.paid, True)
+
+        self.assertRaises(appier.AssertionError, order.mark_paid_s)
