@@ -87,6 +87,10 @@ class Bag(bundle.Bundle):
         session["bag"] = bag.key
         return bag
 
+    def pre_delete(self):
+        bundle.Bundle.pre_delete(self)
+        for line in self.lines: line.delete()
+
     def add_line_s(self, line):
         line.bag = self
         return bundle.Bundle.add_line_s(self, line)
@@ -114,6 +118,10 @@ class Bag(bundle.Bundle):
         for line in self.lines: line.delete()
         self.lines = []
         self.save()
+
+    @appier.operation(name = "Garbage Collect")
+    def collect_s(self):
+        self.delete()
 
     @appier.operation(name = "Fix Orphans")
     def fix_orphans_s(self):

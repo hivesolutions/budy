@@ -69,3 +69,8 @@ class BagLine(bundle_line.BundleLine):
         )
         _order_line.save()
         return _order_line
+
+    @appier.operation(name = "Garbage Collect")
+    def collect_s(self):
+        if self.bag: return
+        self.delete()
