@@ -78,24 +78,41 @@ class OrderApiController(root.RootApiController):
             "email",
             "account",
             "product",
+            "quantity",
             "total",
             "currency",
-            "quantity"
+            "first_name",
+            "last_name",
+            "address",
+            "city",
+            "state",
+            "postal_code",
+            "country"
         )]
         for order in orders:
             for line in order.lines:
                 if not line.product: continue
+                account = order.account
+                shipping_address = order.shipping_address
+                billing_address = order.billing_address
                 order_s = (
                     order.id,
                     order.reference,
                     order.created_d.strftime("%d/%m/%Y"),
                     order.status,
                     order.email,
-                    order.account.username,
+                    account.username,
                     line.product.short_description,
+                    line.quantity,
                     line.total,
                     line.currency,
-                    line.quantity
+                    billing_address.first_name,
+                    billing_address.last_name,
+                    shipping_address and shipping_address.address,
+                    shipping_address and shipping_address.city,
+                    shipping_address and shipping_address.state,
+                    shipping_address and shipping_address.postal_code,
+                    shipping_address and shipping_address.country
                 )
                 orders_s.append(order_s)
         result = appier.serialize_csv(orders_s, delimiter = ",")
