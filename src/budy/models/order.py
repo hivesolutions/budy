@@ -153,7 +153,7 @@ class Order(bundle.Bundle):
 
     @classmethod
     def _build(cls, model, map):
-        prefix = appier.conf("BUDY_ORDER_REF", "BD-%05d")
+        prefix = appier.conf("BUDY_ORDER_REF", "BD-%06d")
         id = model.get("id", None)
         if id: model["reference"] = prefix % id
 
