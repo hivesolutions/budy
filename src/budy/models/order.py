@@ -173,6 +173,10 @@ class Order(bundle.Bundle):
         id = model.get("id", None)
         if id: model["reference"] = prefix % id
 
+    def refresh_s(self, *args, **kwargs):
+        if self.paid: return
+        bundle.Bundle.refresh_s(self, *args, **kwargs)
+
     def verify(self):
         appier.verify(not self.billing_address == None)
         appier.verify(self.status == "created")
