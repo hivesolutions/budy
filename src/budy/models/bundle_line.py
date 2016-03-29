@@ -121,6 +121,7 @@ class BundleLine(base.BudyBase):
         return self.price
 
     def get_size(self, currency = None, country = None, force = False):
+        if not self.product: return None, None
         return self.product.get_size(
             currency = currency,
             country = country,
