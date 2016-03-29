@@ -87,6 +87,10 @@ class Bag(bundle.Bundle):
         session["bag"] = bag.key
         return bag
 
+    def add_line_s(self, line):
+        line.bag = self
+        return bundle.Bundle.add_line_s(self, line)
+
     def to_order_s(self):
         self.refresh_s()
         _order = order.Order(

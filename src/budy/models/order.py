@@ -151,10 +151,6 @@ class Order(bundle.Bundle):
     def line_cls(cls):
         return order_line.OrderLine
 
-    def pre_delete(self):
-        bundle.Bundle.pre_delete(self)
-        for line in self.lines: line.delete()
-
     @classmethod
     @appier.link(
         name = "Export Complex",
@@ -176,6 +172,14 @@ class Order(bundle.Bundle):
         prefix = appier.conf("BUDY_ORDER_REF", "BD-%06d")
         id = model.get("id", None)
         if id: model["reference"] = prefix % id
+
+    def pre_delete(self):
+        bundle.Bundle.pre_delete(self)
+        for line in self.lines: line.delete()
+
+    def add_line_s(self, line):
+        line.order = self
+        return bundle.Bundle.add_line_s(self, line)
 
     def refresh_s(self, *args, **kwargs):
         if self.paid: return

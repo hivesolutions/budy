@@ -126,7 +126,6 @@ class Bundle(base.BudyBase):
         self.save()
 
     def add_line_s(self, line):
-        line.bag = self
         line.save()
         self.lines.append(line)
         self.save()
