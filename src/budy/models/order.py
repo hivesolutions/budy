@@ -203,7 +203,6 @@ class Order(bundle.Bundle):
         appier_extras.admin.Event.notify_g(
             "order.new",
             arguments = dict(
-                title = "New Order",
                 params = dict(
                     order = order
                 )
