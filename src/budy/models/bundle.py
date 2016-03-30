@@ -98,6 +98,8 @@ class Bundle(base.BudyBase):
     @classmethod
     def validate(cls):
         return super(Bundle, cls).validate() + [
+            appier.not_duplicate("key", cls._name()),
+
             appier.not_null("total"),
             appier.gte("total", 0)
         ]
