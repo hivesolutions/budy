@@ -85,18 +85,18 @@ class OrderApiController(root.RootApiController):
             "currency",
             "first_name",
             "last_name",
-            "billing.address",
-            "billing.city",
-            "billing.state",
-            "billing.postal_code",
-            "billing.country",
-            "billing.phone",
-            "shipping.address",
-            "shipping.city",
-            "shipping.state",
-            "shipping.postal_code",
-            "shipping.country",
-            "shipping.phone"
+            "billing_address",
+            "billing_city",
+            "billing_state",
+            "billing_postal_code",
+            "billing_country",
+            "billing_phone",
+            "shipping_address",
+            "shipping_city",
+            "shipping_state",
+            "shipping_postal_code",
+            "shipping_country",
+            "shipping_phone"
         )]
         for order in orders:
             for line in order.lines:
