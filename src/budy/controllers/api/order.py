@@ -85,11 +85,18 @@ class OrderApiController(root.RootApiController):
             "currency",
             "first_name",
             "last_name",
-            "address",
-            "city",
-            "state",
-            "postal_code",
-            "country"
+            "billing.address",
+            "billing.city",
+            "billing.state",
+            "billing.postal_code",
+            "billing.country",
+            "billing.phone",
+            "shipping.address",
+            "shipping.city",
+            "shipping.state",
+            "shipping.postal_code",
+            "shipping.country",
+            "shipping.phone"
         )]
         for order in orders:
             for line in order.lines:
@@ -112,11 +119,18 @@ class OrderApiController(root.RootApiController):
                     line.currency,
                     billing_address.first_name,
                     billing_address.last_name,
+                    billing_address.address,
+                    billing_address.city,
+                    billing_address.state,
+                    billing_address.postal_code,
+                    billing_address.country,
+                    billing_address.phone_number,
                     shipping_address and shipping_address.address,
                     shipping_address and shipping_address.city,
                     shipping_address and shipping_address.state,
                     shipping_address and shipping_address.postal_code,
-                    shipping_address and shipping_address.country
+                    shipping_address and shipping_address.country,
+                    shipping_address and shipping_address.phone_number
                 )
                 orders_s.append(order_s)
         result = appier.serialize_csv(orders_s, delimiter = ",")
