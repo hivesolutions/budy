@@ -198,12 +198,11 @@ class Order(bundle.Bundle):
         if notify: self.notify_s()
 
     @appier.operation(name = "Notify")
-    def notify_s(self):
+    def notify_s(self, name = "order.new"):
         order = self.reload(map = True)
         appier_extras.admin.Event.notify_g(
-            "order.new",
+            name,
             arguments = dict(
-                title = "New Order",
                 params = dict(
                     order = order
                 )
