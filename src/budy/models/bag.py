@@ -87,6 +87,14 @@ class Bag(bundle.Bundle):
         session["bag"] = bag.key
         return bag
 
+    @classmethod
+    def ensure_s(cls, key = None):
+        from . import BudyAccount
+        account = BudyAccount.from_session(raise_e = False)
+        if account: return account.ensure_bag_s(key = key)
+        bag = cls(key = key)
+        bag.save()
+
     def pre_delete(self):
         bundle.Bundle.pre_delete(self)
         for line in self.lines: line.delete()
@@ -106,9 +114,10 @@ class Bag(bundle.Bundle):
             shipping_cost = self.shipping_cost,
             account = self.account
         )
+        _order.save()
         _order.lines = []
         for line in self.lines:
-            order_line = line.to_order_line_s()
+            order_line = line.to_order_line_s(_order)
             _order.lines.append(order_line)
         _order.save()
         return _order
