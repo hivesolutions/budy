@@ -17,6 +17,8 @@ take care of all the transactional details like:
 Test driven development should be a concern on the development of the Budy infra-structure
 so that all the use cases are proper validated before implementation.
 
+Code coverage of at least 75% of the code base should be considered a priority.
+
 ## License
 
 Budy is currently licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/).
