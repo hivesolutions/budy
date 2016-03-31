@@ -64,3 +64,52 @@ class ProductApiController(root.RootApiController):
             map = True
         )
         return product
+
+    @appier.route("/api/products/simple.csv", "GET")
+    @appier.ensure(token = "admin")
+    def simple_csv(self):
+        object = appier.get_object(
+            alias = True,
+            find = True,
+            limit = 0
+        )
+        products = budy.Product.find(
+            eager = (
+                "colors",
+                "categories",
+                "variants",
+                "brand",
+                "season",
+                "measurements",
+                "compositions"
+            ),
+            **object
+        )
+
+        products_s = []
+        for product in products:
+            product_s = dict(
+                short_description = product.short_description,
+                product_id = product.product_id,
+                gender = product.gender,
+                price = product.price,
+                order = product.order,
+                tag = product.tag,
+                tag_descritpion = product.tag_descritpion,
+                farfetch_url = product.farfetch_url,
+                farfetch_male_url = product.farfetch_male_url,
+                farfetch_female_url = product.farfetch_female_url,
+                colors = ";".join([color.name for color in product.colors]),
+                categories = ";".join([category.name for category in product.categories]),
+                variants = ";".join([variant.product_id for variant in product.variants]),
+                brand = product.brand.name if product.brand else None,
+                season = product.season.name if product.season else None,
+                measurements = ";".join([measurement.name for measurement in product.measurements]),
+                price_provider = product.price_provider,
+                price_url = product.price_url
+            )
+            products_s.append(product_s)
+
+        result = appier.serialize_csv(products_s, delimiter = ",")
+        self.content_type("text/csv")
+        return result

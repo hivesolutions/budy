@@ -245,9 +245,6 @@ class Product(base.BudyBase):
             measurements = measurements.split(";") if measurements else []
             measurements = measurement.Measurement.find(name = {"$in" : measurements})
 
-            compositions = compositions.split(";") if compositions else []
-            compositions = composition.Composition.find(name = {"$in" : compositions})
-
             product = Product(
                 short_description = short_description,
                 product_id = product_id,
@@ -272,6 +269,14 @@ class Product(base.BudyBase):
             product.save()
 
         cls._csv_import(file, callback)
+
+    @classmethod
+    @appier.link(name = "Export Simple")
+    def simple_csv_url(cls, absolute = False):
+        return appier.get_app().url_for(
+            "product_api.simple_csv",
+            absolute = absolute
+        )
 
     def get_price(
         self,
