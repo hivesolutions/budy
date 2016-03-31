@@ -78,7 +78,7 @@ class Product(base.BudyBase):
 
     tag = appier.field()
 
-    tag_descritpion = appier.field()
+    tag_description = appier.field()
 
     price_provider = appier.field(
         index = True
@@ -213,13 +213,13 @@ class Product(base.BudyBase):
             price,\
             order,\
             tag,\
-            tag_descritpion,\
+            tag_description,\
             farfetch_url,\
             farfetch_male_url,\
             farfetch_female_url,\
             colors,\
             categories,\
-            collections,\
+            collections, \
             variants,\
             _brand,\
             _season,\
@@ -232,7 +232,7 @@ class Product(base.BudyBase):
             price = float(price) if price else None
             order = int(order) if order else None
             tag = tag or None
-            tag_descritpion = tag_descritpion or None
+            tag_description = tag_description or None
             farfetch_url = farfetch_url or None
             farfetch_male_url = farfetch_male_url or None
             farfetch_female_url = farfetch_female_url or None
@@ -267,7 +267,7 @@ class Product(base.BudyBase):
                 price = price,
                 order = order,
                 tag = tag,
-                tag_descritpion = tag_descritpion,
+                tag_description = tag_description,
                 farfetch_url = farfetch_url,
                 farfetch_male_url = farfetch_male_url,
                 farfetch_female_url = farfetch_female_url,
@@ -285,6 +285,14 @@ class Product(base.BudyBase):
             product.save()
 
         cls._csv_import(file, callback)
+
+    @classmethod
+    @appier.link(name = "Export Simple")
+    def simple_csv_url(cls, absolute = False):
+        return appier.get_app().url_for(
+            "product_api.simple_csv",
+            absolute = absolute
+        )
 
     def get_price(
         self,

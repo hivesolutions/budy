@@ -64,3 +64,76 @@ class ProductApiController(root.RootApiController):
             map = True
         )
         return product
+
+    @appier.route("/api/products/simple.csv", "GET")
+    @appier.ensure(token = "admin")
+    def simple_csv(self):
+        object = appier.get_object(
+            alias = True,
+            find = True,
+            limit = 0
+        )
+        products = budy.Product.find(
+            eager = (
+                "colors",
+                "categories",
+                "collections",
+                "variants",
+                "brand",
+                "season",
+                "measurements",
+                "compositions"
+            ),
+            **object
+        )
+
+        products_s = [(
+            "short_description",
+            "product_id",
+            "gender",
+            "price",
+            "order",
+            "tag",
+            "tag_description",
+            "farfetch_url",
+            "farfetch_male_url",
+            "farfetch_female_url",
+            "colors",
+            "categories",
+            "collections",
+            "variants",
+            "brand",
+            "season",
+            "measurements",
+            "compositions",
+            "price_provider",
+            "price_url"
+        )]
+        for product in products:
+            product_s = (
+                product.short_description,
+                product.product_id,
+                product.gender,
+                product.price,
+                product.order,
+                product.tag,
+                product.tag_description,
+                product.farfetch_url,
+                product.farfetch_male_url,
+                product.farfetch_female_url,
+                ";".join([color.name for color in product.colors]),
+                ";".join([category.name for category in product.categories]),
+                ";".join([collection.name for collection in product.collections]),
+                ";".join([variant.product_id for variant in product.variants]),
+                product.brand.name if product.brand else None,
+                product.season.name if product.season else None,
+                ";".join([measurement.name for measurement in product.measurements]),
+                ";".join([composition.name for composition in product.compositions]),
+                product.price_provider,
+                product.price_url
+            )
+            products_s.append(product_s)
+
+        result = appier.serialize_csv(products_s, delimiter = ",")
+        self.content_type("text/csv")
+        return result
