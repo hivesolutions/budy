@@ -55,6 +55,7 @@ from . import order
 from . import product
 from . import season
 from . import subscription
+from . import voucher
 
 from .account import BudyAccount
 from .address import Address
@@ -77,3 +78,4 @@ from .order import Order
 from .product import Product
 from .season import Season
 from .subscription import Subscription
+from .voucher import Voucher
