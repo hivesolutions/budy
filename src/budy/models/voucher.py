@@ -69,6 +69,16 @@ class Voucher(base.BudyBase):
         meta = "datetime"
     )
 
+    usage_count = appier.field(
+        type = int,
+        index = True
+    )
+
+    usage_limit = appier.field(
+        type = int,
+        index = True
+    )
+
     @classmethod
     def validate(cls):
         return super(Voucher, cls).validate() + [
