@@ -50,12 +50,12 @@ class Voucher(base.BudyBase):
     )
 
     amount = appier.field(
-        type(float),
+        type = float,
         index = True
     )
 
     percentage = appier.field(
-        type(float),
+        type = float,
         index = True
     )
 
