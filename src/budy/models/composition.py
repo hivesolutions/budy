@@ -43,6 +43,8 @@ from . import base
 
 class Composition(base.BudyBase):
 
+    name = appier.field()
+
     part = appier.field(
         index = True,
         default = True
@@ -59,6 +61,9 @@ class Composition(base.BudyBase):
     @classmethod
     def validate(cls):
         return super(Composition, cls).validate() + [
+            appier.not_null("name"),
+            appier.not_empty("name"),
+
             appier.not_null("part"),
             appier.not_empty("part"),
 

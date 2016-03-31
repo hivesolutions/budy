@@ -78,7 +78,7 @@ class Product(base.BudyBase):
 
     tag = appier.field()
 
-    tag_descritpion = appier.field()
+    tag_description = appier.field()
 
     price_provider = appier.field(
         index = True
@@ -213,13 +213,13 @@ class Product(base.BudyBase):
             price,\
             order,\
             tag,\
-            tag_descritpion,\
+            tag_description,\
             farfetch_url,\
             farfetch_male_url,\
             farfetch_female_url,\
             colors,\
             categories,\
-            collections,\
+            collections, \
             variants,\
             _brand,\
             _season,\
@@ -232,7 +232,7 @@ class Product(base.BudyBase):
             price = float(price) if price else None
             order = int(order) if order else None
             tag = tag or None
-            tag_descritpion = tag_descritpion or None
+            tag_description = tag_description or None
             farfetch_url = farfetch_url or None
             farfetch_male_url = farfetch_male_url or None
             farfetch_female_url = farfetch_female_url or None
@@ -267,7 +267,7 @@ class Product(base.BudyBase):
                 price = price,
                 order = order,
                 tag = tag,
-                tag_descritpion = tag_descritpion,
+                tag_description = tag_description,
                 farfetch_url = farfetch_url,
                 farfetch_male_url = farfetch_male_url,
                 farfetch_female_url = farfetch_female_url,
@@ -285,6 +285,14 @@ class Product(base.BudyBase):
             product.save()
 
         cls._csv_import(file, callback)
+
+    @classmethod
+    @appier.link(name = "Export Simple")
+    def simple_csv_url(cls, absolute = False):
+        return appier.get_app().url_for(
+            "product_api.simple_csv",
+            absolute = absolute
+        )
 
     def get_price(
         self,
@@ -334,27 +342,3 @@ class Product(base.BudyBase):
         )
         total = result["total"]
         return total["price_final"]
-
-    def get_size(self, currency = None, country = None, attributes = None):
-        if not self.price_provider: return None, None
-        method = getattr(self, "get_size_%s" % self.price_provider)
-        return method(
-            country = country,
-            attributes = attributes
-        )
-
-    def get_size_ripe(
-        self,
-        currency = None,
-        country = None,
-        attributes = None
-    ):
-        attributes_m = json.loads(attributes)
-        size = attributes_m["size"]
-        scale = attributes_m["scale"]
-        gender = attributes_m["gender"]
-
-        if gender == "male": converter = lambda native: ((native - 17) / 2) + 36
-        else: converter = lambda native: ((native - 17) / 2) + 34
-
-        return converter(size), scale
