@@ -118,6 +118,13 @@ class Product(base.BudyBase):
         )
     )
 
+    collections = appier.field(
+        type = appier.references(
+            "Collection",
+            name = "id"
+        )
+    )
+
     variants = appier.field(
         type = appier.references(
             "Product",
@@ -196,6 +203,7 @@ class Product(base.BudyBase):
             from . import brand
             from . import season
             from . import category
+            from . import collection
             from . import composition
             from . import measurement
 
@@ -211,6 +219,7 @@ class Product(base.BudyBase):
             farfetch_female_url,\
             colors,\
             categories,\
+            collections,\
             variants,\
             _brand,\
             _season,\
@@ -235,6 +244,9 @@ class Product(base.BudyBase):
 
             categories = categories.split(";") if categories else []
             categories = category.Category.find(name = {"$in" : categories})
+
+            collections = collections.split(";") if collections else []
+            collections = collection.Collection.find(name = {"$in" : collections})
 
             variants = variants.split(";") if variants else []
             variants = Product.find(product_id = {"$in" : variants})
@@ -261,6 +273,7 @@ class Product(base.BudyBase):
                 farfetch_female_url = farfetch_female_url,
                 colors = colors,
                 categories = categories,
+                collections = collections,
                 variants = variants,
                 brand = _brand,
                 season = _season,
