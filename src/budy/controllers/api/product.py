@@ -77,6 +77,7 @@ class ProductApiController(root.RootApiController):
             eager = (
                 "colors",
                 "categories",
+                "collections",
                 "variants",
                 "brand",
                 "season",
@@ -86,27 +87,50 @@ class ProductApiController(root.RootApiController):
             **object
         )
 
-        products_s = []
+        products_s = [(
+            "short_description",
+            "product_id",
+            "gender",
+            "price",
+            "order",
+            "tag",
+            "tag_description",
+            "farfetch_url",
+            "farfetch_male_url",
+            "farfetch_female_url",
+            "colors",
+            "categories",
+            "collections",
+            "variants",
+            "brand",
+            "season",
+            "measurements",
+            "compositions",
+            "price_provider",
+            "price_url"
+        )]
         for product in products:
-            product_s = dict(
-                short_description = product.short_description,
-                product_id = product.product_id,
-                gender = product.gender,
-                price = product.price,
-                order = product.order,
-                tag = product.tag,
-                tag_descritpion = product.tag_descritpion,
-                farfetch_url = product.farfetch_url,
-                farfetch_male_url = product.farfetch_male_url,
-                farfetch_female_url = product.farfetch_female_url,
-                colors = ";".join([color.name for color in product.colors]),
-                categories = ";".join([category.name for category in product.categories]),
-                variants = ";".join([variant.product_id for variant in product.variants]),
-                brand = product.brand.name if product.brand else None,
-                season = product.season.name if product.season else None,
-                measurements = ";".join([measurement.name for measurement in product.measurements]),
-                price_provider = product.price_provider,
-                price_url = product.price_url
+            product_s = (
+                product.short_description,
+                product.product_id,
+                product.gender,
+                product.price,
+                product.order,
+                product.tag,
+                product.tag_description,
+                product.farfetch_url,
+                product.farfetch_male_url,
+                product.farfetch_female_url,
+                ";".join([color.name for color in product.colors]),
+                ";".join([category.name for category in product.categories]),
+                ";".join([collection.name for collection in product.collections]),
+                ";".join([variant.product_id for variant in product.variants]),
+                product.brand.name if product.brand else None,
+                product.season.name if product.season else None,
+                ";".join([measurement.name for measurement in product.measurements]),
+                ";".join([composition.name for composition in product.compositions]),
+                product.price_provider,
+                product.price_url
             )
             products_s.append(product_s)
 
