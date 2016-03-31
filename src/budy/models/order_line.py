@@ -52,4 +52,9 @@ class OrderLine(bundle_line.BundleLine):
 
     @classmethod
     def list_names(cls):
-        return ["id", "quantity", "total", "product", "order"]
+        return ["id", "quantity", "total", "currency", "product", "order"]
+
+    @appier.operation(name = "Garbage Collect")
+    def collect_s(self):
+        if self.order: return
+        self.delete()

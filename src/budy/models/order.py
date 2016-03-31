@@ -40,6 +40,7 @@ __license__ = "Apache License, Version 2.0"
 import time
 
 import appier
+import appier_extras
 
 from . import bundle
 from . import country
@@ -92,58 +93,142 @@ class Order(bundle.Bundle):
         safe = True
     )
 
+    notification_sent = appier.field(
+        type = bool,
+        index = True,
+        initial = False,
+        safe = True
+    )
+
     lines = appier.field(
         type = appier.references(
             "OrderLine",
             name = "id"
-        )
+        ),
+        eager = True
     )
 
     account = appier.field(
         type = appier.reference(
             "BudyAccount",
             name = "id"
-        )
+        ),
+        eager = True
     )
 
     shipping_address = appier.field(
         type = appier.reference(
             "Address",
             name = "id"
-        )
+        ),
+        eager = True
     )
 
     billing_address = appier.field(
         type = appier.reference(
             "Address",
             name = "id"
-        )
+        ),
+        eager = True
     )
 
     def __init__(self, *args, **kwargs):
         bundle.Bundle.__init__(self, *args, **kwargs)
+        self.created = kwargs.get("status", "created")
         self.paid = kwargs.get("paid", False)
+        self.date = kwargs.get("date", None)
+        self.notification_sent = kwargs.get("notification_sent", False)
 
     @classmethod
     def list_names(cls):
-        return ["id", "currency", "total", "account", "status"]
+        return ["id", "total", "currency", "account", "status"]
+
+    @classmethod
+    def order_name(self):
+        return ["id", -1]
 
     @classmethod
     def line_cls(cls):
         return order_line.OrderLine
 
+    @classmethod
+    @appier.link(
+        name = "Export Complex",
+        parameters = (
+            ("Start Id", "start", int),
+            ("End Id", "end", int),
+        )
+    )
+    def complex_csv_url(cls, start = None, end = None, absolute = False):
+        return appier.get_app().url_for(
+            "order_api.complex_csv",
+            start = start,
+            end = end,
+            absolute = absolute
+        )
+
+    @classmethod
+    def _build(cls, model, map):
+        prefix = appier.conf("BUDY_ORDER_REF", "BD-%06d")
+        id = model.get("id", None)
+        if id: model["reference"] = prefix % id
+
+    def pre_delete(self):
+        bundle.Bundle.pre_delete(self)
+        for line in self.lines: line.delete()
+
+    def add_line_s(self, line):
+        line.order = self
+        return bundle.Bundle.add_line_s(self, line)
+
+    def refresh_s(self, *args, **kwargs):
+        if self.paid: return
+        bundle.Bundle.refresh_s(self, *args, **kwargs)
+
     def verify(self):
         appier.verify(not self.billing_address == None)
         appier.verify(self.status == "created")
         appier.verify(self.paid == False)
+        appier.verify(self.date == None)
 
-    def pay_s(self, payment_data):
+    def pay_s(self, payment_data, notify = False):
         self.verify()
         self._pay_stripe(payment_data)
+        self.mark_paid_s()
+        if notify: self.notify_s()
+
+    @appier.operation(name = "Notify")
+    def notify_s(self, name = "order.new"):
+        order = self.reload(map = True)
+        appier_extras.admin.Event.notify_g(
+            name,
+            arguments = dict(
+                params = dict(
+                    order = order
+                )
+            )
+        )
+        self.notification_sent = True
+        self.save()
+
+    @appier.operation(name = "Mark Paid")
+    def mark_paid_s(self):
+        self.verify()
         self.status = "paid"
         self.paid = True
         self.date = time.time()
         self.save()
+
+    @appier.operation(name = "Garbage Collect")
+    def collect_s(self):
+        if self.paid: return
+        self.delete()
+
+    @appier.operation(name = "Fix Orphans")
+    def fix_orphans_s(self):
+        for line in self.lines:
+            line.order = self
+            line.save()
 
     @property
     def shipping_country(self):

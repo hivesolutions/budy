@@ -118,6 +118,13 @@ class Product(base.BudyBase):
         )
     )
 
+    collections = appier.field(
+        type = appier.references(
+            "Collection",
+            name = "id"
+        )
+    )
+
     variants = appier.field(
         type = appier.references(
             "Product",
@@ -196,6 +203,7 @@ class Product(base.BudyBase):
             from . import brand
             from . import season
             from . import category
+            from . import collection
             from . import composition
             from . import measurement
 
@@ -211,6 +219,7 @@ class Product(base.BudyBase):
             farfetch_female_url,\
             colors,\
             categories,\
+            collections,\
             variants,\
             _brand,\
             _season,\
@@ -236,6 +245,9 @@ class Product(base.BudyBase):
             categories = categories.split(";") if categories else []
             categories = category.Category.find(name = {"$in" : categories})
 
+            collections = collections.split(";") if collections else []
+            collections = collection.Collection.find(name = {"$in" : collections})
+
             variants = variants.split(";") if variants else []
             variants = Product.find(product_id = {"$in" : variants})
 
@@ -258,6 +270,7 @@ class Product(base.BudyBase):
                 farfetch_female_url = farfetch_female_url,
                 colors = colors,
                 categories = categories,
+                collections = collections,
                 variants = variants,
                 brand = _brand,
                 season = _season,
@@ -326,3 +339,27 @@ class Product(base.BudyBase):
         )
         total = result["total"]
         return total["price_final"]
+
+    def get_size(self, currency = None, country = None, attributes = None):
+        if not self.price_provider: return None, None
+        method = getattr(self, "get_size_%s" % self.price_provider)
+        return method(
+            country = country,
+            attributes = attributes
+        )
+
+    def get_size_ripe(
+        self,
+        currency = None,
+        country = None,
+        attributes = None
+    ):
+        attributes_m = json.loads(attributes)
+        size = attributes_m["size"]
+        scale = attributes_m["scale"]
+        gender = attributes_m["gender"]
+
+        if gender == "male": converter = lambda native: ((native - 17) / 2) + 36
+        else: converter = lambda native: ((native - 17) / 2) + 34
+
+        return converter(size), scale

@@ -73,7 +73,8 @@ class BundleLine(base.BudyBase):
         type = appier.reference(
             "Product",
             name = "id"
-        )
+        ),
+        eager = True
     )
 
     def __init__(self, *args, **kwargs):
@@ -83,16 +84,25 @@ class BundleLine(base.BudyBase):
 
     @classmethod
     def list_names(cls):
-        return ["id", "quantity", "total", "product"]
+        return ["id", "quantity", "total", "currency", "product"]
 
     def pre_save(self):
         base.BudyBase.pre_save(self)
         self.calculate()
+        self.measure()
 
     def calculate(self, currency = None, country = None, force = False):
         currency = currency or self.currency
         country = country or self.country
         self.total = self.quantity * self.get_price(
+            currency = currency,
+            country = country,
+            force = force
+        )
+
+    def measure(self, currency = None, country = None, force = False):
+        if self.size and self.scale and not force: return
+        self.size, self.scale = self.get_size(
             currency = currency,
             country = country,
             force = force
@@ -110,8 +120,26 @@ class BundleLine(base.BudyBase):
         self.country = country
         return self.price
 
+    def get_size(self, currency = None, country = None, force = False):
+        if not self.product: return None, None
+        return self.product.get_size(
+            currency = currency,
+            country = country,
+            attributes = self.attributes
+        )
+
     def is_dirty(self, currency = None, country = None):
         is_dirty = not self.currency == currency
         is_dirty |= not self.country == country
         is_dirty |= not hasattr(self, "price") or self.price == None
         return is_dirty
+
+    @appier.operation(name = "Calculate")
+    def calculate_s(self):
+        self.calculate(force = True)
+        self.save()
+
+    @appier.operation(name = "Measure")
+    def measure_s(self):
+        self.measure(force = True)
+        self.save()

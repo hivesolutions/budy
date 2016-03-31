@@ -49,11 +49,7 @@ class BagApiController(root.RootApiController):
     @appier.ensure(token = "admin")
     def list(self):
         object = appier.get_object(alias = True, find = True)
-        bags = budy.Bag.find(
-            eager = ("lines", "lines.product"),
-            map = True,
-            **object
-        )
+        bags = budy.Bag.find(eager_l = True, map = True, **object)
         return bags
 
     @appier.route("/api/bags", "POST", json = True)
@@ -72,15 +68,12 @@ class BagApiController(root.RootApiController):
     def show(self, key):
         ensure = self.field("ensure", True)
         bag = budy.Bag.get(key = key, raise_e = not ensure)
-        if not bag: bag = budy.Bag(key = key).save()
+        if not bag: bag = budy.Bag.ensure_s(key = key)
         bag.refresh_s(
             currency = self.currency,
             country = self.country
         )
-        bag = bag.reload(
-            eager = ("lines", "lines.product"),
-            map = True
-        )
+        bag = bag.reload(map = True)
         return bag
 
     @appier.route("/api/bags/<str:key>/merge/<str:target>", "PUT", json = True)
@@ -89,10 +82,7 @@ class BagApiController(root.RootApiController):
         bag = budy.Bag.get(key = key)
         target = budy.Bag.get(key = target)
         bag.merge_s(target.id, increment = increment)
-        bag = bag.reload(
-            eager = ("lines", "lines.product"),
-            map = True
-        )
+        bag = bag.reload(map = True)
         return bag
 
     @appier.route("/api/bags/<str:key>/lines", "POST", json = True)
@@ -102,20 +92,14 @@ class BagApiController(root.RootApiController):
         bag = budy.Bag.get(key = key)
         bag.lines.append(line)
         bag.save()
-        line = line.reload(
-            eager = ("product",),
-            map = True
-        )
+        line = line.reload(map = True)
         return line
 
     @appier.route("/api/bags/<str:key>/lines/<int:line_id>", "DELETE", json = True)
     def remove_line(self, key, line_id):
         bag = budy.Bag.get(key = key)
         bag.remove_line_s(line_id)
-        bag = bag.reload(
-            eager = ("lines", "lines.product"),
-            map = True,
-        )
+        bag = bag.reload(map = True)
         return bag
 
     @appier.route("/api/bags/<str:key>/lines/add_update", "POST", json = True)
@@ -123,18 +107,12 @@ class BagApiController(root.RootApiController):
         line = budy.BagLine.new()
         bag = budy.Bag.get(key = key)
         line = bag.add_update_line_s(line)
-        line = line.reload(
-            eager = ("product",),
-            map = True
-        )
+        line = line.reload(map = True)
         return line
 
     @appier.route("/api/bags/<str:key>/order", "GET", json = True)
     def order(self, key):
         bag = budy.Bag.get(key = key)
         order = bag.to_order_s()
-        order = order.reload(
-            eager = ("lines", "lines.product"),
-            map = True
-        )
+        order = order.reload(map = True)
         return order

@@ -19,6 +19,9 @@
 # You should have received a copy of the Apache License along with
 # Hive Budy. If not, see <http://www.apache.org/licenses/>.
 
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
 __version__ = "1.0.0"
 """ The version of the module """
 
@@ -34,46 +37,24 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
-from . import account
-from . import address
-from . import bag_line
-from . import bag
-from . import base
-from . import brand
-from . import bundle_line
-from . import bundle
-from . import category
-from . import collection
-from . import color
-from . import composition
-from . import country
-from . import live_model
-from . import measurement
-from . import media
-from . import order_line
-from . import order
-from . import product
-from . import season
-from . import subscription
+import appier
 
-from .account import BudyAccount
-from .address import Address
-from .bag_line import BagLine
-from .bag import Bag
-from .base import BudyBase
-from .brand import Brand
-from .bundle import Bundle
-from .bundle_line import BundleLine
-from .category import Category
-from .collection import Collection
-from .color import Color
-from .composition import Composition
-from .country import Country
-from .live_model import LiveModel
-from .measurement import Measurement
-from .media import Media
-from .order_line import OrderLine
-from .order import Order
-from .product import Product
-from .season import Season
-from .subscription import Subscription
+from . import base
+
+class Collection(base.BudyBase):
+
+    name = appier.field(
+        index = True,
+        default = True
+    )
+
+    @classmethod
+    def validate(cls):
+        return super(Collection, cls).validate() + [
+            appier.not_null("name"),
+            appier.not_empty("name")
+        ]
+
+    @classmethod
+    def list_names(cls):
+        return ["id", "name"]

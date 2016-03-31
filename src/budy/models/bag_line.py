@@ -53,9 +53,9 @@ class BagLine(bundle_line.BundleLine):
 
     @classmethod
     def list_names(cls):
-        return ["id", "quantity", "total", "product", "bag"]
+        return ["id", "quantity", "total", "currency", "product", "bag"]
 
-    def to_order_line_s(self):
+    def to_order_line_s(self, order = None):
         _order_line = order_line.OrderLine(
             price = self.price,
             currency = self.currency,
@@ -65,7 +65,13 @@ class BagLine(bundle_line.BundleLine):
             size = self.size,
             scale = self.scale,
             attributes = self.attributes,
-            product = self.product.id
+            product = self.product,
+            order = order
         )
         _order_line.save()
         return _order_line
+
+    @appier.operation(name = "Garbage Collect")
+    def collect_s(self):
+        if self.bag: return
+        self.delete()

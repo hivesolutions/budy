@@ -109,10 +109,10 @@ class BudyAccount(appier_extras.admin.Account):
         appier_extras.admin.Account.post_create(self)
         self.ensure_bag_s()
 
-    def ensure_bag_s(self):
+    def ensure_bag_s(self, key = None):
         _bag = self.get_bag()
         if _bag: return _bag
-        _bag = bag.Bag.new(form = False)
+        _bag = bag.Bag(key = key)
         _bag.account = self
         _bag.save()
         return _bag

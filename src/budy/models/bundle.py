@@ -96,8 +96,17 @@ class Bundle(base.BudyBase):
         self.shipping_cost = kwargs.get("shipping_cost", 0.0)
 
     @classmethod
+    def validate(cls):
+        return super(Bundle, cls).validate() + [
+            appier.not_duplicate("key", cls._name()),
+
+            appier.not_null("total"),
+            appier.gte("total", 0)
+        ]
+
+    @classmethod
     def list_names(cls):
-        return ["id", "key", "currency", "total"]
+        return ["id", "key", "total", "currency"]
 
     @classmethod
     def line_cls(cls):
@@ -119,7 +128,6 @@ class Bundle(base.BudyBase):
         self.save()
 
     def add_line_s(self, line):
-        line.bag = self
         line.save()
         self.lines.append(line)
         self.save()

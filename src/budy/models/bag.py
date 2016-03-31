@@ -49,7 +49,8 @@ class Bag(bundle.Bundle):
         type = appier.references(
             "BagLine",
             name = "id"
-        )
+        ),
+        eager = True
     )
 
     account = appier.field(
@@ -61,7 +62,11 @@ class Bag(bundle.Bundle):
 
     @classmethod
     def list_names(cls):
-        return ["id", "key", "currency", "total", "account"]
+        return ["id", "key", "total", "currency", "account"]
+
+    @classmethod
+    def order_name(self):
+        return ["id", -1]
 
     @classmethod
     def line_cls(cls):
@@ -82,6 +87,22 @@ class Bag(bundle.Bundle):
         session["bag"] = bag.key
         return bag
 
+    @classmethod
+    def ensure_s(cls, key = None):
+        from . import BudyAccount
+        account = BudyAccount.from_session(raise_e = False)
+        if account: return account.ensure_bag_s(key = key)
+        bag = cls(key = key)
+        bag.save()
+
+    def pre_delete(self):
+        bundle.Bundle.pre_delete(self)
+        for line in self.lines: line.delete()
+
+    def add_line_s(self, line):
+        line.bag = self
+        return bundle.Bundle.add_line_s(self, line)
+
     def to_order_s(self):
         self.refresh_s()
         _order = order.Order(
@@ -93,9 +114,26 @@ class Bag(bundle.Bundle):
             shipping_cost = self.shipping_cost,
             account = self.account
         )
+        _order.save()
         _order.lines = []
         for line in self.lines:
-            order_line = line.to_order_line_s()
+            order_line = line.to_order_line_s(_order)
             _order.lines.append(order_line)
         _order.save()
         return _order
+
+    @appier.operation(name = "Empty Bag")
+    def empty_bag_s(self):
+        for line in self.lines: line.delete()
+        self.lines = []
+        self.save()
+
+    @appier.operation(name = "Garbage Collect")
+    def collect_s(self):
+        self.delete()
+
+    @appier.operation(name = "Fix Orphans")
+    def fix_orphans_s(self):
+        for line in self.lines:
+            line.bag = self
+            line.save()

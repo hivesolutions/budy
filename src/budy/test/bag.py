@@ -173,6 +173,11 @@ class BagTest(unittest.TestCase):
         self.assertEqual(bag.total, 20.0)
         self.assertEqual(len(bag.lines), 1)
 
+        bag = bag.reload()
+
+        self.assertEqual(bag.total, 20.0)
+        self.assertEqual(len(bag.lines), 1)
+
         extra = budy.Bag.new(form = False)
         extra.save()
 
@@ -223,3 +228,15 @@ class BagTest(unittest.TestCase):
         self.assertEqual(order.currency, bag.currency)
         self.assertEqual(order.total, 20.0)
         self.assertEqual(len(order.lines), 1)
+
+    def test_duplicate(self):
+        bag = budy.Bag.new(form = False)
+        bag.save()
+
+        self.assertNotEqual(bag.key, None)
+        self.assertEqual(type(bag.key), appier.legacy.UNICODE)
+
+        duplicated = budy.Bag.new(form = False)
+        duplicated.key = bag.key
+
+        self.assertRaises(appier.ValidationError, duplicated.save)

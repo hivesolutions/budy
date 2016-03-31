@@ -78,6 +78,22 @@ class Address(base.BudyBase):
     neighborhood = appier.field()
 
     @classmethod
+    def validate(cls):
+        return super(Address, cls).validate() + [
+            appier.not_null("first_name"),
+            appier.not_empty("first_name"),
+
+            appier.not_null("last_name"),
+            appier.not_empty("last_name"),
+
+            appier.not_null("address"),
+            appier.not_empty("address"),
+
+            appier.not_null("city"),
+            appier.not_empty("city")
+        ]
+
+    @classmethod
     def list_names(cls):
         return ["id", "first_name", "last_name", "address", "country"]
 

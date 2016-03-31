@@ -11,8 +11,9 @@ ENV PORT 8080
 ENV MONGOHQ_URL mongodb://localhost:27017
 
 ADD requirements.txt /
+ADD extra.txt /
 ADD src /src
 
-RUN pip3 install -r /requirements.txt && pip3 install --upgrade netius
+RUN pip3 install -r /requirements.txt && pip3 install -r /extra.txt && pip3 install --upgrade netius
 
 CMD ["/usr/bin/python3", "/src/budy/main.py"]
