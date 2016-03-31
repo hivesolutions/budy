@@ -84,7 +84,11 @@ class Voucher(base.BudyBase):
         return super(Voucher, cls).validate() + [
             appier.gte("amount", 0.0),
 
-            appier.gte("percentage", 0.0)
+            appier.gte("percentage", 0.0),
+
+            appier.gte("usage_count", 0),
+
+            appier.gte("usage_limit", 0)
         ]
 
     @classmethod
