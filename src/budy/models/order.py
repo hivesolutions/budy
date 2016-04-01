@@ -152,6 +152,10 @@ class Order(bundle.Bundle):
         return order_line.OrderLine
 
     @classmethod
+    def is_snapshot(cls):
+        return True
+
+    @classmethod
     @appier.link(
         name = "Export Complex",
         parameters = (
