@@ -121,6 +121,7 @@ class OrderTest(unittest.TestCase):
         address.save()
 
         order.billing_address = address
+        order.email = "username@email.com"
         order.save()
 
         order.mark_paid_s()
