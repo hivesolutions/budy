@@ -48,8 +48,10 @@ class CollectionApiController(root.RootApiController):
     @appier.route("/api/collections", "GET", json = True)
     def list(self):
         object = appier.get_object(alias = True, find = True)
-        collections = budy.Collection.find(
-            map = True,
-            **object
-        )
+        collections = budy.Collection.find(map = True, **object)
         return collections
+
+    @appier.route("/api/collections/<int:id>", "GET", json = True)
+    def show(self, id):
+        collection = budy.Collection.get(id = id, map = True)
+        return collection
