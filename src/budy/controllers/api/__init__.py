@@ -40,6 +40,7 @@ from . import bag
 from . import base
 from . import brand
 from . import category
+from . import collection
 from . import color
 from . import country
 from . import media
@@ -54,6 +55,7 @@ from .bag import BagApiController
 from .base import BaseApiController
 from .brand import BrandApiController
 from .category import CategoryApiController
+from .collection import CollectionApiController
 from .color import ColorApiController
 from .country import CountryApiController
 from .media import MediaApiController
