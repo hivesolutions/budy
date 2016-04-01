@@ -309,7 +309,7 @@ class Product(base.BudyBase):
     def apply_collection(self, collection):
         from . import collection
         collection = collection.Collection.get(name = collection)
-        self.collections.add(collection)
+        self.collections.append(collection)
         self.save()
 
     def get_price(
