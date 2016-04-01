@@ -303,12 +303,12 @@ class Product(base.BudyBase):
     @appier.operation(
         name = "Apply Collection",
         parameters = (
-            ("Collection", "collection", "str"),
+            ("Collection", "_collection", str),
         )
     )
-    def apply_collection_s(self, collection):
+    def apply_collection_s(self, _collection):
         from . import collection
-        collection = collection.Collection.get(name = collection)
+        collection = collection.Collection.get(name = _collection)
         self.collections.append(collection)
         self.save()
 
