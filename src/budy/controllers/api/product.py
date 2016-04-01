@@ -88,6 +88,7 @@ class ProductApiController(root.RootApiController):
         )
 
         products_s = [(
+            "description",
             "short_description",
             "product_id",
             "gender",
@@ -111,6 +112,7 @@ class ProductApiController(root.RootApiController):
         )]
         for product in products:
             product_s = (
+                product.description,
                 product.short_description,
                 product.product_id,
                 product.gender,

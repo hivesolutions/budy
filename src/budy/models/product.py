@@ -194,9 +194,12 @@ class Product(base.BudyBase):
     @classmethod
     @appier.operation(
         name = "Import CSV",
-        parameters = (("CSV File", "file", "file"),)
+        parameters = (
+            ("CSV File", "file", "file"),
+            ("Empty source", "empty", bool, True)
+        )
     )
-    def import_csv_s(cls, file):
+    def import_csv_s(cls, file, empty):
 
         def callback(line):
             from . import color
@@ -207,6 +210,7 @@ class Product(base.BudyBase):
             from . import composition
             from . import measurement
 
+            description,\
             short_description,\
             product_id,\
             gender,\
@@ -261,6 +265,7 @@ class Product(base.BudyBase):
             compositions = composition.Composition.find(name = {"$in" : compositions})
 
             product = Product(
+                description = description,
                 short_description = short_description,
                 product_id = product_id,
                 gender = gender,
@@ -284,6 +289,7 @@ class Product(base.BudyBase):
             )
             product.save()
 
+        if empty: Product.delete_c()
         cls._csv_import(file, callback)
 
     @classmethod
@@ -293,6 +299,18 @@ class Product(base.BudyBase):
             "product_api.simple_csv",
             absolute = absolute
         )
+
+    @appier.operation(
+        name = "Apply Collection",
+        parameters = (
+            ("Collection", "collection", "str"),
+        )
+    )
+    def apply_collection(self, collection):
+        from . import collection
+        collection = collection.Collection.get(name = collection)
+        self.collections.add(collection)
+        self.save()
 
     def get_price(
         self,
