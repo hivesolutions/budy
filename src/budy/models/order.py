@@ -187,6 +187,8 @@ class Order(bundle.Bundle):
 
     def verify(self):
         appier.verify(not self.billing_address == None)
+        appier.verify(not self.email == None)
+        appier.verify(not self.email == "")
         appier.verify(self.status == "created")
         appier.verify(self.paid == False)
         appier.verify(self.date == None)
