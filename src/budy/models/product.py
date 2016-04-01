@@ -306,7 +306,7 @@ class Product(base.BudyBase):
             ("Collection", "collection", "str"),
         )
     )
-    def apply_collection(self, collection):
+    def apply_collection_s(self, collection):
         from . import collection
         collection = collection.Collection.get(name = collection)
         self.collections.append(collection)
