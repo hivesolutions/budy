@@ -301,15 +301,29 @@ class Product(base.BudyBase):
         )
 
     @appier.operation(
-        name = "Apply Collection",
+        name = "Add Collection",
         parameters = (
             ("Collection", "collection", str),
         )
     )
-    def apply_collection_s(self, collection):
+    def add_collection_s(self, collection):
         from . import collection as _collection
         collection = _collection.Collection.get(name = collection)
+        if collection in self.collections: return
         self.collections.append(collection)
+        self.save()
+
+    @appier.operation(
+        name = "Remove Collection",
+        parameters = (
+            ("Collection", "collection", str),
+        )
+    )
+    def remove_collection_s(self, collection):
+        from . import collection as _collection
+        collection = _collection.Collection.get(name = collection)
+        if not collection in self.collections: return
+        self.collections.remove(collection)
         self.save()
 
     def get_price(
