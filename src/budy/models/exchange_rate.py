@@ -96,17 +96,19 @@ class ExchangeRate(base.BudyBase):
         exchange_rate_r.save()
 
     @classmethod
-    def convert(cls, value, base, target, reversed = False, places = 5):
+    def convert(cls, value, base, target, reversed = False):
+        from . import currency
         if reversed: return cls.reverse(value, base, target)
         exchange_rate = cls.get(base = base, target = target)
         result = commons.Decimal(value) * exchange_rate.rate
-        return round(result, places)
+        return currency.Currency.round(result, target)
 
     @classmethod
-    def reverse(cls, value, base, target, places = 5):
+    def reverse(cls, value, base, target):
+        from . import currency
         exchange_rate = cls.get(base = target, target = base)
         result = commons.Decimal(value) * (commons.Decimal(1.0) / exchange_rate.rate)
-        return round(result, places)
+        return currency.Currency.round(result, target)
 
     @classmethod
     def has_rate(cls, base, target):

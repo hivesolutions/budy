@@ -69,6 +69,19 @@ class Currency(base.BudyBase):
         return ["iso", "decimal_places"]
 
     @classmethod
+    def round(cls, value, currency, decimal_places = 5):
+        currencies = cls.get_currencies()
+        currency = currencies.get(currency, {})
+        decimal_places = currency.get("decimal_places", decimal_places)
+        return round(value, decimal_places)
+
+    @classmethod
+    def get_currencies(cls):
+        if hasattr(cls, "_currencies"): return cls._currencies
+        cls._currencies = cls.find(map = True)
+        return cls._currencies
+
+    @classmethod
     @appier.operation(
         name = "Import CSV",
         parameters = (
