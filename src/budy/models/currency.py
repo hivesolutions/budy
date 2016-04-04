@@ -69,6 +69,12 @@ class Currency(base.BudyBase):
         return ["iso", "decimal_places"]
 
     @classmethod
+    def create_s(cls, iso, decimal_places, invalidate = True):
+        if invalidate and hasattr(cls, "_currencies"): delattr(cls, "_currencies")
+        currency = cls(iso = iso, decimal_places = decimal_places)
+        currency.save()
+
+    @classmethod
     def round(cls, value, currency, decimal_places = 5):
         currencies = cls.get_currencies()
         currency = currencies.get(currency, {})
@@ -78,7 +84,8 @@ class Currency(base.BudyBase):
     @classmethod
     def get_currencies(cls):
         if hasattr(cls, "_currencies"): return cls._currencies
-        cls._currencies = cls.find(map = True)
+        currencies = cls.find(map = True)
+        cls._currencies = dict([(value["iso"], value) for value in currencies])
         return cls._currencies
 
     @classmethod
