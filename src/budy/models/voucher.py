@@ -131,6 +131,10 @@ class Voucher(base.BudyBase):
     def list_names(cls):
         return ["description", "created", "amount", "percentage", "expiration", "enabled"]
 
+    @classmethod
+    def is_snapshot(cls):
+        return True
+
     def pre_create(self):
         base.BudyBase.pre_create(self)
         if not hasattr(self, "key") or not self.key:
