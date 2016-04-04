@@ -175,6 +175,10 @@ class Product(base.BudyBase):
         )
     )
 
+    def __init__(self, *args, **kwargs):
+        base.BudyBase.__init__(self, *args, **kwargs)
+        self.price_provider = kwargs.get("price_provider", None)
+
     @classmethod
     def validate(cls):
         return super(Product, cls).validate() + [

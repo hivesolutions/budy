@@ -38,6 +38,7 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import time
+import commons
 
 import appier
 import appier_extras
@@ -142,10 +143,12 @@ class Order(bundle.Bundle):
 
     def __init__(self, *args, **kwargs):
         bundle.Bundle.__init__(self, *args, **kwargs)
-        self.created = kwargs.get("status", "created")
+        self.status = kwargs.get("status", "created")
         self.paid = kwargs.get("paid", False)
         self.date = kwargs.get("date", None)
         self.notification_sent = kwargs.get("notification_sent", False)
+        self.lines = kwargs.get("lines", [])
+        self.vouchers = kwargs.get("vouchers", [])
 
     @classmethod
     def list_names(cls):
@@ -197,8 +200,11 @@ class Order(bundle.Bundle):
         return bundle.Bundle.add_line_s(self, line)
 
     def add_voucher_s(self, voucher):
-        appier.verify(voucher.valid())
-        self.discount += voucher.open_amount
+        appier.verify(voucher.is_valid())
+        overflows = voucher.open_amount > self.payable
+        amount = self.payable if overflows else voucher.open_amount
+        self.discount += amount
+        self.vouchers.append(voucher)
         self.save()
 
     def refresh_s(self, *args, **kwargs):
@@ -212,13 +218,34 @@ class Order(bundle.Bundle):
         appier.verify(self.status == "created")
         appier.verify(self.paid == False)
         appier.verify(self.date == None)
-        for voucher in self.vouchers: appier.verify(voucher.is_valid == True)
+        self.verify_vouchers()
 
-    def pay_s(self, payment_data, notify = False):
+    def verify_vouchers(self):
+        pending = self.discount
+        for voucher in self.vouchers:
+            if pending == 0.0: break
+            overflows = voucher.open_amount > pending
+            amount = pending if overflows else pending
+            voucher.is_valid(amount)
+            pending -= commons.Decimal(amount)
+        appier.verify(pending == 0.0)
+
+    def pay_s(self, payment_data, vouchers = True, notify = False):
         self.verify()
         self._pay_stripe(payment_data)
         self.mark_paid_s()
+        if vouchers: self.use_vouchers_s()
         if notify: self.notify_s()
+
+    def use_vouchers_s(self):
+        pending = self.discount
+        for voucher in self.vouchers:
+            if pending == 0.0: break
+            overflows = voucher.open_amount > pending
+            amount = pending if overflows else pending
+            voucher.use_s(amount)
+            pending -= commons.Decimal(amount)
+        appier.verify(pending == 0.0)
 
     @appier.operation(name = "Notify")
     def notify_s(self, name = "order.new"):
@@ -252,6 +279,10 @@ class Order(bundle.Bundle):
         for line in self.lines:
             line.order = self
             line.save()
+
+    @property
+    def payable(self):
+        return self.total - self.discount
 
     @property
     def shipping_country(self):
