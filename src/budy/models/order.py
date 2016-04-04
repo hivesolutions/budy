@@ -189,10 +189,7 @@ class Order(bundle.Bundle):
     def _build(cls, model, map):
         prefix = appier.conf("BUDY_ORDER_REF", "BD-%06d")
         id = model.get("id", None)
-        total = model.get("total", 0.0)
-        discount = model.get("discount", 0.0)
         if id: model["reference"] = prefix % id
-        model["payable"] = total - discount
 
     def pre_delete(self):
         bundle.Bundle.pre_delete(self)
@@ -213,17 +210,23 @@ class Order(bundle.Bundle):
 
     def set_voucher_s(self, voucher):
         appier.verify(voucher.is_valid(currency = self.currency))
-        self.empty_voucher_s()
+        self.empty_vouchers_s()
         self.add_voucher_s(voucher)
 
-    def empty_voucher_s(self):
+    def empty_vouchers_s(self):
         self.vouchers = []
         self.discount = commons.Decimal(0.0)
         self.save()
 
+    def refresh_vouchers_s(self):
+        vouchers = self.vouchers
+        self.empty_vouchers_s()
+        for voucher in vouchers: self.add_voucher_s(voucher)
+
     def refresh_s(self, *args, **kwargs):
         if self.paid: return
-        bundle.Bundle.refresh_s(self, *args, **kwargs)
+        refreshed = bundle.Bundle.refresh_s(self, *args, **kwargs)
+        if refreshed: self.refresh_vouchers_s()
 
     def verify(self):
         appier.verify(not self.billing_address == None)

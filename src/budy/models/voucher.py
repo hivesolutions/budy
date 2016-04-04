@@ -148,15 +148,24 @@ class Voucher(base.BudyBase):
         self.usage_count += 1
         self.save()
 
-    def to_local(self, amount, currency):
+    def to_local(self, amount, currency, reversed = False):
         from . import exchange_rate
+        if not amount: return amount
         if not currency: return amount
+        if not self.currency: return amount
         if currency == self.currency: return amount
-        return exchange_rate.ExchangeRate.convert(amount, currency, self.currency)
+        return exchange_rate.ExchangeRate.convert(
+            amount,
+            currency,
+            self.currency,
+            reversed = reversed
+        )
 
     def to_remote(self, amount, currency, reversed = True):
         from . import exchange_rate
+        if not amount: return amount
         if not currency: return amount
+        if not self.currency: return amount
         if currency == self.currency: return amount
         return exchange_rate.ExchangeRate.convert(
             amount,

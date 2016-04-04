@@ -86,7 +86,7 @@ class VoucherTest(unittest.TestCase):
         self.assertEqual(voucher.usage_count, 2)
 
         self.assertRaises(
-            appier.NotFoundError,
+            appier.AssertionError,
             lambda: voucher.use_s(100.0, currency = "EUR")
         )
 

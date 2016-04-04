@@ -231,7 +231,7 @@ class Bundle(base.BudyBase):
         currency = currency or self.currency
         country = country or self.country
         is_dirty = self.is_dirty(currency = currency, country = country)
-        if not is_dirty and not force: return
+        if not is_dirty and not force: return False
         lines = self.lines if hasattr(self, "lines") else []
         for line in lines:
             is_dirty = line.is_dirty(
@@ -244,6 +244,7 @@ class Bundle(base.BudyBase):
         self.currency = currency
         self.country = country
         self.save()
+        return True
 
     def calculate(self):
         lines = self.lines if hasattr(self, "lines") else []
