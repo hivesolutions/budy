@@ -160,9 +160,7 @@ class OrderTest(unittest.TestCase):
         order.email = "username@email.com"
         order.save()
 
-        voucher = budy.Voucher(
-            amount = 5.0
-        )
+        voucher = budy.Voucher(amount = 5.0)
         voucher.save()
 
         order.add_voucher_s(voucher)
