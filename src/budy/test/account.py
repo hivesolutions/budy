@@ -54,13 +54,12 @@ class AccountTest(unittest.TestCase):
         adapter.drop_db()
 
     def test_basic(self):
-        account = budy.BudyAccount.new(
+        account = budy.BudyAccount(
             name = "name",
             username = "username",
             email = "email@email.com",
             password = "password",
-            password_confirm = "password",
-            form = False
+            password_confirm = "password"
         )
         account.save()
 
@@ -74,21 +73,19 @@ class AccountTest(unittest.TestCase):
         self.assertEqual(account.get_bag().__class__, budy.Bag)
         self.assertEqual(account.get_bag().total, 0.0)
 
-        account = budy.BudyAccount.new(
+        account = budy.BudyAccount(
             username = "username",
             email = "email@email.com",
             password = "password",
-            password_confirm = "password",
-            form = False
+            password_confirm = "password"
         )
         self.assertRaises(appier.ValidationError, account.save)
 
-        account = budy.BudyAccount.new(
+        account = budy.BudyAccount(
             name = "name",
             username = "username",
             email = "email@email.com",
             password = "password",
-            password_confirm = "password_error",
-            form = False
+            password_confirm = "password_error"
         )
         self.assertRaises(appier.ValidationError, account.save)

@@ -131,3 +131,58 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.paid, True)
 
         self.assertRaises(appier.AssertionError, order.mark_paid_s)
+
+    def test_voucher(self):
+        product = budy.Product(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0
+        )
+        product.save()
+
+        order = budy.Order()
+        order.save()
+
+        order_line = budy.OrderLine.new(
+            quantity = 2.0,
+            form = False
+        )
+        order_line.product = product
+        order_line.save()
+        order.add_line_s(order_line)
+
+        self.assertEqual(order_line.quantity, 2.0)
+        self.assertEqual(order_line.total, 20.0)
+        self.assertEqual(order.total, 20.0)
+        self.assertEqual(len(order.lines), 1)
+
+        address = budy.Address.new(
+            first_name = "first name",
+            last_name = "last name",
+            address = "address",
+            city = "city",
+            form = False
+        )
+        address.save()
+
+        order.billing_address = address
+        order.email = "username@email.com"
+        order.save()
+
+        voucher = budy.Voucher(
+            amount = 5.0
+        )
+        voucher.save()
+
+        order.add_voucher_s(voucher)
+
+        self.assertEqual(order.total, 20.0)
+        self.assertEqual(order.discount, 5.0)
+        self.assertEqual(order.payable, 15.0)
+
+        order.use_vouchers_s()
+        voucher = voucher.reload()
+
+        self.assertEqual(voucher.is_valid(), False)
+
+        order.mark_paid_s()

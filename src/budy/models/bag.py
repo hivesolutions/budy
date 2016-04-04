@@ -63,6 +63,7 @@ class Bag(bundle.Bundle):
     def __init__(self, *args, **kwargs):
         bundle.Bundle.__init__(self, *args, **kwargs)
         self.lines = kwargs.get("lines", [])
+        self.account = kwargs.get("account", None)
 
     @classmethod
     def list_names(cls):
