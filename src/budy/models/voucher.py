@@ -143,12 +143,13 @@ class Voucher(base.BudyBase):
         self.used_amount += commons.Decimal(amount)
         self.save()
 
-    def is_valid(self, amount = None):
+    def is_valid(self, amount = None, currency = None):
         current = time.time()
         if self.expiration and current > self.expiration: return False
         if self.usage_limit and self.usage_count >= self.usage_limit: return False
         if commons.Decimal(self.used_amount) >= commons.Decimal(self.amount): return False
         if amount and commons.Decimal(amount) > commons.Decimal(self.open_amount): return False
+        if currency and not currency == self.currency: return False
         return True
 
     @property

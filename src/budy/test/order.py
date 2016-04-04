@@ -180,4 +180,15 @@ class OrderTest(unittest.TestCase):
 
         self.assertEqual(voucher.is_valid(), False)
 
-        order.mark_paid_s()
+        order.unmark_paid_s()
+
+        small_voucher = budy.Voucher(
+            amount = 1.0
+        )
+        small_voucher.save()
+
+        order.set_voucher_s(small_voucher)
+
+        self.assertEqual(order.total, 20.0)
+        self.assertEqual(order.discount, 1.0)
+        self.assertEqual(order.payable, 19.0)
