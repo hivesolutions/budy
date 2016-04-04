@@ -60,7 +60,7 @@ class Bundle(base.BudyBase):
         index = True
     )
 
-    total = appier.field(
+    sub_total = appier.field(
         type = commons.Decimal,
         index = True,
         initial = 0.0,
@@ -81,6 +81,13 @@ class Bundle(base.BudyBase):
         safe = True
     )
 
+    total = appier.field(
+        type = commons.Decimal,
+        index = True,
+        initial = 0.0,
+        safe = True
+    )
+
     shipping_cost = appier.field(
         type = commons.Decimal,
         index = True,
@@ -92,9 +99,10 @@ class Bundle(base.BudyBase):
         base.BudyBase.__init__(self, *args, **kwargs)
         self.currency = kwargs.get("currency", None)
         self.country = kwargs.get("country", None)
-        self.total = kwargs.get("total", 0.0)
+        self.sub_total = kwargs.get("sub_total", 0.0)
         self.discount = kwargs.get("discount", 0.0)
         self.taxes = kwargs.get("taxes", 0.0)
+        self.total = kwargs.get("total", 0.0)
         self.shipping_cost = kwargs.get("shipping_cost", 0.0)
 
     @classmethod
@@ -102,14 +110,17 @@ class Bundle(base.BudyBase):
         return super(Bundle, cls).validate() + [
             appier.not_duplicate("key", cls._name()),
 
-            appier.not_null("total"),
-            appier.gte("total", 0.0),
+            appier.not_null("sub_total"),
+            appier.gte("sub_total", 0.0),
 
             appier.not_null("discount"),
             appier.gte("discount", 0.0),
 
             appier.not_null("taxes"),
             appier.gte("taxes", 0.0),
+
+            appier.not_null("total"),
+            appier.gte("total", 0.0),
 
             appier.not_null("shipping_cost"),
             appier.gte("shipping_cost", 0.0)
@@ -236,7 +247,8 @@ class Bundle(base.BudyBase):
 
     def calculate(self):
         lines = self.lines if hasattr(self, "lines") else []
-        self.total = sum(line.total for line in lines)
+        self.sub_total = sum(line.total for line in lines)
+        self.total = self.sub_total - self.discount + self.taxes
 
     def is_dirty(self, currency = None, country = None):
         dirty = False
@@ -246,3 +258,9 @@ class Bundle(base.BudyBase):
             country = country
         )
         return dirty
+
+    @appier.operation(name = "Fix Sub Total")
+    def fix_sub_total_s(self):
+        if self.sub_total: return
+        self.sub_total = self.total
+        self.save()

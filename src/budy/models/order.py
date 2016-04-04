@@ -301,7 +301,7 @@ class Order(bundle.Bundle):
 
     @property
     def payable(self):
-        return self.total - self.discount
+        return self.total
 
     @property
     def shipping_country(self):
@@ -324,7 +324,7 @@ class Order(bundle.Bundle):
         exp_year = int(payment_data["expiration_year"])
         name = payment_data.get("card_name", None)
         api.create_charge(
-            int(self.total * 100),
+            int(self.payable * 100),
             self.currency,
             exp_month,
             exp_year,

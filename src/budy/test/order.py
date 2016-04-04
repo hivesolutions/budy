@@ -171,8 +171,9 @@ class OrderTest(unittest.TestCase):
 
         order.add_voucher_s(voucher)
 
-        self.assertEqual(order.total, 20.0)
+        self.assertEqual(order.sub_total, 20.0)
         self.assertEqual(order.discount, 5.0)
+        self.assertEqual(order.total, 15.0)
         self.assertEqual(order.payable, 15.0)
 
         order.use_vouchers_s()
@@ -191,6 +192,7 @@ class OrderTest(unittest.TestCase):
 
         order.set_voucher_s(small_voucher)
 
-        self.assertEqual(order.total, 20.0)
+        self.assertEqual(order.sub_total, 20.0)
         self.assertEqual(order.discount, 1.0)
+        self.assertEqual(order.total, 19.0)
         self.assertEqual(order.payable, 19.0)
