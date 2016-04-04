@@ -5,6 +5,7 @@
 	<projects>
 		<project>appier</project>
 		<project>appier_extras</project>
+		<project>commons_py</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

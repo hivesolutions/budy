@@ -37,6 +37,9 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import time
+import commons
+
 import appier
 
 from . import base
@@ -50,39 +53,67 @@ class Voucher(base.BudyBase):
     )
 
     amount = appier.field(
-        type = float,
-        index = True
+        type = commons.Decimal,
+        index = True,
+        safe = True,
+        immutable = True
+    )
+
+    used_amount = appier.field(
+        type = commons.Decimal,
+        index = True,
+        safe = True
     )
 
     percentage = appier.field(
-        type = float,
-        index = True
+        type = commons.Decimal,
+        index = True,
+        safe = True,
+        immutable = True
     )
 
     currency = appier.field(
-        index = True
+        index = True,
+        safe = True
     )
 
     expiration = appier.field(
         type = int,
         index = True,
+        safe = True,
         meta = "datetime"
     )
 
     usage_count = appier.field(
         type = int,
-        index = True
+        index = True,
+        safe = True
     )
 
     usage_limit = appier.field(
         type = int,
-        index = True
+        index = True,
+        safe = True
     )
+
+    def __init__(self, *args, **kwargs):
+        base.BudyBase.__init__(self, *args, **kwargs)
+        self.amount = kwargs.get("amount", 100.0)
+        self.used_amount = kwargs.get("used_amount", 0.0)
+        self.percentage = kwargs.get("percentage", 0.0)
+        self.currency = kwargs.get("currency", None)
+        self.expiration = kwargs.get("expiration", None)
+        self.usage_count = kwargs.get("usage_count", 0)
+        self.usage_limit = kwargs.get("usage_limit", 0)
 
     @classmethod
     def validate(cls):
         return super(Voucher, cls).validate() + [
+            appier.not_duplicate("key", cls._name()),
+
             appier.gte("amount", 0.0),
+
+            appier.gte("used_amount", 0.0),
 
             appier.gte("percentage", 0.0),
 
@@ -93,4 +124,28 @@ class Voucher(base.BudyBase):
 
     @classmethod
     def list_names(cls):
-        return ["created", "key", "amount", "percentage", "expiration", "enabled"]
+        return ["description", "created", "amount", "percentage", "expiration", "enabled"]
+
+    def pre_create(self):
+        base.BudyBase.pre_create(self)
+        if not hasattr(self, "key") or not self.key:
+            self.key = self.secret()
+        self.description = self.key[:8]
+
+    def use_s(self, amount, currency = None):
+        appier.verify(currency == self.currency)
+        appier.verify(self.is_valid(amount = amount))
+        self.used_amount += commons.Decimal(amount)
+        self.save()
+
+    def is_valid(self, amount = None):
+        current = time.time()
+        if self.expiration and current > self.expiration: return False
+        if self.usage_limit and self.usage_count >= self.usage_limit: return False
+        if commons.Decimal(self.used_amount) >= commons.Decimal(self.amount): return False
+        if amount and commons.Decimal(amount) > commons.Decimal(self.open_amount): return False
+        return True
+
+    @property
+    def open_amount(self):
+        return commons.Decimal(self.amount) - commons.Decimal(self.used_amount)

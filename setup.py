@@ -63,7 +63,8 @@ setuptools.setup(
     },
     install_requires = [
         "appier",
-        "appier_extras"
+        "appier_extras",
+        "commons_py"
     ],
     classifiers = [
         "Development Status :: 3 - Alpha",

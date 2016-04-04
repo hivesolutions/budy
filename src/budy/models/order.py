@@ -108,6 +108,14 @@ class Order(bundle.Bundle):
         eager = True
     )
 
+    vouchers = appier.field(
+        type = appier.references(
+            "Voucher",
+            name = "id"
+        ),
+        eager = True
+    )
+
     account = appier.field(
         type = appier.reference(
             "BudyAccount",
@@ -196,6 +204,7 @@ class Order(bundle.Bundle):
         appier.verify(self.status == "created")
         appier.verify(self.paid == False)
         appier.verify(self.date == None)
+        for voucher in self.vouchers: appier.verify(voucher.is_valid == True)
 
     def pay_s(self, payment_data, notify = False):
         self.verify()
