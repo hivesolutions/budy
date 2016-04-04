@@ -55,9 +55,7 @@ class VoucherTest(unittest.TestCase):
         adapter.drop_db()
 
     def test_basic(self):
-        voucher = budy.Voucher(
-            amount = 200.0
-        )
+        voucher = budy.Voucher(amount = 200.0)
         voucher.save()
 
         self.assertEqual(voucher.amount, 200.0)
@@ -91,3 +89,24 @@ class VoucherTest(unittest.TestCase):
             appier.NotFoundError,
             lambda: voucher.use_s(100.0, currency = "EUR")
         )
+
+        budy.ExchangeRate.create_both_s("EUR", "USD", 1.138)
+
+        voucher = budy.Voucher(amount = 200.0, currency = "EUR")
+        voucher.use_s(100.0, currency = "EUR")
+
+        self.assertEqual(voucher.is_valid(), True)
+        self.assertEqual(voucher.amount, 200.0)
+        self.assertEqual(voucher.currency, "EUR")
+        self.assertEqual(voucher.open_amount, 100.0)
+        self.assertEqual(voucher.used_amount, 100.0)
+        self.assertEqual(voucher.usage_count, 1)
+
+        voucher.use_s(100.0, currency = "USD")
+
+        self.assertEqual(voucher.is_valid(), True)
+        self.assertEqual(voucher.amount, 200.0)
+        self.assertEqual(voucher.currency, "EUR")
+        self.assertEqual(voucher.open_amount, 12.12653778559)
+        self.assertEqual(voucher.used_amount, 187.87346221441)
+        self.assertEqual(voucher.usage_count, 2)
