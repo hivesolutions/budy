@@ -87,16 +87,18 @@ class Currency(base.BudyBase):
         return round(value, decimal_places)
 
     @classmethod
-    def get_currencies(cls):
-        if hasattr(cls, "_currencies"): return cls._currencies
+    def get_currencies(cls, app = None):
+        app = app or appier.get_app()
+        if hasattr(app, "_currencies"): return app._currencies
         currencies = cls.find(map = True)
-        cls._currencies = dict([(value["iso"], value) for value in currencies])
-        return cls._currencies
+        app._currencies = dict([(value["iso"], value) for value in currencies])
+        return app._currencies
 
     @classmethod
-    def invalidate(cls):
-        if not hasattr(cls, "_currencies"): return
-        delattr(cls, "_currencies")
+    def invalidate(cls, app = None):
+        app = app or appier.get_app()
+        if not hasattr(app, "_currencies"): return
+        delattr(app, "_currencies")
 
     @classmethod
     @appier.operation(
