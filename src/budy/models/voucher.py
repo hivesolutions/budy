@@ -201,6 +201,8 @@ class Voucher(base.BudyBase):
 
     def is_valid_currency(self, currency):
         from . import exchange_rate
+        if not currency: return True
+        if not self.currency: return True
         if currency == self.currency: return True
         has_to_remote = exchange_rate.ExchangeRate.has_rate(self.currency, currency)
         has_to_local = exchange_rate.ExchangeRate.has_rate(currency, self.currency)
