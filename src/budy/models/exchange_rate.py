@@ -132,12 +132,12 @@ class ExchangeRate(base.BudyBase):
         def callback(line):
             base, target, rate = line
             rate = float(rate)
-            hs_code_rule = ExchangeRate(
+            exchange_rate = cls(
                 base = base,
                 target = target,
                 rate = rate
             )
-            hs_code_rule.save()
+            exchange_rate.save()
 
-        if empty: ExchangeRate.delete_c()
+        if empty: cls.delete_c()
         cls._csv_import(file, callback)

@@ -269,7 +269,7 @@ class Product(base.BudyBase):
             compositions = compositions.split(";") if compositions else []
             compositions = composition.Composition.find(name = {"$in" : compositions})
 
-            product = Product(
+            product = cls(
                 description = description,
                 short_description = short_description,
                 product_id = product_id,
@@ -294,7 +294,7 @@ class Product(base.BudyBase):
             )
             product.save()
 
-        if empty: Product.delete_c()
+        if empty: cls.delete_c()
         cls._csv_import(file, callback)
 
     @classmethod

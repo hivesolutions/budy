@@ -37,52 +37,38 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import commons
+
 import appier
 
 from . import base
 
-class Country(base.BudyBase):
+class ExchangeRate(base.BudyBase):
 
-    name = appier.field(
-        index = True,
-        default = True
-    )
-
-    country_code = appier.field(
+    iso = appier.field(
+        default = True,
         index = True
     )
 
-    currency_code = appier.field(
-        index = True
-    )
-
-    locale = appier.field(
+    decimal_places = appier.field(
+        type = int,
         index = True
     )
 
     @classmethod
     def validate(cls):
-        return super(Country, cls).validate() + [
-            appier.not_null("name"),
-            appier.not_empty("name"),
+        return super(ExchangeRate, cls).validate() + [
+            appier.not_null("iso"),
+            appier.not_empty("iso"),
+            appier.string_eq("iso", 3),
 
-            appier.not_null("country_code"),
-            appier.not_empty("country_code"),
-
-            appier.not_null("currency_code"),
-            appier.not_empty("currency_code"),
-
-            appier.not_null("locale"),
-            appier.not_empty("locale")
+            appier.not_null("decimal_places"),
+            appier.gte("decimal_places", 0)
         ]
 
     @classmethod
     def list_names(cls):
-        return ["id", "name", "country_code", "currency_code", "locale"]
-
-    @classmethod
-    def get_by_code(cls, country_code, *args, **kwargs):
-        return cls.get(country_code = country_code, *args, **kwargs)
+        return ["iso", "decimal_places"]
 
     @classmethod
     @appier.operation(
@@ -95,18 +81,13 @@ class Country(base.BudyBase):
     def import_csv_s(cls, file, empty):
 
         def callback(line):
-            name, country_code, currency_code, locale = line
-            name = name or None
-            country_code = country_code or None
-            currency_code = currency_code or None
-            locale = locale or None
-            country = cls(
-                name = name,
-                country_code = country_code,
-                currency_code = currency_code,
-                locale = locale
+            iso, decimal_places = line
+            decimal_places = int(decimal_places)
+            currency = cls(
+                iso = iso,
+                decimal_places = decimal_places
             )
-            country.save()
+            currency.save()
 
         if empty: cls.delete_c()
         cls._csv_import(file, callback)
