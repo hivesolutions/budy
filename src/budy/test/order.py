@@ -175,6 +175,7 @@ class OrderTest(unittest.TestCase):
 
         self.assertEqual(voucher.is_valid(), False)
         self.assertEqual(voucher.used_amount, 5.0)
+        self.assertEqual(voucher.open_amount, 0.0)
         self.assertEqual(voucher.usage_count, 1)
 
         order.unmark_paid_s()
@@ -188,3 +189,21 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.discount, 1.0)
         self.assertEqual(order.total, 19.0)
         self.assertEqual(order.payable, 19.0)
+
+        large_voucher = budy.Voucher(amount = 100.0)
+        large_voucher.save()
+
+        order.set_voucher_s(large_voucher)
+
+        self.assertEqual(order.sub_total, 20.0)
+        self.assertEqual(order.discount, 20.0)
+        self.assertEqual(order.total, 0.0)
+        self.assertEqual(order.payable, 0.0)
+
+        order.use_vouchers_s()
+        voucher = large_voucher.reload()
+
+        self.assertEqual(voucher.is_valid(), True)
+        self.assertEqual(voucher.used_amount, 20.0)
+        self.assertEqual(voucher.open_amount, 80.0)
+        self.assertEqual(voucher.usage_count, 1)
