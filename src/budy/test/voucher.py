@@ -77,3 +77,8 @@ class VoucherTest(unittest.TestCase):
 
         self.assertEqual(voucher.is_valid(), False)
         self.assertEqual(voucher.open_amount, 0.0)
+
+        self.assertRaises(
+            appier.AssertionError,
+            lambda: voucher.use_s(100.0, currency = "EUR")
+        )

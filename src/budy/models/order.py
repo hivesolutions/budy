@@ -239,7 +239,7 @@ class Order(bundle.Bundle):
             if pending == 0.0: break
             overflows = voucher.open_amount > pending
             amount = pending if overflows else pending
-            voucher.is_valid(amount)
+            voucher.is_valid(amount = amount)
             pending -= commons.Decimal(amount)
         appier.verify(pending == 0.0)
 
@@ -256,7 +256,7 @@ class Order(bundle.Bundle):
             if pending == 0.0: break
             overflows = voucher.open_amount > pending
             amount = pending if overflows else pending
-            voucher.use_s(amount)
+            voucher.use_s(amount, currency = self.currency)
             pending -= commons.Decimal(amount)
         appier.verify(pending == 0.0)
 
