@@ -61,7 +61,7 @@ class OrderTest(unittest.TestCase):
         voucher.save()
 
         self.assertEqual(voucher.is_valid(), True)
-        self.assertEqual(type(voucher.key), str)
+        self.assertEqual(type(voucher.key), appier.legacy.UNICODE)
         self.assertNotEqual(voucher.key, None)
 
         voucher.use_s(100)
