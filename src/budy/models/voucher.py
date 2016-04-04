@@ -55,18 +55,21 @@ class Voucher(base.BudyBase):
     amount = appier.field(
         type = commons.Decimal,
         index = True,
+        initial = commons.Decimal(0.0),
         safe = True,
         immutable = True
     )
 
     used_amount = appier.field(
         type = commons.Decimal,
+        initial = commons.Decimal(0.0),
         index = True,
         safe = True
     )
 
     percentage = appier.field(
         type = commons.Decimal,
+        initial = commons.Decimal(0.0),
         index = True,
         safe = True,
         immutable = True
@@ -86,12 +89,14 @@ class Voucher(base.BudyBase):
 
     usage_count = appier.field(
         type = int,
+        initial = 0,
         index = True,
         safe = True
     )
 
     usage_limit = appier.field(
         type = int,
+        initial = 0,
         index = True,
         safe = True
     )
@@ -101,17 +106,6 @@ class Voucher(base.BudyBase):
         index = True,
         safe = True
     )
-
-    def __init__(self, *args, **kwargs):
-        base.BudyBase.__init__(self, *args, **kwargs)
-        self.amount = kwargs.get("amount", 100.0)
-        self.used_amount = kwargs.get("used_amount", 0.0)
-        self.percentage = kwargs.get("percentage", 0.0)
-        self.currency = kwargs.get("currency", None)
-        self.expiration = kwargs.get("expiration", None)
-        self.usage_count = kwargs.get("usage_count", 0)
-        self.usage_limit = kwargs.get("usage_limit", 0)
-        self.used = kwargs.get("used", False)
 
     @classmethod
     def validate(cls):
