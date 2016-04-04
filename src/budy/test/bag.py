@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import commons
 import logging
 import unittest
 
@@ -70,7 +71,7 @@ class BagTest(unittest.TestCase):
         bag.save()
 
         self.assertEqual(type(bag.key), appier.legacy.UNICODE)
-        self.assertEqual(type(bag.total), float)
+        self.assertEqual(type(bag.total), commons.Decimal)
         self.assertEqual(len(bag.lines), 0)
         self.assertEqual(bag.currency, None)
         self.assertEqual(bag.total >= 0.0, True)

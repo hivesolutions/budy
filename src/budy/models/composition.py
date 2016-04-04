@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import commons
+
 import appier
 
 from . import base
@@ -55,7 +57,7 @@ class Composition(base.BudyBase):
     )
 
     value = appier.field(
-        type = float
+        type = commons.Decimal
     )
 
     @classmethod

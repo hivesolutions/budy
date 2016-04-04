@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import commons
 import logging
 import unittest
 
@@ -70,7 +71,7 @@ class OrderTest(unittest.TestCase):
         order.save()
 
         self.assertEqual(type(order.key), appier.legacy.UNICODE)
-        self.assertEqual(type(order.total), float)
+        self.assertEqual(type(order.total), commons.Decimal)
         self.assertEqual(len(order.lines), 0)
         self.assertEqual(order.currency, None)
         self.assertEqual(order.total >= 0.0, True)
@@ -83,7 +84,7 @@ class OrderTest(unittest.TestCase):
         order = order.reload()
 
         self.assertEqual(type(order.key), appier.legacy.UNICODE)
-        self.assertEqual(type(order.total), float)
+        self.assertEqual(type(order.total), commons.Decimal)
         self.assertEqual(len(order.lines), 0)
         self.assertEqual(len(order.reference), 9)
         self.assertEqual(order.currency, None)

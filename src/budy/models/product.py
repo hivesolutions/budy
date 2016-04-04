@@ -38,6 +38,7 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import json
+import commons
 
 import appier
 
@@ -67,7 +68,7 @@ class Product(base.BudyBase):
     )
 
     price = appier.field(
-        type = float,
+        type = commons.Decimal,
         index = True
     )
 

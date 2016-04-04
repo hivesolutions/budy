@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import commons
+
 import appier
 
 from . import base
@@ -44,7 +46,7 @@ from . import base
 class BundleLine(base.BudyBase):
 
     price = appier.field(
-        type = float
+        type = commons.Decimal
     )
 
     currency = appier.field()
@@ -52,11 +54,11 @@ class BundleLine(base.BudyBase):
     country = appier.field()
 
     quantity = appier.field(
-        type = float
+        type = commons.Decimal
     )
 
     total = appier.field(
-        type = float
+        type = commons.Decimal
     )
 
     size = appier.field(
