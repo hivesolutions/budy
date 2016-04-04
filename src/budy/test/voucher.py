@@ -51,6 +51,7 @@ class VoucherTest(unittest.TestCase):
         budy.BudyApp(level = logging.ERROR)
 
     def tearDown(self):
+        print("tear down")
         adapter = appier.get_adapter()
         adapter.drop_db()
 
