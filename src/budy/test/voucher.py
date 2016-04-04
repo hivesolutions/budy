@@ -56,7 +56,7 @@ class VoucherTest(unittest.TestCase):
 
     def test_basic(self):
         voucher = budy.Voucher(
-            amount = 200
+            amount = 200.0
         )
         voucher.save()
 
@@ -64,16 +64,16 @@ class VoucherTest(unittest.TestCase):
         self.assertEqual(type(voucher.key), appier.legacy.UNICODE)
         self.assertNotEqual(voucher.key, None)
 
-        voucher.use_s(100)
+        voucher.use_s(100.0)
 
         self.assertEqual(voucher.is_valid(), True)
-        self.assertEqual(voucher.is_valid(amount = 100), True)
-        self.assertEqual(voucher.is_valid(amount = 200), False)
-        self.assertEqual(voucher.open_amount, 100)
+        self.assertEqual(voucher.is_valid(amount = 100.0), True)
+        self.assertEqual(voucher.is_valid(amount = 200.0), False)
+        self.assertEqual(voucher.open_amount, 100.0)
         self.assertEqual(isinstance(voucher.amount, commons.Decimal), True)
         self.assertEqual(isinstance(voucher.open_amount, commons.Decimal), True)
 
-        voucher.use_s(100)
+        voucher.use_s(100.0)
 
         self.assertEqual(voucher.is_valid(), False)
-        self.assertEqual(voucher.open_amount, 0)
+        self.assertEqual(voucher.open_amount, 0.0)
