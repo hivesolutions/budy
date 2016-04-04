@@ -45,7 +45,7 @@ import appier
 
 import budy
 
-class OrderTest(unittest.TestCase):
+class VoucherTest(unittest.TestCase):
 
     def setUp(self):
         budy.BudyApp(level = logging.ERROR)

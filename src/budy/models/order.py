@@ -193,6 +193,11 @@ class Order(bundle.Bundle):
         line.order = self
         return bundle.Bundle.add_line_s(self, line)
 
+    def add_voucher_s(self, voucher):
+        appier.verify(voucher.valid())
+        self.discount += voucher.open_amount
+        self.save()
+
     def refresh_s(self, *args, **kwargs):
         if self.paid: return
         bundle.Bundle.refresh_s(self, *args, **kwargs)

@@ -111,14 +111,19 @@ class Voucher(base.BudyBase):
         return super(Voucher, cls).validate() + [
             appier.not_duplicate("key", cls._name()),
 
+            appier.not_null("amount"),
             appier.gte("amount", 0.0),
 
+            appier.not_null("used_amount"),
             appier.gte("used_amount", 0.0),
 
+            appier.not_null("percentage"),
             appier.gte("percentage", 0.0),
 
+            appier.not_null("usage_count"),
             appier.gte("usage_count", 0),
 
+            appier.not_null("usage_limit"),
             appier.gte("usage_limit", 0)
         ]
 
