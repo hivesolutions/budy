@@ -51,9 +51,9 @@ class VoucherTest(unittest.TestCase):
         budy.BudyApp(level = logging.ERROR)
 
     def tearDown(self):
-        print("tear down")
         adapter = appier.get_adapter()
         adapter.drop_db()
+        budy.Currency.invalidate() #@todo this must be done in a better way
 
     def test_basic(self):
         voucher = budy.Voucher(amount = 200.0)

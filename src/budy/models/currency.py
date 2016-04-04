@@ -70,7 +70,7 @@ class Currency(base.BudyBase):
 
     @classmethod
     def create_s(cls, iso, decimal_places, invalidate = True):
-        if invalidate and hasattr(cls, "_currencies"): delattr(cls, "_currencies")
+        if invalidate: cls.invalidate()
         currency = cls(iso = iso, decimal_places = decimal_places)
         currency.save()
 
@@ -87,6 +87,11 @@ class Currency(base.BudyBase):
         currencies = cls.find(map = True)
         cls._currencies = dict([(value["iso"], value) for value in currencies])
         return cls._currencies
+
+    @classmethod
+    def invalidate(cls):
+        if not hasattr(cls, "_currencies"): return
+        delattr(cls, "_currencies")
 
     @classmethod
     @appier.operation(
