@@ -139,6 +139,10 @@ class Voucher(base.BudyBase):
         return ["description", "created", "amount", "percentage", "expiration", "used"]
 
     @classmethod
+    def order_name(self):
+        return ["id", -1]
+
+    @classmethod
     def is_snapshot(cls):
         return True
 

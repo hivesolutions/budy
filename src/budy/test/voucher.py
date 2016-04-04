@@ -112,6 +112,6 @@ class VoucherTest(unittest.TestCase):
         self.assertEqual(voucher.used, False)
         self.assertEqual(voucher.amount, 200.0)
         self.assertEqual(voucher.currency, "EUR")
-        self.assertEqual(voucher.open_amount, 12.12653778559)
-        self.assertEqual(voucher.used_amount, 187.87346221441)
+        self.assertEqual(voucher.open_amount, 12.12654)
+        self.assertEqual(voucher.used_amount, 187.87346)
         self.assertEqual(voucher.usage_count, 2)

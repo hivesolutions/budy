@@ -75,4 +75,4 @@ class ExchangeRateTest(unittest.TestCase):
 
         result = budy.ExchangeRate.convert(10.0, "USD", "EUR")
 
-        self.assertEqual(result, commons.Decimal(8.787346221441))
+        self.assertEqual(result, commons.Decimal(8.78735))

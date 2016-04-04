@@ -90,7 +90,7 @@ class BagTest(unittest.TestCase):
         bag.add_product_s(product, 3.0)
 
         self.assertEqual(bag.total, 50.0)
-        self.assertEqual(len(bag.lines), 2)
+        self.assertEqual(len(bag.lines), 1)
 
         product_expensive = budy.Product(
             short_description = "product_expensive",
@@ -106,7 +106,7 @@ class BagTest(unittest.TestCase):
         bag.add_product_s(product_expensive, 1.0)
 
         self.assertEqual(bag.total, 150.0)
-        self.assertEqual(len(bag.lines), 3)
+        self.assertEqual(len(bag.lines), 2)
 
         bag.empty_s()
 

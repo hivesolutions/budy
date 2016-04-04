@@ -221,6 +221,7 @@ class Bundle(base.BudyBase):
 
     def merge_s(self, bag_id, increment = False):
         cls = self.__class__
+        if bag_id == self.id: return
         bag = cls.get(id = bag_id)
         for line in bag.lines:
             line = line.clone()
