@@ -63,47 +63,37 @@ class Bundle(base.BudyBase):
     sub_total = appier.field(
         type = commons.Decimal,
         index = True,
-        initial = 0.0,
+        initial = commons.Decimal(0.0),
         safe = True
     )
 
     discount = appier.field(
         type = commons.Decimal,
         index = True,
-        initial = 0.0,
+        initial = commons.Decimal(0.0),
         safe = True
     )
 
     taxes = appier.field(
         type = commons.Decimal,
         index = True,
-        initial = 0.0,
+        initial = commons.Decimal(0.0),
         safe = True
     )
 
     total = appier.field(
         type = commons.Decimal,
         index = True,
-        initial = 0.0,
+        initial = commons.Decimal(0.0),
         safe = True
     )
 
     shipping_cost = appier.field(
         type = commons.Decimal,
         index = True,
-        initial = 0.0,
+        initial = commons.Decimal(0.0),
         safe = True
     )
-
-    def __init__(self, *args, **kwargs):
-        base.BudyBase.__init__(self, *args, **kwargs)
-        self.currency = kwargs.get("currency", None)
-        self.country = kwargs.get("country", None)
-        self.sub_total = kwargs.get("sub_total", 0.0)
-        self.discount = kwargs.get("discount", 0.0)
-        self.taxes = kwargs.get("taxes", 0.0)
-        self.total = kwargs.get("total", 0.0)
-        self.shipping_cost = kwargs.get("shipping_cost", 0.0)
 
     @classmethod
     def validate(cls):

@@ -141,18 +141,6 @@ class Order(bundle.Bundle):
         eager = True
     )
 
-    def __init__(self, *args, **kwargs):
-        bundle.Bundle.__init__(self, *args, **kwargs)
-        self.status = kwargs.get("status", "created")
-        self.paid = kwargs.get("paid", False)
-        self.date = kwargs.get("date", None)
-        self.notification_sent = kwargs.get("notification_sent", False)
-        self.lines = kwargs.get("lines", [])
-        self.vouchers = kwargs.get("vouchers", [])
-        self.account = kwargs.get("account", None)
-        self.shipping_address = kwargs.get("shipping_address", None)
-        self.billing_address = kwargs.get("billing_address", None)
-
     @classmethod
     def list_names(cls):
         return ["id", "total", "currency", "account", "status"]

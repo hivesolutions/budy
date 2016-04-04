@@ -54,11 +54,13 @@ class BundleLine(base.BudyBase):
     country = appier.field()
 
     quantity = appier.field(
-        type = commons.Decimal
+        type = commons.Decimal,
+        initial = commons.Decimal(0.0)
     )
 
     total = appier.field(
-        type = commons.Decimal
+        type = commons.Decimal,
+        initial = commons.Decimal(0.0)
     )
 
     size = appier.field(
@@ -78,15 +80,6 @@ class BundleLine(base.BudyBase):
         ),
         eager = True
     )
-
-    def __init__(self, *args, **kwargs):
-        base.BudyBase.__init__(self, *args, **kwargs)
-        self.currency = kwargs.get("currency", None)
-        self.country = kwargs.get("country", None)
-        self.total = kwargs.get("total", 0.0)
-        self.size = kwargs.get("size", None)
-        self.scale = kwargs.get("scale", None)
-        self.attributes = kwargs.get("attributes", None)
 
     @classmethod
     def list_names(cls):
