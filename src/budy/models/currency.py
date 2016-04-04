@@ -37,13 +37,11 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
-import commons
-
 import appier
 
 from . import base
 
-class ExchangeRate(base.BudyBase):
+class Currency(base.BudyBase):
 
     iso = appier.field(
         default = True,
@@ -57,7 +55,7 @@ class ExchangeRate(base.BudyBase):
 
     @classmethod
     def validate(cls):
-        return super(ExchangeRate, cls).validate() + [
+        return super(Currency, cls).validate() + [
             appier.not_null("iso"),
             appier.not_empty("iso"),
             appier.string_eq("iso", 3),

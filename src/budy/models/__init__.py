@@ -47,6 +47,7 @@ from . import collection
 from . import color
 from . import composition
 from . import country
+from . import currency
 from . import exchange_rate
 from . import live_model
 from . import measurement
@@ -71,6 +72,7 @@ from .collection import Collection
 from .color import Color
 from .composition import Composition
 from .country import Country
+from .currency import Currency
 from .exchange_rate import ExchangeRate
 from .live_model import LiveModel
 from .measurement import Measurement
