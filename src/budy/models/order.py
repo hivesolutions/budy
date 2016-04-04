@@ -241,7 +241,7 @@ class Order(bundle.Bundle):
 
     def pay_s(self, payment_data, vouchers = True, notify = False):
         self.verify()
-        self._pay_stripe(payment_data)
+        self._pay(payment_data)
         self.mark_paid_s()
         if vouchers: self.use_vouchers_s()
         if notify: self.notify_s()
@@ -312,6 +312,10 @@ class Order(bundle.Bundle):
         if not self.shipping_country: return None
         shipping_country = country.Country.get_by_code(self.shipping_country)
         return shipping_country.currency_code
+
+    def _pay(self, payment_data):
+        if self.payable == 0.0: return
+        self._pay_stripe(payment_data)
 
     def _pay_stripe(self, payment_data):
         import stripe
