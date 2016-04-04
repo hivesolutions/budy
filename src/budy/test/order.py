@@ -48,9 +48,10 @@ import budy
 class OrderTest(unittest.TestCase):
 
     def setUp(self):
-        budy.BudyApp(level = logging.ERROR)
+        self.app = budy.BudyApp(level = logging.ERROR)
 
     def tearDown(self):
+        self.app.unload()
         adapter = appier.get_adapter()
         adapter.drop_db()
 

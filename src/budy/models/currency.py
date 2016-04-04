@@ -54,6 +54,11 @@ class Currency(base.BudyBase):
     )
 
     @classmethod
+    def teardown(cls):
+        super(Currency, cls).teardown()
+        cls.invalidate()
+
+    @classmethod
     def validate(cls):
         return super(Currency, cls).validate() + [
             appier.not_null("iso"),
