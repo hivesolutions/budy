@@ -184,7 +184,7 @@ class OrderApiController(root.RootApiController):
     @appier.ensure(token = "user")
     def set_voucher(self, key):
         data = appier.request_json()
-        voucher_key = data["voucher"]
+        voucher_key = data["key"]
         order = budy.Order.get(key = key, rules = False)
         voucher = budy.Voucher.get(key = voucher_key)
         order.set_voucher_s(voucher)
