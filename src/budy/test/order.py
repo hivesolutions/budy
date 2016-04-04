@@ -55,11 +55,10 @@ class OrderTest(unittest.TestCase):
         adapter.drop_db()
 
     def test_basic(self):
-        product = budy.Product.new(
+        product = budy.Product(
             short_description = "product",
             gender = "Male",
-            price = 10.0,
-            form = False
+            price = 10.0
         )
         product.save()
 
@@ -67,7 +66,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(product.gender, "Male")
         self.assertEqual(product.price, 10.0)
 
-        order = budy.Order.new(form = False)
+        order = budy.Order()
         order.save()
 
         self.assertEqual(type(order.key), appier.legacy.UNICODE)
@@ -97,9 +96,8 @@ class OrderTest(unittest.TestCase):
 
         self.assertRaises(appier.AssertionError, order.mark_paid_s)
 
-        order_line = budy.OrderLine.new(
-            quantity = 2.0,
-            form = False
+        order_line = budy.OrderLine(
+            quantity = 2.0
         )
         order_line.product = product
         order_line.save()
@@ -112,12 +110,11 @@ class OrderTest(unittest.TestCase):
 
         self.assertRaises(appier.AssertionError, order.mark_paid_s)
 
-        address = budy.Address.new(
+        address = budy.Address(
             first_name = "first name",
             last_name = "last name",
             address = "address",
-            city = "city",
-            form = False
+            city = "city"
         )
         address.save()
 
@@ -143,9 +140,8 @@ class OrderTest(unittest.TestCase):
         order = budy.Order()
         order.save()
 
-        order_line = budy.OrderLine.new(
-            quantity = 2.0,
-            form = False
+        order_line = budy.OrderLine(
+            quantity = 2.0
         )
         order_line.product = product
         order_line.save()
@@ -156,12 +152,11 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.total, 20.0)
         self.assertEqual(len(order.lines), 1)
 
-        address = budy.Address.new(
+        address = budy.Address(
             first_name = "first name",
             last_name = "last name",
             address = "address",
-            city = "city",
-            form = False
+            city = "city"
         )
         address.save()
 

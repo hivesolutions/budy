@@ -149,6 +149,9 @@ class Order(bundle.Bundle):
         self.notification_sent = kwargs.get("notification_sent", False)
         self.lines = kwargs.get("lines", [])
         self.vouchers = kwargs.get("vouchers", [])
+        self.account = kwargs.get("account", None)
+        self.shipping_address = kwargs.get("shipping_address", None)
+        self.billing_address = kwargs.get("billing_address", None)
 
     @classmethod
     def list_names(cls):
