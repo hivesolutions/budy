@@ -183,7 +183,10 @@ class Order(bundle.Bundle):
     def _build(cls, model, map):
         prefix = appier.conf("BUDY_ORDER_REF", "BD-%06d")
         id = model.get("id", None)
+        total = model.get("total", 0.0)
+        discount = model.get("discount", 0.0)
         if id: model["reference"] = prefix % id
+        model["payable"] = total - discount
 
     def pre_delete(self):
         bundle.Bundle.pre_delete(self)
