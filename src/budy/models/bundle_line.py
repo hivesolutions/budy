@@ -83,6 +83,10 @@ class BundleLine(base.BudyBase):
         base.BudyBase.__init__(self, *args, **kwargs)
         self.currency = kwargs.get("currency", None)
         self.country = kwargs.get("country", None)
+        self.total = kwargs.get("total", 0.0)
+        self.size = kwargs.get("size", None)
+        self.scale = kwargs.get("scale", None)
+        self.attributes = kwargs.get("attributes", {})
 
     @classmethod
     def list_names(cls):
