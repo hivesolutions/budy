@@ -96,9 +96,7 @@ class OrderTest(unittest.TestCase):
 
         self.assertRaises(appier.AssertionError, order.mark_paid_s)
 
-        order_line = budy.OrderLine(
-            quantity = 2.0
-        )
+        order_line = budy.OrderLine(quantity = 2.0)
         order_line.product = product
         order_line.save()
         order.add_line_s(order_line)
@@ -140,9 +138,7 @@ class OrderTest(unittest.TestCase):
         order = budy.Order()
         order.save()
 
-        order_line = budy.OrderLine(
-            quantity = 2.0
-        )
+        order_line = budy.OrderLine(quantity = 2.0)
         order_line.product = product
         order_line.save()
         order.add_line_s(order_line)
@@ -185,9 +181,7 @@ class OrderTest(unittest.TestCase):
 
         order.unmark_paid_s()
 
-        small_voucher = budy.Voucher(
-            amount = 1.0
-        )
+        small_voucher = budy.Voucher(amount = 1.0)
         small_voucher.save()
 
         order.set_voucher_s(small_voucher)
