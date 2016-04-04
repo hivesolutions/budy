@@ -96,6 +96,12 @@ class Voucher(base.BudyBase):
         safe = True
     )
 
+    used = appier.field(
+        type = bool,
+        index = True,
+        safe = True
+    )
+
     def __init__(self, *args, **kwargs):
         base.BudyBase.__init__(self, *args, **kwargs)
         self.amount = kwargs.get("amount", 100.0)
@@ -105,6 +111,7 @@ class Voucher(base.BudyBase):
         self.expiration = kwargs.get("expiration", None)
         self.usage_count = kwargs.get("usage_count", 0)
         self.usage_limit = kwargs.get("usage_limit", 0)
+        self.used = kwargs.get("used", False)
 
     @classmethod
     def validate(cls):
@@ -129,7 +136,7 @@ class Voucher(base.BudyBase):
 
     @classmethod
     def list_names(cls):
-        return ["description", "created", "amount", "percentage", "expiration", "enabled"]
+        return ["description", "created", "amount", "percentage", "expiration", "used"]
 
     @classmethod
     def is_snapshot(cls):
@@ -140,6 +147,10 @@ class Voucher(base.BudyBase):
         if not hasattr(self, "key") or not self.key:
             self.key = self.secret()
         self.description = self.key[:8]
+
+    def pre_update(self):
+        base.BudyBase.pre_update(self)
+        if not self.used and not self.is_valid(): self.used = True
 
     def use_s(self, amount, currency = None):
         amount_l = self.to_local(amount, currency)
