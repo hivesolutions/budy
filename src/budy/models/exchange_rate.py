@@ -82,7 +82,7 @@ class ExchangeRate(base.BudyBase):
     @classmethod
     def convert(cls, value, base, target):
         exchange_rate = cls.get(base = base, target = target)
-        return commons.Decimal * exchange_rate.rate
+        return commons.Decimal(value) * exchange_rate.rate
 
     @classmethod
     @appier.operation(
