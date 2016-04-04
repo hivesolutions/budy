@@ -142,21 +142,44 @@ class Voucher(base.BudyBase):
         self.description = self.key[:8]
 
     def use_s(self, amount, currency = None):
-        appier.verify(currency == self.currency)
-        appier.verify(self.is_valid(amount = amount))
-        self.used_amount += commons.Decimal(amount)
+        amount_l = self.to_local(amount, currency)
+        appier.verify(self.is_valid(amount = amount, currency = currency))
+        self.used_amount += commons.Decimal(amount_l)
         self.usage_count += 1
         self.save()
 
+    def to_local(self, amount, currency):
+        from . import exchange_rate
+        if currency == self.currency: return amount
+        return exchange_rate.ExchangeRate.convert(amount, currency, self.currency)
+
+    def to_remote(self, amount, currency):
+        from . import exchange_rate
+        if currency == self.currency: return amount
+        return exchange_rate.ExchangeRate.convert(amount, self.currency, currency)
+
     def is_valid(self, amount = None, currency = None):
         current = time.time()
+        amount_l = self.to_local(amount, currency)
         if self.expiration and current > self.expiration: return False
         if self.usage_limit and self.usage_count >= self.usage_limit: return False
         if commons.Decimal(self.used_amount) >= commons.Decimal(self.amount): return False
-        if amount and commons.Decimal(amount) > commons.Decimal(self.open_amount): return False
-        if currency and not currency == self.currency: return False
+        if amount_l and commons.Decimal(amount_l) > commons.Decimal(self.open_amount): return False
+        if currency and not self.is_valid_currency(currency): return False
         return True
+
+    def is_valid_currency(self, currency):
+        from . import exchange_rate
+        if currency == self.currency: return True
+        has_to_remote = exchange_rate.ExchangeRate.has_rate(self.currency, currency)
+        has_to_local = exchange_rate.ExchangeRate.has_rate(currency, self.currency)
+        if has_to_remote and has_to_local: return True
+        return False
+
+    def open_amount_r(self, currency = None):
+        open_amount = commons.Decimal(self.amount) - commons.Decimal(self.used_amount)
+        return self.to_remote(open_amount, currency)
 
     @property
     def open_amount(self):
-        return commons.Decimal(self.amount) - commons.Decimal(self.used_amount)
+        return self.open_amount_r()

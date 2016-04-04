@@ -85,6 +85,17 @@ class ExchangeRate(base.BudyBase):
         return commons.Decimal(value) * exchange_rate.rate
 
     @classmethod
+    def has_rate(cls, base, target):
+        exchange_rate = cls.get(
+            base = base,
+            target = target,
+            raise_e = False
+        )
+        if not exchange_rate: return False
+        if not exchange_rate.rate: return False
+        return True
+
+    @classmethod
     @appier.operation(
         name = "Import CSV",
         parameters = (
