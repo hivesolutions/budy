@@ -141,6 +141,7 @@ class Voucher(base.BudyBase):
         appier.verify(currency == self.currency)
         appier.verify(self.is_valid(amount = amount))
         self.used_amount += commons.Decimal(amount)
+        self.usage_count += 1
         self.save()
 
     def is_valid(self, amount = None, currency = None):

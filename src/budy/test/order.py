@@ -179,6 +179,8 @@ class OrderTest(unittest.TestCase):
         voucher = voucher.reload()
 
         self.assertEqual(voucher.is_valid(), False)
+        self.assertEqual(voucher.used_amount, 5.0)
+        self.assertEqual(voucher.usage_count, 1)
 
         order.unmark_paid_s()
 

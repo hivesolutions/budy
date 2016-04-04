@@ -60,6 +60,9 @@ class VoucherTest(unittest.TestCase):
         )
         voucher.save()
 
+        self.assertEqual(voucher.amount, 200.0)
+        self.assertEqual(voucher.used_amount, 0.0)
+        self.assertEqual(voucher.usage_count, 0)
         self.assertEqual(voucher.is_valid(), True)
         self.assertEqual(type(voucher.key), appier.legacy.UNICODE)
         self.assertNotEqual(voucher.key, None)
@@ -69,14 +72,20 @@ class VoucherTest(unittest.TestCase):
         self.assertEqual(voucher.is_valid(), True)
         self.assertEqual(voucher.is_valid(amount = 100.0), True)
         self.assertEqual(voucher.is_valid(amount = 200.0), False)
+        self.assertEqual(voucher.amount, 200.0)
         self.assertEqual(voucher.open_amount, 100.0)
+        self.assertEqual(voucher.used_amount, 100.0)
+        self.assertEqual(voucher.usage_count, 1)
         self.assertEqual(isinstance(voucher.amount, commons.Decimal), True)
         self.assertEqual(isinstance(voucher.open_amount, commons.Decimal), True)
 
         voucher.use_s(100.0)
 
         self.assertEqual(voucher.is_valid(), False)
+        self.assertEqual(voucher.amount, 200.0)
         self.assertEqual(voucher.open_amount, 0.0)
+        self.assertEqual(voucher.used_amount, 200.0)
+        self.assertEqual(voucher.usage_count, 2)
 
         self.assertRaises(
             appier.AssertionError,
