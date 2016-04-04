@@ -153,10 +153,15 @@ class Voucher(base.BudyBase):
         if currency == self.currency: return amount
         return exchange_rate.ExchangeRate.convert(amount, currency, self.currency)
 
-    def to_remote(self, amount, currency):
+    def to_remote(self, amount, currency, reversed = True):
         from . import exchange_rate
         if currency == self.currency: return amount
-        return exchange_rate.ExchangeRate.convert(amount, self.currency, currency)
+        return exchange_rate.ExchangeRate.convert(
+            amount,
+            self.currency,
+            currency,
+            reversed = reversed
+        )
 
     def is_valid(self, amount = None, currency = None):
         current = time.time()

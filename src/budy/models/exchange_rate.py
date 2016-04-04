@@ -80,9 +80,31 @@ class ExchangeRate(base.BudyBase):
         return ["base", "target", "rate"]
 
     @classmethod
-    def convert(cls, value, base, target):
+    def create_both_s(cls, base, target, rate):
+        rate_r = commons.Decimal(1.0) / rate
+        exchange_rate = ExchangeRate(
+            base = base,
+            target = target,
+            rate = rate
+        )
+        exchange_rate.save()
+        exchange_rate_r = ExchangeRate(
+            base = target,
+            target = base,
+            rate = rate_r
+        )
+        exchange_rate_r.save()
+
+    @classmethod
+    def convert(cls, value, base, target, reversed = False):
+        if reversed: cls.reverse(value, base, target)
         exchange_rate = cls.get(base = base, target = target)
         return commons.Decimal(value) * exchange_rate.rate
+
+    @classmethod
+    def reverse(cls, value, base, target):
+        exchange_rate = cls.get(base = target, target = base)
+        return commons.Decimal(value) * (commons.Decimal(1.0) / exchange_rate.rate)
 
     @classmethod
     def has_rate(cls, base, target):

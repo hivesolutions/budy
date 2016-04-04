@@ -65,3 +65,14 @@ class ExchangeRateTest(unittest.TestCase):
         result = budy.ExchangeRate.convert(10.0, "EUR", "USD")
 
         self.assertEqual(result, commons.Decimal(11.38))
+
+    def test_both(self):
+        budy.ExchangeRate.create_both_s("EUR", "USD", 1.138)
+
+        result = budy.ExchangeRate.convert(10.0, "EUR", "USD")
+
+        self.assertEqual(result, commons.Decimal(11.38))
+
+        result = budy.ExchangeRate.convert(10.0, "USD", "EUR")
+
+        self.assertEqual(result, commons.Decimal(8.787346221441))
