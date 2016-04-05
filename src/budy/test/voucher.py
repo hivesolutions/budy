@@ -120,6 +120,27 @@ class VoucherTest(unittest.TestCase):
         self.assertEqual(voucher.used_amount, 188.10)
         self.assertEqual(voucher.usage_count, 2)
 
+        value = voucher.open_amount_r(currency = "USD")
+        voucher.use_s(value, currency = "USD")
+
+        self.assertEqual(voucher.is_valid(), True)
+        self.assertEqual(voucher.used, False)
+        self.assertEqual(voucher.amount, 200.0)
+        self.assertEqual(voucher.currency, "EUR")
+        self.assertEqual(voucher.open_amount, 0.01)
+        self.assertEqual(voucher.used_amount, 199.99)
+        self.assertEqual(voucher.usage_count, 3)
+
+        voucher.use_s(voucher.open_amount, currency = "EUR")
+
+        self.assertEqual(voucher.is_valid(), False)
+        self.assertEqual(voucher.used, True)
+        self.assertEqual(voucher.amount, 200.0)
+        self.assertEqual(voucher.currency, "EUR")
+        self.assertEqual(voucher.open_amount, 0.0)
+        self.assertEqual(voucher.used_amount, 200.0)
+        self.assertEqual(voucher.usage_count, 4)
+
     def test_single(self):
         voucher = budy.Voucher(amount = 200.0, usage_limit = 1)
         voucher.save()
