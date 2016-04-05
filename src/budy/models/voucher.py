@@ -167,7 +167,8 @@ class Voucher(base.BudyBase):
             amount,
             currency,
             self.currency,
-            reversed = reversed
+            reversed = reversed,
+            rounder = commons.floor
         )
 
     def to_remote(self, amount, currency, reversed = True):
@@ -180,7 +181,8 @@ class Voucher(base.BudyBase):
             amount,
             self.currency,
             currency,
-            reversed = reversed
+            reversed = reversed,
+            rounder = commons.floor
         )
 
     def is_valid(self, amount = None, currency = None):

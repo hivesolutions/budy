@@ -80,11 +80,11 @@ class Currency(base.BudyBase):
         currency.save()
 
     @classmethod
-    def round(cls, value, currency, decimal_places = 5):
+    def round(cls, value, currency, rounder = round, decimal_places = 5):
         currencies = cls.get_currencies()
         currency = currencies.get(currency, {})
         decimal_places = currency.get("decimal_places", decimal_places)
-        return round(value, decimal_places)
+        return rounder(value, decimal_places)
 
     @classmethod
     def get_currencies(cls, app = None):

@@ -97,7 +97,7 @@ class VoucherTest(unittest.TestCase):
 
         budy.Currency.create_s("EUR", 2)
         budy.Currency.create_s("USD", 2)
-        budy.ExchangeRate.create_both_s("EUR", "USD", 1.138)
+        budy.ExchangeRate.create_both_s("EUR", "USD", 1.135)
 
         voucher = budy.Voucher(amount = 200.0, currency = "EUR")
         voucher.use_s(100.0, currency = "EUR")
@@ -116,8 +116,8 @@ class VoucherTest(unittest.TestCase):
         self.assertEqual(voucher.used, False)
         self.assertEqual(voucher.amount, 200.0)
         self.assertEqual(voucher.currency, "EUR")
-        self.assertEqual(voucher.open_amount, 12.13)
-        self.assertEqual(voucher.used_amount, 187.87)
+        self.assertEqual(voucher.open_amount, 11.90)
+        self.assertEqual(voucher.used_amount, 188.10)
         self.assertEqual(voucher.usage_count, 2)
 
     def test_single(self):
