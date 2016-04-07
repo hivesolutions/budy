@@ -64,6 +64,7 @@ class VoucherTest(unittest.TestCase):
         self.assertEqual(voucher.amount, 200.0)
         self.assertEqual(voucher.used_amount, 0.0)
         self.assertEqual(voucher.usage_count, 0)
+        self.assertEqual(voucher.is_percent, False)
         self.assertEqual(voucher.is_valid(), True)
         self.assertEqual(type(voucher.key), appier.legacy.UNICODE)
         self.assertNotEqual(voucher.key, None)
@@ -78,6 +79,7 @@ class VoucherTest(unittest.TestCase):
         self.assertEqual(voucher.open_amount, 100.0)
         self.assertEqual(voucher.used_amount, 100.0)
         self.assertEqual(voucher.usage_count, 1)
+        self.assertEqual(voucher.is_percent, False)
         self.assertEqual(isinstance(voucher.amount, commons.Decimal), True)
         self.assertEqual(isinstance(voucher.open_amount, commons.Decimal), True)
 
@@ -89,6 +91,7 @@ class VoucherTest(unittest.TestCase):
         self.assertEqual(voucher.open_amount, 0.0)
         self.assertEqual(voucher.used_amount, 200.0)
         self.assertEqual(voucher.usage_count, 2)
+        self.assertEqual(voucher.is_percent, False)
 
         self.assertRaises(
             appier.AssertionError,
@@ -130,6 +133,7 @@ class VoucherTest(unittest.TestCase):
         self.assertEqual(voucher.open_amount, 0.01)
         self.assertEqual(voucher.used_amount, 199.99)
         self.assertEqual(voucher.usage_count, 3)
+        self.assertEqual(voucher.is_percent, False)
 
         voucher.use_s(voucher.open_amount, currency = "EUR")
 
@@ -140,6 +144,7 @@ class VoucherTest(unittest.TestCase):
         self.assertEqual(voucher.open_amount, 0.0)
         self.assertEqual(voucher.used_amount, 200.0)
         self.assertEqual(voucher.usage_count, 4)
+        self.assertEqual(voucher.is_percent, False)
 
     def test_single(self):
         voucher = budy.Voucher(amount = 200.0, usage_limit = 1)
@@ -155,6 +160,7 @@ class VoucherTest(unittest.TestCase):
         self.assertEqual(voucher.open_amount, 100.0)
         self.assertEqual(voucher.used_amount, 100.0)
         self.assertEqual(voucher.usage_count, 1)
+        self.assertEqual(voucher.is_percent, False)
         self.assertEqual(isinstance(voucher.amount, commons.Decimal), True)
         self.assertEqual(isinstance(voucher.open_amount, commons.Decimal), True)
 
@@ -162,6 +168,19 @@ class VoucherTest(unittest.TestCase):
             appier.AssertionError,
             lambda: voucher.use_s(100.0)
         )
+
+    def test_percent(self):
+        budy.Currency.create_s("EUR", 2)
+
+        voucher = budy.Voucher(percentage = 10.0)
+        voucher.save()
+
+        self.assertEqual(voucher.open_amount_p(100.0), 10.0)
+        self.assertEqual(voucher.discount(100.0), 10.0)
+        self.assertEqual(voucher.discount(100.234, currency = "EUR"), 10.02)
+
+        voucher = budy.Voucher(percentage = 120.0)
+        self.assertRaises(appier.ValidationError, voucher.save)
 
     def test_expired(self):
         voucher = budy.Voucher(amount = 200.0, expiration = time.time() + 3600)
@@ -177,6 +196,7 @@ class VoucherTest(unittest.TestCase):
         self.assertEqual(voucher.open_amount, 100.0)
         self.assertEqual(voucher.used_amount, 100.0)
         self.assertEqual(voucher.usage_count, 1)
+        self.assertEqual(voucher.is_percent, False)
         self.assertEqual(isinstance(voucher.amount, commons.Decimal), True)
         self.assertEqual(isinstance(voucher.open_amount, commons.Decimal), True)
 

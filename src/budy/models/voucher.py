@@ -120,6 +120,7 @@ class Voucher(base.BudyBase):
 
             appier.not_null("percentage"),
             appier.gte("percentage", 0.0),
+            appier.lte("percentage", 100.0),
 
             appier.not_null("usage_count"),
             appier.gte("usage_count", 0),
@@ -156,6 +157,10 @@ class Voucher(base.BudyBase):
         self.used_amount += commons.Decimal(amount_l)
         self.usage_count += 1
         self.save()
+
+    def discount(self, amount, currency = None):
+        if self.is_percent: return self.open_amount_p(amount, currency = currency)
+        else: return self.open_amount_r(currency = currency)
 
     def to_local(self, amount, currency, reversed = False):
         from . import exchange_rate
@@ -209,6 +214,21 @@ class Voucher(base.BudyBase):
         open_amount = commons.Decimal(self.amount) - commons.Decimal(self.used_amount)
         return self.to_remote(open_amount, currency)
 
+    def open_amount_p(self, amount, currency = None):
+        from . import currency as _currency
+        decimal = self.percentage / 100.0
+        open_amount = commons.Decimal(amount) * decimal
+        if not currency: return open_amount
+        return _currency.Currency.round(open_amount, currency)
+
     @property
     def open_amount(self):
         return self.open_amount_r()
+
+    @property
+    def is_percent(self):
+        if self.amount: return False
+        if self.percentage: return True
+        raise appier.OperationalError(
+            message = "No amount or percentage defined"
+        )
