@@ -216,3 +216,24 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(voucher.used_amount, 20.0)
         self.assertEqual(voucher.open_amount, 80.0)
         self.assertEqual(voucher.usage_count, 1)
+
+        order.unmark_paid_s()
+
+        percent_voucher = budy.Voucher(percentage = 10.0)
+        percent_voucher.save()
+
+        order.set_voucher_s(percent_voucher)
+
+        self.assertEqual(order.sub_total, 20.0)
+        self.assertEqual(order.discount, 2.0)
+        self.assertEqual(order.total, 18.0)
+        self.assertEqual(order.payable, 18.0)
+
+        order.use_vouchers_s()
+        voucher = percent_voucher.reload()
+
+        self.assertEqual(voucher.is_valid(), True)
+        self.assertEqual(voucher.percentage, 10.0)
+        self.assertEqual(voucher.used_amount, 0.0)
+        self.assertEqual(voucher.open_amount, 0.0)
+        self.assertEqual(voucher.usage_count, 1)

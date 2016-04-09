@@ -189,9 +189,9 @@ class Order(bundle.Bundle):
 
     def add_voucher_s(self, voucher):
         appier.verify(voucher.is_valid(currency = self.currency))
-        open_amount = voucher.open_amount_r(currency = self.currency)
-        overflows = open_amount > self.payable
-        amount = self.payable if overflows else open_amount
+        discount = voucher.discount(self.sub_total, currency = self.currency)
+        overflows = discount > self.payable
+        amount = self.payable if overflows else discount
         self.discount += amount
         self.vouchers.append(voucher)
         self.save()
@@ -232,10 +232,11 @@ class Order(bundle.Bundle):
             open_amount = voucher.open_amount_r(currency = self.currency)
             overflows = open_amount > pending
             amount = pending if overflows else pending
-            voucher.is_valid(
+            result = voucher.is_valid(
                 amount = amount,
                 currency = self.currency
             )
+            if not result: continue
             pending -= commons.Decimal(amount)
         appier.verify(pending == 0.0)
 
@@ -250,9 +251,12 @@ class Order(bundle.Bundle):
         pending = self.discount
         for voucher in self.vouchers:
             if pending == 0.0: break
-            open_amount = voucher.open_amount_r(currency = self.currency)
-            overflows = open_amount > pending
-            amount = pending if overflows else pending
+            discount = voucher.discount(
+                self.sub_total,
+                currency = self.currency
+            )
+            overflows = discount > pending
+            amount = pending if overflows else discount
             voucher.use_s(amount, currency = self.currency)
             pending -= commons.Decimal(amount)
         appier.verify(pending == 0.0)

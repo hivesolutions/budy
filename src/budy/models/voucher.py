@@ -154,7 +154,7 @@ class Voucher(base.BudyBase):
     def use_s(self, amount, currency = None):
         amount_l = self.to_local(amount, currency)
         appier.verify(self.is_valid(amount = amount, currency = currency))
-        self.used_amount += commons.Decimal(amount_l)
+        if self.is_value: self.used_amount += commons.Decimal(amount_l)
         self.usage_count += 1
         self.save()
 
@@ -195,9 +195,10 @@ class Voucher(base.BudyBase):
         amount_l = self.to_local(amount, currency)
         if self.expiration and current > self.expiration: return False
         if self.usage_limit and self.usage_count >= self.usage_limit: return False
-        if commons.Decimal(self.used_amount) >= commons.Decimal(self.amount): return False
-        if amount_l and commons.Decimal(amount_l) > commons.Decimal(self.open_amount): return False
+        if self.amount and commons.Decimal(self.used_amount) >= commons.Decimal(self.amount): return False
+        if self.amount and amount_l and commons.Decimal(amount_l) > commons.Decimal(self.open_amount): return False
         if currency and not self.is_valid_currency(currency): return False
+        if not self.amount and not self.percentage: return False
         return True
 
     def is_valid_currency(self, currency):
@@ -232,3 +233,7 @@ class Voucher(base.BudyBase):
         raise appier.OperationalError(
             message = "No amount or percentage defined"
         )
+
+    @property
+    def is_value(self):
+        return not self.is_percent
