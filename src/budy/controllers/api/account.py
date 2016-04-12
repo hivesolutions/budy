@@ -45,6 +45,14 @@ from . import root
 
 class AccountApiController(root.RootApiController):
 
+    @appier.route("/api/accounts", "POST", json = True)
+    def create(self):
+        account = budy.BudyAccount.new()
+        account.type = budy.BudyAccount.USER_TYPE
+        account.password_confirm = account.password
+        account.save()
+        return account
+
     @appier.route("/api/accounts/me", "GET", json = True)
     @appier.ensure(token = "user")
     def me(self):
