@@ -407,9 +407,7 @@ class Product(base.BudyBase):
         )
     )
     def add_image_s(self, image):
-        from . import media
-        image = media.Media.get(id = image.id)
-        if image in self.images: return
+        if not image: return
         self.images.append(image)
         self.save()
 
@@ -420,8 +418,7 @@ class Product(base.BudyBase):
         )
     )
     def remove_image_s(self, image):
-        from . import media
-        image = media.Media.get(id = image.id)
+        if not image: return
         if not image in self.images: return
         self.images.remove(image)
         self.save()
