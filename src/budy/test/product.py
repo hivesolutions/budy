@@ -57,55 +57,55 @@ class ProductTest(unittest.TestCase):
     def test_add_remove_images(self):
         media_1 = budy.Media()
         media_1.save(validate = False)
-        
+
         media_2 = budy.Media()
         media_2.save(validate = False)
-        
+
         product = budy.Product(
             short_description = "product",
             gender = "Male",
             price = 10.0
         )
         product.save()
-        
+
         self.assertEqual(len(product.images), 0)
-        
+
         product.add_image_s(media_1.id)
-        
+
         self.assertEqual(len(product.images), 1)
         self.assertEqual(product.images[0].id, media_1.id)
-        
+
         product.add_image_s(media_1.id)
-        
+
         self.assertEqual(len(product.images), 1)
         self.assertEqual(product.images[0].id, media_1.id)
-        
+
         product.add_image_s(media_2.id)
-        
+
         self.assertEqual(len(product.images), 2)
         self.assertEqual(product.images[0].id, media_1.id)
         self.assertEqual(product.images[1].id, media_2.id)
-        
+
         product = product.reload()
-        
+
         self.assertEqual(len(product.images), 2)
         self.assertEqual(product.images[0].id, media_1.id)
         self.assertEqual(product.images[1].id, media_2.id)
-        
+
         product.remove_image_s(media_1.id)
-        
+
         self.assertEqual(len(product.images), 1)
         self.assertEqual(product.images[0].id, media_2.id)
-        
+
         product.remove_image_s(media_1.id)
-        
+
         self.assertEqual(len(product.images), 1)
         self.assertEqual(product.images[0].id, media_2.id)
-        
+
         product.remove_image_s(media_2.id)
-        
+
         self.assertEqual(len(product.images), 0)
-        
+
         product = product.reload()
-        
+
         self.assertEqual(len(product.images), 0)
