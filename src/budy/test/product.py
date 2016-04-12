@@ -55,11 +55,29 @@ class ProductTest(unittest.TestCase):
         adapter.drop_db()
 
     def test_add_remove_images(self):
-        media_1 = budy.Media()
-        media_1.save(validate = False)
+        file = appier.typesf.ImageFile(
+            dict(
+                name = "name",
+                data = "data",
+                mime = "mime"
+            )
+        )
 
-        media_2 = budy.Media()
-        media_2.save(validate = False)
+        media_1 = budy.Media(
+            description = "description",
+            label = "label",
+            order = 1,
+            file = file
+        )
+        media_1.save()
+
+        media_2 = budy.Media(
+            description = "description",
+            label = "label",
+            order = 1,
+            file = file
+        )
+        media_2.save()
 
         product = budy.Product(
             short_description = "product",
