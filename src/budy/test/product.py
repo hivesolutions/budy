@@ -88,17 +88,17 @@ class ProductTest(unittest.TestCase):
 
         self.assertEqual(len(product.images), 0)
 
-        product.add_image_s(media_1.id)
+        product.add_image_s(media_1)
 
         self.assertEqual(len(product.images), 1)
         self.assertEqual(product.images[0].id, media_1.id)
 
-        product.add_image_s(media_1.id)
+        product.add_image_s(media_1)
 
         self.assertEqual(len(product.images), 1)
         self.assertEqual(product.images[0].id, media_1.id)
 
-        product.add_image_s(media_2.id)
+        product.add_image_s(media_2)
 
         self.assertEqual(len(product.images), 2)
         self.assertEqual(product.images[0].id, media_1.id)
@@ -110,17 +110,17 @@ class ProductTest(unittest.TestCase):
         self.assertEqual(product.images[0].id, media_1.id)
         self.assertEqual(product.images[1].id, media_2.id)
 
-        product.remove_image_s(media_1.id)
+        product.remove_image_s(media_1)
 
         self.assertEqual(len(product.images), 1)
         self.assertEqual(product.images[0].id, media_2.id)
 
-        product.remove_image_s(media_1.id)
+        product.remove_image_s(media_1)
 
         self.assertEqual(len(product.images), 1)
         self.assertEqual(product.images[0].id, media_2.id)
 
-        product.remove_image_s(media_2.id)
+        product.remove_image_s(media_2)
 
         self.assertEqual(len(product.images), 0)
 

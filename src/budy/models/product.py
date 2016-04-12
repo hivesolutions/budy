@@ -403,12 +403,12 @@ class Product(base.BudyBase):
     @appier.operation(
         name = "Add Image",
         parameters = (
-            ("Image ID", "image_id", int),
+            ("Image", "image", appier.reference("Media", name = "id")),
         )
     )
-    def add_image_s(self, image_id):
+    def add_image_s(self, image):
         from . import media
-        image = media.Media.get(id = image_id)
+        image = media.Media.get(id = image.id)
         if image in self.images: return
         self.images.append(image)
         self.save()
@@ -416,12 +416,12 @@ class Product(base.BudyBase):
     @appier.operation(
         name = "Remove Image",
         parameters = (
-            ("Image ID", "image_id", int),
+            ("Image", "image", appier.reference("Media", name = "id")),
         )
     )
-    def remove_image_s(self, image_id):
+    def remove_image_s(self, image):
         from . import media
-        image = media.Media.get(id = image_id)
+        image = media.Media.get(id = image.id)
         if not image in self.images: return
         self.images.remove(image)
         self.save()
