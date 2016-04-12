@@ -327,6 +327,32 @@ class Product(base.BudyBase):
         self.collections.remove(collection)
         self.save()
 
+    @appier.operation(
+        name = "Add Image",
+        parameters = (
+            ("Image ID", "image_id", int),
+        )
+    )
+    def add_image_s(self, image_id):
+        from . import media
+        image = media.Media.get(id = image_id)
+        if image in self.images: return
+        self.images.append(image)
+        self.save()
+
+    @appier.operation(
+        name = "Remove Image",
+        parameters = (
+            ("Image ID", "image_id", int),
+        )
+    )
+    def remove_image_s(self, image_id):
+        from . import media
+        image = media.Media.get(id = image_id)
+        if not image in self.images: return
+        self.images.remove(image)
+        self.save()
+
     def get_price(
         self,
         currency = None,
