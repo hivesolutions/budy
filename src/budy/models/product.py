@@ -377,12 +377,15 @@ class Product(base.BudyBase):
     @appier.operation(
         name = "Add Collection",
         parameters = (
-            ("Collection", "collection", str),
+            (
+                "Collection",
+                "collection",
+                appier.reference("Collection", name = "id")
+            ),
         )
     )
     def add_collection_s(self, collection):
-        from . import collection as _collection
-        collection = _collection.Collection.get(name = collection)
+        if not collection: return
         if collection in self.collections: return
         self.collections.append(collection)
         self.save()
@@ -390,12 +393,15 @@ class Product(base.BudyBase):
     @appier.operation(
         name = "Remove Collection",
         parameters = (
-            ("Collection", "collection", str),
+            (
+                "Collection",
+                "collection",
+                appier.reference("Collection", name = "id")
+            ),
         )
     )
     def remove_collection_s(self, collection):
-        from . import collection as _collection
-        collection = _collection.Collection.get(name = collection)
+        if not collection: return
         if not collection in self.collections: return
         self.collections.remove(collection)
         self.save()
@@ -403,18 +409,27 @@ class Product(base.BudyBase):
     @appier.operation(
         name = "Add Image",
         parameters = (
-            ("Image", "image", appier.reference("Media", name = "id")),
+            (
+                "Image",
+                "image",
+                appier.reference("Media", name = "id")
+            ),
         )
     )
     def add_image_s(self, image):
         if not image: return
+        if image in self.images: return
         self.images.append(image)
         self.save()
 
     @appier.operation(
         name = "Remove Image",
         parameters = (
-            ("Image", "image", appier.reference("Media", name = "id")),
+            (
+                "Image",
+                "image",
+                appier.reference("Media", name = "id")
+            ),
         )
     )
     def remove_image_s(self, image):
