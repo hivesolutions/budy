@@ -91,9 +91,12 @@ class Media(base.BudyBase):
     @classmethod
     @appier.operation(
         name = "Import Media",
-        parameters = (("Media File", "file", "file"),)
+        parameters = (
+            ("Media File", "file", "file"),
+            ("Empty source", "empty", bool, True)
+        )
     )
-    def import_media_s(cls, file, strict = False):
+    def import_media_s(cls, file, empty, strict = False):
         _file_name, mime_type, data = file
         is_zip = mime_type in ("application/zip", "application/octet-stream")
         if not is_zip and strict:
@@ -105,6 +108,8 @@ class Media(base.BudyBase):
         target = tempfile.mkdtemp()
         try: file.extractall(target)
         finally: file.close()
+
+        if empty: cls.delete_c()
 
         names = os.listdir(target)
         for name in names:
