@@ -95,6 +95,12 @@ class Bundle(base.BudyBase):
         safe = True
     )
 
+    referals = appier.field(
+        type = list,
+        index = True,
+        safe = True
+    )
+
     @classmethod
     def validate(cls):
         return super(Bundle, cls).validate() + [
