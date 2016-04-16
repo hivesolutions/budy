@@ -95,10 +95,12 @@ class Bundle(base.BudyBase):
         safe = True
     )
 
-    referals = appier.field(
-        type = list,
-        index = True,
-        safe = True
+    referrals = appier.field(
+        type = appier.references(
+            "Referral",
+            name = "name"
+        ),
+        eager = True
     )
 
     @classmethod

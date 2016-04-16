@@ -55,6 +55,7 @@ from . import media
 from . import order_line
 from . import order
 from . import product
+from . import referral
 from . import season
 from . import subscription
 from . import voucher
@@ -80,6 +81,7 @@ from .media import Media
 from .order_line import OrderLine
 from .order import Order
 from .product import Product
+from .referral import Referral
 from .season import Season
 from .subscription import Subscription
 from .voucher import Voucher
