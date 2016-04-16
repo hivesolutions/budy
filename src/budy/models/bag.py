@@ -94,6 +94,7 @@ class Bag(bundle.Bundle):
         if account: return account.ensure_bag_s(key = key)
         bag = cls(key = key)
         bag.save()
+        return bag
 
     def pre_delete(self):
         bundle.Bundle.pre_delete(self)
