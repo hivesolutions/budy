@@ -128,6 +128,18 @@ class OrderTest(unittest.TestCase):
 
         self.assertRaises(appier.AssertionError, order.mark_paid_s)
 
+    def test_referral(self):
+        order = budy.Order()
+        order.save()
+
+        referral = budy.Referral(name = "name")
+        referral.save()
+
+        order.set_referral_s(referral)
+
+        self.assertEqual(len(order.referrals), 1)
+        self.assertEqual(order.referrals[0].name, "name")
+
     def test_voucher(self):
         product = budy.Product(
             short_description = "product",
