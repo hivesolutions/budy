@@ -180,6 +180,17 @@ class OrderApiController(root.RootApiController):
         order = order.reload(map = True)
         return order
 
+    @appier.route("/api/orders/<str:key>/referral", "PUT", json = True)
+    @appier.ensure(token = "user")
+    def set_referral(self, key):
+        data = appier.request_json()
+        referral_name = data["name"]
+        order = budy.Order.get(key = key, rules = False)
+        referral = budy.Referral.get(name = referral_name)
+        order.set_referral_s(referral)
+        order = order.reload(map = True)
+        return order
+
     @appier.route("/api/orders/<str:key>/voucher", "PUT", json = True)
     @appier.ensure(token = "user")
     def set_voucher(self, key):

@@ -187,6 +187,18 @@ class Order(bundle.Bundle):
         line.order = self
         return bundle.Bundle.add_line_s(self, line)
 
+    def add_referral_s(self, referral):
+        self.referrals.append(referral)
+        self.save()
+
+    def set_referral_s(self, referral):
+        self.empty_referrals_s()
+        self.add_referral_s(referral)
+
+    def empty_referrals_s(self):
+        self.referrals = []
+        self.save()
+
     def add_voucher_s(self, voucher):
         appier.verify(voucher.is_valid(currency = self.currency))
         discount = voucher.discount(self.sub_total, currency = self.currency)
