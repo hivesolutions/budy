@@ -73,7 +73,13 @@ class BagApiController(root.RootApiController):
             currency = self.currency,
             country = self.country
         )
-        bag = bag.reload(map = True)
+        bag = bag.reload(
+            eager = (
+                "lines.product.images",
+                "lines.product.brand"
+            ),
+            map = True
+        )
         return bag
 
     @appier.route("/api/bags/<str:key>/merge/<str:target>", "PUT", json = True)
