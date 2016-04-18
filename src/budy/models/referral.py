@@ -44,7 +44,8 @@ from . import base
 class Referral(base.BudyBase):
 
     name = appier.field(
-        index = True
+        index = True,
+        default = True
     )
 
     @classmethod
