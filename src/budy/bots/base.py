@@ -37,57 +37,21 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
-import time
-import threading
-import traceback
-
 import appier
 
-SLEEP_TIME = 1.0
-""" The default sleep time to be used by the bots
-in case no sleep time is defined in the constructor """
+LOOP_TIMEOUT = 30.0
+""" The time value to be used to sleep the main sequence
+loop between ticks, this value should not be too small
+to spend many resources or to high to create a long set
+of time between external interactions """
 
-class Bot(threading.Thread):
+class Bot(appier.Scheduler):
 
-    GLOBAL_LOCK = threading.RLock()
-
-    def __init__(self, sleep_time = SLEEP_TIME, name = None, *args, **kwargs):
-        threading.Thread.__init__(self, *args, **kwargs)
-        self.sleep_time = sleep_time
-        self.name = name or self.__class__.__name__
-        self.daemon = True
-
-    def run(self):
-        self.active = True
-
-        while self.active:
-            Bot.GLOBAL_LOCK.acquire()
-            logger = appier.get_logger()
-            logger.debug(
-                "Tick operation started in %s" % self.name
-            )
-            try: self.tick()
-            except BaseException as exception:
-                lines = traceback.format_exc().splitlines()
-                logger.debug(
-                    "Failed tick due to %s (%s) in %s" %
-                    (
-                         str(exception),
-                         exception.__class__.__name__,
-                         self.name
-                    ),
-                    lines = lines
-                )
-            finally: Bot.GLOBAL_LOCK.release()
-            logger.debug("Tick operation ended in %s" % self.name)
-            logger.debug(
-                "Sleeping for %d seconds in %s" %
-                (self.sleep_time, self.name)
-            )
-            time.sleep(self.sleep_time)
-
-    def stop(self):
-        self.active = False
-
-    def tick(self):
-        raise appier.NotImplementedError()
+    def __init__(self, owner, *args, **kwargs):
+        appier.Scheduler.__init__(
+            self,
+            owner,
+            timeout = LOOP_TIMEOUT,
+            *args,
+            **kwargs
+        )
