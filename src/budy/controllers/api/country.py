@@ -55,3 +55,32 @@ class CountryApiController(root.RootApiController):
             **object
         )
         return countries
+
+    @appier.route("/api/countries/simple.csv", "GET")
+    @appier.ensure(token = "admin")
+    def simple_csv(self):
+        object = appier.get_object(
+            alias = True,
+            find = True,
+            limit = 0
+        )
+        countries = budy.Country.find(**object)
+
+        countries_s = [(
+            "name",
+            "country_code",
+            "currency_code",
+            "locale"
+        )]
+        for country in countries:
+            country_s = (
+                country.name,
+                country.country_code,
+                country.currency_code,
+                country.locale
+            )
+            countries_s.append(country_s)
+
+        result = appier.serialize_csv(countries_s, delimiter = ",")
+        self.content_type("text/csv")
+        return result

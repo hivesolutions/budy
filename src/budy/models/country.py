@@ -110,3 +110,11 @@ class Country(base.BudyBase):
 
         if empty: cls.delete_c()
         cls._csv_import(file, callback)
+
+    @classmethod
+    @appier.link(name = "Export Simple")
+    def simple_csv_url(cls, absolute = False):
+        return appier.get_app().url_for(
+            "country_api.simple_csv",
+            absolute = absolute
+        )
