@@ -37,5 +37,21 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
-class Bot(object):
-    pass
+import appier
+
+LOOP_TIMEOUT = 30.0
+""" The time value to be used to sleep the main sequence
+loop between ticks, this value should not be too small
+to spend many resources or to high to create a long set
+of time between external interactions """
+
+class Scheduler(appier.Scheduler):
+
+    def __init__(self, owner, *args, **kwargs):
+        appier.Scheduler.__init__(
+            self,
+            owner,
+            timeout = LOOP_TIMEOUT,
+            *args,
+            **kwargs
+        )
