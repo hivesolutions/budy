@@ -34,12 +34,8 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
-from . import bots
-from . import controllers
-from . import models
-from . import main
+from . import base
+from . import omni_bot
 
-from .bots import *
-from .controllers import *
-from .models import *
-from .main import BudyApp
+from .base import Bot
+from .omni_bot import OmniBot
