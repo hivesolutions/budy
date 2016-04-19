@@ -207,7 +207,7 @@ class Bundle(base.BudyBase):
 
         return _line
 
-    def add_update_line_s(self, line, increment = False):
+    def add_update_line_s(self, line, increment = True):
         return self.add_product_s(
             line.product,
             quantity = line.quantity,
