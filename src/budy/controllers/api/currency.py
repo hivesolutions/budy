@@ -19,6 +19,9 @@
 # You should have received a copy of the Apache License along with
 # Hive Budy. If not, see <http://www.apache.org/licenses/>.
 
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
 __version__ = "1.0.0"
 """ The version of the module """
 
@@ -34,36 +37,40 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
-from . import account
-from . import address
-from . import bag
-from . import base
-from . import brand
-from . import category
-from . import collection
-from . import color
-from . import country
-from . import currency
-from . import media
-from . import order
-from . import product
-from . import root
-from . import subscription
-from . import voucher
+import appier
 
-from .account import AccountApiController
-from .address import AddressApiController
-from .bag import BagApiController
-from .base import BaseApiController
-from .brand import BrandApiController
-from .category import CategoryApiController
-from .collection import CollectionApiController
-from .color import ColorApiController
-from .country import CountryApiController
-from .currency import CurrencyApiController
-from .media import MediaApiController
-from .order import OrderApiController
-from .product import ProductApiController
-from .root import RootApiController
-from .subscription import SubscriptionApiController
-from .voucher import VoucherApiController
+import budy
+
+from . import root
+
+class CurrencyApiController(root.RootApiController):
+
+    @appier.route("/api/currencies", "GET", json = True)
+    def list(self):
+        object = appier.get_object(alias = True, find = True)
+        currencies = budy.Currency.find(
+            find_i = True,
+            find_t = "right",
+            map = True,
+            **object
+        )
+        return currencies
+
+    @appier.route("/api/currencies/simple.csv", "GET")
+    @appier.ensure(token = "admin")
+    def simple_csv(self):
+        object = appier.get_object(
+            alias = True,
+            find = True,
+            limit = 0
+        )
+        currencies = budy.Currency.find(**object)
+
+        currencies_s = [("iso", "decimal_places")]
+        for currency in currencies:
+            currency_s = (currency.iso, currency.decimal_places)
+            currencies_s.append(currency_s)
+
+        result = appier.serialize_csv(currencies_s, delimiter = ",")
+        self.content_type("text/csv")
+        return result
