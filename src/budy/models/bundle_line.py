@@ -85,6 +85,10 @@ class BundleLine(base.BudyBase):
     def list_names(cls):
         return ["id", "quantity", "total", "currency", "product"]
 
+    @classmethod
+    def order_name(self):
+        return ["id", -1]
+
     def pre_save(self):
         base.BudyBase.pre_save(self)
         self.calculate()

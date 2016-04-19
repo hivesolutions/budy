@@ -129,6 +129,10 @@ class Bundle(base.BudyBase):
         return ["id", "key", "total", "currency"]
 
     @classmethod
+    def order_name(self):
+        return ["id", -1]
+
+    @classmethod
     def line_cls(cls):
         return bundle_line.BundleLine
 

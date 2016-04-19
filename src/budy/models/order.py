@@ -146,10 +146,6 @@ class Order(bundle.Bundle):
         return ["id", "total", "currency", "account", "status"]
 
     @classmethod
-    def order_name(self):
-        return ["id", -1]
-
-    @classmethod
     def line_cls(cls):
         return order_line.OrderLine
 
