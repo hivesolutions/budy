@@ -180,7 +180,7 @@ class Order(bundle.Bundle):
         for line in self.lines: line.delete()
 
     def post_create(self):
-        bundle.Bundle.pos_create(self)
+        bundle.Bundle.post_create(self)
         self.set_reference_s()
 
     def add_line_s(self, line):
