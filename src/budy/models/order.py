@@ -224,7 +224,7 @@ class Order(bundle.Bundle):
         refreshed = bundle.Bundle.refresh_s(self, *args, **kwargs)
         if refreshed: self.refresh_vouchers_s()
 
-    def verify(self):
+    def verify_paid(self):
         appier.verify(not self.billing_address == None)
         appier.verify(not self.email == None)
         appier.verify(not self.email == "")
@@ -232,6 +232,11 @@ class Order(bundle.Bundle):
         appier.verify(self.paid == False)
         appier.verify(self.date == None)
         self.verify_vouchers()
+
+    def verify_sent(self):
+        appier.verify(not self.date == None)
+        appier.verify(self.status == "paid")
+        appier.verify(self.paid == True)
 
     def verify_vouchers(self):
         pending = self.discount
@@ -249,7 +254,7 @@ class Order(bundle.Bundle):
         appier.verify(pending == 0.0)
 
     def pay_s(self, payment_data, vouchers = True, notify = False):
-        self.verify()
+        self.verify_paid()
         self._pay(payment_data)
         self.mark_paid_s()
         if vouchers: self.use_vouchers_s()
@@ -270,7 +275,8 @@ class Order(bundle.Bundle):
         appier.verify(pending == 0.0)
 
     @appier.operation(name = "Notify")
-    def notify_s(self, name = "order.new"):
+    def notify_s(self, name = None):
+        name = name or "order.%s" % self.status
         order = self.reload(map = True)
         appier_extras.admin.Event.notify_g(
             name,
@@ -285,7 +291,7 @@ class Order(bundle.Bundle):
 
     @appier.operation(name = "Mark Paid")
     def mark_paid_s(self):
-        self.verify()
+        self.verify_paid()
         self.status = "paid"
         self.paid = True
         self.date = time.time()
@@ -295,6 +301,12 @@ class Order(bundle.Bundle):
     def unmark_paid_s(self):
         self.status = "created"
         self.paid = False
+        self.save()
+
+    @appier.operation(name = "Mark Sent")
+    def mark_sent_s(self):
+        self.verify_sent()
+        self.status = "sent"
         self.save()
 
     @appier.operation(name = "Garbage Collect")
