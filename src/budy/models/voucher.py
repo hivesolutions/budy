@@ -80,6 +80,13 @@ class Voucher(base.BudyBase):
         safe = True
     )
 
+    start = appier.field(
+        type = int,
+        index = True,
+        safe = True,
+        meta = "datetime"
+    )
+
     expiration = appier.field(
         type = int,
         index = True,
@@ -131,7 +138,15 @@ class Voucher(base.BudyBase):
 
     @classmethod
     def list_names(cls):
-        return ["description", "created", "amount", "percentage", "expiration", "used"]
+        return [
+            "description",
+            "created",
+            "amount",
+            "percentage",
+            "start",
+            "expiration",
+            "used"
+        ]
 
     @classmethod
     def order_name(self):
@@ -140,6 +155,40 @@ class Voucher(base.BudyBase):
     @classmethod
     def is_snapshot(cls):
         return True
+
+    @classmethod
+    @appier.operation(
+        name = "Create Value",
+        parameters = (
+            ("Value", "value", commons.Decimal),
+            ("Currency", "currency", str)
+        ),
+        factory = True
+    )
+    def create_value_s(cls, value, currency, expiration):
+        voucher = cls(
+            value = value,
+            currency = currency
+        )
+        voucher.save()
+        return voucher
+
+    @classmethod
+    @appier.operation(
+        name = "Create Percentage",
+        parameters = (
+            ("Key", "key", str, False),
+            ("Percentage", "percentage", commons.Decimal)
+        ),
+        factory = True
+    )
+    def create_percentage_s(cls, key, percentage):
+        voucher = cls(
+            key = key,
+            percentage = percentage
+        )
+        voucher.save()
+        return voucher
 
     def pre_create(self):
         base.BudyBase.pre_create(self)
@@ -193,6 +242,8 @@ class Voucher(base.BudyBase):
     def is_valid(self, amount = None, currency = None):
         current = time.time()
         amount_l = self.to_local(amount, currency)
+        if not self.enabled: return False
+        if self.start and current < self.start: return False
         if self.expiration and current > self.expiration: return False
         if self.usage_limit and self.usage_count >= self.usage_limit: return False
         if self.amount and commons.Decimal(self.used_amount) >= commons.Decimal(self.amount): return False
