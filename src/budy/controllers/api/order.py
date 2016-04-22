@@ -77,6 +77,7 @@ class OrderApiController(root.RootApiController):
             "status",
             "email",
             "account",
+            "store",
             "product",
             "gender",
             "size",
@@ -102,6 +103,7 @@ class OrderApiController(root.RootApiController):
             for line in order.lines:
                 if not line.product: continue
                 account = order.account
+                store = account.store
                 shipping_address = order.shipping_address
                 billing_address = order.billing_address
                 order_s = (
@@ -111,6 +113,7 @@ class OrderApiController(root.RootApiController):
                     order.status,
                     order.email,
                     account.username,
+                    store and store.name,
                     line.product.short_description,
                     line.product.gender,
                     line.size,

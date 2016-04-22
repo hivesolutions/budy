@@ -57,6 +57,7 @@ from . import order
 from . import product
 from . import referral
 from . import season
+from . import store
 from . import subscription
 from . import voucher
 
@@ -83,5 +84,6 @@ from .order import Order
 from .product import Product
 from .referral import Referral
 from .season import Season
+from .store import Store
 from .subscription import Subscription
 from .voucher import Voucher

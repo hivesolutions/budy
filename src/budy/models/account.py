@@ -83,6 +83,14 @@ class BudyAccount(appier_extras.admin.Account):
         initial = False
     )
 
+    store = appier.field(
+        type = appier.reference(
+            "Store",
+            name = "id"
+        ),
+        eager = True
+    )
+
     addresses = appier.field(
         type = appier.references(
             "Address",
@@ -119,3 +127,18 @@ class BudyAccount(appier_extras.admin.Account):
 
     def get_bag(self):
         return bag.Bag.get(account = self.id, raise_e = False)
+
+    @appier.operation(
+        name = "Set Store",
+        parameters = (
+            (
+                "Store",
+                "store",
+                appier.reference("Store", name = "id")
+            ),
+        )
+    )
+    def set_store_s(self, store):
+        if not store: return
+        self.store = store
+        self.save()
