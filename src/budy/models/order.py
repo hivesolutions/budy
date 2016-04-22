@@ -76,6 +76,12 @@ class Order(bundle.Bundle):
         colors = STATUS_C
     )
 
+    reference = appier.field(
+        index = True,
+        default = True,
+        safe = True
+    )
+
     paid = appier.field(
         type = bool,
         initial = False,
@@ -169,15 +175,13 @@ class Order(bundle.Bundle):
             absolute = absolute
         )
 
-    @classmethod
-    def _build(cls, model, map):
-        prefix = appier.conf("BUDY_ORDER_REF", "BD-%06d")
-        id = model.get("id", None)
-        if id: model["reference"] = prefix % id
-
     def pre_delete(self):
         bundle.Bundle.pre_delete(self)
         for line in self.lines: line.delete()
+
+    def post_create(self):
+        bundle.Bundle.pos_create(self)
+        self.set_reference_s()
 
     def add_line_s(self, line):
         line.order = self
@@ -313,6 +317,12 @@ class Order(bundle.Bundle):
     def collect_s(self):
         if self.paid: return
         self.delete()
+
+    @appier.operation(name = "Set Reference")
+    def set_reference_s(self):
+        prefix = appier.conf("BUDY_ORDER_REF", "BD-%06d")
+        self.reference = prefix % self.id
+        self.save()
 
     @appier.operation(name = "Fix Orphans")
     def fix_orphans_s(self):
