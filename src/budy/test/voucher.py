@@ -182,6 +182,32 @@ class VoucherTest(unittest.TestCase):
         voucher = budy.Voucher(percentage = 120.0)
         self.assertRaises(appier.ValidationError, voucher.save)
 
+    def test_unstarted(self):
+        voucher = budy.Voucher(amount = 200.0, start = time.time() - 3600)
+        voucher.save()
+
+        voucher.use_s(100.0)
+
+        self.assertEqual(voucher.is_valid(), True)
+        self.assertEqual(voucher.is_valid(amount = 100.0), True)
+        self.assertEqual(voucher.is_valid(amount = 200.0), False)
+        self.assertEqual(voucher.used, False)
+        self.assertEqual(voucher.amount, 200.0)
+        self.assertEqual(voucher.open_amount, 100.0)
+        self.assertEqual(voucher.used_amount, 100.0)
+        self.assertEqual(voucher.usage_count, 1)
+        self.assertEqual(voucher.is_percent, False)
+        self.assertEqual(isinstance(voucher.amount, commons.Decimal), True)
+        self.assertEqual(isinstance(voucher.open_amount, commons.Decimal), True)
+
+        voucher = budy.Voucher(amount = 200.0, start = time.time() + 60)
+        voucher.save()
+
+        self.assertRaises(
+            appier.AssertionError,
+            lambda: voucher.use_s(100.0)
+        )
+
     def test_expired(self):
         voucher = budy.Voucher(amount = 200.0, expiration = time.time() + 3600)
         voucher.save()
