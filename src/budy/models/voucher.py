@@ -198,7 +198,7 @@ class Voucher(base.BudyBase):
 
     def pre_update(self):
         base.BudyBase.pre_update(self)
-        if not self.used and not self.is_valid(): self.used = True
+        if not self.used and self.is_used(): self.used = True
 
     def use_s(self, amount, currency = None):
         amount_l = self.to_local(amount, currency)
@@ -239,14 +239,18 @@ class Voucher(base.BudyBase):
             rounder = commons.floor
         )
 
+    def is_used(self):
+        if self.usage_limit and self.usage_count >= self.usage_limit: return True
+        if self.amount and commons.Decimal(self.used_amount) >= commons.Decimal(self.amount): return True
+        return False
+
     def is_valid(self, amount = None, currency = None):
         current = time.time()
         amount_l = self.to_local(amount, currency)
+        if self.is_used(): return False
         if not self.enabled: return False
         if self.start and current < self.start: return False
         if self.expiration and current > self.expiration: return False
-        if self.usage_limit and self.usage_count >= self.usage_limit: return False
-        if self.amount and commons.Decimal(self.used_amount) >= commons.Decimal(self.amount): return False
         if self.amount and amount_l and commons.Decimal(amount_l) > commons.Decimal(self.open_amount): return False
         if currency and not self.is_valid_currency(currency): return False
         if not self.amount and not self.percentage: return False

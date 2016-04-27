@@ -203,6 +203,12 @@ class VoucherTest(unittest.TestCase):
         voucher = budy.Voucher(amount = 200.0, start = time.time() + 60)
         voucher.save()
 
+        self.assertEqual(voucher.is_used(), False)
+        self.assertEqual(voucher.is_valid(), False)
+        self.assertEqual(voucher.is_valid(amount = 100.0), False)
+        self.assertEqual(voucher.is_valid(amount = 200.0), False)
+        self.assertEqual(voucher.used, False)
+
         self.assertRaises(
             appier.AssertionError,
             lambda: voucher.use_s(100.0)
@@ -228,6 +234,12 @@ class VoucherTest(unittest.TestCase):
 
         voucher = budy.Voucher(amount = 200.0, expiration = time.time() - 60)
         voucher.save()
+
+        self.assertEqual(voucher.is_used(), False)
+        self.assertEqual(voucher.is_valid(), False)
+        self.assertEqual(voucher.is_valid(amount = 100.0), False)
+        self.assertEqual(voucher.is_valid(amount = 200.0), False)
+        self.assertEqual(voucher.used, False)
 
         self.assertRaises(
             appier.AssertionError,
