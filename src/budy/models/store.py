@@ -52,7 +52,8 @@ class Store(base.BudyBase):
         type = appier.references(
             "Address",
             name = "id"
-        )
+        ),
+        eager = True
     )
 
     @classmethod
