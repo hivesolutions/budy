@@ -248,6 +248,7 @@ class Voucher(base.BudyBase):
         current = time.time()
         amount_l = self.to_local(amount, currency)
         if self.is_used(): return False
+        if self.used: return False
         if not self.enabled: return False
         if self.start and current < self.start: return False
         if self.expiration and current > self.expiration: return False
