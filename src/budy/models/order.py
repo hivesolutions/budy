@@ -107,6 +107,14 @@ class Order(bundle.Bundle):
         safe = True
     )
 
+    tracking_number = appier.field(
+        index = True
+    )
+
+    tracking_url = appier.field(
+        index = True
+    )
+
     lines = appier.field(
         type = appier.references(
             "OrderLine",
