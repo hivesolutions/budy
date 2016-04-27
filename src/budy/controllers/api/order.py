@@ -203,10 +203,15 @@ class OrderApiController(root.RootApiController):
     @appier.route("/api/orders/<str:key>/voucher", "PUT", json = True)
     @appier.ensure(token = "user")
     def set_voucher(self, key):
+        strict = self.field("strict", False, cast = bool)
         data = appier.request_json()
         voucher_key = data["key"]
         order = budy.Order.get(key = key, rules = False)
-        voucher = budy.Voucher.get(key = voucher_key)
+        voucher = budy.Voucher.get(
+            key = voucher_key,
+            raise_e = strict
+        )
+        if not voucher: return
         order.set_voucher_s(voucher)
         order = order.reload(map = True)
         return order
