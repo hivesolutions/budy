@@ -112,7 +112,8 @@ class Order(bundle.Bundle):
     )
 
     tracking_url = appier.field(
-        index = True
+        index = True,
+        meta = "url"
     )
 
     lines = appier.field(
@@ -325,6 +326,19 @@ class Order(bundle.Bundle):
     def collect_s(self):
         if self.paid: return
         self.delete()
+
+    @appier.operation(
+        name = "Set Tracking",
+        parameters = (
+            ("Tracking Number", "tracking_number", str),
+            ("Tracking URL", "tracking_url", str)
+        )
+    )
+    def set_tracking_s(self, tracking_number, tracking_url):
+        if not tracking_number and not tracking_url: return
+        self.tracking_number = tracking_number
+        self.tracking_url = tracking_url
+        self.save()
 
     @appier.operation(name = "Set Reference")
     def set_reference_s(self):
