@@ -1,4 +1,4 @@
-{% extends "base.html.tpl" %}
+{% extends "partials/external.html.tpl" %}
 {% block title %}Login{% endblock %}
 {% block content %}
     <div class="login-panel">

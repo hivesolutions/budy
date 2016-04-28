@@ -1,4 +1,4 @@
-{% extends "base.html.tpl" %}
+{% extends "partials/internal.html.tpl" %}
 {% block title %}Orders{% endblock %}
 {% block name %}Orders{% endblock %}
 {% block content %}

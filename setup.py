@@ -66,7 +66,8 @@ setuptools.setup(
         "budy" : [
             "static/js/*.js",
             "templates/*.tpl",
-            "templates/order/*.tpl"
+            "templates/order/*.tpl",
+            "templates/partials/*.tpl"
         ]
     },
     install_requires = [
