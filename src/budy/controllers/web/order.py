@@ -44,16 +44,14 @@ import budy
 class OrderController(appier.Controller):
 
     @appier.route("/orders/me", "GET")
+    @appier.route("/orders/me/<str:status>", "GET")
     @appier.ensure(token = "admin")
-    def me(self):
-        return self.redirect(
-            self.url_for("order.open_me")
+    def me(self, status = "open"):
+        account = budy.BudyAccount.from_session(raise_e = False)
+        if not account.store: raise appier.OperationalError(
+            message = "No store associated with user"
         )
-
-    @appier.route("/orders/me/open", "GET")
-    @appier.ensure(token = "admin")
-    def open_me(self):
-        order = budy.Order.find(status = "open")
+        orders = budy.Order.find(status = open, store = account.store)
         return self.redirect(
             self.url_for("admin.index")
         )
