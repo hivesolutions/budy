@@ -54,6 +54,7 @@ setuptools.setup(
         "budy",
         "budy.controllers",
         "budy.controllers.api",
+        "budy.controllers.web",
         "budy.models",
         "budy.test"
     ],
