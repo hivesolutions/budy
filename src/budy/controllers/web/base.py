@@ -39,10 +39,50 @@ __license__ = "Apache License, Version 2.0"
 
 import appier
 
+import budy
+
 class BaseController(appier.Controller):
 
     @appier.route("/", "GET")
     def index(self):
         return self.redirect(
             self.url_for("admin.index")
+        )
+
+    @appier.route("/signin", "GET")
+    def signin(self):
+        next = self.field("next")
+        error = self.field("error", "")
+        return self.template(
+            "signin.html.tpl",
+            next = next,
+            error = error
+        )
+
+    @appier.route("/signin", "POST")
+    def login(self):
+        username = self.field("username")
+        password = self.field("password")
+        next = self.field("next")
+        try: account = budy.BudyAccount.login(username, password)
+        except appier.AppierException as error:
+            return self.template(
+                "signin.html.tpl",
+                next = next,
+                username = username,
+                error = error.message
+            )
+
+        account._set_session()
+
+        return self.redirect(
+            next or self.url_for("base.index")
+        )
+
+    @appier.route("/signout", "GET")
+    def signout(self):
+        next = self.field("next")
+        budy.BudyAccount._unset_session()
+        return self.redirect(
+            next or self.url_for(self.owner.admin_login_redirect)
         )

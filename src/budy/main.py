@@ -51,6 +51,7 @@ class BudyApp(appier.WebApp):
             ),
             *args, **kwargs
         )
+        self.login_route = "base.signin"
 
 if __name__ == "__main__":
     app = BudyApp()
