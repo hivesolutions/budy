@@ -267,6 +267,11 @@ class Order(bundle.Bundle):
             pending -= commons.Decimal(amount)
         appier.verify(pending == 0.0)
 
+    def verify_account(self, account):
+        appier.verify(not account == None)
+        appier.verify(self.account.username == account.username)
+        appier.verify(self.account.email == account.email)
+
     def pay_s(self, payment_data, vouchers = True, notify = False):
         self.verify_paid()
         self._pay(payment_data)

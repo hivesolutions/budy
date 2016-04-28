@@ -47,15 +47,28 @@ class OrderController(appier.Controller):
     @appier.route("/orders/me/<str:status>", "GET")
     @appier.ensure(token = "user")
     def me(self, status = "created"):
-        account = budy.BudyAccount.from_session(raise_e = False)
+        account = budy.BudyAccount.from_session()
         if not account.store: raise appier.OperationalError(
             message = "No store associated with user"
         )
         orders = budy.Order.find(
             status = status,
-            store = account.store.id
+            store = account.store.id,
+            sort = [("id", -1)]
         )
         return self.template(
             "order/me.html.tpl",
             orders = orders
+        )
+
+    @appier.route("/orders/<str:key>/mark_paid", "GET")
+    @appier.ensure(token = "user")
+    def mark_paid(self, key):
+        order = budy.Order.get(key = key)
+        account = budy.BudyAccount.from_session()
+        order.verify_account(account)
+        order.mark_paid_s()
+        order.notify_s()
+        return self.redirect(
+            self.url_for("order.me")
         )

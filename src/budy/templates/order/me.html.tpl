@@ -2,15 +2,18 @@
 {% block title %}Orders{% endblock %}
 {% block name %}Orders{% endblock %}
 {% block content %}
-    <div class="quote">
-        We're only showing your orders below.
-    </div>
-    <ul class="repos">
+    <table class="orders">
         {% for order in orders %}
-            <li>
-                <a href="#">{{ order.ident }}</a>
-                <div class="clear"></div>
-            </li>
+            <tr>
+                <td>{{ order.reference }}</td>
+                <td>{{ order.status }}</td>
+                <td>
+                    {% if order.status == "created" %}
+                        <a class="link link-confirm" href="{{ url_for('order.mark_paid', key = order.key) }}"
+                           data-message="Are you really sure you want to confirm payment for [[{{ order.reference }}]] ?">mark paid</a>
+                    {% endif %}
+                </td>
+            </tr>
         {% endfor %}
-    </ul>
+    </table>
 {% endblock %}
