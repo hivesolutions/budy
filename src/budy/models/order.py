@@ -353,6 +353,16 @@ class Order(bundle.Bundle):
             line.order = self
             line.save()
 
+    @appier.operation(name = "Fix Shipping")
+    def fix_shipping_s(self):
+        if self.shipping_address: return
+        if not self.store: return
+        if not self.store.address: return
+        address = self.store.address.clone()
+        address.save()
+        self.shipping_address = address
+        self.save()
+
     @property
     def payable(self):
         return self.total
