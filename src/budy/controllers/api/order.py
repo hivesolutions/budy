@@ -103,7 +103,6 @@ class OrderApiController(root.RootApiController):
             for line in order.lines:
                 if not line.product: continue
                 account = order.account
-                store = account.store
                 shipping_address = order.shipping_address
                 billing_address = order.billing_address
                 order_s = (
@@ -113,7 +112,7 @@ class OrderApiController(root.RootApiController):
                     order.status,
                     order.email,
                     account.username,
-                    store and store.name,
+                    account.store and account.store.name,
                     line.product.short_description,
                     line.product.gender,
                     line.size,
@@ -173,6 +172,30 @@ class OrderApiController(root.RootApiController):
         address = budy.Address.new()
         address.save()
         order = budy.Order.get(key = key, rules = False)
+        order.billing_address = address
+        order.save()
+        order = order.reload(map = True)
+        return order
+
+    @appier.route("/api/orders/<str:key>/store_shipping", "PUT", json = True)
+    @appier.ensure(token = "user")
+    def set_store_shipping(self, key):
+        order = budy.Order.get(key = key, rules = False)
+        store = order.store
+        address = store.address.clone()
+        address.save()
+        order.shipping_address = address
+        order.save()
+        order = order.reload(map = True)
+        return order
+
+    @appier.route("/api/orders/<str:key>/store_billing", "PUT", json = True)
+    @appier.ensure(token = "user")
+    def set_store_billing(self, key):
+        order = budy.Order.get(key = key, rules = False)
+        store = order.store
+        address = store.address.clone()
+        address.save()
         order.billing_address = address
         order.save()
         order = order.reload(map = True)

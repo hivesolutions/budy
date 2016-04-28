@@ -187,7 +187,7 @@ class OrderTest(unittest.TestCase):
         order.save()
 
         self.assertEqual(order.account.username, "account")
-        self.assertEqual(order.account.store.name, "store")
+        self.assertEqual(order.store.name, "store")
         self.assertEqual(order.currency, None)
         self.assertEqual(order.payment_currency, "GBP")
 

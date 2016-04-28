@@ -238,6 +238,7 @@ class Order(bundle.Bundle):
         if refreshed: self.refresh_vouchers_s()
 
     def verify_paid(self):
+        appier.verify(not self.shipping_address == None)
         appier.verify(not self.billing_address == None)
         appier.verify(not self.email == None)
         appier.verify(not self.email == "")
@@ -357,6 +358,11 @@ class Order(bundle.Bundle):
         return self.total
 
     @property
+    def store(self):
+        if not self.account: return None
+        return self.account.store
+
+    @property
     def shipping_country(self):
         has_shipping = hasattr(self, "shipping_address")
         if not has_shipping: return None
@@ -371,9 +377,8 @@ class Order(bundle.Bundle):
 
     @property
     def payment_currency(self):
-        has_store_currency = self.account and\
-            self.account.store and self.account.store.currency_code
-        if has_store_currency: return self.account.store.currency_code
+        has_store_currency = self.store and self.store.currency_code
+        if has_store_currency: return self.store.currency_code
         return self.shipping_currency
 
     def _pay(self, payment_data):
