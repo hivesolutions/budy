@@ -112,7 +112,7 @@ class OrderApiController(root.RootApiController):
                     order.status,
                     order.email,
                     account.username,
-                    account.store and account.store.name,
+                    order.store and order.store.name,
                     line.product.short_description,
                     line.product.gender,
                     line.size,
