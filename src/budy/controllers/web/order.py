@@ -52,6 +52,7 @@ class OrderController(appier.Controller):
             message = "No store associated with user"
         )
         orders = budy.Order.find(status = open, store = account.store)
-        return self.redirect(
-            self.url_for("admin.index")
+        return self.template(
+            "order/me.html.tpl",
+            orders = orders
         )
