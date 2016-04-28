@@ -140,6 +140,13 @@ class Order(bundle.Bundle):
         eager = True
     )
 
+    store = appier.field(
+        type = appier.reference(
+            "Store",
+            name = "id"
+        )
+    )
+
     shipping_address = appier.field(
         type = appier.reference(
             "Address",
@@ -196,16 +203,9 @@ class Order(bundle.Bundle):
         line.order = self
         return bundle.Bundle.add_line_s(self, line)
 
-    def add_referral_s(self, referral):
-        self.referrals.append(referral)
-        self.save()
-
-    def set_referral_s(self, referral):
-        self.empty_referrals_s()
-        self.add_referral_s(referral)
-
-    def empty_referrals_s(self):
-        self.referrals = []
+    def set_account_s(self, account):
+        self.account = account
+        self.store = self.account.store
         self.save()
 
     def add_voucher_s(self, voucher):
@@ -363,14 +363,16 @@ class Order(bundle.Bundle):
         self.shipping_address = address
         self.save()
 
+    @appier.operation(name = "Fix Store")
+    def fix_store_s(self):
+        if self.store: return
+        if not self.account: return
+        self.store = self.account.store
+        self.save()
+
     @property
     def payable(self):
         return self.total
-
-    @property
-    def store(self):
-        if not self.account: return None
-        return self.account.store
 
     @property
     def shipping_country(self):

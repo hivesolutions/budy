@@ -249,6 +249,18 @@ class Bundle(base.BudyBase):
         self.save()
         return True
 
+    def add_referral_s(self, referral):
+        self.referrals.append(referral)
+        self.save()
+
+    def set_referral_s(self, referral):
+        self.empty_referrals_s()
+        self.add_referral_s(referral)
+
+    def empty_referrals_s(self):
+        self.referrals = []
+        self.save()
+
     def calculate(self):
         lines = self.lines if hasattr(self, "lines") else []
         self.sub_total = sum(line.total for line in lines)

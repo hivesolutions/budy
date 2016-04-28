@@ -109,7 +109,8 @@ class Bag(bundle.Bundle):
             discount = self.discount,
             taxes = self.taxes,
             shipping_cost = self.shipping_cost,
-            account = self.account
+            account = self.account,
+            store = self.account and self.account.store
         )
         _order.save()
         _order.lines = []

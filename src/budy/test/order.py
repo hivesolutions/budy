@@ -184,8 +184,7 @@ class OrderTest(unittest.TestCase):
         )
         account.save()
 
-        order.account = account
-        order.save()
+        order.set_account_s(account)
 
         self.assertEqual(order.account.username, "account")
         self.assertEqual(order.store.name, "store")
