@@ -117,6 +117,13 @@ class BagApiController(root.RootApiController):
         line = line.reload(map = True)
         return line
 
+    @appier.route("/api/bags/<str:key>/empty", "GET", json = True)
+    def empty(self, key):
+        bag = budy.Bag.get(key = key)
+        bag.empty_s()
+        bag = bag.reload(map = True)
+        return bag
+
     @appier.route("/api/bags/<str:key>/order", "GET", json = True)
     def order(self, key):
         bag = budy.Bag.get(key = key)

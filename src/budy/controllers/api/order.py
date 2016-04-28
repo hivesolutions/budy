@@ -247,6 +247,6 @@ class OrderApiController(root.RootApiController):
         order = budy.Order.get(key = key, rules = False)
         order.pay_s(data, notify = True)
         bag = budy.Bag.from_session()
-        if empty_bag and bag: bag.empty_bag_s()
+        if empty_bag and bag: bag.empty_s()
         order = order.reload(map = True)
         return order
