@@ -60,6 +60,10 @@ class Store(base.BudyBase):
         index = True
     )
 
+    checkout_mode = appier.field(
+        index = True
+    )
+
     @classmethod
     def validate(cls):
         return super(Store, cls).validate() + [
@@ -71,4 +75,4 @@ class Store(base.BudyBase):
 
     @classmethod
     def list_names(cls):
-        return ["id", "name"]
+        return ["id", "name", "currency_code", "checkout_mode"]
