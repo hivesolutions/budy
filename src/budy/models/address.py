@@ -98,6 +98,10 @@ class Address(base.BudyBase):
         return ["id", "first_name", "last_name", "address", "country"]
 
     @classmethod
+    def unique_names(cls):
+        return super(Address, cls).unique_names() + ["key"]
+
+    @classmethod
     def order_name(self):
         return ["id", -1]
 
