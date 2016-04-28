@@ -45,13 +45,16 @@ class OrderController(appier.Controller):
 
     @appier.route("/orders/me", "GET")
     @appier.route("/orders/me/<str:status>", "GET")
-    @appier.ensure(token = "admin")
+    @appier.ensure(token = "user")
     def me(self, status = "open"):
         account = budy.BudyAccount.from_session(raise_e = False)
         if not account.store: raise appier.OperationalError(
             message = "No store associated with user"
         )
-        orders = budy.Order.find(status = open, store = account.store)
+        orders = budy.Order.find(
+            status = status,
+            store = account.store.id
+        )
         return self.template(
             "order/me.html.tpl",
             orders = orders

@@ -7,8 +7,8 @@
 {% endblock %}
 {% block links %}
     {% if link == "repos" %}
-        <a href="{{ url_for('repo.list') }}" class="active">orders</a>
+        <a href="{{ url_for('order.me') }}" class="active">orders</a>
     {% else %}
-        <a href="{{ url_for('repo.list') }}">orders</a>
+        <a href="{{ url_for('order.me') }}">orders</a>
     {% endif %}
 {% endblock %}
