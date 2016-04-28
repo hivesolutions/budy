@@ -46,7 +46,7 @@ class OrderController(appier.Controller):
     @appier.route("/orders/me", "GET")
     @appier.route("/orders/me/<str:status>", "GET")
     @appier.ensure(token = "user")
-    def me(self, status = "open"):
+    def me(self, status = "created"):
         account = budy.BudyAccount.from_session(raise_e = False)
         if not account.store: raise appier.OperationalError(
             message = "No store associated with user"
