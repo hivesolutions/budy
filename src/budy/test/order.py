@@ -121,6 +121,7 @@ class OrderTest(unittest.TestCase):
         )
         address.save()
 
+        order.shipping_address = address
         order.billing_address = address
         order.email = "username@email.com"
         order.save()
