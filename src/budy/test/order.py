@@ -144,6 +144,52 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(len(order.referrals), 1)
         self.assertEqual(order.referrals[0].name, "name")
 
+    def test_store(self):
+        product = budy.Product(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0
+        )
+        product.save()
+
+        order = budy.Order()
+        order.save()
+
+        order_line = budy.OrderLine(quantity = 2.0)
+        order_line.product = product
+        order_line.save()
+        order.add_line_s(order_line)
+
+        self.assertEqual(order.currency, None)
+        self.assertEqual(order.payment_currency, None)
+
+        store = budy.Store(name = "store", currency_code = "GBP")
+        store.save()
+
+        account = budy.BudyAccount(
+            username = "account",
+            email = "account@account.com",
+            password = "password",
+            password_confirm = "password",
+            store = store
+        )
+        account.save()
+
+        order.account = account
+        order.save()
+
+        self.assertEqual(order.account.username, "account")
+        self.assertEqual(order.account.store.name, "store")
+        self.assertEqual(order.currency, None)
+        self.assertEqual(order.payment_currency, "GBP")
+
+        order.refresh_s(
+            currency = order.payment_currency or self.currency
+        )
+
+        self.assertEqual(order.currency, "GBP")
+        self.assertEqual(order.payment_currency, "GBP")
+
     def test_voucher(self):
         product = budy.Product(
             short_description = "product",

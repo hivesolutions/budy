@@ -68,12 +68,15 @@ class Country(base.BudyBase):
 
             appier.not_null("country_code"),
             appier.not_empty("country_code"),
+            appier.string_eq("country_code", 2),
 
             appier.not_null("currency_code"),
             appier.not_empty("currency_code"),
+            appier.string_eq("currency_code", 3),
 
             appier.not_null("locale"),
-            appier.not_empty("locale")
+            appier.not_empty("locale"),
+            appier.string_eq("locale", 5),
         ]
 
     @classmethod

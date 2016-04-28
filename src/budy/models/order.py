@@ -369,6 +369,13 @@ class Order(bundle.Bundle):
         shipping_country = country.Country.get_by_code(self.shipping_country)
         return shipping_country.currency_code
 
+    @property
+    def payment_currency(self):
+        has_store_currency = self.account and\
+            self.account.store and self.account.store.currency_code
+        if has_store_currency: return self.account.store.currency_code
+        return self.shipping_currency
+
     def _pay(self, payment_data):
         if self.payable == 0.0: return
         self._pay_stripe(payment_data)

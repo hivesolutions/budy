@@ -56,11 +56,17 @@ class Store(base.BudyBase):
         eager = True
     )
 
+    currency_code = appier.field(
+        index = True
+    )
+
     @classmethod
     def validate(cls):
         return super(Store, cls).validate() + [
             appier.not_null("name"),
-            appier.not_empty("name")
+            appier.not_empty("name"),
+
+            appier.string_eq("currency_code", 3)
         ]
 
     @classmethod
