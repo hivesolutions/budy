@@ -163,6 +163,14 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.currency, None)
         self.assertEqual(order.payment_currency, None)
 
+        order.refresh_s(
+            currency = order.payment_currency or order.currency,
+            country = order.shipping_country or order.country
+        )
+
+        self.assertEqual(order.currency, None)
+        self.assertEqual(order.payment_currency, None)
+
         store = budy.Store(name = "store", currency_code = "GBP")
         store.save()
 
@@ -184,7 +192,8 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.payment_currency, "GBP")
 
         order.refresh_s(
-            currency = order.payment_currency or self.currency
+            currency = order.payment_currency or order.currency,
+            country = order.shipping_country or order.country
         )
 
         self.assertEqual(order.currency, "GBP")
