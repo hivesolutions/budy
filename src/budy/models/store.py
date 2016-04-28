@@ -49,7 +49,7 @@ class Store(base.BudyBase):
     )
 
     address = appier.field(
-        type = appier.references(
+        type = appier.reference(
             "Address",
             name = "id"
         ),
