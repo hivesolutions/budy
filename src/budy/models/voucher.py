@@ -160,14 +160,14 @@ class Voucher(base.BudyBase):
     @appier.operation(
         name = "Create Value",
         parameters = (
-            ("Value", "value", commons.Decimal),
+            ("Amount", "amount", commons.Decimal),
             ("Currency", "currency", str)
         ),
         factory = True
     )
-    def create_value_s(cls, value, currency, expiration):
+    def create_value_s(cls, amount, currency):
         voucher = cls(
-            value = value,
+            amount = amount,
             currency = currency
         )
         voucher.save()
