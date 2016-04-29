@@ -165,7 +165,7 @@ class Voucher(base.BudyBase):
         ),
         factory = True
     )
-    def create_value_s(cls, value, currency, expiration):
+    def create_value_s(cls, value, currency):
         voucher = cls(
             value = value,
             currency = currency
