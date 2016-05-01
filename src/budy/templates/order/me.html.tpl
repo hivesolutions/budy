@@ -6,6 +6,7 @@
         {% for order in orders %}
             <tr>
                 <td>{{ order.reference }}</td>
+                <td>{{ order.email }}</td>
                 <td>{{ order.status }}</td>
                 <td>
                     {% if order.status == "created" %}
