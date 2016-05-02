@@ -284,6 +284,10 @@ class Order(bundle.Bundle):
         appier.verify(self.account.username == account.username)
         appier.verify(self.account.email == account.email)
 
+    def wait_payment_s(self):
+        self.verify_waiting_payment()
+        self.mark_waiting_payment_s()
+
     def pay_s(
         self,
         payment_data,
