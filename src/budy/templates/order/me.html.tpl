@@ -10,7 +10,7 @@
                 <td>{{ order.status }}</td>
                 <td>{{ order.total }}</td>
                 <td>
-                    {% if order.status == "created" %}
+                    {% if order.status == "waiting_payment" %}
                         <a class="link link-confirm" href="{{ url_for('order.mark_paid', key = order.key) }}"
                            data-message="Are you really sure you want to confirm payment for [[{{ order.reference }}]] ?">mark paid</a>
                     {% endif %}
