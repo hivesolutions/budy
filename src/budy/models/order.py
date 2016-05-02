@@ -51,6 +51,7 @@ class Order(bundle.Bundle):
 
     STATUS_S = dict(
         created = "created",
+        waiting_payment = "waiting_payment",
         paid = "paid",
         sent = "sent",
         received = "received",
@@ -60,6 +61,7 @@ class Order(bundle.Bundle):
 
     STATUS_C = dict(
         created = "grey",
+        waiting_payment = "orange",
         paid = "blue",
         sent = "blue",
         received = "green",
@@ -165,7 +167,7 @@ class Order(bundle.Bundle):
 
     @classmethod
     def list_names(cls):
-        return ["reference", "total", "currency", "account", "status"]
+        return ["reference", "total", "currency", "account", "email", "status"]
 
     @classmethod
     def line_cls(cls):
@@ -237,12 +239,22 @@ class Order(bundle.Bundle):
         refreshed = bundle.Bundle.refresh_s(self, *args, **kwargs)
         if refreshed: self.refresh_vouchers_s()
 
-    def verify_paid(self):
+    def verify_waiting_payment(self):
         appier.verify(not self.shipping_address == None)
         appier.verify(not self.billing_address == None)
         appier.verify(not self.email == None)
         appier.verify(not self.email == "")
         appier.verify(self.status == "created")
+        appier.verify(self.paid == False)
+        appier.verify(self.date == None)
+        self.verify_vouchers()
+
+    def verify_paid(self):
+        appier.verify(not self.shipping_address == None)
+        appier.verify(not self.billing_address == None)
+        appier.verify(not self.email == None)
+        appier.verify(not self.email == "")
+        appier.verify(self.status == "waiting_payment")
         appier.verify(self.paid == False)
         appier.verify(self.date == None)
         self.verify_vouchers()
@@ -272,7 +284,14 @@ class Order(bundle.Bundle):
         appier.verify(self.account.username == account.username)
         appier.verify(self.account.email == account.email)
 
-    def pay_s(self, payment_data, vouchers = True, notify = False):
+    def pay_s(
+        self,
+        payment_data,
+        vouchers = True,
+        notify = False,
+        ensure_waiting = True
+    ):
+        if ensure_waiting: self.ensure_waiting_s()
         self.verify_paid()
         self._pay(payment_data)
         self.mark_paid_s()
@@ -293,6 +312,10 @@ class Order(bundle.Bundle):
             pending -= commons.Decimal(amount)
         appier.verify(pending == 0.0)
 
+    def ensure_waiting_s(self):
+        if not self.state == "created": return
+        self.mark_waiting_payment_s()
+
     @appier.operation(name = "Notify")
     def notify_s(self, name = None):
         name = name or "order.%s" % self.status
@@ -308,6 +331,12 @@ class Order(bundle.Bundle):
         self.notification_sent = True
         self.save()
 
+    @appier.operation(name = "Mark Waiting Payment")
+    def mark_waiting_payment_s(self):
+        self.verify_waiting_payment()
+        self.status = "waiting_payment"
+        self.save()
+
     @appier.operation(name = "Mark Paid")
     def mark_paid_s(self):
         self.verify_paid()
@@ -318,7 +347,7 @@ class Order(bundle.Bundle):
 
     @appier.operation(name = "Unmark Paid")
     def unmark_paid_s(self):
-        self.status = "created"
+        self.status = "waiting_payment"
         self.paid = False
         self.save()
 
