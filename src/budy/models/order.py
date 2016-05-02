@@ -318,7 +318,7 @@ class Order(bundle.Bundle):
         appier.verify(pending == 0.0)
 
     def ensure_waiting_s(self):
-        if not self.state == "created": return
+        if not self.status == "created": return
         self.mark_waiting_payment_s()
 
     @appier.operation(name = "Notify")
