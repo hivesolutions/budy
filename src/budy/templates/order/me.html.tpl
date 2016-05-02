@@ -2,7 +2,7 @@
 {% block title %}Orders{% endblock %}
 {% block name %}Orders{% endblock %}
 {% block content %}
-    <table class="orders">
+    <table class="table-full orders">
         {% for order in orders %}
             <tr>
                 <td>{{ order.reference }}</td>
