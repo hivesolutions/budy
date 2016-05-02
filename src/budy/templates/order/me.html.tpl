@@ -8,6 +8,7 @@
                 <td>{{ order.reference }}</td>
                 <td>{{ order.email }}</td>
                 <td>{{ order.status }}</td>
+                <td>{{ order.total }}</td>
                 <td>
                     {% if order.status == "created" %}
                         <a class="link link-confirm" href="{{ url_for('order.mark_paid', key = order.key) }}"
