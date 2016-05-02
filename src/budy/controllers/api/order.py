@@ -242,10 +242,9 @@ class OrderApiController(root.RootApiController):
     @appier.route("/api/orders/<str:key>/wait_payment", "PUT", json = True)
     @appier.ensure(token = "user")
     def wait_payment(self, key):
-        data = appier.request_json()
         empty_bag = self.field("empty_bag", True, cast = bool)
         order = budy.Order.get(key = key, rules = False)
-        order.wait_payment_s(data, notify = True)
+        order.wait_payment_s(notify = True)
         bag = budy.Bag.from_session()
         if empty_bag and bag: bag.empty_s()
         order = order.reload(map = True)
