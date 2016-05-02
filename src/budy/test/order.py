@@ -126,6 +126,11 @@ class OrderTest(unittest.TestCase):
         order.email = "username@email.com"
         order.save()
 
+        order.mark_waiting_payment_s()
+
+        self.assertEqual(order.status, "waiting_payment")
+        self.assertEqual(order.paid, False)
+
         order.mark_paid_s()
 
         self.assertEqual(order.status, "paid")
