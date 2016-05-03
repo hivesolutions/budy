@@ -64,6 +64,11 @@ class Media(base.BudyBase):
         index = True
     )
 
+    unique = appier.field(
+        index = True,
+        safe = True
+    )
+
     file = appier.field(
         type = appier.File,
         private = True
@@ -168,6 +173,35 @@ class Media(base.BudyBase):
 
     def get_url(self):
         return self.__class__.get_url(self.id)
+
+    @appier.operation(
+        name = "Generate Thumbnail",
+        parameters = (
+            ("Width", "width", int),
+            ("Height", "height", int),
+            ("Format", "format", str, "png")
+        ),
+        factory = True
+    )
+    def thumbnail_s(self, width = None, height = None, format = "png"):
+        cls = self.__class__
+        media = self.reload(rules = False)
+        builder = appier.image(
+            width = width,
+            height = height,
+            format = format
+        )
+        image = builder(media.file)
+        data = image.resize()
+        thumbnail = cls(
+            description = media.description,
+            label = "thumbnail",
+            order = media.order,
+            size = "thumbnail",
+            file = appier.File(("thumbnail", None, data))
+        )
+        thumbnail.save()
+        return thumbnail
 
     @appier.link(name = "View")
     def view_url(self, absolute = False):
