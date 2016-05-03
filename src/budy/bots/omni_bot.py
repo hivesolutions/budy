@@ -80,8 +80,47 @@ class OmniBot(base.Bot):
             offset += len(merchandise)
 
             for merchandise in merchandise:
-                product = budy.Product.from_omni(merchandise)
-                product.save()
+                _class = merchandise["_class"]
+                object_id = merchandise["object_id"]
+                is_product = _class in ("Product",)
+                is_sub_product = _class in ("SubProduct",)
+                is_valid = is_product or is_sub_product
+                if not is_valid: continue
+
+                if is_product:
+                    product = budy.Product.from_omni(merchandise)
+                    product.save()
+                    media = api.info_media_entity(
+                        object_id, dimensions = "original"
+                    )
+                    for item in media:
+                        unique = "%d-%d" % (item["object_id"], item["modify_date"])
+                        _media = budy.Media.get(unique = unique, raise_e = False)
+                        if _media: continue
+                        media_url = api.get_media_url(item["secret"])
+                        data = appier.get(media_url)
+
+                        _media = budy.Media(
+                            description = item["dimensions"],
+                            label = item["label"],
+                            order = item["position"] or 1,
+                            size = item["dimensions"],
+                            unique = unique,
+                            file = appier.File((item["label"], None, data))
+                        )
+                        _media.save()
+
+                        if _media.order == 1:
+                            thumbnail = _media.thumbnail_s(width = 520, height = 520)
+                            thumbnail.save()
+                            product.images.append(thumbnail)
+
+                        product.images.append(_media)
+                        product.save()
+
+                    #product.omni_media_s(media)
+                else:
+                    print("Sub produto %s" % str(object_id))
 
     def get_api(self):
         import omni
