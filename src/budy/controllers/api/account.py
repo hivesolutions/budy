@@ -68,11 +68,7 @@ class AccountApiController(root.RootApiController):
         orders = budy.Order.find(
             account = account.id,
             paid = True,
-            eager = (
-                "lines",
-                "shipping_address",
-                "billing_address"
-            ),
+            eager = ("lines",),
             map = True,
             **object
         )
