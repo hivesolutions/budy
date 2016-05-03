@@ -72,6 +72,10 @@ class Product(base.BudyBase):
         index = True
     )
 
+    currency = appier.field(
+        index = True
+    )
+
     order = appier.field(
         type = int,
         index = True
@@ -185,12 +189,37 @@ class Product(base.BudyBase):
             appier.not_empty("gender"),
 
             appier.not_null("price"),
-            appier.gt("price", 0.0)
+            appier.gte("price", 0.0)
         ]
 
     @classmethod
     def list_names(cls):
         return ["id", "product_id", "short_description", "enabled", "gender", "tag"]
+
+    @classmethod
+    def from_omni(cls, product, gender = "Both", currency = "EUR"):
+        company_product_code = product["company_product_code"]
+        _product = cls.get(product_id = company_product_code, raise_e = False)
+        if not _product: _product = cls()
+        _product.product_id = company_product_code
+        _product.short_description = company_product_code
+        _product.gender = gender
+        _product.price = product["retail_price"]
+        _product.currency = currency
+        return _product
+
+    @classmethod
+    @appier.operation(
+        name = "Import Omni",
+        parameters = (
+            ("Product", "product", "longtext"),
+        ),
+        factory = True
+    )
+    def import_omni_s(cls, product, safe = True):
+        product = json.loads(product)
+        product = cls.from_omni(product)
+        product.save()
 
     @classmethod
     @appier.operation(

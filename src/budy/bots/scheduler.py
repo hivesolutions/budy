@@ -39,6 +39,8 @@ __license__ = "Apache License, Version 2.0"
 
 import appier
 
+from . import omni_bot
+
 LOOP_TIMEOUT = 30.0
 """ The time value to be used to sleep the main sequence
 loop between ticks, this value should not be too small
@@ -55,3 +57,8 @@ class Scheduler(appier.Scheduler):
             *args,
             **kwargs
         )
+        self.omni_bot = omni_bot.OmniBot(*args, **kwargs)
+
+    def tick(self):
+        appier.Scheduler.tick(self)
+        self.omni_bot.tick()

@@ -40,6 +40,8 @@ __license__ = "Apache License, Version 2.0"
 import appier
 import appier_extras
 
+from budy import bots
+
 class BudyApp(appier.WebApp):
 
     def __init__(self, *args, **kwargs):
@@ -52,6 +54,11 @@ class BudyApp(appier.WebApp):
             *args, **kwargs
         )
         self.login_route = "base.signin"
+        self.scheduler = bots.Scheduler(self)
+
+    def start(self):
+        appier.WebApp.start(self)
+        self.scheduler.start()
 
 if __name__ == "__main__":
     app = BudyApp()

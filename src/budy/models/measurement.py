@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import commons
+
 import appier
 
 from . import base
@@ -53,13 +55,38 @@ class Measurement(base.BudyBase):
         index = True
     )
 
+    quantity = appier.field(
+        type = int,
+        index = True
+    )
+
+    price = appier.field(
+        type = commons.Decimal,
+        index = True
+    )
+
+    currency = appier.field(
+        index = True
+    )
+
+    product = appier.field(
+        type = appier.reference(
+            "Product",
+            name = "id"
+        )
+    )
+
     @classmethod
     def validate(cls):
         return super(Measurement, cls).validate() + [
             appier.not_null("name"),
             appier.not_empty("name"),
 
-            appier.not_null("value")
+            appier.not_null("value"),
+
+            appier.gte("price", 0.0),
+
+            appier.not_null("product")
         ]
 
     @classmethod

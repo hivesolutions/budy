@@ -37,7 +37,53 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import appier
+
+import budy
+
 from . import base
 
+RECORDS = 100
+
 class OmniBot(base.Bot):
-    pass
+
+    def __init__(self, *args, **kwargs):
+        self.enabled = appier.conf("OMNI_BOT_ENABLED", False, cast = bool)
+        self.store = appier.conf("OMNI_BOT_STORE", None, cast = int)
+        self.records = appier.conf("OMNI_BOT_RECORDS", RECORDS)
+        self.enabled = kwargs.get("enabled", self.enabled)
+        self.store = kwargs.get("store", self.store)
+        self.records = kwargs.get("records", self.records)
+
+    def tick(self):
+        if not self.enabled: return
+        self.sync_products()
+
+    def sync_products(self):
+        api = self.get_api()
+        offset = 0
+
+        while True:
+            kwargs = {
+                "filter_string" : "",
+                "start_record" : offset,
+                "number_records" : self.records,
+                "filters[]" : [
+                    "sellable:equals:2"
+                ]
+            }
+            merchandise = api.list_store_merchandise(
+                store_id = self.store,
+                **kwargs
+            )
+            if not merchandise: break
+            offset += len(merchandise)
+
+            for merchandise in merchandise:
+                product = budy.Product.from_omni(merchandise)
+                product.save()
+
+    def get_api(self):
+        import omni
+        api = omni.Api()
+        return api
