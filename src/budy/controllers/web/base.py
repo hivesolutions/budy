@@ -49,6 +49,12 @@ class BaseController(appier.Controller):
             self.url_for("admin.index")
         )
 
+    @appier.route("/index_store", "GET")
+    def index_store(self):
+        return self.redirect(
+            self.url_for("order.me")
+        )
+
     @appier.route("/signin", "GET")
     def signin(self):
         next = self.field("next")
@@ -76,7 +82,7 @@ class BaseController(appier.Controller):
         account._set_session()
 
         return self.redirect(
-            next or self.url_for("base.index")
+            next or self.url_for(self.budy_login_redirect)
         )
 
     @appier.route("/signout", "GET")
@@ -84,5 +90,5 @@ class BaseController(appier.Controller):
         next = self.field("next")
         budy.BudyAccount._unset_session()
         return self.redirect(
-            next or self.url_for(self.owner.admin_login_redirect)
+            next or self.url_for(self.login_route)
         )

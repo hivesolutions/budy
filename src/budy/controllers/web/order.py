@@ -54,6 +54,7 @@ class OrderController(appier.Controller):
         )
         orders = budy.Order.find(
             status = status,
+            account = account.id,
             store = account.store.id,
             sort = [("id", -1)]
         )
