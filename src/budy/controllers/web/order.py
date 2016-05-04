@@ -49,7 +49,8 @@ class OrderController(appier.Controller):
     def me(self, status = "waiting_payment"):
         account = budy.BudyAccount.from_session()
         if not account.store: raise appier.OperationalError(
-            message = "No store associated with user"
+            message = "No store associated with user",
+            code = 403
         )
         orders = budy.Order.find(
             status = status,
