@@ -179,26 +179,34 @@ class Media(base.BudyBase):
         parameters = (
             ("Width", "width", int),
             ("Height", "height", int),
-            ("Format", "format", str, "png")
+            ("Format", "format", str, "png"),
+            ("Suffix", "suffix", str, "thumbnail")
         ),
         factory = True
     )
-    def thumbnail_s(self, width = None, height = None, format = "png"):
+    def thumbnail_s(
+        self,
+        width = None,
+        height = None,
+        format = "png",
+        suffix = "thumbnail"
+    ):
         cls = self.__class__
         media = self.reload(rules = False)
         builder = appier.image(
-            width = width,
-            height = height,
+            width = width or height,
+            height = height or width,
             format = format
         )
         image = builder(media.file)
         data = image.resize()
         thumbnail = cls(
             description = media.description,
-            label = "thumbnail",
+            label = suffix,
             order = media.order,
-            size = "thumbnail",
-            file = appier.File(("thumbnail", None, data))
+            size = suffix,
+            unique = "%s-%s" % (media.unique, suffix),
+            file = appier.File((suffix, None, data))
         )
         thumbnail.save()
         return thumbnail

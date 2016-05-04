@@ -94,31 +94,45 @@ class OmniBot(base.Bot):
                         object_id, dimensions = "original"
                     )
                     for item in media:
+                        # creates the unique value for the media from its object
+                        # identifier and its last modification data, using this
+                        # value tries to retrieve a possible already existing
+                        # and equivalent media (avoids duplication) 
                         unique = "%d-%d" % (item["object_id"], item["modify_date"])
                         _media = budy.Media.get(unique = unique, raise_e = False)
-                        if _media: continue
-                        media_url = api.get_media_url(item["secret"])
-                        data = appier.get(media_url)
+                        
+                        # in case the media does not exist, tries to retrieve the
+                        # new remote data from the source and create a new media
+                        if not _media:
+                            media_url = api.get_media_url(item["secret"])
+                            data = appier.get(media_url)
+                            _media = budy.Media(
+                                description = item["dimensions"],
+                                label = item["label"],
+                                order = item["position"] or 1,
+                                size = item["dimensions"],
+                                unique = unique,
+                                file = appier.File((item["label"], None, data))
+                            )
+                            _media.save()
 
-                        _media = budy.Media(
-                            description = item["dimensions"],
-                            label = item["label"],
-                            order = item["position"] or 1,
-                            size = item["dimensions"],
-                            unique = unique,
-                            file = appier.File((item["label"], None, data))
-                        )
-                        _media.save()
+                        # iterates over the complete set of resized images to
+                        # be created and for each of them verifies it has to
+                        # be generated or if one already exists
+                        for suffix, size in (("thumbnail", 260), ("large_image", 540)):
+                            if not _media.order == 1: continue
+                            resized_unique = "%s-%s" % (unique, suffix)
+                            resized = budy.Media.get(unique = resized_unique, raise_e = False)
+                            if not resized:
+                                resized = _media.thumbnail_s(width = size, suffix = suffix)
+                                resized.save()
+                            exists = resized in product.images
+                            if not exists: product.images.append(resized)
 
-                        if _media.order == 1:
-                            thumbnail = _media.thumbnail_s(width = 520, height = 520)
-                            thumbnail.save()
-                            product.images.append(thumbnail)
-
-                        product.images.append(_media)
+                        exists = _media in product.images
+                        if not exists: product.images.append(_media)
                         product.save()
 
-                    #product.omni_media_s(media)
                 else:
                     print("Sub produto %s" % str(object_id))
 
