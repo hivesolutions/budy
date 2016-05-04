@@ -90,17 +90,22 @@ class OmniBot(base.Bot):
                 if is_product:
                     product = budy.Product.from_omni(merchandise)
                     product.save()
+                    product.images = []
+
                     media = api.info_media_entity(
                         object_id, dimensions = "original"
                     )
+
+                    # iterates over the complete set of media associated with
+                    # the current product to try to create/update its media
                     for item in media:
                         # creates the unique value for the media from its object
                         # identifier and its last modification data, using this
                         # value tries to retrieve a possible already existing
-                        # and equivalent media (avoids duplication) 
+                        # and equivalent media (avoids duplication)
                         unique = "%d-%d" % (item["object_id"], item["modify_date"])
                         _media = budy.Media.get(unique = unique, raise_e = False)
-                        
+
                         # in case the media does not exist, tries to retrieve the
                         # new remote data from the source and create a new media
                         if not _media:
@@ -126,11 +131,9 @@ class OmniBot(base.Bot):
                             if not resized:
                                 resized = _media.thumbnail_s(width = size, suffix = suffix)
                                 resized.save()
-                            exists = resized in product.images
-                            if not exists: product.images.append(resized)
+                            product.images.append(resized)
 
-                        exists = _media in product.images
-                        if not exists: product.images.append(_media)
+                        product.images.append(_media)
                         product.save()
 
                 else:
