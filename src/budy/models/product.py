@@ -202,7 +202,7 @@ class Product(base.BudyBase):
         _product = cls.get(product_id = company_product_code, raise_e = False)
         if not _product: _product = cls()
         _product.product_id = company_product_code
-        _product.short_description = company_product_code
+        _product.short_description = product["name"] or company_product_code
         _product.gender = gender
         _product.price = product["retail_price"]
         _product.currency = currency
