@@ -1,3 +1,4 @@
 redis
-stripe_api
+pillow
 omni_api
+stripe_api
