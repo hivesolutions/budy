@@ -124,7 +124,12 @@ class OmniBot(base.Bot):
                         # iterates over the complete set of resized images to
                         # be created and for each of them verifies it has to
                         # be generated or if one already exists
-                        for suffix, size in (("thumbnail", 260), ("large_image", 540)):
+                        for suffix, size in (
+                            ("thumbnail", 260),
+                            ("thumbnail-2x", 540),
+                            ("large_image", 540),
+                            ("large_image-2x", 1080)
+                        ):
                             if not _media.order == 1: continue
                             resized_unique = "%s-%s" % (unique, suffix)
                             resized = budy.Media.get(unique = resized_unique, raise_e = False)
