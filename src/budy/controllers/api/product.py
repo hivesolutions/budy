@@ -65,6 +65,16 @@ class ProductApiController(root.RootApiController):
         )
         return product
 
+    @appier.route("/api/products/<int:id>/related", "GET", json = True)
+    def related(self, id):
+        limit = self.field("limit", 10, int)
+        products = budy.Product.find(
+            eager = ("images",),
+            limit = limit,
+            map = True
+        )
+        return products
+
     @appier.route("/api/products/simple.csv", "GET")
     @appier.ensure(token = "admin")
     def simple_csv(self):
