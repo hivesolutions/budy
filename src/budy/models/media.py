@@ -200,13 +200,15 @@ class Media(base.BudyBase):
         )
         image = builder(media.file)
         data = image.resize()
+        name = "%s.%s" % (suffix, format)
+        mime, _encoding = mimetypes.guess_type(name, strict = False)
         thumbnail = cls(
             description = media.description,
             label = suffix,
             order = media.order,
             size = suffix,
             unique = "%s-%s" % (media.unique, suffix),
-            file = appier.File((suffix, None, data))
+            file = appier.File((name, mime, data))
         )
         thumbnail.save()
         return thumbnail
