@@ -70,7 +70,6 @@ class ProductApiController(root.RootApiController):
         limit = self.field("limit", 10, int)
         products = budy.Product.find(
             eager = ("images",),
-            skip = 0,
             limit = limit,
             map = True
         )
