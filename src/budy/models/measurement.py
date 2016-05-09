@@ -92,3 +92,32 @@ class Measurement(base.BudyBase):
     @classmethod
     def list_names(cls):
         return ["id", "name", "value"]
+
+    @classmethod
+    def from_omni(cls, sub_product, name = "size", currency = "EUR"):
+        from . import product
+        parent = sub_product["product"]
+        company_product_code = sub_product["company_product_code"]
+
+        _product = product.Product.get(
+            product_id = parent["company_product_code"],
+            raise_e = False
+        )
+        if not _product: return None
+
+        value = company_product_code.split("-", 1)[1]
+
+        measurement = cls.get(
+            product = _product.id,
+            name = name,
+            value = value,
+            raise_e = False
+        )
+        if not measurement: measurement = cls()
+
+        measurement.name = name
+        measurement.value = value
+        measurement.price = sub_product["retail_price"]
+        measurement.currency = currency
+        measurement.product = _product
+        return measurement

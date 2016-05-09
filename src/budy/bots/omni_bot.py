@@ -81,71 +81,106 @@ class OmniBot(base.Bot):
 
             for merchandise in merchandise:
                 _class = merchandise["_class"]
-                object_id = merchandise["object_id"]
                 is_product = _class in ("Product",)
                 is_sub_product = _class in ("SubProduct",)
                 is_valid = is_product or is_sub_product
                 if not is_valid: continue
+                if is_product: self.sync_product(merchandise)
+                else: self.sync_sub_product(merchandise)
 
-                if is_product:
-                    product = budy.Product.from_omni(merchandise)
-                    product.save()
-                    product.images = []
+    def sync_product(self, merchandise):
+        # retrieves the reference to the api object that is
+        # going to be used for api based operations
+        api = self.get_api()
 
-                    # retrieves the media information associated with the
-                    # current merchandise to be able to sync it by either
-                    # creating new local medias or re-using existing ones
-                    media = api.info_media_entity(
-                        object_id, dimensions = "original"
-                    )
+        # retrieves some of the most general attributes of the
+        # merchandise that is going to be integrated as a product
+        _class = merchandise["_class"]
+        object_id = merchandise["object_id"]
 
-                    # iterates over the complete set of media associated with
-                    # the current product to try to create/update its media
-                    for item in media:
-                        # creates the unique value for the media from its object
-                        # identifier and its last modification data, using this
-                        # value tries to retrieve a possible already existing
-                        # and equivalent media (avoids duplication)
-                        unique = "%d-%d" % (item["object_id"], item["modify_date"])
-                        _media = budy.Media.get(unique = unique, raise_e = False)
+        # builds a new product instance from the merchandise
+        # information that has just been retrieved
+        product = budy.Product.from_omni(merchandise)
+        product.save()
+        product.images = []
 
-                        # in case the media does not exist, tries to retrieve the
-                        # new remote data from the source and create a new media
-                        if not _media:
-                            media_url = api.get_media_url(item["secret"])
-                            data = appier.get(media_url)
-                            _media = budy.Media(
-                                description = item["dimensions"],
-                                label = item["label"],
-                                order = item["position"] or 1,
-                                size = item["dimensions"],
-                                unique = unique,
-                                file = appier.File((item["label"], None, data))
-                            )
-                            _media.save()
+        # retrieves the media information associated with the
+        # current merchandise to be able to sync it by either
+        # creating new local medias or re-using existing ones
+        media = api.info_media_entity(
+            object_id, dimensions = "original"
+        )
 
-                        # iterates over the complete set of resized images to
-                        # be created and for each of them verifies it has to
-                        # be generated or if one already exists
-                        for suffix, size in (
-                            ("thumbnail", 260),
-                            ("thumbnail_2x", 540),
-                            ("large_image", 540),
-                            ("large_image_2x", 1080)
-                        ):
-                            if not _media.order == 1: continue
-                            resized_unique = "%s-%s" % (unique, suffix)
-                            resized = budy.Media.get(unique = resized_unique, raise_e = False)
-                            if not resized:
-                                resized = _media.thumbnail_s(width = size, suffix = suffix)
-                                resized.save()
-                            product.images.append(resized)
+        # iterates over the complete set of media associated with
+        # the current product to try to create/update its media
+        for item in media:
+            # creates the unique value for the media from its object
+            # identifier and its last modification data, using this
+            # value tries to retrieve a possible already existing
+            # and equivalent media (avoids duplication)
+            unique = "%d-%d" % (item["object_id"], item["modify_date"])
+            _media = budy.Media.get(unique = unique, raise_e = False)
 
-                        product.images.append(_media)
-                        product.save()
+            # in case the media does not exist, tries to retrieve the
+            # new remote data from the source and create a new media
+            if not _media:
+                media_url = api.get_media_url(item["secret"])
+                data = appier.get(media_url)
+                _media = budy.Media(
+                    description = item["dimensions"],
+                    label = item["label"],
+                    order = item["position"] or 1,
+                    size = item["dimensions"],
+                    unique = unique,
+                    file = appier.File((item["label"], None, data))
+                )
+                _media.save()
 
-                else:
-                    print("Sub produto %s" % str(object_id))
+            # iterates over the complete set of resized images to
+            # be created and for each of them verifies it has to
+            # be generated or if one already exists
+            for suffix, size in (
+                ("thumbnail", 260),
+                ("thumbnail_2x", 540),
+                ("large_image", 540),
+                ("large_image_2x", 1080)
+            ):
+                if not _media.order == 1: continue
+                resized_unique = "%s-%s" % (unique, suffix)
+                resized = budy.Media.get(unique = resized_unique, raise_e = False)
+                if not resized:
+                    resized = _media.thumbnail_s(width = size, suffix = suffix)
+                    resized.save()
+                product.images.append(resized)
+
+            product.images.append(_media)
+            product.save()
+
+    def sync_sub_product(self, merchandise):
+        api = self.get_api()
+
+        object_id = merchandise["object_id"]
+        sub_product = api.get_sub_product(object_id)
+        
+        product = sub_product["product"]
+
+        measurement = budy.Measurement.from_omni(sub_product)
+        if not measurement:
+            product = api.get_product(product["object_id"])
+            self.sync_product(product)
+            measurement = budy.Measurement.from_omni(sub_product)
+
+        if not measurement: return
+
+        measurement.save()
+
+        parent = measurement.product
+
+        if not measurement in parent.measurements:
+            parent.measurements.append(measurement)
+            parent.save()
+
+        print("Sub produto %s" % str(object_id))
 
     def get_api(self):
         import omni

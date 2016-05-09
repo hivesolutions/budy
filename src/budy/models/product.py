@@ -197,6 +197,10 @@ class Product(base.BudyBase):
         return ["id", "product_id", "short_description", "enabled", "gender", "tag"]
 
     @classmethod
+    def index_names(cls):
+        return super(Product, cls).index_names() + ["product_id"]
+
+    @classmethod
     def from_omni(cls, product, gender = "Both", currency = "EUR"):
         company_product_code = product["company_product_code"]
         _product = cls.get(product_id = company_product_code, raise_e = False)
