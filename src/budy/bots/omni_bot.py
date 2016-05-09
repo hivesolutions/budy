@@ -92,6 +92,9 @@ class OmniBot(base.Bot):
                     product.save()
                     product.images = []
 
+                    # retrieves the media information associated with the
+                    # current merchandise to be able to sync it by either
+                    # creating new local medias or re-using existing ones
                     media = api.info_media_entity(
                         object_id, dimensions = "original"
                     )
