@@ -60,7 +60,7 @@ class ProductApiController(root.RootApiController):
     def show(self, id):
         product = budy.Product.get(
             id = id,
-            eager = ("images", "brand"),
+            eager = ("images", "brand", "measurements"),
             map = True
         )
         return product
