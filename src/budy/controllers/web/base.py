@@ -58,7 +58,7 @@ class BaseController(appier.Controller):
     @appier.route("/signin", "GET")
     def signin(self):
         next = self.field("next")
-        error = self.field("error", "")
+        error = self.field("error")
         return self.template(
             "signin.html.tpl",
             next = next,
