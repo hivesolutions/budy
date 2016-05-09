@@ -83,6 +83,15 @@ class BudyAccount(appier_extras.admin.Account):
         initial = False
     )
 
+    avatar = appier.field(
+        type = appier.image(
+            width = 400,
+            height = 400,
+            format = "png"
+        ),
+        private = True
+    )
+
     store = appier.field(
         type = appier.reference(
             "Store",
