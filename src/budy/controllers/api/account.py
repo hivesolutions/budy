@@ -73,21 +73,8 @@ class AccountApiController(root.RootApiController):
     def avatar_me(self):
         account = budy.BudyAccount.from_session(rules = False)
         avatar = account.avatar
-        if not avatar: return
         return self.send_file(
             avatar.data,
-            content_type = avatar.mime,
-            etag = avatar.etag
-        )
-
-    @appier.route("/api/accounts/me/avatar/data", "GET", json = True)
-    @appier.ensure(token = "user")
-    def avatar_data_me(self):
-        account = budy.BudyAccount.from_session(rules = False)
-        avatar = account.avatar
-        if not avatar: return
-        return dict(
-            data_b64 = avatar.data_b64,
             content_type = avatar.mime,
             etag = avatar.etag
         )
