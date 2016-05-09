@@ -161,7 +161,7 @@ class OmniBot(base.Bot):
 
         object_id = merchandise["object_id"]
         sub_product = api.get_sub_product(object_id)
-        
+
         product = sub_product["product"]
 
         measurement = budy.Measurement.from_omni(sub_product)
@@ -179,8 +179,6 @@ class OmniBot(base.Bot):
         if not measurement in parent.measurements:
             parent.measurements.append(measurement)
             parent.save()
-
-        print("Sub produto %s" % str(object_id))
 
     def get_api(self):
         import omni
