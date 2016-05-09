@@ -384,6 +384,14 @@ class Product(base.BudyBase):
         total = result["total"]
         return total["price_final"]
 
+    def get_currency(self, currency = None):
+        if not self.price_provider: return self.currency or currency
+        method = getattr(self, "get_currency_%s" % self.price_provider)
+        return method(currency = currency)
+
+    def get_currency_ripe(self, currency = None):
+        return self.currency or currency
+
     def get_size(self, currency = None, country = None, attributes = None):
         if not self.price_provider: return None, None
         method = getattr(self, "get_size_%s" % self.price_provider)
