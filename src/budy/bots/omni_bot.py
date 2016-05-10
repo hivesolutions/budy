@@ -145,7 +145,6 @@ class OmniBot(base.Bot):
                 ("large", 540),
                 ("large_2x", 1080)
             ):
-                if not _media.order == 1: continue
                 resized_unique = "%s-%s" % (unique, suffix)
                 resized = budy.Media.get(unique = resized_unique, raise_e = False)
                 if not resized:
