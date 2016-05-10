@@ -142,8 +142,8 @@ class OmniBot(base.Bot):
             for suffix, size in (
                 ("thumbnail", 260),
                 ("thumbnail_2x", 540),
-                ("large_image", 540),
-                ("large_image_2x", 1080)
+                ("large", 540),
+                ("large_2x", 1080)
             ):
                 if not _media.order == 1: continue
                 resized_unique = "%s-%s" % (unique, suffix)
