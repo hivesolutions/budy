@@ -54,6 +54,7 @@ class OmniBot(base.Bot):
         self.enabled = kwargs.get("enabled", self.enabled)
         self.store = kwargs.get("store", self.store)
         self.records = kwargs.get("records", self.records)
+        self.api = None
 
     def tick(self):
         if not self.enabled: return
@@ -181,5 +182,6 @@ class OmniBot(base.Bot):
 
     def get_api(self):
         import omni
-        api = omni.Api()
-        return api
+        if self.api: return self.api
+        self.api = omni.Api()
+        return self.api
