@@ -57,6 +57,10 @@ class Address(base.BudyBase):
         index = True
     )
 
+    tax_number = appier.field(
+        index = True
+    )
+
     address = appier.field()
 
     address_extra = appier.field()
