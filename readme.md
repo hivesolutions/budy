@@ -19,6 +19,12 @@ so that all the use cases are proper validated before implementation.
 
 Code coverage of at least 75% of the code base should be considered a priority.
 
+## Configuration
+
+* `BUDY_CURRENCY` (`str`) - The currency to be "forced" for financial operations, this value is not
+set by default an an automatic algorithm is used instead, to determine the best possible match for the
+currency to be used, use this value only for situations where binding a currency value is required (default to `None`)
+
 ## License
 
 Budy is currently licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/).
