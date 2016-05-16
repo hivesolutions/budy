@@ -123,6 +123,11 @@ class Order(bundle.Bundle):
         meta = "url"
     )
 
+    payment_data = appier.field(
+        type = dict,
+        meta = "json"
+    )
+
     lines = appier.field(
         type = appier.references(
             "OrderLine",
@@ -486,4 +491,9 @@ class Order(bundle.Bundle):
             exp_year,
             number,
             name = name
+        )
+        self.payment_data = dict(
+            number = "*" * 12 + number[-4:],
+            exp_month = exp_month,
+            exp_year = exp_year
         )
