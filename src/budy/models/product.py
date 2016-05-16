@@ -67,7 +67,12 @@ class Product(base.BudyBase):
         enum = GENDER_S
     )
 
-    quantity = appier.field(
+    quantity_hand = appier.field(
+        type = commons.Decimal,
+        index = True
+    )
+
+    quantity_reserved = appier.field(
         type = commons.Decimal,
         index = True
     )
@@ -214,7 +219,7 @@ class Product(base.BudyBase):
         _product.short_description = merchandise["name"] or company_product_code
         _product.description = merchandise["description"]
         _product.gender = gender
-        _product.quantity = merchandise["stock_on_hand"]
+        _product.quantity_hand = merchandise["stock_on_hand"]
         _product.price = merchandise["retail_price"]
         _product.currency = currency
         return _product
@@ -344,7 +349,7 @@ class Product(base.BudyBase):
     def pre_save(self):
         base.BudyBase.pre_save(self)
         if not self.measurements: return
-        self.quantity = sum([measurement.quantity for measurement in self.measurements])
+        self.quantity_hand = sum([measurement.quantity for measurement in self.measurements])
 
     def get_measurement(self, value, name = None):
         for measurement in self.measurements:
@@ -497,3 +502,7 @@ class Product(base.BudyBase):
         if not image in self.images: return
         self.images.remove(image)
         self.save()
+
+    @property
+    def quantity(self):
+        return self.quantity_hand

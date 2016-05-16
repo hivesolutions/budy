@@ -55,7 +55,12 @@ class Measurement(base.BudyBase):
         index = True
     )
 
-    quantity = appier.field(
+    quantity_hand = appier.field(
+        type = commons.Decimal,
+        index = True
+    )
+
+    quantity_reserved = appier.field(
         type = commons.Decimal,
         index = True
     )
@@ -117,8 +122,12 @@ class Measurement(base.BudyBase):
 
         measurement.name = name
         measurement.value = value
-        measurement.quantity = merchandise["stock_on_hand"]
+        measurement.quantity_hand = merchandise["stock_on_hand"]
         measurement.price = merchandise["retail_price"]
         measurement.currency = currency
         measurement.product = _product
         return measurement
+
+    @property
+    def quantity(self):
+        return self.quantity_hand
