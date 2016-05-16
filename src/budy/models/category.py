@@ -58,3 +58,11 @@ class Category(base.BudyBase):
     @classmethod
     def list_names(cls):
         return ["id", "name"]
+
+    @classmethod
+    def ensure_s(cls, name):
+        category = cls.get(name = name, raise_e = False)
+        if category: return category
+        category = cls(name = name)
+        category.save()
+        return category

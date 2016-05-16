@@ -216,8 +216,17 @@ class Product(base.BudyBase):
 
     @classmethod
     def from_omni(cls, merchandise, gender = "Both", currency = "EUR"):
+        from . import color
+        from . import category
+        from . import collection
         company_product_code = merchandise["company_product_code"]
         metadata = merchandise["metadata"] or dict()
+        _color = metadata.get("material")
+        _category = metadata.get("category")
+        _collection = metadata.get("collection")
+        if _color: _color = color.Color.ensure_s(_color)
+        if _category: _category = category.Category.ensure_s(_category)
+        if _collection: _collection = collection.Collection.ensure_s(_collection) 
         _product = cls.get(product_id = company_product_code, raise_e = False)
         if not _product: _product = cls()
         _product.product_id = company_product_code
@@ -228,6 +237,9 @@ class Product(base.BudyBase):
         _product.price = merchandise["retail_price"]
         _product.currency = currency
         _product.characteristics = metadata.get("characteristics", [])
+        _product.colors = [_color]
+        _product.categories = [_category]
+        _product.collections = [_collection]
         return _product
 
     @classmethod

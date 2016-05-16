@@ -58,3 +58,11 @@ class Color(base.BudyBase):
     @classmethod
     def list_names(cls):
         return ["id", "name"]
+
+    @classmethod
+    def ensure_s(cls, name):
+        color = cls.get(name = name, raise_e = False)
+        if color: return color
+        color = cls(name = name)
+        color.save()
+        return color
