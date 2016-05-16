@@ -345,6 +345,7 @@ class Order(bundle.Bundle):
     def mark_waiting_payment_s(self):
         self.verify_waiting_payment()
         self.status = "waiting_payment"
+        self.set_reference_f_s()
         self.save()
 
     @appier.operation(name = "Mark Paid")
@@ -353,6 +354,7 @@ class Order(bundle.Bundle):
         self.status = "paid"
         self.paid = True
         self.date = time.time()
+        self.set_reference_f_s()
         self.save()
 
     @appier.operation(name = "Unmark Paid")
