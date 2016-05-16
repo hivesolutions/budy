@@ -67,6 +67,11 @@ class Product(base.BudyBase):
         enum = GENDER_S
     )
 
+    quantity = appier.field(
+        type = commons.Decimal,
+        index = True
+    )
+
     price = appier.field(
         type = commons.Decimal,
         index = True
@@ -334,6 +339,11 @@ class Product(base.BudyBase):
             "product_api.simple_csv",
             absolute = absolute
         )
+
+    def pre_save(self):
+        base.BudyBase.pre_save(self)
+        if not self.measurements: return
+        self.quantity = sum([measurement.quantity for measurement in self.measurements])
 
     def get_price(
         self,

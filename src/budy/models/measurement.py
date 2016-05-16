@@ -56,7 +56,7 @@ class Measurement(base.BudyBase):
     )
 
     quantity = appier.field(
-        type = int,
+        type = commons.Decimal,
         index = True
     )
 
