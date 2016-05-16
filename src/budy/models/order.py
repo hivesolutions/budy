@@ -124,8 +124,7 @@ class Order(bundle.Bundle):
     )
 
     payment_data = appier.field(
-        type = dict,
-        meta = "json"
+        type = dict
     )
 
     lines = appier.field(
