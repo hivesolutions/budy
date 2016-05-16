@@ -145,6 +145,7 @@ class OrderApiController(root.RootApiController):
         start = self.field("start", cast = int)
         end = self.field("end", cast = int)
         paid = self.field("paid", True, cast = bool)
+        sms = self.field("sms", False, cast = bool)
         object = appier.get_object(
             alias = True,
             find = True,
@@ -166,7 +167,7 @@ class OrderApiController(root.RootApiController):
             weight = weight.replace(".", ",")
             line = dict(
                 reference = order.reference,
-                quantity = order.quantity,
+                quantity = int(order.quantity),
                 weight = weight,
                 price = "0ue",
                 destiny = shipping_address.full_name[:60],
@@ -193,7 +194,7 @@ class OrderApiController(root.RootApiController):
                 delivery_date = "",
                 return_signed_document = 0,
                 expeditor_instructions = 0,
-                sms = 1,
+                sms = 1 if sms else 0,
                 not_applicable_3 = "",
                 printer = "",
                 ticket_machine = "",
