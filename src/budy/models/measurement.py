@@ -94,10 +94,10 @@ class Measurement(base.BudyBase):
         return ["id", "name", "value"]
 
     @classmethod
-    def from_omni(cls, sub_product, name = "size", currency = "EUR"):
+    def from_omni(cls, merchandise, sub_product, name = "size", currency = "EUR"):
         from . import product
         parent = sub_product["product"]
-        company_product_code = sub_product["company_product_code"]
+        company_product_code = merchandise["company_product_code"]
 
         _product = product.Product.get(
             product_id = parent["company_product_code"],
@@ -117,7 +117,8 @@ class Measurement(base.BudyBase):
 
         measurement.name = name
         measurement.value = value
-        measurement.price = sub_product["retail_price"]
+        measurement.quantity = merchandise["stock_on_hand"]
+        measurement.price = merchandise["retail_price"]
         measurement.currency = currency
         measurement.product = _product
         return measurement

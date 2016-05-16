@@ -206,15 +206,16 @@ class Product(base.BudyBase):
         return super(Product, cls).index_names() + ["product_id"]
 
     @classmethod
-    def from_omni(cls, product, gender = "Both", currency = "EUR"):
-        company_product_code = product["company_product_code"]
+    def from_omni(cls, merchandise, gender = "Both", currency = "EUR"):
+        company_product_code = merchandise["company_product_code"]
         _product = cls.get(product_id = company_product_code, raise_e = False)
         if not _product: _product = cls()
         _product.product_id = company_product_code
-        _product.short_description = product["name"] or company_product_code
-        _product.description = product["description"]
+        _product.short_description = merchandise["name"] or company_product_code
+        _product.description = merchandise["description"]
         _product.gender = gender
-        _product.price = product["retail_price"]
+        _product.quantity = merchandise["stock_on_hand"]
+        _product.price = merchandise["retail_price"]
         _product.currency = currency
         return _product
 
