@@ -94,6 +94,10 @@ class Media(base.BudyBase):
         return ["id", "description", "label", "order", "size"]
 
     @classmethod
+    def order_name(self):
+        return ["id", -1]
+
+    @classmethod
     @appier.operation(
         name = "Import Media",
         parameters = (

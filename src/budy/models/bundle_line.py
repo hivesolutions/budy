@@ -119,7 +119,7 @@ class BundleLine(base.BudyBase):
             country = country,
             attributes = self.attributes
         )
-        self.currency = currency
+        self.currency = self.product.get_currency(currency = currency)
         self.country = country
         return self.price
 

@@ -422,12 +422,16 @@ class Order(bundle.Bundle):
 
     @property
     def shipping_currency(self):
+        currency = appier.conf("BUDY_CURRENCY", None)
+        if currency: return currency
         if not self.shipping_country: return None
         shipping_country = country.Country.get_by_code(self.shipping_country)
         return shipping_country.currency_code
 
     @property
     def payment_currency(self):
+        currency = appier.conf("BUDY_CURRENCY", None)
+        if currency: return currency
         has_store_currency = self.store and self.store.currency_code
         if has_store_currency: return self.store.currency_code
         return self.shipping_currency
