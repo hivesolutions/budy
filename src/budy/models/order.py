@@ -84,6 +84,11 @@ class Order(bundle.Bundle):
         safe = True
     )
 
+    reference_f = appier.field(
+        index = True,
+        safe = True
+    )
+
     paid = appier.field(
         type = bool,
         initial = False,
@@ -381,9 +386,18 @@ class Order(bundle.Bundle):
         self.save()
 
     @appier.operation(name = "Set Reference")
-    def set_reference_s(self):
+    def set_reference_s(self, force = False):
+        if self.reference and not force: return
         prefix = appier.conf("BUDY_ORDER_REF", "BD-%06d")
         self.reference = prefix % self.id
+        self.save()
+
+    @appier.operation(name = "Set Reference Final")
+    def set_reference_f_s(self, force = False):
+        if self.reference_f and not force: return
+        cls = self.__class__
+        prefix = appier.conf("BUDY_ORDER_REF_F", "BDF-%06d")
+        self.reference_f = prefix % cls._increment("reference_f")
         self.save()
 
     @appier.operation(name = "Fix Orphans")
