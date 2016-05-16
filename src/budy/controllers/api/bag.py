@@ -110,7 +110,7 @@ class BagApiController(root.RootApiController):
 
     @appier.route("/api/bags/<str:key>/lines/add_update", "POST", json = True)
     def add_update_line(self, key):
-        increment = self.field("increment", True, cast = True)
+        increment = self.field("increment", True, cast = bool)
         line = budy.BagLine.new()
         bag = budy.Bag.get(key = key)
         line = bag.add_update_line_s(line, increment = increment)
