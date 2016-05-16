@@ -66,7 +66,7 @@ class BagApiController(root.RootApiController):
 
     @appier.route("/api/bags/<str:key>", "GET", json = True)
     def show(self, key):
-        ensure = self.field("ensure", True)
+        ensure = self.field("ensure", True, cast = bool)
         bag = budy.Bag.get(key = key, raise_e = not ensure)
         if not bag: bag = budy.Bag.ensure_s(key = key)
         bag.refresh_s(
@@ -84,7 +84,7 @@ class BagApiController(root.RootApiController):
 
     @appier.route("/api/bags/<str:key>/merge/<str:target>", "PUT", json = True)
     def merge(self, key, target):
-        increment = self.field("increment", False)
+        increment = self.field("increment", False, cast = bool)
         bag = budy.Bag.get(key = key)
         target = budy.Bag.get(key = target)
         bag.merge_s(target.id, increment = increment)
