@@ -346,6 +346,15 @@ class Product(base.BudyBase):
         if not self.measurements: return
         self.quantity = sum([measurement.quantity for measurement in self.measurements])
 
+    def get_measurement(self, value, name = None):
+        for measurement in self.measurements:
+            print(measurement.name)
+            print(measurement.value)
+            if not measurement.value == value: continue
+            if not measurement.name == name: continue
+            return measurement
+        return None
+
     def get_price(
         self,
         currency = None,

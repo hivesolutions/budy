@@ -93,6 +93,7 @@ class BundleLine(base.BudyBase):
         base.BudyBase.pre_save(self)
         self.calculate()
         self.measure()
+        self.ensure_valid()
 
     def calculate(self, currency = None, country = None, force = False):
         currency = currency or self.currency
@@ -131,11 +132,23 @@ class BundleLine(base.BudyBase):
             attributes = self.attributes
         )
 
+    def ensure_valid(self):
+        appier.verify(self.is_valid())
+
     def is_dirty(self, currency = None, country = None):
         is_dirty = not self.currency == currency
         is_dirty |= not self.country == country
         is_dirty |= not hasattr(self, "price") or self.price == None
         return is_dirty
+
+    def is_valid(self):
+        is_valid = self.is_valid_quantity()
+        return is_valid
+
+    def is_valid_quantity(self):
+        if self.product.quantity == None: return True
+        print(self.merchandise)
+        return self.quantity <= self.merchandise.quantity
 
     @appier.operation(name = "Calculate")
     def calculate_s(self):
@@ -146,3 +159,8 @@ class BundleLine(base.BudyBase):
     def measure_s(self):
         self.measure(force = True)
         self.save()
+        
+    @property
+    def merchandise(self):
+        if not self.size: return self.product
+        return self.product.get_measurement(self.size, name = "size")

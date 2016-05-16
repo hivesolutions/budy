@@ -145,6 +145,7 @@ class Bundle(base.BudyBase):
     def pre_save(self):
         base.BudyBase.pre_save(self)
         self.calculate()
+        self.ensure_valid()
 
     def empty_s(self):
         for line in self.lines: line.delete()
@@ -265,6 +266,9 @@ class Bundle(base.BudyBase):
         lines = self.lines if hasattr(self, "lines") else []
         self.sub_total = sum(line.total for line in lines)
         self.total = self.sub_total - self.discount + self.taxes
+        
+    def ensure_valid(self):
+        appier.verify(self.is_valid())
 
     def is_dirty(self, currency = None, country = None):
         dirty = False
@@ -274,6 +278,11 @@ class Bundle(base.BudyBase):
             country = country
         )
         return dirty
+
+    def is_valid(self):
+        is_valid = True
+        for line in self.lines: is_valid &= line.is_valid()
+        return is_valid
 
     @appier.operation(name = "Fix Sub Total")
     def fix_sub_total_s(self):
