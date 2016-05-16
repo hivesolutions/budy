@@ -198,6 +198,22 @@ class Order(bundle.Bundle):
             absolute = absolute
         )
 
+    @classmethod
+    @appier.link(
+        name = "Export CTT",
+        parameters = (
+            ("Start Id", "start", int),
+            ("End Id", "end", int),
+        )
+    )
+    def ctt_csv_url(cls, start = None, end = None, absolute = False):
+        return appier.get_app().url_for(
+            "order_api.ctt_csv",
+            start = start,
+            end = end,
+            absolute = absolute
+        )
+
     def pre_delete(self):
         bundle.Bundle.pre_delete(self)
         for line in self.lines: line.delete()

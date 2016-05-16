@@ -139,6 +139,106 @@ class OrderApiController(root.RootApiController):
         self.content_type("text/csv")
         return result
 
+    @appier.route("/api/orders/ctt.csv", "GET")
+    @appier.ensure(token = "admin")
+    def ctt_csv(self):
+        start = self.field("start", cast = int)
+        end = self.field("end", cast = int)
+        paid = self.field("paid", True, cast = bool)
+        object = appier.get_object(
+            alias = True,
+            find = True,
+            limit = 0,
+            sort = [("id", -1)]
+        )
+        id = object.get("id", {})
+        if start: id["$gte"] = start
+        if end: id["$lte"] = end
+        if start or end: object["id"] = id
+        if paid: object["paid"] = True
+        orders = budy.Order.find(**object)
+        orders_s = []
+        for order in orders:
+            shipping_address = order.shipping_address
+            postal_code = shipping_address.postal_code or ""
+            if not "-" in postal_code: postal_code += "-"
+            weight = "%.2f" % (order.quantity * 100)
+            weight = weight.replace(".", ",")
+            line = dict(
+                reference = order.reference,
+                quantity = order.quantity,
+                weight = weight,
+                price = "0ue",
+                destiny = shipping_address.full_name[:60],
+                title = order.account.title[:20],
+                name = shipping_address.full_name[:60],
+                address = shipping_address.address[:60],
+                town = shipping_address.city[:50],
+                zip_code_4 = postal_code.split("-", 1)[0][:4],
+                zip_code_3 = postal_code.split("-", 1)[1][:3],
+                not_applicable_1 = "",
+                observations = "",
+                back = 0,
+                document_code = "",
+                phone_number = (shipping_address.phone_number or "").replace("+", "00")[:15],
+                saturday = 0,
+                email = (order.email or "")[:200],
+                country = order.country,
+                fragile = 0,
+                not_applicable_2 = "",
+                document_collection = "",
+                code_email = "",
+                mobile_phone = (shipping_address.phone_number or "").replace("+", "00")[:15],
+                second_delivery = 0,
+                delivery_date = "",
+                return_signed_document = 0,
+                expeditor_instructions = 0,
+                sms = 1,
+                not_applicable_3 = "",
+                printer = "",
+                ticket_machine = "",
+                at_code = ""
+            )
+            order_s = (
+                line["reference"],
+                str(line["quantity"]),
+                line["weight"],
+                line["price"],
+                line["destiny"],
+                line["title"],
+                line["name"],
+                line["address"],
+                line["town"],
+                line["zip_code_4"],
+                line["zip_code_3"],
+                line["not_applicable_1"],
+                line["observations"],
+                str(line["back"]),
+                line["document_code"],
+                line["phone_number"],
+                str(line["saturday"]),
+                line["email"],
+                line["country"],
+                str(line["fragile"]),
+                line["not_applicable_2"],
+                line["document_collection"],
+                line["code_email"],
+                line["mobile_phone"],
+                str(line["second_delivery"]),
+                line["delivery_date"],
+                str(line["return_signed_document"]),
+                str(line["expeditor_instructions"]),
+                str(line["sms"]),
+                line["not_applicable_3"],
+                line["printer"],
+                line["ticket_machine"],
+                line["at_code"]
+            )
+            orders_s.append(order_s)
+        result = appier.serialize_csv(orders_s, delimiter = "+")
+        self.content_type("text/csv")
+        return result
+
     @appier.route("/api/orders/<str:key>", "GET", json = True)
     def show(self, key):
         order = budy.Order.get(key = key)

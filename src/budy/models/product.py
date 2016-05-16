@@ -349,7 +349,7 @@ class Product(base.BudyBase):
     def pre_save(self):
         base.BudyBase.pre_save(self)
         if not self.measurements: return
-        self.quantity_hand = sum([measurement.quantity for measurement in self.measurements])
+        self.quantity_hand = sum(measurement.quantity for measurement in self.measurements)
 
     def get_measurement(self, value, name = None):
         for measurement in self.measurements:

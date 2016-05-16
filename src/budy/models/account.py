@@ -155,6 +155,10 @@ class BudyAccount(appier_extras.admin.Account):
         self.store = store
         self.save()
 
+    @property
+    def title(self):
+        return "Mrs." if self.gender == "Female" else "Mr."
+
     def _set_avatar_d(self, image = "avatar.png", mime = "image/png"):
         app = appier.get_app()
 

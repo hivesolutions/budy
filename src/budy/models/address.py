@@ -114,3 +114,8 @@ class Address(base.BudyBase):
         if not hasattr(self, "key") or not self.key:
             self.key = self.secret()
         self.description = self.key[:8]
+
+    @property
+    def full_name(self):
+        if not self.last_name: return self.first_name
+        return self.first_name + " " + self.last_name

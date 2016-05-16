@@ -300,3 +300,7 @@ class Bundle(base.BudyBase):
         if self.sub_total: return
         self.sub_total = self.total
         self.save()
+
+    @property
+    def quantity(self):
+        return sum(line.quantity for line in self.lines)
