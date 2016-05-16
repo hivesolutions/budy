@@ -92,6 +92,10 @@ class Bag(bundle.Bundle):
         bag.save()
         return bag
 
+    def pre_validate(self):
+        bundle.Bundle.pre_validate(self)
+        self.try_valid()
+
     def pre_delete(self):
         bundle.Bundle.pre_delete(self)
         for line in self.lines: line.delete()

@@ -348,8 +348,6 @@ class Product(base.BudyBase):
 
     def get_measurement(self, value, name = None):
         for measurement in self.measurements:
-            print(measurement.name)
-            print(measurement.value)
             if not measurement.value == value: continue
             if not measurement.name == name: continue
             return measurement

@@ -266,7 +266,18 @@ class Bundle(base.BudyBase):
         lines = self.lines if hasattr(self, "lines") else []
         self.sub_total = sum(line.total for line in lines)
         self.total = self.sub_total - self.discount + self.taxes
-        
+
+    def collect_empty(self):
+        empty = []
+        for line in self.lines:
+            is_empty = line.is_empty()
+            if is_empty: empty.append(line)
+        for line in empty: self.lines.remove(line)
+
+    def try_valid(self):
+        for line in self.lines: line.try_valid()
+        self.collect_empty()
+
     def ensure_valid(self):
         appier.verify(self.is_valid())
 

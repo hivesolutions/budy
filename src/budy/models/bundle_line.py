@@ -135,6 +135,16 @@ class BundleLine(base.BudyBase):
     def ensure_valid(self):
         appier.verify(self.is_valid())
 
+    def try_valid(self):
+        self.try_valid_quantity()
+
+    def try_valid_quantity(self):
+        self.quantity = self.quantity if self.quantity <= self.merchandise.quantity else\
+             self.merchandise.quantity
+
+    def is_empty(self):
+        return self.quantity == 0.0
+
     def is_dirty(self, currency = None, country = None):
         is_dirty = not self.currency == currency
         is_dirty |= not self.country == country
@@ -147,7 +157,6 @@ class BundleLine(base.BudyBase):
 
     def is_valid_quantity(self):
         if self.product.quantity == None: return True
-        print(self.merchandise)
         return self.quantity <= self.merchandise.quantity
 
     @appier.operation(name = "Calculate")
@@ -159,7 +168,7 @@ class BundleLine(base.BudyBase):
     def measure_s(self):
         self.measure(force = True)
         self.save()
-        
+
     @property
     def merchandise(self):
         if not self.size: return self.product
