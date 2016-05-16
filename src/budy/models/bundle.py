@@ -194,8 +194,8 @@ class Bundle(base.BudyBase):
             _line = line
 
         if _line:
-            if not increment: return _line
-            _line.quantity += quantity
+            if increment: _line.quantity += quantity
+            else: _line.quantity = quantity
             _line.save()
             self.save()
             return _line
