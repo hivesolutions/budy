@@ -119,6 +119,10 @@ class Product(base.BudyBase):
         meta = "url"
     )
 
+    characteristics = appier.field(
+        type = list
+    )
+
     colors = appier.field(
         type = appier.references(
             "Color",
@@ -213,6 +217,7 @@ class Product(base.BudyBase):
     @classmethod
     def from_omni(cls, merchandise, gender = "Both", currency = "EUR"):
         company_product_code = merchandise["company_product_code"]
+        metadata = merchandise["metadata"] or dict()
         _product = cls.get(product_id = company_product_code, raise_e = False)
         if not _product: _product = cls()
         _product.product_id = company_product_code
@@ -222,6 +227,7 @@ class Product(base.BudyBase):
         _product.quantity_hand = merchandise["stock_on_hand"]
         _product.price = merchandise["retail_price"]
         _product.currency = currency
+        _product.characteristics = metadata.get("characteristics", [])
         return _product
 
     @classmethod
