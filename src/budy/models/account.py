@@ -120,7 +120,10 @@ class BudyAccount(appier_extras.admin.Account):
 
     def pre_create(self):
         appier_extras.admin.Account.pre_create(self)
-        if not hasattr(self, "first_name"): self.first_name = self.username
+        if not hasattr(self, "first_name") or not self.first_name:
+            self.first_name = self.username
+        if not hasattr(self, "avatar") or not self.avatar:
+            self._set_avatar_d()
 
     def post_create(self):
         appier_extras.admin.Account.post_create(self)
@@ -151,3 +154,13 @@ class BudyAccount(appier_extras.admin.Account):
         if not store: return
         self.store = store
         self.save()
+
+    def _set_avatar_d(self, image = "avatar.png", mime = "image/png"):
+        app = appier.get_app()
+
+        file = open(app.static_path + "/images/" + image, "rb")
+        try: data = file.read()
+        finally: file.close()
+
+        file_t = (image, mime, data)
+        self.avatar = appier.File(file_t)
