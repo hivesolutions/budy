@@ -155,6 +155,19 @@ class BudyAccount(appier_extras.admin.Account):
         self.store = store
         self.save()
 
+    @appier.operation(name = "Notify")
+    def notify(self, name = None):
+        name = name or "account.new" 
+        account = self.reload(map = True)
+        appier_extras.admin.Event.notify_g(
+            name,
+            arguments = dict(
+                params = dict(
+                    account = account
+                )
+            )
+        )
+
     @property
     def title(self):
         return "Mrs." if self.gender == "Female" else "Mr."
