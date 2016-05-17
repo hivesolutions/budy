@@ -355,6 +355,7 @@ class Order(bundle.Bundle):
             name,
             arguments = dict(
                 params = dict(
+                    payload = order,
                     order = order,
                     receiver = receiver
                 )

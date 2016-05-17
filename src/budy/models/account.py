@@ -164,6 +164,7 @@ class BudyAccount(appier_extras.admin.Account):
             name,
             arguments = dict(
                 params = dict(
+                    payload = account,
                     account = account,
                     receiver = receiver
                 )
