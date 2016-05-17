@@ -110,17 +110,33 @@ class BudyAccount(appier_extras.admin.Account):
     @classmethod
     def _build(cls, model, map):
         id = model.get("id", None)
-        first_name = model.get("first_name", "") or ""
-        last_name = model.get("last_name", "") or ""
-        full_name = first_name + (" " + last_name if last_name else "")
+        first_name = model.get("first_name", None)
+        last_name = model.get("last_name", None)
+        full_name = cls._build_full_name(first_name, last_name)
+        small_name = cls._build_small_name(first_name, last_name)
         if id: model["bag_key"] = cls._get_bag_key(id)
         if full_name: model["full_name"] = full_name
+        if small_name: model["small_name"] = small_name
 
     @classmethod
     def _get_bag_key(cls, id):
         _bag = bag.Bag.get(account = id, raise_e = False)
         if not _bag: return None
         return _bag.key
+
+    @classmethod
+    def _build_full_name(cls, first_name, last_name):
+        first_name = first_name or ""
+        last_name = last_name or ""
+        return first_name + (" " + last_name if last_name else "")
+
+    @classmethod
+    def _build_small_name(cls, first_name, last_name):
+        first_name = first_name or ""
+        last_name = last_name or ""
+        first = first_name.split(" ")[0].strip()
+        second = last_name[0] + "." if last_name else ""
+        return first + " " + second
 
     def pre_create(self):
         appier_extras.admin.Account.pre_create(self)
