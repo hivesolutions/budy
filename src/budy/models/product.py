@@ -375,8 +375,16 @@ class Product(base.BudyBase):
         if self.collections: kwargs["collections"] = {"$in" : [self.collections[0].id]}
         elif self.categories: kwargs["categories"] = {"$in" : [self.categories[0].id]}
         elif self.colors: kwargs["colors"] = {"$in" : [self.colors[0].id]}
+        kwargs["id"] = {"$nin" : [self.id]}
+        kwargs["sort"] = [("id", 1)]
+        count = cls.count(**kwargs)
+        skip = self._get_offset(count, limit, kwargs = kwargs)
+        delta = skip + limit - count
+        if delta > 0: skip = count - skip - delta
+        if skip < 0: skip = 0
         products = cls.find(
             eager = ("images",),
+            skip = skip,
             limit = limit,
             map = True,
             **kwargs
@@ -538,3 +546,16 @@ class Product(base.BudyBase):
     @property
     def quantity(self):
         return self.quantity_hand
+
+    def _get_offset(self, count, limit, kwargs):
+        return self._get_offset_offset(count, limit, kwargs)
+
+    def _get_offset_simple(self, count, limit, kwargs):
+        return self.id % count
+
+    def _get_offset_offset(self, count, limit, kwargs):
+        cls = self.__class__
+        kwargs = dict(kwargs)
+        kwargs["id"] = {"$lt" : self.id}
+        offset = cls.count(**kwargs)
+        return offset
