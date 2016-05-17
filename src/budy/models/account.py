@@ -110,8 +110,8 @@ class BudyAccount(appier_extras.admin.Account):
     @classmethod
     def _build(cls, model, map):
         id = model.get("id", None)
-        first_name = model.get("first_name", "")
-        last_name = model.get("last_name", "")
+        first_name = model.get("first_name", "") or ""
+        last_name = model.get("last_name", "") or ""
         full_name = first_name + (" " + last_name if last_name else "")
         if id: model["bag_key"] = cls._get_bag_key(id)
         if full_name: model["full_name"] = full_name
