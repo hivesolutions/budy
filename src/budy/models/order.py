@@ -350,11 +350,13 @@ class Order(bundle.Bundle):
     def notify_s(self, name = None):
         name = name or "order.%s" % self.status
         order = self.reload(map = True)
+        receiver = order.get("email", None)
         appier_extras.admin.Event.notify_g(
             name,
             arguments = dict(
                 params = dict(
-                    order = order
+                    order = order,
+                    receiver = receiver
                 )
             )
         )
