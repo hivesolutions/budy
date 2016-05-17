@@ -226,7 +226,7 @@ class Product(base.BudyBase):
         _collection = metadata.get("collection")
         if _color: _color = color.Color.ensure_s(_color)
         if _category: _category = category.Category.ensure_s(_category)
-        if _collection: _collection = collection.Collection.ensure_s(_collection) 
+        if _collection: _collection = collection.Collection.ensure_s(_collection)
         _product = cls.get(product_id = company_product_code, raise_e = False)
         if not _product: _product = cls()
         _product.product_id = company_product_code
@@ -368,6 +368,20 @@ class Product(base.BudyBase):
         base.BudyBase.pre_save(self)
         if not self.measurements: return
         self.quantity_hand = sum(measurement.quantity for measurement in self.measurements)
+
+    def related(self, limit = 6):
+        cls = self.__class__
+        kwargs = dict()
+        if self.collections: kwargs["collections"] = {"$in" : [self.collections[0].id]}
+        elif self.categories: kwargs["categories"] = {"$in" : [self.categories[0].id]}
+        elif self.colors: kwargs["colors"] = {"$in" : [self.colors[0].id]}
+        products = cls.find(
+            eager = ("images",),
+            limit = limit,
+            map = True,
+            **kwargs
+        )
+        return products
 
     def get_measurement(self, value, name = None):
         for measurement in self.measurements:
