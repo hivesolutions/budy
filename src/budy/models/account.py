@@ -113,10 +113,10 @@ class BudyAccount(appier_extras.admin.Account):
         first_name = model.get("first_name", None)
         last_name = model.get("last_name", None)
         full_name = cls._build_full_name(first_name, last_name)
-        small_name = cls._build_small_name(first_name, last_name)
+        short_name = cls._build_short_name(first_name, last_name)
         if id: model["bag_key"] = cls._get_bag_key(id)
         if full_name: model["full_name"] = full_name
-        if small_name: model["small_name"] = small_name
+        if short_name: model["short_name"] = short_name
 
     @classmethod
     def _get_bag_key(cls, id):
@@ -131,12 +131,15 @@ class BudyAccount(appier_extras.admin.Account):
         return first_name + (" " + last_name if last_name else "")
 
     @classmethod
-    def _build_small_name(cls, first_name, last_name):
+    def _build_short_name(cls, first_name, last_name, limit = 16):
         first_name = first_name or ""
         last_name = last_name or ""
         first = first_name.split(" ")[0].strip()
-        second = last_name[0] + "." if last_name else ""
-        return first + " " + second
+        last = last_name.split(" ")[-1].strip()
+        short_name = first + (" " + last if last else "")
+        if len(short_name) <= limit: return short_name
+        last = last_name[0] + "." if last_name else ""
+        return first + (" " + last if last else "")
 
     def pre_create(self):
         appier_extras.admin.Account.pre_create(self)
