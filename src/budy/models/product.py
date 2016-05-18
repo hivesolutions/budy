@@ -233,8 +233,8 @@ class Product(base.BudyBase):
         _product.short_description = merchandise["name"] or company_product_code
         _product.description = merchandise["description"]
         _product.gender = gender
-        _product.quantity_hand = merchandise["stock_on_hand"]
-        _product.price = merchandise["retail_price"]
+        _product.quantity_hand = merchandise.get("stock_on_hand", 0.0)
+        _product.price = merchandise.get("retail_price", 0.0)
         _product.currency = currency
         _product.characteristics = metadata.get("characteristics", [])
         _product.colors = [_color]

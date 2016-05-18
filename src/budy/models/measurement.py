@@ -122,8 +122,8 @@ class Measurement(base.BudyBase):
 
         measurement.name = name
         measurement.value = value
-        measurement.quantity_hand = merchandise["stock_on_hand"]
-        measurement.price = merchandise["retail_price"]
+        measurement.quantity_hand = merchandise.get("stock_on_hand", 0.0)
+        measurement.price = merchandise.get("retail_price", 0.0)
         measurement.currency = currency
         measurement.product = _product
         return measurement
