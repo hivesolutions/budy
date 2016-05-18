@@ -139,6 +139,7 @@ class BundleLine(base.BudyBase):
         self.try_valid_quantity()
 
     def try_valid_quantity(self):
+        if self.quantity < 0: self.quantity = 0
         if self.merchandise.quantity_hand == None: return
         self.quantity = self.quantity if\
             self.quantity <= self.merchandise.quantity_hand else\
