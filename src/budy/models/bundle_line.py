@@ -175,6 +175,8 @@ class BundleLine(base.BudyBase):
         self.save()
 
     @property
-    def merchandise(self):
+    def merchandise(self, strict = False):
         if not self.size: return self.product
-        return self.product.get_measurement(self.size, name = "size")
+        measurement = self.product.get_measurement(self.size, name = "size")
+        if strict: return measurement
+        return self.product
