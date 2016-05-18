@@ -158,8 +158,10 @@ class BundleLine(base.BudyBase):
         return is_valid
 
     def is_valid_quantity(self):
-        if self.product.quantity_hand == None: return True
-        return self.quantity <= self.merchandise.quantity_hand
+        if self.quantity < 0: return False
+        if not self.product.quantity_hand == None and\
+            self.quantity <= self.merchandise.quantity_hand: return False
+        return True
 
     @appier.operation(name = "Calculate")
     def calculate_s(self):
