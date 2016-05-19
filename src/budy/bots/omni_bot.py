@@ -110,6 +110,8 @@ class OmniBot(base.Bot):
             if not object_id: continue
             merchandise = api.get_product(object_id)
             if not merchandise: continue
+            merchandise.pop("stock_on_hand")
+            merchandise.pop("retail_price")
             self.sync_product(merchandise)
 
     def sync_measurements_db(self):
@@ -125,6 +127,8 @@ class OmniBot(base.Bot):
             if not object_id: continue
             merchandise = api.get_sub_product(object_id)
             if not merchandise: continue
+            merchandise.pop("stock_on_hand")
+            merchandise.pop("retail_price")
             self.sync_sub_product(merchandise)
 
     def sync_product(self, merchandise, force = False):
