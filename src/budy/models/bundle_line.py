@@ -115,12 +115,12 @@ class BundleLine(base.BudyBase):
     def get_price(self, currency = None, country = None, force = False):
         is_dirty = self.is_dirty(currency = currency, country = country)
         if not is_dirty and not force: return self.price
-        self.price = self.product.get_price(
+        self.price = self.merchandise.get_price(
             currency = currency,
             country = country,
             attributes = self.attributes
         )
-        self.currency = self.product.get_currency(currency = currency)
+        self.currency = self.merchandise.get_currency(currency = currency)
         self.country = country
         return self.price
 
@@ -156,12 +156,19 @@ class BundleLine(base.BudyBase):
 
     def is_valid(self):
         is_valid = self.is_valid_quantity()
+        is_valid &= self.is_valid_price()
         return is_valid
 
     def is_valid_quantity(self):
         if self.quantity < 0: return False
-        if not self.product.quantity_hand == None and\
+        if not self.merchandise.quantity_hand == None and\
             self.quantity > self.merchandise.quantity_hand: return False
+        return True
+
+    def is_valid_price(self):
+        if not self.merchandise.quantity_hand == None and\
+            not self.merchandise.price == None and\
+            not self.price == self.merchandise.price: return False
         return True
 
     @appier.operation(name = "Calculate")

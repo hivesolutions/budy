@@ -144,6 +144,20 @@ class Measurement(base.BudyBase):
             measurement.price = merchandise.get("retail_price", 0.0)
         return measurement
 
+    def get_price(
+        self,
+        currency = None,
+        country = None,
+        attributes = None
+    ):
+        return self.price
+
+    def get_currency(self, currency = None):
+        return currency
+
+    def get_size(self, currency = None, country = None, attributes = None):
+        return None, None
+
     @property
     def quantity(self):
         return self.quantity_hand
