@@ -57,7 +57,10 @@ class Scheduler(appier.Scheduler):
             *args,
             **kwargs
         )
-        self.omni_bot = omni_bot.OmniBot(*args, **kwargs)
+        self.omni_bot = omni_bot.OmniBot(
+            owner = owner,
+            **kwargs
+        )
 
     def tick(self):
         appier.Scheduler.tick(self)

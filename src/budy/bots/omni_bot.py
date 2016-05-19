@@ -48,6 +48,7 @@ RECORDS = 100
 class OmniBot(base.Bot):
 
     def __init__(self, *args, **kwargs):
+        base.Bot.__init__(self, *args, **kwargs)
         self.enabled = appier.conf("OMNI_BOT_ENABLED", False, cast = bool)
         self.store = appier.conf("OMNI_BOT_STORE", None, cast = int)
         self.records = appier.conf("OMNI_BOT_RECORDS", RECORDS)
@@ -58,7 +59,9 @@ class OmniBot(base.Bot):
 
     def tick(self):
         if not self.enabled: return
+        self.owner.logger.info("Starting omni sync ...")
         self.sync_products()
+        self.owner.logger.info("Ended omni sync")
 
     def sync_products(self):
         api = self.get_api()
@@ -91,7 +94,13 @@ class OmniBot(base.Bot):
                 if is_product: self.sync_product(merchandise)
                 else: self.sync_sub_product(merchandise, parents = parents)
 
-            for product in budy.Product.find():
+            products = budy.Product.find()
+
+            self.owner.logger.info(
+                "Syncing %d products in database ..." % len(products)
+            )
+
+            for product in products:
                 object_id = product.meta.get("object_id", None)
                 if not object_id: continue
                 kwargs = {
@@ -107,7 +116,13 @@ class OmniBot(base.Bot):
                 merchandise = merchandise[0]
                 self.sync_product(merchandise)
 
-            for measurement in budy.Measurement.find():
+            measurements = budy.Measurement.find()
+
+            self.owner.logger.info(
+                "Syncing %d measurements in database ..." % len(measurements)
+            )
+
+            for measurement in measurements:
                 object_id = measurement.meta.get("object_id", None)
                 if not object_id: continue
                 kwargs = {

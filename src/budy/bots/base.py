@@ -38,4 +38,6 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 class Bot(object):
-    pass
+
+    def __init__(self, *args, **kwargs):
+        self.owner = kwargs.get("owner", None)
