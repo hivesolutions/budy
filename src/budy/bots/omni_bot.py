@@ -135,6 +135,7 @@ class OmniBot(base.Bot):
                 **kwargs
             )
             if not merchandise: continue
+            merchandise = merchandise[0]
             self.sync_sub_product(merchandise)
 
     def sync_product(self, merchandise, force = False):
