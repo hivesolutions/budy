@@ -157,4 +157,26 @@ class Measurement(base.BudyBase):
             value = self.value
         )
         if len(measurements) == 1: return
-        for measurement in measurements[1:]: measurement.delete()
+        for measurement in measurements[1:]:
+            measurement.delete()
+            parent = measurement.parent
+            exists = measurement in parent.measurements
+            if not exists: continue
+            parent.measurements.remove(measurement)
+            parent.save()
+
+    @appier.operation(name = "Duplicate Measurement")
+    def duplicate_s(self):
+        cls = self.__class__
+        measurement = cls(
+            product = self.product.id,
+            name = self.name,
+            value = self.value,
+            quantity_hand = self.quantity_hand,
+            price = self.price,
+            currency = self.currency,
+            meta = self.meta
+        )
+        measurement.save()
+        self.product.measurements.append(measurement)
+        self.product.save()
