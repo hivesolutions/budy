@@ -131,6 +131,10 @@ class OmniBot(base.Bot):
             merchandise.pop("retail_price", None)
             self.sync_sub_product(merchandise)
 
+        self.owner.logger.info(
+            "Fixing %d measurements in database ..." % len(measurements)
+        )
+
         for measurement in measurements: measurement.fix_s()
 
     def sync_product(self, merchandise, force = False):
