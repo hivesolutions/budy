@@ -215,7 +215,13 @@ class Product(base.BudyBase):
         return super(Product, cls).index_names() + ["product_id"]
 
     @classmethod
-    def from_omni(cls, merchandise, gender = "Both", currency = "EUR"):
+    def from_omni(
+        cls,
+        merchandise,
+        gender = "Both",
+        currency = "EUR",
+        force = False
+    ):
         from . import color
         from . import category
         from . import collection
@@ -240,10 +246,10 @@ class Product(base.BudyBase):
         _product.categories = [_category]
         _product.collections = [_collection]
         _product.meta = dict(object_id = object_id)
-        if "stock_on_hand" in merchandise:
-            _product.quantity_hand = merchandise["stock_on_hand"]
-        if "retail_price" in merchandise:
-            _product.price = merchandise["retail_price"]
+        if "stock_on_hand" in merchandise or force:
+            _product.quantity_hand = merchandise.get("stock_on_hand", 0.0)
+        if "retail_price" in merchandise or force:
+            _product.price = merchandise.get("retail_price", 0.0)
         return _product
 
     @classmethod

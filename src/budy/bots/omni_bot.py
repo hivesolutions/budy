@@ -137,7 +137,7 @@ class OmniBot(base.Bot):
             if not merchandise: continue
             self.sync_sub_product(merchandise)
 
-    def sync_product(self, merchandise):
+    def sync_product(self, merchandise, force = False):
         # retrieves the reference to the api object that is
         # going to be used for api based operations
         api = self.get_api()
@@ -149,7 +149,7 @@ class OmniBot(base.Bot):
 
         # builds a new product instance from the merchandise
         # information that has just been retrieved
-        product = budy.Product.from_omni(merchandise)
+        product = budy.Product.from_omni(merchandise, force = force)
         product.save()
         product.images = []
 
@@ -204,7 +204,7 @@ class OmniBot(base.Bot):
             product.images.append(_media)
             product.save()
 
-    def sync_sub_product(self, merchandise, parents = []):
+    def sync_sub_product(self, merchandise, parents = [], force = False):
         api = self.get_api()
 
         object_id = merchandise["object_id"]
@@ -216,11 +216,19 @@ class OmniBot(base.Bot):
         # associated merchandise value to the measurement in case it fails
         # (meaning that no product was found) a new try is made after the
         # proper associated (parent) product is created
-        measurement = budy.Measurement.from_omni(merchandise, sub_product)
+        measurement = budy.Measurement.from_omni(
+            merchandise,
+            sub_product,
+            force = force
+        )
         if not measurement:
             product = api.get_product(product["object_id"])
-            self.sync_product(product)
-            measurement = budy.Measurement.from_omni(merchandise, sub_product)
+            self.sync_product(product, force = True)
+            measurement = budy.Measurement.from_omni(
+                merchandise,
+                sub_product,
+                force = force
+            )
 
         if not measurement: return
 
