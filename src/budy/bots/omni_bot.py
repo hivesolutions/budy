@@ -71,7 +71,7 @@ class OmniBot(base.Bot):
 
     def fix_products(self):
         self.owner.logger.info("Starting Omni fix ...")
-        self.fix_products()
+        self.fix_products_db()
         self.fix_measurements_db()
         self.owner.logger.info("Ended Omni fix")
 
