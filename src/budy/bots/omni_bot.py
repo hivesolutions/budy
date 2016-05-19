@@ -59,9 +59,9 @@ class OmniBot(base.Bot):
 
     def tick(self):
         if not self.enabled: return
-        self.owner.logger.info("Starting omni sync ...")
+        self.owner.logger.info("Starting Omni sync ...")
         self.sync_products()
-        self.owner.logger.info("Ended omni sync")
+        self.owner.logger.info("Ended Omni sync")
 
     def sync_products(self):
         api = self.get_api()
