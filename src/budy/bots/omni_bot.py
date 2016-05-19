@@ -80,6 +80,8 @@ class OmniBot(base.Bot):
             if not merchandise: break
             offset += len(merchandise)
 
+            parents = []
+
             for merchandise in merchandise:
                 _class = merchandise["_class"]
                 is_product = _class in ("Product",)
@@ -87,7 +89,10 @@ class OmniBot(base.Bot):
                 is_valid = is_product or is_sub_product
                 if not is_valid: continue
                 if is_product: self.sync_product(merchandise)
-                else: self.sync_sub_product(merchandise)
+                else: self.sync_sub_product(merchandise, parents = parents)
+
+            for _object_id, merchandise in appier.legacy.iteritems(parents):
+                self.sync_product(merchandise)
 
     def sync_product(self, merchandise):
         # retrieves the reference to the api object that is
@@ -156,7 +161,7 @@ class OmniBot(base.Bot):
             product.images.append(_media)
             product.save()
 
-    def sync_sub_product(self, merchandise):
+    def sync_sub_product(self, merchandise, parents = []):
         api = self.get_api()
 
         object_id = merchandise["object_id"]
@@ -171,6 +176,11 @@ class OmniBot(base.Bot):
             measurement = budy.Measurement.from_omni(merchandise, sub_product)
 
         if not measurement: return
+
+        # adds the (parent) product reference to the map of
+        # parents that may be used latter for extra sync, this
+        # is required otherwise out of sync errors may occur
+        parents[product["object_id"]] = product
 
         measurement.save()
 
