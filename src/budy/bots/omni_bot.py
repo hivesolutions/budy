@@ -64,6 +64,11 @@ class OmniBot(base.Bot):
         self.owner.logger.info("Ended Omni sync")
 
     def sync_products(self):
+        self.sync_products_store()
+        self.sync_products_db()
+        self.sync_measurements_db()
+
+    def sync_products_store(self):
         api = self.get_api()
         offset = 0
 
@@ -92,6 +97,8 @@ class OmniBot(base.Bot):
                 if is_product: self.sync_product(merchandise)
                 else: self.sync_sub_product(merchandise)
 
+    def sync_products_db(self):
+        api = self.get_api()
         products = budy.Product.find()
 
         self.owner.logger.info(
@@ -105,6 +112,8 @@ class OmniBot(base.Bot):
             if not merchandise: continue
             self.sync_product(merchandise)
 
+    def sync_measurements_db(self):
+        api = self.get_api()
         measurements = budy.Measurement.find()
 
         self.owner.logger.info(
