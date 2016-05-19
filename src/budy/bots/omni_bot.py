@@ -208,7 +208,7 @@ class OmniBot(base.Bot):
         # proper associated (parent) product is created
         measurement = budy.Measurement.from_omni(
             merchandise,
-            sub_product,
+            sub_product = sub_product,
             force = force
         )
         if not measurement:
@@ -216,7 +216,7 @@ class OmniBot(base.Bot):
             self.sync_product(product, force = True)
             measurement = budy.Measurement.from_omni(
                 merchandise,
-                sub_product,
+                sub_product = sub_product,
                 force = force
             )
 
