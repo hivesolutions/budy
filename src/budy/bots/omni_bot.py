@@ -59,14 +59,21 @@ class OmniBot(base.Bot):
 
     def tick(self):
         if not self.enabled: return
-        self.owner.logger.info("Starting Omni sync ...")
         self.sync_products()
-        self.owner.logger.info("Ended Omni sync")
+        self.fix_products()
 
     def sync_products(self):
+        self.owner.logger.info("Starting Omni sync ...")
         self.sync_products_store()
         self.sync_products_db()
         self.sync_measurements_db()
+        self.owner.logger.info("Ended Omni sync")
+
+    def fix_products(self):
+        self.owner.logger.info("Starting Omni fix ...")
+        self.fix_products()
+        self.fix_measurements_db()
+        self.owner.logger.info("Ended Omni fix")
 
     def sync_products_store(self):
         api = self.get_api()
@@ -130,6 +137,18 @@ class OmniBot(base.Bot):
             merchandise.pop("stock_on_hand", None)
             merchandise.pop("retail_price", None)
             self.sync_sub_product(merchandise)
+
+    def fix_products_db(self):
+        products = budy.Product.find()
+
+        self.owner.logger.info(
+            "Fixing %d products in database ..." % len(products)
+        )
+
+        for product in products: product.fix_s()
+
+    def fix_measurements_db(self):
+        measurements = budy.Measurement.find()
 
         self.owner.logger.info(
             "Fixing %d measurements in database ..." % len(measurements)

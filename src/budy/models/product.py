@@ -558,6 +558,22 @@ class Product(base.BudyBase):
         self.images.remove(image)
         self.save()
 
+    @appier.operation(name = "Fix Product")
+    def fix_s(self):
+        removal = []
+        for measurement in self.measurements:
+            is_valid = hasattr(measurement, "quantity")
+            if is_valid: continue
+            self.removal.append(measurement)
+
+        if not removal: return
+
+        for measurement in removal:
+            self.measurements.remove(measurement)
+            measurement.delete()
+
+        self.save()
+
     @property
     def quantity(self):
         return self.quantity_hand
