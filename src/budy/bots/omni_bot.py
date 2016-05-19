@@ -103,7 +103,6 @@ class OmniBot(base.Bot):
             if not object_id: continue
             merchandise = api.get_product(object_id)
             if not merchandise: continue
-            merchandise = merchandise[0]
             self.sync_product(merchandise)
 
         measurements = budy.Measurement.find()
@@ -117,7 +116,6 @@ class OmniBot(base.Bot):
             if not object_id: continue
             merchandise = api.get_sub_product(object_id)
             if not merchandise: continue
-            merchandise = merchandise[0]
             self.sync_sub_product(merchandise)
 
     def sync_product(self, merchandise, force = False):
