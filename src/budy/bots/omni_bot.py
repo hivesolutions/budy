@@ -94,16 +94,33 @@ class OmniBot(base.Bot):
             for product in budy.Product.find():
                 object_id = product.meta.get("object_id", None)
                 if not object_id: continue
-                merchandise = api.get_product(object_id)
+                kwargs = {
+                    "filters[]" : [
+                        "object_id:equals:%d" % object_id
+                    ]
+                }
+                merchandise = api.list_store_merchandise(
+                    store_id = self.store,
+                    **kwargs
+                )
                 if not merchandise: continue
+                merchandise = merchandise[0]
                 self.sync_product(merchandise)
 
             for measurement in budy.Measurement.find():
                 object_id = measurement.meta.get("object_id", None)
                 if not object_id: continue
-                merchandise = api.get_sub_product(object_id)
+                kwargs = {
+                    "filters[]" : [
+                        "object_id:equals:%d" % object_id
+                    ]
+                }
+                merchandise = api.list_store_merchandise(
+                    store_id = self.store,
+                    **kwargs
+                )
                 if not merchandise: continue
-                self.sync_product(merchandise)
+                self.sync_sub_product(merchandise)
 
     def sync_product(self, merchandise):
         # retrieves the reference to the api object that is
