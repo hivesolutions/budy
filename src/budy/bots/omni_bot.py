@@ -83,8 +83,6 @@ class OmniBot(base.Bot):
             if not merchandise: break
             offset += len(merchandise)
 
-            parents = []
-
             for merchandise in merchandise:
                 _class = merchandise["_class"]
                 is_product = _class in ("Product",)
@@ -92,7 +90,7 @@ class OmniBot(base.Bot):
                 is_valid = is_product or is_sub_product
                 if not is_valid: continue
                 if is_product: self.sync_product(merchandise)
-                else: self.sync_sub_product(merchandise, parents = parents)
+                else: self.sync_sub_product(merchandise)
 
         products = budy.Product.find()
 
@@ -205,7 +203,7 @@ class OmniBot(base.Bot):
             product.images.append(_media)
             product.save()
 
-    def sync_sub_product(self, merchandise, parents = [], force = False):
+    def sync_sub_product(self, merchandise, force = False):
         api = self.get_api()
 
         object_id = merchandise["object_id"]
