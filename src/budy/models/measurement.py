@@ -165,7 +165,7 @@ class Measurement(base.BudyBase):
 
     @appier.operation(name = "Fix Measurement")
     def fix_s(self):
-        cls = self.__class__
+        if not self.exists(): return
         self._fix_value_s()
         self._fix_duplicates_s()
         self._fix_invalid_s()
@@ -200,7 +200,7 @@ class Measurement(base.BudyBase):
         if len(measurements) == 1: return
         for measurement in measurements[1:]:
             measurement.delete()
-            parent = measurement.parent
+            parent = measurement.parent if hasattr(self, "parent") else None
             if not parent: continue
             exists = measurement in parent.measurements
             if not exists: continue
@@ -208,6 +208,6 @@ class Measurement(base.BudyBase):
             parent.save()
 
     def _fix_invalid_s(self):
-        is_valid = not self.parent == None
+        is_valid = hasattr(self, "parent") and not self.parent == None
         if is_valid: return
         self.delete()

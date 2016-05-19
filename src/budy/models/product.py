@@ -560,16 +560,19 @@ class Product(base.BudyBase):
 
     @appier.operation(name = "Fix Product")
     def fix_s(self):
+        if not self.exists(): return
+
         removal = []
         for measurement in self.measurements:
             is_valid = hasattr(measurement, "quantity")
             if is_valid: continue
-            self.removal.append(measurement)
+            removal.append(measurement)
 
         if not removal: return
 
         for measurement in removal:
             self.measurements.remove(measurement)
+            if not hasattr(measurement, "delete"): continue
             measurement.delete()
 
         self.save()
