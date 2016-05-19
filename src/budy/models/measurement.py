@@ -123,11 +123,13 @@ class Measurement(base.BudyBase):
 
         measurement.name = name
         measurement.value = value
-        measurement.quantity_hand = merchandise.get("stock_on_hand", 0.0)
-        measurement.price = merchandise.get("retail_price", 0.0)
         measurement.currency = currency
         measurement.product = _product
         measurement.meta = dict(object_id = object_id)
+        if "stock_on_hand" in merchandise:
+            measurement.quantity_hand = merchandise["stock_on_hand"]
+        if "retail_price" in merchandise:
+            measurement.price = merchandise["retail_price"]
         return measurement
 
     @property
