@@ -124,6 +124,7 @@ class Measurement(base.BudyBase):
         if not _product: return None
 
         value = company_product_code.split("-", 1)[1]
+        value = int(value)
 
         measurement = cls.get(
             product = _product.id,
