@@ -234,14 +234,16 @@ class Product(base.BudyBase):
         _product.short_description = merchandise["name"] or company_product_code
         _product.description = merchandise["description"]
         _product.gender = gender
-        _product.quantity_hand = merchandise.get("stock_on_hand", 0.0)
-        _product.price = merchandise.get("retail_price", 0.0)
         _product.currency = currency
         _product.characteristics = metadata.get("characteristics", [])
         _product.colors = [_color]
         _product.categories = [_category]
         _product.collections = [_collection]
         _product.meta = dict(object_id = object_id)
+        if "stock_on_hand" in merchandise:
+            _product.quantity_hand = merchandise["stock_on_hand"]
+        if "retail_price" in merchandise:
+            _product.price = merchandise["retail_price"]
         return _product
 
     @classmethod
