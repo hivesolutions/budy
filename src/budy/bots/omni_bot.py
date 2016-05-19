@@ -131,6 +131,8 @@ class OmniBot(base.Bot):
             merchandise.pop("retail_price")
             self.sync_sub_product(merchandise)
 
+        for measurement in measurements: measurement.fix_s()
+
     def sync_product(self, merchandise, force = False):
         # retrieves the reference to the api object that is
         # going to be used for api based operations

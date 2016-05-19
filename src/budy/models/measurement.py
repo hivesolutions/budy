@@ -147,3 +147,14 @@ class Measurement(base.BudyBase):
     @property
     def quantity(self):
         return self.quantity_hand
+
+    @appier.operation(name = "Fix Measurement")
+    def fix_s(self):
+        cls = self.__class__
+        measurements = cls.find(
+            product = self.product.id,
+            name = self.name,
+            value = self.value
+        )
+        if len(measurements) == 1: return
+        for measurement in measurements[1:]: measurement.delete()
