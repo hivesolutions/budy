@@ -59,7 +59,6 @@ class OmniBot(base.Bot):
 
     def tick(self):
         if not self.enabled: return
-        self.fix_products()
         self.sync_products()
         self.fix_products()
 
