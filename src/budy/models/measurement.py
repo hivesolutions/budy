@@ -166,19 +166,8 @@ class Measurement(base.BudyBase):
     @appier.operation(name = "Fix Measurement")
     def fix_s(self):
         cls = self.__class__
-        measurements = cls.find(
-            product = self.product.id,
-            name = self.name,
-            value = self.value
-        )
-        if len(measurements) == 1: return
-        for measurement in measurements[1:]:
-            measurement.delete()
-            parent = measurement.parent
-            exists = measurement in parent.measurements
-            if not exists: continue
-            parent.measurements.remove(measurement)
-            parent.save()
+        self._fix_value_s()
+        self._fix_duplicates_s()
 
     @appier.operation(name = "Duplicate Measurement")
     def duplicate_s(self):
@@ -195,3 +184,23 @@ class Measurement(base.BudyBase):
         measurement.save()
         self.product.measurements.append(measurement)
         self.product.save()
+
+    def _fix_value_s(self):
+        self.value = int(self.value)
+        self.save()
+
+    def _fix_duplicates_s(self):
+        cls = self.__class__
+        measurements = cls.find(
+            product = self.product.id,
+            name = self.name,
+            value = self.value
+        )
+        if len(measurements) == 1: return
+        for measurement in measurements[1:]:
+            measurement.delete()
+            parent = measurement.parent
+            exists = measurement in parent.measurements
+            if not exists: continue
+            parent.measurements.remove(measurement)
+            parent.save()
