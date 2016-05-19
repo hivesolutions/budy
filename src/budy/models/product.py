@@ -382,6 +382,7 @@ class Product(base.BudyBase):
         base.BudyBase.pre_save(self)
         if not self.measurements: return
         self.quantity_hand = sum(measurement.quantity for measurement in self.measurements)
+        self.price = self.measurements[0].price
 
     def related(self, limit = 6):
         cls = self.__class__
