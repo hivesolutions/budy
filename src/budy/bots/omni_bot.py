@@ -91,7 +91,18 @@ class OmniBot(base.Bot):
                 if is_product: self.sync_product(merchandise)
                 else: self.sync_sub_product(merchandise, parents = parents)
 
-            for _object_id, merchandise in appier.legacy.iteritems(parents):
+            for product in budy.Product.find():
+                object_id = product.meta.get("object_id", None)
+                if not object_id: continue
+                merchandise = api.get_product(object_id)
+                if not merchandise: continue
+                self.sync_product(merchandise)
+
+            for measurement in budy.Measurement.find():
+                object_id = measurement.meta.get("object_id", None)
+                if not object_id: continue
+                merchandise = api.get_sub_product(object_id)
+                if not merchandise: continue
                 self.sync_product(merchandise)
 
     def sync_product(self, merchandise):
@@ -169,6 +180,10 @@ class OmniBot(base.Bot):
 
         product = sub_product["product"]
 
+        # tries to run the conversion process from the sub product and
+        # associated merchandise value to the measurement in case it fails
+        # (meaning that no product was found) a new try is made after the
+        # proper associated (parent) product is created
         measurement = budy.Measurement.from_omni(merchandise, sub_product)
         if not measurement:
             product = api.get_product(product["object_id"])
@@ -176,11 +191,6 @@ class OmniBot(base.Bot):
             measurement = budy.Measurement.from_omni(merchandise, sub_product)
 
         if not measurement: return
-
-        # adds the (parent) product reference to the map of
-        # parents that may be used latter for extra sync, this
-        # is required otherwise out of sync errors may occur
-        parents[product["object_id"]] = product
 
         measurement.save()
 

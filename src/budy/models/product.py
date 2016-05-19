@@ -219,6 +219,7 @@ class Product(base.BudyBase):
         from . import color
         from . import category
         from . import collection
+        object_id = merchandise["object_id"]
         company_product_code = merchandise["company_product_code"]
         metadata = merchandise["metadata"] or dict()
         _color = metadata.get("material")
@@ -240,6 +241,7 @@ class Product(base.BudyBase):
         _product.colors = [_color]
         _product.categories = [_category]
         _product.collections = [_collection]
+        _product.meta = dict(object_id = object_id)
         return _product
 
     @classmethod
