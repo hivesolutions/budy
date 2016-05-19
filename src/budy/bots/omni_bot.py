@@ -101,15 +101,7 @@ class OmniBot(base.Bot):
         for product in products:
             object_id = product.meta.get("object_id", None)
             if not object_id: continue
-            kwargs = {
-                "filters[]" : [
-                    "object_id:equals:%d" % object_id
-                ]
-            }
-            merchandise = api.list_store_merchandise(
-                store_id = self.store,
-                **kwargs
-            )
+            merchandise = api.get_product(object_id)
             if not merchandise: continue
             merchandise = merchandise[0]
             self.sync_product(merchandise)
@@ -123,15 +115,7 @@ class OmniBot(base.Bot):
         for measurement in measurements:
             object_id = measurement.meta.get("object_id", None)
             if not object_id: continue
-            kwargs = {
-                "filters[]" : [
-                    "object_id:equals:%d" % object_id
-                ]
-            }
-            merchandise = api.list_store_merchandise(
-                store_id = self.store,
-                **kwargs
-            )
+            merchandise = api.get_sub_product(object_id)
             if not merchandise: continue
             merchandise = merchandise[0]
             self.sync_sub_product(merchandise)

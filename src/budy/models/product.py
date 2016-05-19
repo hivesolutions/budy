@@ -211,6 +211,10 @@ class Product(base.BudyBase):
         return ["id", "product_id", "short_description", "enabled", "gender", "tag"]
 
     @classmethod
+    def order_name(self):
+        return ["id", -1]
+
+    @classmethod
     def index_names(cls):
         return super(Product, cls).index_names() + ["product_id"]
 

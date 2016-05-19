@@ -99,6 +99,10 @@ class Measurement(base.BudyBase):
         return ["id", "name", "value"]
 
     @classmethod
+    def order_name(self):
+        return ["id", -1]
+
+    @classmethod
     def from_omni(
         cls,
         merchandise,
