@@ -168,7 +168,7 @@ class Measurement(base.BudyBase):
         if not self.exists(): return
         self._fix_value_s()
 
-    @appier.operation(name = "Duplicate Measurement")
+    @appier.operation(name = "Duplicate Measurement", factory = True)
     def duplicate_s(self):
         cls = self.__class__
         measurement = cls(
@@ -183,6 +183,7 @@ class Measurement(base.BudyBase):
         measurement.save()
         self.product.measurements.append(measurement)
         self.product.save()
+        return measurement
 
     def _fix_value_s(self):
         self.value = int(self.value)
