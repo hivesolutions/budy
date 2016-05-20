@@ -558,7 +558,7 @@ class Product(base.BudyBase):
         self.images.remove(image)
         self.save()
 
-    @appier.operation(name = "Fix Product")
+    @appier.operation(name = "Fix")
     def fix_s(self):
         if not self.exists(): return
         self.save()

@@ -163,12 +163,12 @@ class Measurement(base.BudyBase):
     def quantity(self):
         return self.quantity_hand
 
-    @appier.operation(name = "Fix Measurement")
+    @appier.operation(name = "Fix")
     def fix_s(self):
         if not self.exists(): return
         self._fix_value_s()
 
-    @appier.operation(name = "Duplicate Measurement", factory = True)
+    @appier.operation(name = "Duplicate", factory = True)
     def duplicate_s(self):
         cls = self.__class__
         measurement = cls(
