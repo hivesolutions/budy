@@ -485,6 +485,7 @@ class Order(bundle.Bundle):
         number = payment_data["card_number"]
         exp_month = int(payment_data["expiration_month"])
         exp_year = int(payment_data["expiration_year"])
+        cvc = payment_data.get("security_code", None)
         name = payment_data.get("card_name", None)
         api.create_charge(
             int(self.payable * 100),
@@ -492,6 +493,7 @@ class Order(bundle.Bundle):
             exp_month,
             exp_year,
             number,
+            cvc = cvc,
             name = name
         )
         self.payment_data = dict(
