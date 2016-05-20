@@ -151,6 +151,7 @@ class BudyAccount(appier_extras.admin.Account):
     def post_create(self):
         appier_extras.admin.Account.post_create(self)
         self.ensure_bag_s()
+        self.notify()
 
     def ensure_bag_s(self, key = None):
         _bag = self.get_bag()
