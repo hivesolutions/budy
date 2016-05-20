@@ -487,6 +487,9 @@ class Order(bundle.Bundle):
         exp_year = int(payment_data["expiration_year"])
         cvc = payment_data.get("security_code", None)
         name = payment_data.get("card_name", None)
+        if number: number = number.replace(" ", "")
+        if cvc: cvc = cvc.replace(" ", "")
+        if name: name = name.strip()
         api.create_charge(
             int(self.payable * 100),
             self.currency,
