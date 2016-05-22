@@ -74,6 +74,13 @@ class Bundle(base.BudyBase):
         safe = True
     )
 
+    shipping = appier.field(
+        type = commons.Decimal,
+        index = True,
+        initial = commons.Decimal(0.0),
+        safe = True
+    )
+
     taxes = appier.field(
         type = commons.Decimal,
         index = True,
