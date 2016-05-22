@@ -265,7 +265,14 @@ class Bundle(base.BudyBase):
     def calculate(self):
         lines = self.lines if hasattr(self, "lines") else []
         self.sub_total = sum(line.total for line in lines)
-        self.total = self.sub_total - self.discount + self.taxes
+        self.shipping_cost = self.build_shipping()
+        self.total = self.sub_total - self.discount + self.taxes + self.shipping_cost
+
+    def build_shipping(self):
+        shipping = appier.conf("BUDY_SHIPPING", None)
+        if not shipping: return 0.0
+        shipping = eval(shipping)
+        return shipping(self.sub_total, self.taxes, self.quantity)
 
     def collect_empty(self):
         empty = []
