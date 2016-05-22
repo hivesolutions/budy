@@ -109,10 +109,11 @@ class Bag(bundle.Bundle):
         _order = order.Order(
             currency = self.currency,
             country = self.country,
-            total = self.total,
+            sub_total = self.sub_total,
             discount = self.discount,
-            taxes = self.taxes,
             shipping_cost = self.shipping_cost,
+            taxes = self.taxes,
+            total = self.total,
             account = self.account,
             store = self.account and self.account.store
         )

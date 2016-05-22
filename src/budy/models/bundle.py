@@ -74,7 +74,7 @@ class Bundle(base.BudyBase):
         safe = True
     )
 
-    shipping = appier.field(
+    shipping_cost = appier.field(
         type = commons.Decimal,
         index = True,
         initial = commons.Decimal(0.0),
@@ -89,13 +89,6 @@ class Bundle(base.BudyBase):
     )
 
     total = appier.field(
-        type = commons.Decimal,
-        index = True,
-        initial = commons.Decimal(0.0),
-        safe = True
-    )
-
-    shipping_cost = appier.field(
         type = commons.Decimal,
         index = True,
         initial = commons.Decimal(0.0),
