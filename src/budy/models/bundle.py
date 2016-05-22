@@ -114,14 +114,14 @@ class Bundle(base.BudyBase):
             appier.not_null("discount"),
             appier.gte("discount", 0.0),
 
+            appier.not_null("shipping_cost"),
+            appier.gte("shipping_cost", 0.0),
+
             appier.not_null("taxes"),
             appier.gte("taxes", 0.0),
 
             appier.not_null("total"),
-            appier.gte("total", 0.0),
-
-            appier.not_null("shipping_cost"),
-            appier.gte("shipping_cost", 0.0)
+            appier.gte("total", 0.0)
         ]
 
     @classmethod
