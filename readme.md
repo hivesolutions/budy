@@ -25,6 +25,9 @@ Code coverage of at least 75% of the code base should be considered a priority.
 set by default an an automatic algorithm is used instead, to determine the best possible match for the
 currency to be used, use this value only for situations where binding a currency value is required (default to `None`)
 * `BUDY_ORDER_REF` (`str`) - Defines the template to be used for order reference number generation (default to `BD-%06d`)
+* `BUDY_SHIPPING` (`str`) - String with the definition of the lambda function to be called for calculus of the
+shipping costs for a bundle (bag or order) the arguments provided are the sub total, taxes and quantity and the return
+value should be a valid float value for the shipping costs (default to `None`)
 
 ## License
 
