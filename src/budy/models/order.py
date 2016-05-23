@@ -224,13 +224,36 @@ class Order(bundle.Bundle):
         )
 
     @classmethod
+    def _methods(cls):
+        methods = dict()
+        for engine in ("stripe", "easypay"):
+            function = getattr(cls, "_methods_" + engine)
+            engine_m = [(value, engine) for value in function()]
+            methods.update(engine_m)
+        return methods
+
+    @classmethod
+    def _methods_stripe(cls):
+        return (
+            "visa",
+            "mastercard",
+            "american_express"
+        )
+
+    @classmethod
+    def _methods_easypay(cls):
+        return ("multibanco",)
+
+    @classmethod
     def _get_api_stripe(cls):
-        import stripe
+        try: import stripe
+        except: return None
         return stripe.Api.singleton()
 
     @classmethod
     def _get_api_easypay(cls):
-        import easypay
+        try: import easypay
+        except: return None
         return easypay.Api.singleton(scallback = cls._on_api_easypay)
 
     @classmethod
@@ -351,7 +374,7 @@ class Order(bundle.Bundle):
         self.verify_paid()
         confirmed = self._pay(payment_data)
         if vouchers: self.use_vouchers_s()
-        if confirmed: self.end_pay_s(vouchers = vouchers)
+        if confirmed: self.end_pay_s()
         if notify: self.notify_s()
 
     def end_pay_s(self, notify = False):
@@ -506,12 +529,18 @@ class Order(bundle.Bundle):
         return self.shipping_currency
 
     def _pay(self, payment_data):
+        cls = self.__class__
         if self.payable == 0.0: return
-        return self._pay_stripe(payment_data)
+        methods = cls._methods()
+        type = payment_data.get("type", None)
+        method = methods.get(type, None)
+        function = getattr(self, "_pay_" + method)
+        return function(payment_data)
 
     def _pay_stripe(self, payment_data):
         cls = self.__class__
         api = cls._get_api_stripe()
+        type = payment_data["type"]
         number = payment_data["card_number"]
         exp_month = int(payment_data["expiration_month"])
         exp_year = int(payment_data["expiration_year"])
@@ -531,6 +560,7 @@ class Order(bundle.Bundle):
         )
         self.payment_data = dict(
             engine = "stripe",
+            type = type,
             number = "*" * 12 + number[-4:],
             exp_month = exp_month,
             exp_year = exp_year
@@ -540,10 +570,11 @@ class Order(bundle.Bundle):
     def _pay_easypay(self, payment_data):
         cls = self.__class__
         api = cls._get_api_easypay()
+        type = payment_data["type"]
         reference = api.generate_mb(self.payable, key = self.key)
         self.payment_data = dict(
             engine = "easypay",
-            method = "mb",
+            type = type,
             entity = api.entity,
             reference = reference
         )
