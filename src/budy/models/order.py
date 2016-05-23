@@ -345,12 +345,12 @@ class Order(bundle.Bundle):
         if ensure_waiting: self.ensure_waiting_s()
         self.verify_paid()
         delayed = self._pay(payment_data)
+        if vouchers: self.use_vouchers_s()
         if delayed: return
         self.end_pay_s(vouchers = vouchers, notify = notify)
 
-    def end_pay_s(self, vouchers = True, notify = False):
+    def end_pay_s(self, notify = False):
         self.mark_paid_s()
-        if vouchers: self.use_vouchers_s()
         if notify: self.notify_s()
 
     def use_vouchers_s(self):
