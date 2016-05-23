@@ -235,6 +235,7 @@ class Product(base.BudyBase):
         _color = metadata.get("material")
         _category = metadata.get("category")
         _collection = metadata.get("collection")
+        order = metadata.get("order")
         if _color: _color = color.Color.ensure_s(_color)
         if _category: _category = category.Category.ensure_s(_category)
         if _collection: _collection = collection.Collection.ensure_s(_collection)
@@ -245,6 +246,7 @@ class Product(base.BudyBase):
         _product.description = merchandise["description"]
         _product.gender = gender
         _product.currency = currency
+        _product.order = order
         _product.characteristics = metadata.get("characteristics", [])
         _product.colors = [_color]
         _product.categories = [_category]
