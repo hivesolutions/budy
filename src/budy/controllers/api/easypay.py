@@ -19,6 +19,9 @@
 # You should have received a copy of the Apache License along with
 # Hive Budy. If not, see <http://www.apache.org/licenses/>.
 
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
 __version__ = "1.0.0"
 """ The version of the module """
 
@@ -34,38 +37,20 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
-from . import account
-from . import address
-from . import bag
-from . import base
-from . import brand
-from . import category
-from . import collection
-from . import color
-from . import country
-from . import currency
-from . import easypay
-from . import media
-from . import order
-from . import product
-from . import root
-from . import subscription
-from . import voucher
+import appier
 
-from .account import AccountApiController
-from .address import AddressApiController
-from .bag import BagApiController
-from .base import BaseApiController
-from .brand import BrandApiController
-from .category import CategoryApiController
-from .collection import CollectionApiController
-from .color import ColorApiController
-from .country import CountryApiController
-from .currency import CurrencyApiController
-from .easypay import EasypayApiController
-from .media import MediaApiController
-from .order import OrderApiController
-from .product import ProductApiController
-from .root import RootApiController
-from .subscription import SubscriptionApiController
-from .voucher import VoucherApiController
+import budy
+
+from . import root
+
+class EasypayApiController(root.RootApiController):
+
+    @appier.route("/api/easypay/notification", "GET", json = True)
+    def notification(self):
+        cin = self.field("ep_cin")
+        username = self.field("ep_user")
+        doc = self.field("ep_doc")
+        api = budy.Order._get_api_easypay()
+        result = api.notify_mb(cin, username, doc)
+        self.content_type("application/xml")
+        return result
