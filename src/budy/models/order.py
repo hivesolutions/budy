@@ -254,7 +254,7 @@ class Order(bundle.Bundle):
     def _get_api_easypay(cls):
         try: import easypay
         except: return None
-        return easypay.Api.singleton(scallback = cls._on_api_easypay)
+        return easypay.ShelveApi.singleton(scallback = cls._on_api_easypay)
 
     @classmethod
     def _on_api_easypay(cls, api):
