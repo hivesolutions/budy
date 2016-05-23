@@ -224,16 +224,16 @@ class Order(bundle.Bundle):
         )
 
     @classmethod
-    def _methods(cls):
+    def _pmethods(cls):
         methods = dict()
         for engine in ("stripe", "easypay"):
-            function = getattr(cls, "_methods_" + engine)
+            function = getattr(cls, "_pmethods_" + engine)
             engine_m = [(value, engine) for value in function()]
             methods.update(engine_m)
         return methods
 
     @classmethod
-    def _methods_stripe(cls):
+    def _pmethods_stripe(cls):
         return (
             "visa",
             "mastercard",
@@ -241,7 +241,7 @@ class Order(bundle.Bundle):
         )
 
     @classmethod
-    def _methods_easypay(cls):
+    def _pmethods_easypay(cls):
         return ("multibanco",)
 
     @classmethod
@@ -531,7 +531,7 @@ class Order(bundle.Bundle):
     def _pay(self, payment_data):
         cls = self.__class__
         if self.payable == 0.0: return
-        methods = cls._methods()
+        methods = cls._pmethods()
         type = payment_data.get("type", None)
         method = methods.get(type, None)
         function = getattr(self, "_pay_" + method)
