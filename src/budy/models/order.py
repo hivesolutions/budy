@@ -175,6 +175,11 @@ class Order(bundle.Bundle):
     )
 
     @classmethod
+    def setup(cls):
+        super(Order, cls).setup()
+        cls._get_api_easypay()
+
+    @classmethod
     def list_names(cls):
         return ["reference", "total", "currency", "account", "email", "status"]
 
