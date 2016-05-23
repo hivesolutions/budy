@@ -344,10 +344,10 @@ class Order(bundle.Bundle):
     ):
         if ensure_waiting: self.ensure_waiting_s()
         self.verify_paid()
-        delayed = self._pay(payment_data)
+        confirmed = self._pay(payment_data)
         if vouchers: self.use_vouchers_s()
-        if delayed: return
-        self.end_pay_s(vouchers = vouchers, notify = notify)
+        if confirmed: self.end_pay_s(vouchers = vouchers)
+        if notify: self.notify_s()
 
     def end_pay_s(self, notify = False):
         self.mark_paid_s()
@@ -530,7 +530,7 @@ class Order(bundle.Bundle):
             exp_month = exp_month,
             exp_year = exp_year
         )
-        return False
+        return True
 
     def _pay_easypay(self, payment_data):
         cls = self.__class__
@@ -542,4 +542,4 @@ class Order(bundle.Bundle):
             entity = api.entity,
             reference = reference
         )
-        return True
+        return False
