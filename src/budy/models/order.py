@@ -218,6 +218,27 @@ class Order(bundle.Bundle):
             absolute = absolute
         )
 
+    @classmethod
+    def _get_api_stripe(cls):
+        import stripe
+        return stripe.Api.singleton()
+
+    @classmethod
+    def _get_api_easypay(cls):
+        import easypay
+        return easypay.Api.singleton(scallback = cls._on_api_easypay)
+
+    @classmethod
+    def _on_api_easypay(cls, api):
+        api.start_scheduler()
+        api.bind("paid", cls._on_paid_easypay)
+
+    @classmethod
+    def _on_paid_easypay(cls, reference, details):
+        identifier = reference["identifier"]
+        order = cls.get(key = identifier, raise_e = False)
+        order.end_pay_s(notify = True)
+
     def pre_delete(self):
         bundle.Bundle.pre_delete(self)
         for line in self.lines: line.delete()
@@ -323,7 +344,11 @@ class Order(bundle.Bundle):
     ):
         if ensure_waiting: self.ensure_waiting_s()
         self.verify_paid()
-        self._pay(payment_data)
+        delayed = self._pay(payment_data)
+        if delayed: return
+        self.end_pay_s(vouchers = vouchers, notify = notify)
+
+    def end_pay_s(self, vouchers = True, notify = False):
         self.mark_paid_s()
         if vouchers: self.use_vouchers_s()
         if notify: self.notify_s()
@@ -477,11 +502,11 @@ class Order(bundle.Bundle):
 
     def _pay(self, payment_data):
         if self.payable == 0.0: return
-        self._pay_stripe(payment_data)
+        return self._pay_stripe(payment_data)
 
     def _pay_stripe(self, payment_data):
-        import stripe
-        api = stripe.Api()
+        cls = self.__class__
+        api = cls._get_api_stripe()
         number = payment_data["card_number"]
         exp_month = int(payment_data["expiration_month"])
         exp_year = int(payment_data["expiration_year"])
@@ -500,7 +525,21 @@ class Order(bundle.Bundle):
             name = name
         )
         self.payment_data = dict(
+            engine = "stripe",
             number = "*" * 12 + number[-4:],
             exp_month = exp_month,
             exp_year = exp_year
         )
+        return False
+
+    def _pay_easypay(self, payment_data):
+        cls = self.__class__
+        api = cls._get_api_easypay()
+        reference = api.generate_mb(self.payable, key = self.key)
+        self.payment_data = dict(
+            engine = "easypay",
+            method = "mb",
+            entity = api.entity,
+            reference = reference
+        )
+        return True
