@@ -258,8 +258,8 @@ class Order(bundle.Bundle):
 
     @classmethod
     def _on_api_easypay(cls, api):
-        api.start_scheduler()
         api.bind("paid", cls._on_paid_easypay)
+        api.start_scheduler()
 
     @classmethod
     def _on_paid_easypay(cls, reference, details):
