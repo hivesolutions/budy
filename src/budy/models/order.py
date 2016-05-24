@@ -107,13 +107,6 @@ class Order(bundle.Bundle):
         safe = True
     )
 
-    notification_sent = appier.field(
-        type = bool,
-        index = True,
-        initial = False,
-        safe = True
-    )
-
     tracking_number = appier.field(
         index = True
     )
@@ -125,6 +118,13 @@ class Order(bundle.Bundle):
 
     payment_data = appier.field(
         type = dict
+    )
+
+    notifications = appier.field(
+        type = list,
+        index = True,
+        initial = [],
+        safe = True
     )
 
     lines = appier.field(
@@ -383,6 +383,7 @@ class Order(bundle.Bundle):
         if ensure_waiting: self.ensure_waiting_s()
         self.verify_paid()
         confirmed = self._pay(payment_data)
+        self.save()
         if vouchers: self.use_vouchers_s()
         if confirmed: self.end_pay_s()
         if notify: self.notify_s()
@@ -428,7 +429,8 @@ class Order(bundle.Bundle):
                 )
             )
         )
-        self.notification_sent = True
+        exists = name in self.notifications
+        if not exists: self.notifications.append(name)
         self.save()
 
     @appier.operation(name = "Mark Waiting Payment")
