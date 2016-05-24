@@ -259,6 +259,7 @@ class Order(bundle.Bundle):
     @classmethod
     def _on_api_easypay(cls, api):
         api.bind("paid", cls._on_paid_easypay)
+        api.bind("canceled", cls._on_canceled_easypay)
         api.start_scheduler()
 
     @classmethod
@@ -266,6 +267,12 @@ class Order(bundle.Bundle):
         identifier = reference["identifier"]
         order = cls.get(key = identifier, raise_e = False)
         order.end_pay_s(notify = True)
+
+    @classmethod
+    def _on_canceled_easypay(cls, reference):
+        identifier = reference["identifier"]
+        order = cls.get(key = identifier, raise_e = False)
+        order.cancel_s(notify = True)
 
     def pre_delete(self):
         bundle.Bundle.pre_delete(self)
@@ -338,6 +345,9 @@ class Order(bundle.Bundle):
         appier.verify(self.status == "paid")
         appier.verify(self.paid == True)
 
+    def verify_canceled(self):
+        appier.verify(not self.status == "created")
+
     def verify_vouchers(self):
         pending = self.discount
         for voucher in self.vouchers:
@@ -379,6 +389,10 @@ class Order(bundle.Bundle):
 
     def end_pay_s(self, notify = False):
         self.mark_paid_s()
+        if notify: self.notify_s()
+
+    def cancel_s(self, notify = False):
+        self.mark_canceled_s()
         if notify: self.notify_s()
 
     def use_vouchers_s(self):
@@ -443,6 +457,12 @@ class Order(bundle.Bundle):
     def mark_sent_s(self):
         self.verify_sent()
         self.status = "sent"
+        self.save()
+
+    @appier.operation(name = "Mark Canceled")
+    def mark_canceled_s(self):
+        self.verify_canceled()
+        self.status = "canceled"
         self.save()
 
     @appier.operation(name = "Garbage Collect")
@@ -567,21 +587,30 @@ class Order(bundle.Bundle):
         )
         return True
 
-    def _pay_easypay(self, payment_data):
+    def _pay_easypay(self, payment_data, warning_d = 172800, cancel_d = 259200):
         cls = self.__class__
         api = cls._get_api_easypay()
         type = payment_data["type"]
-        mb = api.generate_mb(self.payable, key = self.key)
+        mb = api.generate_mb(
+            self.payable,
+            key = self.key,
+            warning = time.time() + warning_d,
+            cancel = time.time() + cancel_d
+        )
         entity = mb["entity"]
         reference = mb["reference"]
         cin = mb["cin"]
         identifier = mb["identifier"]
+        warning = mb["warning"]
+        cancel = mb["cancel"]
         self.payment_data = dict(
             engine = "easypay",
             type = type,
             entity = entity,
             reference = reference,
             cin = cin,
-            identifier = identifier
+            identifier = identifier,
+            warning = warning,
+            cancel = cancel
         )
         return False
