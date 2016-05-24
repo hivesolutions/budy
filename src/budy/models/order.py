@@ -594,8 +594,8 @@ class Order(bundle.Bundle):
         mb = api.generate_mb(
             self.payable,
             key = self.key,
-            warning = int(time.time() + warning_d),
-            cancel = int(time.time() + cancel_d)
+            warning = int(time.time() + warning_d) if warning_d else None,
+            cancel = int(time.time() + cancel_d) if cancel_d else None
         )
         entity = mb["entity"]
         reference = mb["reference"]
