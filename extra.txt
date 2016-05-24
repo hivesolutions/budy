@@ -2,3 +2,4 @@ redis
 pillow
 omni_api
 stripe_api
+easypay_api
