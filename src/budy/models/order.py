@@ -571,11 +571,17 @@ class Order(bundle.Bundle):
         cls = self.__class__
         api = cls._get_api_easypay()
         type = payment_data["type"]
-        reference = api.generate_mb(self.payable, key = self.key)
+        mb = api.generate_mb(self.payable, key = self.key)
+        entity = mb["entity"]
+        reference = mb["reference"]
+        cin = mb["cin"]
+        identifier = mb["identifier"]
         self.payment_data = dict(
             engine = "easypay",
             type = type,
-            entity = api.entity,
-            reference = reference
+            entity = entity,
+            reference = reference,
+            cin = cin,
+            identifier = identifier
         )
         return False
