@@ -79,7 +79,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.total >= 0.0, True)
         self.assertEqual(order.paid, False)
         self.assertEqual(order.date, None)
-        self.assertEqual(order.notification_sent, False)
+        self.assertEqual(order.notifications, [])
 
         self.assertRaises(appier.AssertionError, order.mark_paid_s)
 
@@ -96,7 +96,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.status, "created")
         self.assertEqual(order.paid, False)
         self.assertEqual(order.date, None)
-        self.assertEqual(order.notification_sent, False)
+        self.assertEqual(order.notifications, [])
         self.assertEqual(order.reference.startswith("BD-"), True)
 
         self.assertRaises(appier.AssertionError, order.mark_paid_s)
