@@ -227,7 +227,7 @@ class Order(bundle.Bundle):
     @classmethod
     def _pmethods(cls):
         methods = dict()
-        for engine in ("stripe", "easypay"):
+        for engine in ("stripe", "easypay", "paypal"):
             function = getattr(cls, "_pmethods_" + engine)
             engine_m = [(value, engine) for value in function()]
             methods.update(engine_m)
@@ -244,6 +244,10 @@ class Order(bundle.Bundle):
     @classmethod
     def _pmethods_easypay(cls):
         return ("multibanco",)
+
+    @classmethod
+    def _pmethods_paypal(cls):
+        return ("paypal",)
 
     @classmethod
     def _get_api_stripe(cls):
@@ -428,7 +432,7 @@ class Order(bundle.Bundle):
         for line in self.lines:
             items.append(
                 dict(
-                    name = line.product.name,
+                    name = line.product.short_description,
                     price = currency.Currency.format(line.product.price, line.currency),
                     currency = line.currency,
                     quantity = line.quantity
@@ -677,9 +681,11 @@ class Order(bundle.Bundle):
         )
         return False
 
-    def _pay_paypal(self, return_url = None, cancel_url = None):
+    def _pay_paypal(self, payment_data):
         cls = self.__class__
         api = cls._get_api_paypal()
+        return_url = payment_data.get("return_url", None)
+        cancel_url = payment_data.get("cancel_url", None)
         paypal_order = self.get_paypal(
             return_url = return_url,
             cancel_url = cancel_url
