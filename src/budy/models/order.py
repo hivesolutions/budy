@@ -401,9 +401,11 @@ class Order(bundle.Bundle):
         if notify: self.notify_s()
         return result
 
-    def end_pay_s(self, notify = False):
+    def end_pay_s(self, extra_data = {}, notify = False):
+        payment_data = dict(self.payment_data)
+        payment_data.update(extra_data)
+        result = self._end_pay(payment_data)
         self.mark_paid_s()
-        result = self._end_pay(self.payment_data)
         if notify: self.notify_s()
         return result
 
@@ -704,8 +706,9 @@ class Order(bundle.Bundle):
         cls = self.__class__
         if self.payable == 0.0: return
         methods = cls._pmethods()
-        type = payment_data.get("type", None)
-        method = methods.get(type, None)
+        type = payment_data.get("engine", None)
+        type = payment_data.get("type", type)
+        method = methods.get(type, type)
         has_function = hasattr(self, "_end_pay_" + method)
         if not has_function and not strict: return
         function = getattr(self, "_end_pay_" + method)
@@ -714,3 +717,8 @@ class Order(bundle.Bundle):
     def _end_pay_paypal(self, payment_data):
         cls = self.__class__
         api = cls._get_api_paypal()
+        payment = payment_data["payment"]
+        payer_id = payment_data["payer_id"]
+        payment_id = payment["id"]
+        api.execute_payment(payment_id, payer_id)
+        return True
