@@ -386,7 +386,7 @@ class Order(bundle.Bundle):
 
     def pay_s(
         self,
-        payment_data,
+        payment_data = {},
         vouchers = True,
         notify = False,
         ensure_waiting = True
@@ -401,9 +401,14 @@ class Order(bundle.Bundle):
         if notify: self.notify_s()
         return result
 
-    def end_pay_s(self, payment_data = {}, notify = False):
+    def end_pay_s(
+        self,
+        payment_data = {},
+        strict = False,
+        notify = False
+    ):
         payment_data.update(self.payment_data)
-        result = self._end_pay(payment_data)
+        result = self._end_pay(payment_data, strict = strict)
         self.mark_paid_s()
         if notify: self.notify_s()
         return result
