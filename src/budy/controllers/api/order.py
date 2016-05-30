@@ -377,7 +377,7 @@ class OrderApiController(root.RootApiController):
         data = appier.request_json()
         empty_bag = self.field("empty_bag", True, cast = bool)
         order = budy.Order.get(key = key, rules = False)
-        result = order.end_pay_s(data, notify = True)
+        result = order.end_pay_s(payment_data = data, notify = True)
         bag = budy.Bag.from_session()
         if empty_bag and bag: bag.empty_s()
         order = order.reload(map = True)

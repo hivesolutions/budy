@@ -401,9 +401,8 @@ class Order(bundle.Bundle):
         if notify: self.notify_s()
         return result
 
-    def end_pay_s(self, extra_data = {}, notify = False):
-        payment_data = dict(self.payment_data)
-        payment_data.update(extra_data)
+    def end_pay_s(self, payment_data = {}, notify = False):
+        payment_data.update(self.payment_data)
         result = self._end_pay(payment_data)
         self.mark_paid_s()
         if notify: self.notify_s()
