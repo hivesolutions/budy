@@ -93,3 +93,26 @@ class CurrencyTest(unittest.TestCase):
 
         self.assertEqual(result, 12.46)
         self.assertEqual(result, commons.Decimal(12.46))
+
+    def test_format(self):
+        budy.Currency.create_s("EUR", 2)
+        budy.Currency.create_s("USD", 2)
+        budy.Currency.create_s("JPY", 0)
+
+        result = budy.Currency.format(1200.2, "EUR")
+        self.assertEqual(result, "1200.20")
+
+        result = budy.Currency.format(1200.238, "EUR")
+        self.assertEqual(result, "1200.24")
+
+        result = budy.Currency.format(1200.2, "USD")
+        self.assertEqual(result, "1200.20")
+
+        result = budy.Currency.format(1200.238, "USD")
+        self.assertEqual(result, "1200.24")
+
+        result = budy.Currency.format(1200.2, "JPY")
+        self.assertEqual(result, "1200")
+
+        result = budy.Currency.format(1200.238, "JPY")
+        self.assertEqual(result, "1200")
