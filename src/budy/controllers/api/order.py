@@ -370,3 +370,32 @@ class OrderApiController(root.RootApiController):
             redirect_url = redirect_url,
             order = order
         )
+
+    @appier.route("/api/orders/<str:key>/end_pay", "PUT", json = True)
+    @appier.ensure(token = "user")
+    def end_pay(self, key):
+        data = appier.request_json()
+        empty_bag = self.field("empty_bag", True, cast = bool)
+        order = budy.Order.get(key = key, rules = False)
+        result = order.end_pay_s(data, notify = True)
+        bag = budy.Bag.from_session()
+        if empty_bag and bag: bag.empty_s()
+        order = order.reload(map = True)
+        redirect_url = result if appier.legacy.is_string(result) else None
+        return dict(
+            redirect_url = redirect_url,
+            order = order
+        )
+
+    @appier.route("/api/orders/<str:key>/cancel", "PUT", json = True)
+    @appier.ensure(token = "user")
+    def cancel(self, key):
+        data = appier.request_json()
+        order = budy.Order.get(key = key, rules = False)
+        result = order.cancel_s(data, notify = True)
+        order = order.reload(map = True)
+        redirect_url = result if appier.legacy.is_string(result) else None
+        return dict(
+            redirect_url = redirect_url,
+            order = order
+        )

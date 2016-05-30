@@ -403,7 +403,9 @@ class Order(bundle.Bundle):
 
     def end_pay_s(self, notify = False):
         self.mark_paid_s()
+        result = self._end_pay(self.payment_data)
         if notify: self.notify_s()
+        return result
 
     def cancel_s(self, notify = False):
         self.mark_canceled_s()
@@ -692,4 +694,23 @@ class Order(bundle.Bundle):
         )
         payment = api.create_payment(**paypal_order)
         approval_url = api.get_url(payment["links"], "approval_url")
+        self.payment_data = dict(
+            engine = "paypal",
+            payment = payment
+        )
         return approval_url
+
+    def _end_pay(self, payment_data, strict = False):
+        cls = self.__class__
+        if self.payable == 0.0: return
+        methods = cls._pmethods()
+        type = payment_data.get("type", None)
+        method = methods.get(type, None)
+        has_function = hasattr(self, "_end_pay_" + method)
+        if not has_function and not strict: return
+        function = getattr(self, "_end_pay_" + method)
+        return function(payment_data)
+
+    def _end_pay_paypal(self, payment_data):
+        cls = self.__class__
+        api = cls._get_api_paypal()
