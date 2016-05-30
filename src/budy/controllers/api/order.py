@@ -349,7 +349,7 @@ class OrderApiController(root.RootApiController):
         bag = budy.Bag.from_session()
         if empty_bag and bag: bag.empty_s()
         order = order.reload(map = True)
-        redirect_url = result if type(result) in appier.legacy.STRINGS else None
+        redirect_url = result if appier.legacy.is_string(result) else None
         return dict(
             redirect_url = redirect_url,
             order = order
@@ -365,7 +365,7 @@ class OrderApiController(root.RootApiController):
         bag = budy.Bag.from_session()
         if empty_bag and bag: bag.empty_s()
         order = order.reload(map = True)
-        redirect_url = result if type(result) in appier.legacy.STRINGS else None
+        redirect_url = result if appier.legacy.is_string(result) else None
         return dict(
             redirect_url = redirect_url,
             order = order
