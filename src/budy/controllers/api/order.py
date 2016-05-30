@@ -357,8 +357,11 @@ class OrderApiController(root.RootApiController):
         data = appier.request_json()
         empty_bag = self.field("empty_bag", True, cast = bool)
         order = budy.Order.get(key = key, rules = False)
-        order.pay_s(data, notify = True)
+        result = order.pay_s(data, notify = True)
         bag = budy.Bag.from_session()
         if empty_bag and bag: bag.empty_s()
         order = order.reload(map = True)
-        return order
+        return dict(
+            result = result,
+            order = order
+        )

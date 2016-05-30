@@ -45,6 +45,7 @@ import appier_extras
 
 from . import bundle
 from . import country
+from . import currency
 from . import order_line
 
 class Order(bundle.Bundle):
@@ -257,6 +258,12 @@ class Order(bundle.Bundle):
         return easypay.ShelveApi.singleton(scallback = cls._on_api_easypay)
 
     @classmethod
+    def _get_api_paypal(cls):
+        try: import paypal
+        except: return None
+        return paypal.Api.singleton()
+
+    @classmethod
     def _on_api_easypay(cls, api):
         api.bind("paid", cls._on_paid_easypay)
         api.bind("canceled", cls._on_canceled_easypay)
@@ -382,11 +389,13 @@ class Order(bundle.Bundle):
     ):
         if ensure_waiting: self.ensure_waiting_s()
         self.verify_paid()
-        confirmed = self._pay(payment_data)
+        result = self._pay(payment_data)
+        confirmed = result == True
         self.save()
         if vouchers: self.use_vouchers_s()
         if confirmed: self.end_pay_s()
         if notify: self.notify_s()
+        return result
 
     def end_pay_s(self, notify = False):
         self.mark_paid_s()
@@ -413,6 +422,57 @@ class Order(bundle.Bundle):
     def ensure_waiting_s(self):
         if not self.status == "created": return
         self.mark_waiting_payment_s()
+
+    def get_paypal(self, return_url = None, cancel_url = None):
+        items = []
+        for line in self.lines:
+            items.append(
+                dict(
+                    name = line.product.name,
+                    price = currency.Currency.format(line.product.price, line.currency),
+                    currency = line.currency,
+                    quantity = line.quantity
+                )
+            )
+        if self.discount: items.append(
+            dict(
+                name = "discount",
+                price = currency.Currency.format(self.discount * -1, self.currency),
+                currency = self.currency,
+                quantity = 1
+            )
+        )
+        transaction = dict(
+            item_list = dict(
+                items = items,
+                shipping_address = dict(
+                    recipient_name = self.shipping_address.full_name,
+                    line1 = self.shipping_address.address,
+                    line2 = self.shipping_address.address_extra,
+                    city = self.shipping_address.city,
+                    country_code = self.shipping_address.country,
+                    postal_code = self.shipping_address.postal_code,
+                    state = self.shipping_address.state
+                )
+            ),
+            amount = dict(
+                total = currency.Currency.format(self.total, self.currency),
+                currency = self.currency,
+                details = dict(
+                    subtotal = currency.Currency.format(self.sub_total - self.discount, self.currency),
+                    shipping = currency.Currency.format(self.shipping_cost, self.currency)
+                )
+            ),
+            soft_descriptor = self.reference
+        )
+        return dict(
+            payer = dict(payment_method = "paypal"),
+            transactions = [transaction],
+            redirect_urls = dict(
+                return_url = return_url,
+                cancel_url = cancel_url
+            )
+        )
 
     @appier.operation(name = "Notify")
     def notify_s(self, name = None):
@@ -616,3 +676,14 @@ class Order(bundle.Bundle):
             cancel = cancel
         )
         return False
+
+    def _pay_paypal(self, return_url = None, cancel_url = None):
+        cls = self.__class__
+        api = cls._get_api_paypal()
+        paypal_order = self.get_paypal(
+            return_url = return_url,
+            cancel_url = cancel_url
+        )
+        payment = api.create_payment(**paypal_order)
+        approval_url = api.get_url(payment["links"], "approval_url")
+        return approval_url
