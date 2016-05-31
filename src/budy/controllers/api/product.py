@@ -68,9 +68,9 @@ class ProductApiController(root.RootApiController):
     @appier.route("/api/products/search", "GET", json = True)
     def search(self):
         object = appier.get_object(alias = True, find = True)
-        products = budy.Product.find(
+        products = budy.Product.find_s(
             find_t = "both",
-            find_n = "search_description",
+            find_n = "tokens",
             eager = ("images", "brand"),
             map = True,
             **object

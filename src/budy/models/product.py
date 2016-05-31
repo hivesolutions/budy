@@ -57,10 +57,6 @@ class Product(base.BudyBase):
         default = True
     )
 
-    search_description = appier.field(
-        index = True
-    )
-
     product_id = appier.field(
         index = True
     )
@@ -221,6 +217,20 @@ class Product(base.BudyBase):
     @classmethod
     def index_names(cls):
         return super(Product, cls).index_names() + ["product_id"]
+
+    @classmethod
+    def token_names(cls):
+        return super(Product, cls).token_names() + [
+            ("short_description", True),
+            ("product_id", False),
+            ("brand.name", True),
+            ("season.name", True),
+            ("characteristics", False),
+            ("colors.name", True),
+            ("categories.name", True),
+            ("collections.name", True),
+            ("compositions.name", True)
+        ]
 
     @classmethod
     def from_omni(
@@ -386,17 +396,11 @@ class Product(base.BudyBase):
 
     def pre_save(self):
         base.BudyBase.pre_save(self)
-        self._update_search_description()
         if not self.measurements: return
         self.quantity_hand = sum(measurement.quantity_hand for measurement in\
             self.measurements if hasattr(measurement, "quantity_hand"))
         self.price = max(measurement.price for measurement in\
             self.measurements if hasattr(measurement, "price"))
-
-    @appier.operation(name = "Update Search Description")
-    def update_search_description_s(self):
-        self._update_search_description()
-        self.save()
 
     def related(self, limit = 6):
         cls = self.__class__
@@ -596,51 +600,3 @@ class Product(base.BudyBase):
         kwargs["id"] = {"$lt" : self.id}
         offset = cls.count(**kwargs)
         return offset
-
-    def _update_search_description(self):
-        tokens = []
-        self._add_tokens("short_description", tokens, pluralize = True)
-        self._add_tokens("product_id", tokens, pluralize = False)
-        self._add_tokens("brand.name", tokens, pluralize = True)
-        self._add_tokens("season.name", tokens, pluralize = True)
-        self._add_tokens("characteristics", tokens, pluralize = False)
-        self._add_tokens("colors.name", tokens, pluralize = True)
-        self._add_tokens("categories.name", tokens, pluralize = True)
-        self._add_tokens("collections.name", tokens, pluralize = True)
-        self._add_tokens("compositions.name", tokens, pluralize = True)
-        tokens_s = "|".join(tokens)
-        tokens_s = tokens_s.lower()
-        tokens_s = self._simplify(tokens_s)
-        self.search_description = tokens_s
-
-    def _add_tokens(self, attribute, tokens, pluralize = False):
-        attributes = attribute.split(".")
-        attribute = attributes[0]
-        attributes = attributes[1:] if len(attributes) > 1 else []
-        if not hasattr(self, attribute): return
-
-        value = getattr(self, attribute)
-        if not value: return
-
-        type_s = str(type(value))
-        values = value if type_s in ("<type 'list'>", "<type 'tuple'>", "<class 'appier.typesf._References'>") else [value]
-        for value in values:
-            for _attribute in attributes: value = getattr(value, _attribute)
-            tokens.append(value)
-            if pluralize: tokens.append(value)
-
-    def _simplify(self, value):
-        value = value.replace("á", "a")
-        value = value.replace("é", "e")
-        value = value.replace("í", "i")
-        value = value.replace("ó", "o")
-        value = value.replace("ú", "u")
-        value = value.replace("ã", "a")
-        value = value.replace("õ", "o")
-        value = value.replace("â", "a")
-        value = value.replace("ô", "o")
-        value = value.replace("ç", "c")
-        return value
-
-    def _pluralize(self, value):
-        return value + "s"
