@@ -87,6 +87,14 @@ class Currency(base.BudyBase):
         return rounder(value, decimal_places)
 
     @classmethod
+    def format(cls, value, currency, decimal_places = 2):
+        currencies = cls.get_currencies()
+        currency = currencies.get(currency, {})
+        decimal_places = currency.get("decimal_places", decimal_places)
+        format = "%%.%df" % decimal_places
+        return format % value
+
+    @classmethod
     def get_currencies(cls, app = None):
         app = app or appier.get_app()
         if hasattr(app, "_currencies"): return app._currencies

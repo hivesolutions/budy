@@ -45,6 +45,7 @@ import appier_extras
 
 from . import bundle
 from . import country
+from . import currency
 from . import order_line
 
 class Order(bundle.Bundle):
@@ -107,13 +108,6 @@ class Order(bundle.Bundle):
         safe = True
     )
 
-    notification_sent = appier.field(
-        type = bool,
-        index = True,
-        initial = False,
-        safe = True
-    )
-
     tracking_number = appier.field(
         index = True
     )
@@ -125,6 +119,20 @@ class Order(bundle.Bundle):
 
     payment_data = appier.field(
         type = dict
+    )
+
+    notifications = appier.field(
+        type = list,
+        index = True,
+        initial = [],
+        safe = True
+    )
+
+    discount_voucher = appier.field(
+        type = commons.Decimal,
+        index = True,
+        initial = commons.Decimal(0.0),
+        safe = True
     )
 
     lines = appier.field(
@@ -226,7 +234,7 @@ class Order(bundle.Bundle):
     @classmethod
     def _pmethods(cls):
         methods = dict()
-        for engine in ("stripe", "easypay"):
+        for engine in ("stripe", "easypay", "paypal"):
             function = getattr(cls, "_pmethods_" + engine)
             engine_m = [(value, engine) for value in function()]
             methods.update(engine_m)
@@ -245,6 +253,10 @@ class Order(bundle.Bundle):
         return ("multibanco",)
 
     @classmethod
+    def _pmethods_paypal(cls):
+        return ("paypal",)
+
+    @classmethod
     def _get_api_stripe(cls):
         try: import stripe
         except: return None
@@ -257,8 +269,15 @@ class Order(bundle.Bundle):
         return easypay.ShelveApi.singleton(scallback = cls._on_api_easypay)
 
     @classmethod
+    def _get_api_paypal(cls):
+        try: import paypal
+        except: return None
+        return paypal.Api.singleton()
+
+    @classmethod
     def _on_api_easypay(cls, api):
         api.bind("paid", cls._on_paid_easypay)
+        api.bind("canceled", cls._on_canceled_easypay)
         api.start_scheduler()
 
     @classmethod
@@ -266,6 +285,12 @@ class Order(bundle.Bundle):
         identifier = reference["identifier"]
         order = cls.get(key = identifier, raise_e = False)
         order.end_pay_s(notify = True)
+
+    @classmethod
+    def _on_canceled_easypay(cls, reference):
+        identifier = reference["identifier"]
+        order = cls.get(key = identifier, raise_e = False)
+        order.cancel_s(notify = True)
 
     def pre_delete(self):
         bundle.Bundle.pre_delete(self)
@@ -279,6 +304,9 @@ class Order(bundle.Bundle):
         line.order = self
         return bundle.Bundle.add_line_s(self, line)
 
+    def build_discount(self):
+        return bundle.Bundle.build_discount(self) + self.discount_voucher
+
     def set_account_s(self, account):
         self.account = account
         self.store = self.account.store
@@ -289,7 +317,7 @@ class Order(bundle.Bundle):
         discount = voucher.discount(self.sub_total, currency = self.currency)
         overflows = discount > self.payable
         amount = self.payable if overflows else discount
-        self.discount += amount
+        self.discount_voucher += amount
         self.vouchers.append(voucher)
         self.save()
 
@@ -300,7 +328,7 @@ class Order(bundle.Bundle):
 
     def empty_vouchers_s(self):
         self.vouchers = []
-        self.discount = commons.Decimal(0.0)
+        self.discount_voucher = commons.Decimal(0.0)
         self.save()
 
     def refresh_vouchers_s(self):
@@ -338,8 +366,11 @@ class Order(bundle.Bundle):
         appier.verify(self.status == "paid")
         appier.verify(self.paid == True)
 
+    def verify_canceled(self):
+        appier.verify(not self.status == "created")
+
     def verify_vouchers(self):
-        pending = self.discount
+        pending = self.discount_voucher
         for voucher in self.vouchers:
             if pending == 0.0: break
             open_amount = voucher.open_amount_r(currency = self.currency)
@@ -365,24 +396,39 @@ class Order(bundle.Bundle):
 
     def pay_s(
         self,
-        payment_data,
+        payment_data = {},
         vouchers = True,
         notify = False,
         ensure_waiting = True
     ):
         if ensure_waiting: self.ensure_waiting_s()
         self.verify_paid()
-        confirmed = self._pay(payment_data)
+        result = self._pay(payment_data)
+        confirmed = result == True
+        self.save()
         if vouchers: self.use_vouchers_s()
         if confirmed: self.end_pay_s()
         if notify: self.notify_s()
+        return result
 
-    def end_pay_s(self, notify = False):
+    def end_pay_s(
+        self,
+        payment_data = {},
+        strict = False,
+        notify = False
+    ):
+        payment_data.update(self.payment_data)
+        result = self._end_pay(payment_data, strict = strict)
         self.mark_paid_s()
+        if notify: self.notify_s()
+        return result
+
+    def cancel_s(self, cancel_data = {}, notify = False):
+        self.mark_canceled_s()
         if notify: self.notify_s()
 
     def use_vouchers_s(self):
-        pending = self.discount
+        pending = self.discount_voucher
         for voucher in self.vouchers:
             if pending == 0.0: break
             discount = voucher.discount(
@@ -399,6 +445,57 @@ class Order(bundle.Bundle):
         if not self.status == "created": return
         self.mark_waiting_payment_s()
 
+    def get_paypal(self, return_url = None, cancel_url = None):
+        items = []
+        for line in self.lines:
+            items.append(
+                dict(
+                    name = line.product.short_description,
+                    price = currency.Currency.format(line.product.price, line.currency),
+                    currency = line.currency,
+                    quantity = line.quantity
+                )
+            )
+        if self.discount: items.append(
+            dict(
+                name = "Discount",
+                price = currency.Currency.format(self.discount * -1, self.currency),
+                currency = self.currency,
+                quantity = 1
+            )
+        )
+        transaction = dict(
+            item_list = dict(
+                items = items,
+                shipping_address = dict(
+                    recipient_name = self.shipping_address.full_name,
+                    line1 = self.shipping_address.address,
+                    line2 = self.shipping_address.address_extra,
+                    city = self.shipping_address.city,
+                    country_code = self.shipping_address.country,
+                    postal_code = self.shipping_address.postal_code,
+                    state = self.shipping_address.state
+                )
+            ),
+            amount = dict(
+                total = currency.Currency.format(self.total, self.currency),
+                currency = self.currency,
+                details = dict(
+                    subtotal = currency.Currency.format(self.sub_total - self.discount, self.currency),
+                    shipping = currency.Currency.format(self.shipping_cost, self.currency)
+                )
+            ),
+            soft_descriptor = self.reference
+        )
+        return dict(
+            payer = dict(payment_method = "paypal"),
+            transactions = [transaction],
+            redirect_urls = dict(
+                return_url = return_url,
+                cancel_url = cancel_url
+            )
+        )
+
     @appier.operation(name = "Notify")
     def notify_s(self, name = None):
         name = name or "order.%s" % self.status
@@ -414,7 +511,8 @@ class Order(bundle.Bundle):
                 )
             )
         )
-        self.notification_sent = True
+        exists = name in self.notifications
+        if not exists: self.notifications.append(name)
         self.save()
 
     @appier.operation(name = "Mark Waiting Payment")
@@ -443,6 +541,12 @@ class Order(bundle.Bundle):
     def mark_sent_s(self):
         self.verify_sent()
         self.status = "sent"
+        self.save()
+
+    @appier.operation(name = "Mark Canceled")
+    def mark_canceled_s(self):
+        self.verify_canceled()
+        self.status = "canceled"
         self.save()
 
     @appier.operation(name = "Garbage Collect")
@@ -567,15 +671,69 @@ class Order(bundle.Bundle):
         )
         return True
 
-    def _pay_easypay(self, payment_data):
+    def _pay_easypay(self, payment_data, warning_d = 172800, cancel_d = 259200):
         cls = self.__class__
         api = cls._get_api_easypay()
         type = payment_data["type"]
-        reference = api.generate_mb(self.payable, key = self.key)
+        mb = api.generate_mb(
+            self.payable,
+            key = self.key,
+            warning = int(time.time() + warning_d) if warning_d else None,
+            cancel = int(time.time() + cancel_d) if cancel_d else None
+        )
+        entity = mb["entity"]
+        reference = mb["reference"]
+        cin = mb["cin"]
+        identifier = mb["identifier"]
+        warning = mb["warning"]
+        cancel = mb["cancel"]
         self.payment_data = dict(
             engine = "easypay",
             type = type,
-            entity = api.entity,
-            reference = reference
+            entity = entity,
+            reference = reference,
+            cin = cin,
+            identifier = identifier,
+            warning = warning,
+            cancel = cancel
         )
         return False
+
+    def _pay_paypal(self, payment_data):
+        cls = self.__class__
+        api = cls._get_api_paypal()
+        return_url = payment_data.get("return_url", None)
+        cancel_url = payment_data.get("cancel_url", None)
+        paypal_order = self.get_paypal(
+            return_url = return_url,
+            cancel_url = cancel_url
+        )
+        payment = api.create_payment(**paypal_order)
+        payment_id = payment["id"]
+        approval_url = api.get_url(payment["links"], "approval_url")
+        self.payment_data = dict(
+            engine = "paypal",
+            payment_id = payment_id,
+            approval_url = approval_url
+        )
+        return approval_url
+
+    def _end_pay(self, payment_data, strict = False):
+        cls = self.__class__
+        if self.payable == 0.0: return
+        methods = cls._pmethods()
+        type = payment_data.get("engine", None)
+        type = payment_data.get("type", type)
+        method = methods.get(type, type)
+        has_function = hasattr(self, "_end_pay_" + method)
+        if not has_function and not strict: return
+        function = getattr(self, "_end_pay_" + method)
+        return function(payment_data)
+
+    def _end_pay_paypal(self, payment_data):
+        cls = self.__class__
+        api = cls._get_api_paypal()
+        payment_id = payment_data["payment_id"]
+        payer_id = payment_data["payer_id"]
+        api.execute_payment(payment_id, payer_id)
+        return True

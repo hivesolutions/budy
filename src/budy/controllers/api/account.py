@@ -82,7 +82,7 @@ class AccountApiController(root.RootApiController):
     @appier.route("/api/accounts/me/orders", "GET", json = True)
     @appier.ensure(token = "user")
     def orders_me(self):
-        object = appier.get_object(alias = True, find = True)
+        object = appier.get_object(alias = True, find = True, sort = [("id", -1)])
         account = budy.BudyAccount.from_session()
         orders = budy.Order.find(
             account = account.id,

@@ -345,11 +345,15 @@ class OrderApiController(root.RootApiController):
     def wait_payment(self, key):
         empty_bag = self.field("empty_bag", True, cast = bool)
         order = budy.Order.get(key = key, rules = False)
-        order.wait_payment_s(notify = True)
+        result = order.wait_payment_s(notify = True)
         bag = budy.Bag.from_session()
         if empty_bag and bag: bag.empty_s()
         order = order.reload(map = True)
-        return order
+        redirect_url = result if appier.legacy.is_string(result) else None
+        return dict(
+            redirect_url = redirect_url,
+            order = order
+        )
 
     @appier.route("/api/orders/<str:key>/pay", "PUT", json = True)
     @appier.ensure(token = "user")
@@ -357,8 +361,41 @@ class OrderApiController(root.RootApiController):
         data = appier.request_json()
         empty_bag = self.field("empty_bag", True, cast = bool)
         order = budy.Order.get(key = key, rules = False)
-        order.pay_s(data, notify = True)
+        result = order.pay_s(payment_data = data, notify = True)
         bag = budy.Bag.from_session()
         if empty_bag and bag: bag.empty_s()
         order = order.reload(map = True)
-        return order
+        redirect_url = result if appier.legacy.is_string(result) else None
+        return dict(
+            redirect_url = redirect_url,
+            order = order
+        )
+
+    @appier.route("/api/orders/<str:key>/end_pay", "PUT", json = True)
+    @appier.ensure(token = "user")
+    def end_pay(self, key):
+        data = appier.request_json()
+        empty_bag = self.field("empty_bag", True, cast = bool)
+        order = budy.Order.get(key = key, rules = False)
+        result = order.end_pay_s(payment_data = data, strict = True, notify = True)
+        bag = budy.Bag.from_session()
+        if empty_bag and bag: bag.empty_s()
+        order = order.reload(map = True)
+        redirect_url = result if appier.legacy.is_string(result) else None
+        return dict(
+            redirect_url = redirect_url,
+            order = order
+        )
+
+    @appier.route("/api/orders/<str:key>/cancel", "PUT", json = True)
+    @appier.ensure(token = "user")
+    def cancel(self, key):
+        data = appier.request_json()
+        order = budy.Order.get(key = key, rules = False)
+        result = order.cancel_s(data, notify = True)
+        order = order.reload(map = True)
+        redirect_url = result if appier.legacy.is_string(result) else None
+        return dict(
+            redirect_url = redirect_url,
+            order = order
+        )
