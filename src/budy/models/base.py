@@ -112,7 +112,10 @@ class BudyBase(appier_extras.admin.Base):
         values = value if is_iterable else [value]
 
         for value in values:
-            for _name in names: value = getattr(value, _name)
+            for _name in names:
+                if value == None: break
+                value = getattr(value, _name)
+            if not value: continue
             token = value
             token = token.lower()
             token = cls._simplify(token)
