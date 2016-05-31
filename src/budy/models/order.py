@@ -710,9 +710,10 @@ class Order(bundle.Bundle):
         )
         payment = api.create_payment(**paypal_order)
         approval_url = api.get_url(payment["links"], "approval_url")
+        payment_id = payment["id"]
         self.payment_data = dict(
             engine = "paypal",
-            payment = payment
+            payment_id = payment_id
         )
         return approval_url
 
@@ -731,8 +732,7 @@ class Order(bundle.Bundle):
     def _end_pay_paypal(self, payment_data):
         cls = self.__class__
         api = cls._get_api_paypal()
-        payment = payment_data["payment"]
+        payment_id = payment_data["payment_id"]
         payer_id = payment_data["payer_id"]
-        payment_id = payment["id"]
         api.execute_payment(payment_id, payer_id)
         return True
