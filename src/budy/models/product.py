@@ -219,6 +219,20 @@ class Product(base.BudyBase):
         return super(Product, cls).index_names() + ["product_id"]
 
     @classmethod
+    def token_names(cls):
+        return super(Product, cls).token_names() + [
+            ("short_description", True),
+            ("product_id", False),
+            ("brand.name", True),
+            ("season.name", True),
+            ("characteristics", False),
+            ("colors.name", True),
+            ("categories.name", True),
+            ("collections.name", True),
+            ("compositions.name", True)
+        ]
+
+    @classmethod
     def from_omni(
         cls,
         merchandise,
@@ -383,8 +397,10 @@ class Product(base.BudyBase):
     def pre_save(self):
         base.BudyBase.pre_save(self)
         if not self.measurements: return
-        self.quantity_hand = sum(measurement.quantity for measurement in self.measurements)
-        self.price = max(measurement.price for measurement in self.measurements)
+        self.quantity_hand = sum(measurement.quantity_hand for measurement in\
+            self.measurements if hasattr(measurement, "quantity_hand"))
+        self.price = max(measurement.price for measurement in\
+            self.measurements if hasattr(measurement, "price"))
 
     def related(self, limit = 6):
         cls = self.__class__
@@ -410,6 +426,9 @@ class Product(base.BudyBase):
 
     def get_measurement(self, value, name = None):
         for measurement in self.measurements:
+            if not measurement: continue
+            if not hasattr(measurement, "value"): continue
+            if not hasattr(measurement, "name"): continue
             if not measurement.value == value: continue
             if not measurement.name == name: continue
             return measurement
