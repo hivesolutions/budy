@@ -265,7 +265,7 @@ class Bundle(base.BudyBase):
     def calculate(self):
         lines = self.lines if hasattr(self, "lines") else []
         self.sub_total = sum(line.total for line in lines)
-        self.discount = self.discount or self.build_discount()
+        self.discount = self.build_discount()
         self.shipping_cost = self.build_shipping()
         self.total = self.sub_total - self.discount + self.taxes + self.shipping_cost
 
