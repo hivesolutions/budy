@@ -113,7 +113,7 @@ class BudyBase(appier_extras.admin.Base):
 
         for value in values:
             for _name in names:
-                if value == None: break
+                if not value: break
                 value = getattr(value, _name)
             if not value: continue
             token = value
