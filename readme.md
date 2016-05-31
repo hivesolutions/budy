@@ -28,6 +28,9 @@ currency to be used, use this value only for situations where binding a currency
 * `BUDY_SHIPPING` (`str`) - String with the definition of the lambda function to be called for calculus of the
 shipping costs for a bundle (bag or order) the arguments provided are the sub total, taxes and quantity and the return
 value should be a valid float value for the shipping costs (default to `None`)
+* `BUDY_DISCOUNT` (`str`) - String with the definition of the lambda function to be called for calculus of the
+discount value for a bundle (bag or order) the arguments provided are the sub total, taxes and quantity and the return
+value should be a valid float value for the discount (default to `None`)
 
 ## License
 
