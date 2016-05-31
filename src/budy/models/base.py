@@ -59,6 +59,7 @@ class BudyBase(appier_extras.admin.Base):
 
     @classmethod
     def _simplify(cls, value):
+        value = value.lower()
         value = value.replace(appier.legacy.u("á"), "a")
         value = value.replace(appier.legacy.u("é"), "e")
         value = value.replace(appier.legacy.u("í"), "i")
@@ -117,7 +118,6 @@ class BudyBase(appier_extras.admin.Base):
                 value = getattr(value, _name)
             if not value: continue
             token = value
-            token = token.lower()
             token = cls._simplify(token)
             token_p = cls._pluralize(token)
             tokens.append(token)
