@@ -388,8 +388,10 @@ class Product(base.BudyBase):
         base.BudyBase.pre_save(self)
         self._update_search_description()
         if not self.measurements: return
-        self.quantity_hand = sum(measurement.quantity_hand for measurement in self.measurements)
-        self.price = max(measurement.price for measurement in self.measurements)
+        self.quantity_hand = sum(measurement.quantity_hand for measurement in\
+            self.measurements if hasattr(measurement, "quantity_hand"))
+        self.price = max(measurement.price for measurement in\
+            self.measurements if hasattr(measurement, "price"))
 
     @appier.operation(name = "Update Search Description")
     def update_search_description_s(self):
@@ -420,6 +422,9 @@ class Product(base.BudyBase):
 
     def get_measurement(self, value, name = None):
         for measurement in self.measurements:
+            if not measurement: continue
+            if not hasattr(measurement, "value"): continue
+            if not hasattr(measurement, "name"): continue
             if not measurement.value == value: continue
             if not measurement.name == name: continue
             return measurement
