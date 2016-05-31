@@ -709,11 +709,12 @@ class Order(bundle.Bundle):
             cancel_url = cancel_url
         )
         payment = api.create_payment(**paypal_order)
-        approval_url = api.get_url(payment["links"], "approval_url")
         payment_id = payment["id"]
+        approval_url = api.get_url(payment["links"], "approval_url")
         self.payment_data = dict(
             engine = "paypal",
-            payment_id = payment_id
+            payment_id = payment_id,
+            approval_url = approval_url
         )
         return approval_url
 
