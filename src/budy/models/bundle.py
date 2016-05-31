@@ -136,16 +136,19 @@ class Bundle(base.BudyBase):
     def line_cls(cls):
         return bundle_line.BundleLine
 
+    def pre_validate(self):
+        base.BudyBase.pre_validate(self)
+        self.calculate()
+
+    def pre_save(self):
+        base.BudyBase.pre_save(self)
+        self.ensure_valid()
+
     def pre_create(self):
         base.BudyBase.pre_create(self)
         if not hasattr(self, "key") or not self.key:
             self.key = self.secret()
         self.description = self.key[:8]
-
-    def pre_save(self):
-        base.BudyBase.pre_save(self)
-        self.calculate()
-        self.ensure_valid()
 
     def empty_s(self):
         for line in self.lines: line.delete()

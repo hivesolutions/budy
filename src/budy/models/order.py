@@ -128,6 +128,13 @@ class Order(bundle.Bundle):
         safe = True
     )
 
+    discount_voucher = appier.field(
+        type = commons.Decimal,
+        index = True,
+        initial = commons.Decimal(0.0),
+        safe = True
+    )
+
     lines = appier.field(
         type = appier.references(
             "OrderLine",
@@ -297,6 +304,9 @@ class Order(bundle.Bundle):
         line.order = self
         return bundle.Bundle.add_line_s(self, line)
 
+    def build_discount(self):
+        return bundle.Bundle.build_discount(self) + self.discount_voucher
+
     def set_account_s(self, account):
         self.account = account
         self.store = self.account.store
@@ -307,7 +317,7 @@ class Order(bundle.Bundle):
         discount = voucher.discount(self.sub_total, currency = self.currency)
         overflows = discount > self.payable
         amount = self.payable if overflows else discount
-        self.discount += amount
+        self.discount_voucher += amount
         self.vouchers.append(voucher)
         self.save()
 
@@ -318,7 +328,7 @@ class Order(bundle.Bundle):
 
     def empty_vouchers_s(self):
         self.vouchers = []
-        self.discount = commons.Decimal(0.0)
+        self.discount_voucher = commons.Decimal(0.0)
         self.save()
 
     def refresh_vouchers_s(self):
@@ -360,7 +370,7 @@ class Order(bundle.Bundle):
         appier.verify(not self.status == "created")
 
     def verify_vouchers(self):
-        pending = self.discount
+        pending = self.discount_voucher
         for voucher in self.vouchers:
             if pending == 0.0: break
             open_amount = voucher.open_amount_r(currency = self.currency)
@@ -418,7 +428,7 @@ class Order(bundle.Bundle):
         if notify: self.notify_s()
 
     def use_vouchers_s(self):
-        pending = self.discount
+        pending = self.discount_voucher
         for voucher in self.vouchers:
             if pending == 0.0: break
             discount = voucher.discount(
@@ -448,7 +458,7 @@ class Order(bundle.Bundle):
             )
         if self.discount: items.append(
             dict(
-                name = "discount",
+                name = "Discount",
                 price = currency.Currency.format(self.discount * -1, self.currency),
                 currency = self.currency,
                 quantity = 1
