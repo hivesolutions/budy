@@ -630,16 +630,16 @@ class Product(base.BudyBase):
             if pluralize: tokens.append(value)
 
     def _simplify(self, value):
-        value = value.replace(u"á", "a")
-        value = value.replace(u"é", "e")
-        value = value.replace(u"í", "i")
-        value = value.replace(u"ó", "o")
-        value = value.replace(u"ú", "u")
-        value = value.replace(u"ã", "a")
-        value = value.replace(u"õ", "o")
-        value = value.replace(u"â", "a")
-        value = value.replace(u"ô", "o")
-        value = value.replace(u"ç", "c")
+        value = value.replace("á", "a")
+        value = value.replace("é", "e")
+        value = value.replace("í", "i")
+        value = value.replace("ó", "o")
+        value = value.replace("ú", "u")
+        value = value.replace("ã", "a")
+        value = value.replace("õ", "o")
+        value = value.replace("â", "a")
+        value = value.replace("ô", "o")
+        value = value.replace("ç", "c")
         return value
 
     def _pluralize(self, value):

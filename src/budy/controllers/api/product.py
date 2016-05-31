@@ -65,6 +65,18 @@ class ProductApiController(root.RootApiController):
         )
         return product
 
+    @appier.route("/api/products/search", "GET", json = True)
+    def search(self):
+        object = appier.get_object(alias = True, find = True)
+        products = budy.Product.find(
+            find_t = "both",
+            find_n = "search_description",
+            eager = ("images", "brand"),
+            map = True,
+            **object
+        )
+        return products
+
     @appier.route("/api/products/<int:id>/related", "GET", json = True)
     def related(self, id):
         limit = self.field("limit", 10, int)
