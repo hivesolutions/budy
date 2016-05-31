@@ -38,7 +38,6 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import json
-import types
 import commons
 
 import appier
@@ -389,7 +388,7 @@ class Product(base.BudyBase):
         base.BudyBase.pre_save(self)
         self._update_search_description()
         if not self.measurements: return
-        self.quantity_hand = sum(measurement.quantity for measurement in self.measurements)
+        self.quantity_hand = sum(measurement.quantity_hand for measurement in self.measurements)
         self.price = max(measurement.price for measurement in self.measurements)
 
     @appier.operation(name = "Update Search Description")
