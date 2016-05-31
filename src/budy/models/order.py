@@ -423,7 +423,7 @@ class Order(bundle.Bundle):
         if notify: self.notify_s()
         return result
 
-    def cancel_s(self, notify = False):
+    def cancel_s(self, cancel_data = {}, notify = False):
         self.mark_canceled_s()
         if notify: self.notify_s()
 
