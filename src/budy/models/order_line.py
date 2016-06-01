@@ -54,9 +54,10 @@ class OrderLine(bundle_line.BundleLine):
     def list_names(cls):
         return ["id", "quantity", "total", "currency", "product", "order"]
 
-    def is_valid_quantity(self):
-        if hasattr(self.order, "paid") and self.order.paid: return True
-        return bundle_line.BundleLine.is_valid_quantity(self)
+    def is_valid_quantity(self, reload = True):
+        order = self.order and self.order.reload() if reload else self.order
+        if hasattr(order, "paid") and order.paid: return True
+        return bundle_line.BundleLine.is_valid_quantity(self, reload = reload)
 
     @appier.operation(name = "Garbage Collect")
     def collect_s(self):

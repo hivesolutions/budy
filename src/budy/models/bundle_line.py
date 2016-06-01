@@ -161,13 +161,15 @@ class BundleLine(base.BudyBase):
 
     def is_valid_quantity(self, reload = True):
         if self.quantity < 0: return False
-        merchandise = self.merchandise.reload() if reload else self.merchandise
+        merchandise = self.merchandise and self.merchandise.reload() if\
+            reload else self.merchandise
         if not merchandise.quantity_hand == None and\
             self.quantity > merchandise.quantity_hand: return False
         return True
 
     def is_valid_price(self, reload = True):
-        merchandise = self.merchandise.reload() if reload else self.merchandise
+        merchandise = self.merchandise and self.merchandise.reload() if\
+            reload else self.merchandise
         if not merchandise.quantity_hand == None and\
             not merchandise.price == None and\
             not self.price == merchandise.price: return False
