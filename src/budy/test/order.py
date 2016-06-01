@@ -385,5 +385,6 @@ class OrderTest(unittest.TestCase):
         order.save()
 
         self.assertEqual(order.is_valid(), True)
+        self.assertEqual(order_line.is_valid_quantity(), True)
         self.assertEqual(order.paid, True)
         self.assertEqual(order.status, "paid")
