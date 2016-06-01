@@ -338,11 +338,13 @@ class OrderTest(unittest.TestCase):
         order.add_line_s(order_line)
 
         self.assertEqual(order.is_valid(), True)
+        self.assertEqual(order_line.is_valid_quantity(), True)
 
         product.quantity_hand = 1.0
         product.save()
 
         self.assertEqual(order.is_valid(), False)
+        self.assertEqual(order_line.is_valid_quantity(), False)
         self.assertRaises(appier.AssertionError, order.save)
         self.assertRaises(appier.AssertionError, order.mark_waiting_payment_s)
 
@@ -350,6 +352,7 @@ class OrderTest(unittest.TestCase):
         product.save()
 
         self.assertEqual(order.is_valid(), True)
+        self.assertEqual(order_line.is_valid_quantity(), True)
 
         product.quantity_hand = 2.0
         product.save()
@@ -372,6 +375,7 @@ class OrderTest(unittest.TestCase):
         order.mark_paid_s()
 
         self.assertEqual(order.is_valid(), True)
+        self.assertEqual(order_line.is_valid_quantity(), True)
         self.assertEqual(order.paid, True)
         self.assertEqual(order.status, "paid")
 
