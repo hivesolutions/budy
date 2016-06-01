@@ -159,16 +159,18 @@ class BundleLine(base.BudyBase):
         is_valid &= self.is_valid_price()
         return is_valid
 
-    def is_valid_quantity(self):
+    def is_valid_quantity(self, reload = True):
         if self.quantity < 0: return False
-        if not self.merchandise.quantity_hand == None and\
-            self.quantity > self.merchandise.quantity_hand: return False
+        merchandise = self.merchandise.reload() if reload else self.merchandise
+        if not merchandise.quantity_hand == None and\
+            self.quantity > merchandise.quantity_hand: return False
         return True
 
-    def is_valid_price(self):
-        if not self.merchandise.quantity_hand == None and\
-            not self.merchandise.price == None and\
-            not self.price == self.merchandise.price: return False
+    def is_valid_price(self, reload = True):
+        merchandise = self.merchandise.reload() if reload else self.merchandise
+        if not merchandise.quantity_hand == None and\
+            not merchandise.price == None and\
+            not self.price == merchandise.price: return False
         return True
 
     @appier.operation(name = "Calculate")

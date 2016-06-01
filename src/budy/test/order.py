@@ -313,3 +313,64 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(voucher.used_amount, 0.0)
         self.assertEqual(voucher.open_amount, 0.0)
         self.assertEqual(voucher.usage_count, 1)
+
+    def test_quantity(self):
+        product = budy.Product(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0,
+            quantity_hand = 1.0
+        )
+        product.save()
+
+        order = budy.Order()
+        order.save()
+
+        order_line = budy.OrderLine(quantity = 2.0)
+        order_line.product = product
+
+        self.assertRaises(appier.AssertionError, order_line.save)
+
+        product.quantity_hand = 2.0
+        product.save()
+
+        order_line.save()
+        order.add_line_s(order_line)
+
+        self.assertEqual(order.is_valid(), True)
+
+        product.quantity_hand = 1.0
+        product.save()
+
+        self.assertEqual(order.is_valid(), False)
+        self.assertRaises(appier.AssertionError, order.save)
+        self.assertRaises(appier.AssertionError, order.mark_waiting_payment_s)
+
+        product.quantity_hand = None
+        product.save()
+
+        self.assertEqual(order.is_valid(), True)
+
+        product.quantity_hand = 2.0
+        product.save()
+
+        address = budy.Address(
+            first_name = "first name",
+            last_name = "last name",
+            address = "address",
+            city = "city"
+        )
+        address.save()
+
+        order.shipping_address = address
+        order.billing_address = address
+        order.email = "username@email.com"
+        order.save()
+
+        order.save()
+        order.mark_waiting_payment_s()
+        order.mark_paid_s()
+
+        self.assertEqual(order.is_valid(), True)
+        self.assertEqual(order.paid, True)
+        self.assertEqual(order.status, "paid")
