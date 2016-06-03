@@ -328,9 +328,11 @@ class OrderApiController(root.RootApiController):
     @appier.ensure(token = "user")
     def set_voucher(self, key):
         strict = self.field("strict", False, cast = bool)
+        empty_vouchers = self.field("empty_vouchers", True, cast = bool)
         data = appier.request_json()
         voucher_key = data["key"]
         order = budy.Order.get(key = key, rules = False)
+        if empty_vouchers: order.empty_vouchers_s()
         voucher = budy.Voucher.get(
             key = voucher_key,
             raise_e = strict
