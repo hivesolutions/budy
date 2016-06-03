@@ -285,7 +285,7 @@ class Bundle(base.BudyBase):
     def build_discount(self):
         discount = 0.0
         discounter = appier.conf("BUDY_DISCOUNT", None)
-        discounter = eval(discount) if discounter else None
+        discounter = eval(discounter) if discounter else None
         if discounter: discount += discounter(self.sub_total, self.taxes, self.quantity)
         discount += self.discount_fixed
         return discount
