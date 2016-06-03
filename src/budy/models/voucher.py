@@ -160,13 +160,15 @@ class Voucher(base.BudyBase):
     @appier.operation(
         name = "Create Value",
         parameters = (
+            ("Key", "key", str),
             ("Amount", "amount", commons.Decimal),
             ("Currency", "currency", str)
         ),
         factory = True
     )
-    def create_value_s(cls, amount, currency):
+    def create_value_s(cls, key, amount, currency):
         voucher = cls(
+            key = key,
             amount = amount,
             currency = currency
         )
@@ -177,7 +179,7 @@ class Voucher(base.BudyBase):
     @appier.operation(
         name = "Create Percentage",
         parameters = (
-            ("Key", "key", str, False),
+            ("Key", "key", str),
             ("Percentage", "percentage", commons.Decimal)
         ),
         factory = True
