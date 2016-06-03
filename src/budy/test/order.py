@@ -314,6 +314,35 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(voucher.open_amount, 0.0)
         self.assertEqual(voucher.usage_count, 1)
 
+    def test_discount(self):
+        product = budy.Product(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0
+        )
+        product.save()
+
+        order = budy.Order()
+        order.save()
+
+        order_line = budy.OrderLine(quantity = 2.0)
+        order_line.product = product
+        order_line.save()
+        order.add_line_s(order_line)
+
+        self.assertEqual(order.sub_total, 20.0)
+        self.assertEqual(order.discount, 0.0)
+        self.assertEqual(order.total, 20.0)
+        self.assertEqual(order.payable, 20.0)
+
+        order.discount_fixed = 20.0
+        order.save()
+
+        self.assertEqual(order.sub_total, 20.0)
+        self.assertEqual(order.discount, 20.0)
+        self.assertEqual(order.total, 0.0)
+        self.assertEqual(order.payable, 0.0)
+
     def test_quantity(self):
         product = budy.Product(
             short_description = "product",

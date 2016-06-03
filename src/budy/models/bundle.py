@@ -74,6 +74,13 @@ class Bundle(base.BudyBase):
         safe = True
     )
 
+    discount_fixed = appier.field(
+        type = commons.Decimal,
+        index = True,
+        initial = commons.Decimal(0.0),
+        safe = True
+    )
+
     shipping_cost = appier.field(
         type = commons.Decimal,
         index = True,
@@ -276,10 +283,12 @@ class Bundle(base.BudyBase):
         self.total = discounted + self.taxes + self.shipping_cost
 
     def build_discount(self):
-        discount = appier.conf("BUDY_DISCOUNT", None)
-        if not discount: return 0.0
-        discount = eval(discount)
-        return discount(self.sub_total, self.taxes, self.quantity)
+        discount = 0.0
+        discounter = appier.conf("BUDY_DISCOUNT", None)
+        discounter = eval(discount) if discounter else None
+        if discounter: discount += discounter(self.sub_total, self.taxes, self.quantity)
+        discount += self.discount_fixed
+        return discount
 
     def build_taxes(self):
         taxes = appier.conf("BUDY_TAXES", None)
