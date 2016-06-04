@@ -368,8 +368,7 @@ class Order(bundle.Bundle):
         appier.verify(not self.status == "created")
 
     def verify_vouchers(self):
-        discount = self.build_discount()
-        discount = min(discount, self.discountable, 0.0)
+        discount = self.calculate_discount()
         pending = discount - self.discount_fixed
         if pending <= 0.0: return
         for voucher in self.vouchers:
@@ -429,8 +428,7 @@ class Order(bundle.Bundle):
         if notify: self.notify_s()
 
     def use_vouchers_s(self):
-        discount = self.build_discount()
-        discount = min(discount, self.discountable, 0.0)
+        discount = self.calculate_discount()
         pending = discount - self.discount_fixed
         if pending <= 0.0: return
         for voucher in self.vouchers:
