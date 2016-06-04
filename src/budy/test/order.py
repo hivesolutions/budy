@@ -246,10 +246,12 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.discount, 5.0)
         self.assertEqual(order.total, 15.0)
         self.assertEqual(order.payable, 15.0)
+        self.assertEqual(order.discountable, 20.0)
         self.assertEqual(isinstance(order.sub_total, commons.Decimal), True)
         self.assertEqual(isinstance(order.discount, commons.Decimal), True)
         self.assertEqual(isinstance(order.total, commons.Decimal), True)
         self.assertEqual(isinstance(order.payable, commons.Decimal), True)
+        self.assertEqual(isinstance(order.discountable, commons.Decimal), True)
 
         order.use_vouchers_s()
         voucher = voucher.reload()
@@ -270,6 +272,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.discount, 1.0)
         self.assertEqual(order.total, 19.0)
         self.assertEqual(order.payable, 19.0)
+        self.assertEqual(order.discountable, 20.0)
         self.assertEqual(isinstance(order.sub_total, commons.Decimal), True)
         self.assertEqual(isinstance(order.discount, commons.Decimal), True)
         self.assertEqual(isinstance(order.total, commons.Decimal), True)
@@ -284,6 +287,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.discount, 20.0)
         self.assertEqual(order.total, 0.0)
         self.assertEqual(order.payable, 0.0)
+        self.assertEqual(order.discountable, 20.0)
 
         order.use_vouchers_s()
         voucher = large_voucher.reload()
@@ -304,6 +308,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.discount, 2.0)
         self.assertEqual(order.total, 18.0)
         self.assertEqual(order.payable, 18.0)
+        self.assertEqual(order.discountable, 20.0)
 
         order.use_vouchers_s()
         voucher = percent_voucher.reload()
@@ -334,6 +339,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.discount, 0.0)
         self.assertEqual(order.total, 20.0)
         self.assertEqual(order.payable, 20.0)
+        self.assertEqual(order.discountable, 20.0)
 
         order.discount_fixed = 20.0
         order.save()
@@ -342,6 +348,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.discount, 20.0)
         self.assertEqual(order.total, 0.0)
         self.assertEqual(order.payable, 0.0)
+        self.assertEqual(order.discountable, 20.0)
 
         voucher = budy.Voucher(amount = 5.0)
         voucher.save()
@@ -354,6 +361,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.discount, 20.0)
         self.assertEqual(order.total, 0.0)
         self.assertEqual(order.payable, 0.0)
+        self.assertEqual(order.discountable, 20.0)
 
         voucher = voucher.reload()
 
