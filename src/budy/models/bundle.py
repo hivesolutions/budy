@@ -278,9 +278,8 @@ class Bundle(base.BudyBase):
         self.discount = self.build_discount()
         self.taxes = self.build_taxes()
         self.shipping_cost = self.build_shipping()
-        discounted = self.sub_total - self.discount
-        discounted = max(discounted, 0.0)
-        self.total = discounted + self.taxes + self.shipping_cost
+        self.discount = min(self.discount, self.discountable, 0.0)
+        self.total = self.sub_total - self.discount + self.shipping_cost
 
     def build_discount(self):
         discount = 0.0
@@ -338,3 +337,7 @@ class Bundle(base.BudyBase):
     @property
     def quantity(self):
         return sum(line.quantity for line in self.lines)
+
+    @property
+    def discountable(self):
+        return self.sub_total
