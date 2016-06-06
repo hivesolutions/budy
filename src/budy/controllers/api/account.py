@@ -121,3 +121,9 @@ class AccountApiController(root.RootApiController):
         account.addresses.remove(address.id)
         account.save()
         address.delete()
+
+    @appier.route("/api/accounts/confirm/<str:token>", "GET", json = True)
+    def confirm(self, token):
+        account = budy.BudyAccount.get(confirmation_token = token)
+        account.confirm_s()
+        return account
