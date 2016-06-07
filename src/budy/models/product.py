@@ -202,7 +202,6 @@ class Product(base.BudyBase):
             appier.not_null("gender"),
             appier.not_empty("gender"),
 
-            appier.not_null("price"),
             appier.gte("price", 0.0)
         ]
 
