@@ -51,10 +51,7 @@ class AccountApiController(root.RootApiController):
         account.type = budy.BudyAccount.USER_TYPE
         account.password_confirm = account.password
         account.save()
-        account = account.reload(
-            rules = False,
-            map = True
-        )
+        account = account.reload(map = True)
         return account
 
     @appier.route("/api/accounts/me", "GET", json = True)
