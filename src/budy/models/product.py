@@ -69,17 +69,20 @@ class Product(base.BudyBase):
 
     quantity_hand = appier.field(
         type = commons.Decimal,
-        index = True
+        index = True,
+        initial = commons.Decimal(0.0)
     )
 
     quantity_reserved = appier.field(
         type = commons.Decimal,
-        index = True
+        index = True,
+        initial = commons.Decimal(0.0)
     )
 
     price = appier.field(
         type = commons.Decimal,
-        index = True
+        index = True,
+        initial = commons.Decimal(0.0)
     )
 
     currency = appier.field(
