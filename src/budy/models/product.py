@@ -397,10 +397,14 @@ class Product(base.BudyBase):
     def pre_save(self):
         base.BudyBase.pre_save(self)
         if not self.measurements: return
-        self.quantity_hand = sum(measurement.quantity_hand or 0.0 for measurement in\
-            self.measurements if hasattr(measurement, "quantity_hand"))
-        self.price = max(measurement.price or 0.0 for measurement in\
-            self.measurements if hasattr(measurement, "price"))
+        quantities = [measurement.quantity_hand or 0.0 for measurement in\
+            self.measurements if hasattr(measurement, "quantity_hand") and\
+            not measurement.quantity_hand == None]
+        prices = [measurement.price or 0.0 for measurement in\
+            self.measurements if hasattr(measurement, "price") and\
+            not measurement.price == None]
+        self.quantity_hand = sum(quantities) if quantities else None
+        self.price = max(prices) if prices else None
 
     def related(self, limit = 6):
         cls = self.__class__
@@ -587,6 +591,12 @@ class Product(base.BudyBase):
     @property
     def quantity(self):
         return self.quantity_hand
+
+    @property
+    def is_parent(self):
+        if not hasattr(self, "measurements"): return False
+        if not self.measurements: return False
+        return len(self.measurements) > 0
 
     def _get_offset(self, count, limit, kwargs):
         return self._get_offset_offset(count, limit, kwargs)

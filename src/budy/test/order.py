@@ -448,3 +448,54 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order_line.is_valid_quantity(), True)
         self.assertEqual(order.paid, True)
         self.assertEqual(order.status, "paid")
+
+    def test_measurements(self):
+        product = budy.Product(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0,
+            quantity_hand = None
+        )
+        product.save()
+
+        measurement = budy.Measurement(
+            name = "size",
+            value = 12,
+            price = 12.0,
+            quantity_hand = None,
+            product = product
+        )
+        measurement.save()
+
+        product.measurements.append(measurement)
+        product.save()
+
+        order = budy.Order()
+        order.save()
+
+        order_line = budy.OrderLine(quantity = 2.0)
+        order_line.product = product
+
+        self.assertRaises(appier.AssertionError, order_line.save)
+        self.assertEqual(order_line.is_valid(), False)
+        self.assertEqual(order_line.is_valid_quantity(), True)
+        self.assertEqual(order_line.is_valid_price(), True)
+        self.assertEqual(order_line.is_valid_size(), False)
+
+        order_line = budy.OrderLine(
+            quantity = 2.0,
+            size = 12,
+            scale = 1
+        )
+        order_line.product = product
+
+        self.assertEqual(order_line.is_valid(), True)
+
+        order_line.save()
+        order.add_line_s(order_line)
+
+        self.assertEqual(order.sub_total, 24.0)
+        self.assertEqual(order.discount, 0.0)
+        self.assertEqual(order.total, 24.0)
+        self.assertEqual(order.payable, 24.0)
+        self.assertEqual(order.discountable, 24.0)

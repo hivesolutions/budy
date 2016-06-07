@@ -157,6 +157,7 @@ class BundleLine(base.BudyBase):
     def is_valid(self):
         is_valid = self.is_valid_quantity()
         is_valid &= self.is_valid_price()
+        is_valid &= self.is_valid_size()
         return is_valid
 
     def is_valid_quantity(self, reload = True):
@@ -174,6 +175,10 @@ class BundleLine(base.BudyBase):
             not merchandise.price == None and\
             not self.price == merchandise.price: return False
         return True
+
+    def is_valid_size(self, reload = True):
+        if not self.product.is_parent: return True
+        return True if self.size else False
 
     @appier.operation(name = "Calculate")
     def calculate_s(self):
