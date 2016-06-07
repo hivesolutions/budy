@@ -397,13 +397,13 @@ class Product(base.BudyBase):
     def pre_save(self):
         base.BudyBase.pre_save(self)
         if not self.measurements: return
-        quantities = [measurement.quantity_hand or 0.0 for measurement in\
+        quantities_hand = [measurement.quantity_hand or 0.0 for measurement in\
             self.measurements if hasattr(measurement, "quantity_hand") and\
             not measurement.quantity_hand == None]
         prices = [measurement.price or 0.0 for measurement in\
             self.measurements if hasattr(measurement, "price") and\
             not measurement.price == None]
-        self.quantity_hand = sum(quantities) if quantities else None
+        self.quantity_hand = sum(quantities_hand) if quantities_hand else None
         self.price = max(prices) if prices else None
 
     def related(self, limit = 6):
