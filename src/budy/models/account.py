@@ -182,10 +182,7 @@ class BudyAccount(appier_extras.admin.Account):
     @appier.operation(name = "Notify")
     def notify(self, name = None):
         name = name or "account.new"
-        account = self.reload(
-            rules = False,
-            map = True
-        )
+        account = self.reload(rules = False, map = True)
         receiver = account.get("email", None)
         appier_extras.admin.Event.notify_g(
             name,
