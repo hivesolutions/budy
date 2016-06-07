@@ -135,6 +135,13 @@ class Order(bundle.Bundle):
         safe = True
     )
 
+    discount_used = appier.field(
+        type = commons.Decimal,
+        index = True,
+        initial = commons.Decimal(0.0),
+        safe = True
+    )
+
     lines = appier.field(
         type = appier.references(
             "OrderLine",
@@ -369,7 +376,7 @@ class Order(bundle.Bundle):
 
     def verify_vouchers(self):
         discount = self.calculate_discount()
-        pending = discount - self.discount_fixed
+        pending = discount - self.discount_fixed - self.discount_used
         if pending <= 0.0: return
         for voucher in self.vouchers:
             if pending == 0.0: break
@@ -427,9 +434,22 @@ class Order(bundle.Bundle):
         self.mark_canceled_s()
         if notify: self.notify_s()
 
-    def use_vouchers_s(self):
+    def use_vouchers_s(self, reset = True):
+        """
+        Runs the use/redeem operation on the vouchers currently associated
+        with the order, note that in case the reset flag is set the values
+        already applied as discount to the order are reset meaning that even
+        if (previous) vouchers have been discounted in the order they will
+        be discarded as not relevant.
+
+        @type reset: bool
+        @param reset: If previous voucher discount values should be discarded
+        before the use/redeem operation is performed.
+        """
+
         discount = self.calculate_discount()
-        pending = discount - self.discount_fixed
+        if reset: self.discount_used = commons.Decimal(0.0)
+        pending = discount - self.discount_fixed - self.discount_used
         if pending <= 0.0: return
         for voucher in self.vouchers:
             if pending == 0.0: break
@@ -441,7 +461,9 @@ class Order(bundle.Bundle):
             amount = pending if overflows else discount
             voucher.use_s(amount, currency = self.currency)
             pending -= commons.Decimal(amount)
+            self.discount_used += commons.Decimal(amount)
         appier.verify(pending == 0.0)
+        self.save()
 
     def ensure_waiting_s(self):
         if not self.status == "created": return

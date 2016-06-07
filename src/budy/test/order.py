@@ -254,6 +254,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(isinstance(order.discountable, commons.Decimal), True)
 
         order.use_vouchers_s()
+        order.verify_vouchers()
         voucher = voucher.reload()
 
         self.assertEqual(voucher.is_valid(), False)
@@ -290,6 +291,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.discountable, 20.0)
 
         order.use_vouchers_s()
+        order.verify_vouchers()
         voucher = large_voucher.reload()
 
         self.assertEqual(voucher.is_valid(), True)
@@ -311,6 +313,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.discountable, 20.0)
 
         order.use_vouchers_s()
+        order.verify_vouchers()
         voucher = percent_voucher.reload()
 
         self.assertEqual(voucher.is_valid(), True)
@@ -356,6 +359,7 @@ class OrderTest(unittest.TestCase):
         order.discount_fixed = 18.0
         order.set_voucher_s(voucher)
         order.use_vouchers_s()
+        order.verify_vouchers()
 
         self.assertEqual(order.sub_total, 20.0)
         self.assertEqual(order.discount, 20.0)
