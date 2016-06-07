@@ -202,6 +202,7 @@ class Product(base.BudyBase):
             appier.not_null("gender"),
             appier.not_empty("gender"),
 
+            appier.not_null("price"),
             appier.gte("price", 0.0)
         ]
 
@@ -403,7 +404,7 @@ class Product(base.BudyBase):
             self.measurements if hasattr(measurement, "price") and\
             not measurement.price == None]
         self.quantity_hand = sum(quantities_hand) if quantities_hand else None
-        self.price = max(prices) if prices else None
+        self.price = max(prices) if prices else 0.0
 
     def related(self, limit = 6):
         cls = self.__class__
