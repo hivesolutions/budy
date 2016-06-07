@@ -397,9 +397,9 @@ class Product(base.BudyBase):
     def pre_save(self):
         base.BudyBase.pre_save(self)
         if not self.measurements: return
-        self.quantity_hand = sum(measurement.quantity_hand for measurement in\
+        self.quantity_hand = sum(measurement.quantity_hand or 0.0 for measurement in\
             self.measurements if hasattr(measurement, "quantity_hand"))
-        self.price = max(measurement.price for measurement in\
+        self.price = max(measurement.price or 0.0 for measurement in\
             self.measurements if hasattr(measurement, "price"))
 
     def related(self, limit = 6):
