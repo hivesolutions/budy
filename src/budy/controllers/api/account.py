@@ -73,6 +73,12 @@ class AccountApiController(root.RootApiController):
     def recover(self, identifier):
         budy.BudyAccount.recover(identifier)
 
+    @appier.route("/api/accounts/reset", "POST", json = True)
+    def reset(self):
+        token = self.field("token", mandatory = True)
+        password = self.field("password", mandatory = True)
+        budy.BudyAccount.reset(token, password, password)
+
     @appier.route("/api/accounts/me", "GET", json = True)
     @appier.ensure(token = "user")
     def me(self):
