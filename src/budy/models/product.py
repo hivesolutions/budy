@@ -79,7 +79,8 @@ class Product(base.BudyBase):
 
     price = appier.field(
         type = commons.Decimal,
-        index = True
+        index = True,
+        initial = commons.Decimal(0.0)
     )
 
     currency = appier.field(
