@@ -45,6 +45,13 @@ from . import root
 
 class AccountApiController(root.RootApiController):
 
+    @appier.route("/api/accounts", "GET", json = True)
+    @appier.ensure(token = "admin")
+    def list(self):
+        object = appier.get_object(alias = True, find = True)
+        accounts = budy.BudyAccount.find(map = True, **object)
+        return accounts
+
     @appier.route("/api/accounts", "POST", json = True)
     def create(self):
         pre_enabled = self.field("pre_enabled", False, cast = bool)
