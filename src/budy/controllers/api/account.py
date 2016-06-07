@@ -53,7 +53,7 @@ class AccountApiController(root.RootApiController):
         account.password_confirm = account.password
         account.enabled = pre_enabled
         account.save()
-        account = account.map()
+        account = account.reload(rules = True, map = True)
         return account
 
     @appier.route("/api/accounts/confirm/<str:token>", "GET", json = True)
