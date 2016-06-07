@@ -62,6 +62,10 @@ class AccountApiController(root.RootApiController):
         account.confirm_s()
         return account
 
+    @appier.route("/api/accounts/recover/<str:identifier>", "GET", json = True)
+    def recover(self, identifier):
+        budy.BudyAccount.recover(identifier)
+
     @appier.route("/api/accounts/me", "GET", json = True)
     @appier.ensure(token = "user")
     def me(self):
