@@ -258,7 +258,7 @@ class OmniBot(base.Bot):
         )
         if not measurement:
             product = api.get_product(product["object_id"])
-            self.sync_product_safe(product, force = True)
+            self.sync_product(product, force = True)
             measurement = budy.Measurement.from_omni(
                 merchandise,
                 sub_product = sub_product,
