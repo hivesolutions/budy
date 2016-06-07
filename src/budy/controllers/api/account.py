@@ -47,7 +47,7 @@ class AccountApiController(root.RootApiController):
 
     @appier.route("/api/accounts", "POST", json = True)
     def create(self):
-        pre_enabled = self.field("pre_enabled", False)
+        pre_enabled = self.field("pre_enabled", False, cast = bool)
         account = budy.BudyAccount.new()
         account.type = budy.BudyAccount.USER_TYPE
         account.password_confirm = account.password
