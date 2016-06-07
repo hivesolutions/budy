@@ -54,6 +54,12 @@ class AccountApiController(root.RootApiController):
         account = account.map()
         return account
 
+    @appier.route("/api/accounts/confirm/<str:token>", "GET", json = True)
+    def confirm(self, token):
+        account = budy.BudyAccount.get(confirmation_token = token)
+        account.confirm_s()
+        return account
+
     @appier.route("/api/accounts/me", "GET", json = True)
     @appier.ensure(token = "user")
     def me(self):
@@ -122,9 +128,3 @@ class AccountApiController(root.RootApiController):
         account.addresses.remove(address.id)
         account.save()
         address.delete()
-
-    @appier.route("/api/accounts/confirm/<str:token>", "GET", json = True)
-    def confirm(self, token):
-        account = budy.BudyAccount.get(confirmation_token = token)
-        account.confirm_s()
-        return account
