@@ -53,6 +53,13 @@ class AccountApiController(root.RootApiController):
         account.password_confirm = account.password
         account.enabled = pre_enabled
         account.save()
+        account = account.map()
+        return account
+
+    @appier.route("/api/accounts/confirm/<str:token>", "GET", json = True)
+    def confirm(self, token):
+        account = budy.BudyAccount.get(confirmation_token = token)
+        account.confirm_s()
         return account
 
     @appier.route("/api/accounts/me", "GET", json = True)
