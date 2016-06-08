@@ -142,13 +142,13 @@ class BudyAccount(appier_extras.admin.Account):
         return first + (" " + last if last else "")
 
     @classmethod
-    @appier.link(
+    @appier.operation(
         name = "Import Social CSV",
         parameters = (
             ("CSV File", "file", "file")
         )
     )
-    def import__social_csv_s(cls, file):
+    def import_social_csv_s(cls, file):
 
         def callback(line):
             username, facebook_id, google_id = line
@@ -171,7 +171,7 @@ class BudyAccount(appier_extras.admin.Account):
         self.ensure_bag_s()
         self.notify()
 
-    def recover_s(self, send_email=False):
+    def recover_s(self, send_email = False):
         result = appier_extras.admin.Account.recover_s(
             self,
             send_email = send_email
