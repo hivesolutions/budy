@@ -146,13 +146,15 @@ class BudyAccount(appier_extras.admin.Account):
         name = "Import Social CSV",
         parameters = (
             ("CSV File", "file", "file"),
+            ("Strict", "strict", bool, False)
         )
     )
-    def import_social_csv_s(cls, file):
+    def import_social_csv_s(cls, file, strict):
 
         def callback(line):
             username, facebook_id, google_id = line
-            account = cls.get(username = username)
+            account = cls.get(username = username, raise_e = strict)
+            if not account: return
             if facebook_id: account.facebook_id = facebook_id
             if google_id: account.google_id = google_id
             account.save()
