@@ -141,6 +141,26 @@ class BudyAccount(appier_extras.admin.Account):
         last = last_name[0] + "." if last_name else ""
         return first + (" " + last if last else "")
 
+    @classmethod
+    @appier.operation(
+        name = "Import Social CSV",
+        parameters = (
+            ("CSV File", "file", "file"),
+            ("Strict", "strict", bool, False)
+        )
+    )
+    def import_social_csv_s(cls, file, strict):
+
+        def callback(line):
+            username, facebook_id, google_id = line
+            account = cls.get(username = username, raise_e = strict)
+            if not account: return
+            if facebook_id: account.facebook_id = facebook_id
+            if google_id: account.google_id = google_id
+            account.save()
+
+        cls._csv_import(file, callback)
+
     def pre_create(self):
         appier_extras.admin.Account.pre_create(self)
         if not hasattr(self, "first_name") or not self.first_name:
@@ -153,7 +173,7 @@ class BudyAccount(appier_extras.admin.Account):
         self.ensure_bag_s()
         self.notify()
 
-    def recover_s(self, send_email=False):
+    def recover_s(self, send_email = False):
         result = appier_extras.admin.Account.recover_s(
             self,
             send_email = send_email
