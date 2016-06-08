@@ -145,7 +145,7 @@ class BudyAccount(appier_extras.admin.Account):
     @appier.operation(
         name = "Import Social CSV",
         parameters = (
-            ("CSV File", "file", "file")
+            ("CSV File", "file", "file"),
         )
     )
     def import_social_csv_s(cls, file):
