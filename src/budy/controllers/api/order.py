@@ -401,3 +401,35 @@ class OrderApiController(root.RootApiController):
             redirect_url = redirect_url,
             order = order
         )
+
+    @appier.route("/api/orders/<str:key>/lines.csv", "GET")
+    @appier.ensure(token = "admin")
+    def lines_csv(self, key):
+        order = budy.Order.get(key = key)
+        lines_s = [(
+            "id",
+            "product",
+            "quantity",
+            "size",
+            "scale",
+            "total",
+            "currency",
+            "country"
+        )]
+        for line in order.lines:
+            if not line.product: continue
+            line_s = (
+                line.id,
+                line.product.id,
+                line.quantity,
+                line.size,
+                line.scale,
+                line.total,
+                line.currency,
+                line.country
+            )
+            lines_s.append(line_s)
+
+        result = appier.serialize_csv(lines_s, delimiter = ",")
+        self.content_type("text/csv")
+        return result
