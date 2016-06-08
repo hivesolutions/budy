@@ -215,12 +215,9 @@ class BudyAccount(appier_extras.admin.Account):
 
         def callback(line):
             username, facebook_id, google_id = line
-            username = username or None
-            facebook_id = facebook_id or None
-            google_id = google_id or None
             account = BudyAccount.get(username = username)
-            account.facebook_id = facebook_id
-            account.google_id = google_id
+            if facebook_id: account.facebook_id = facebook_id 
+            if google_id: account.google_id = google_id
             account.save()
 
         cls._csv_import(file, callback)
