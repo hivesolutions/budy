@@ -346,32 +346,46 @@ class Order(bundle.Bundle):
         refreshed = bundle.Bundle.refresh_s(self, *args, **kwargs)
         if refreshed: self.refresh_vouchers_s()
 
-    def verify_waiting_payment(self):
+    def verify_base(self):
+        """
+        Series of base verifications that define the basic integrity
+        check for the order, if any of these rules fail the order
+        is considered to be invalid under any scenario.
+        """
+
+        appier.verify(len(self.lines) > 0)
+
+    def verify_shippable(self):
         appier.verify(not self.shipping_address == None)
         appier.verify(not self.billing_address == None)
         appier.verify(not self.email == None)
         appier.verify(not self.email == "")
+
+    def verify_waiting_payment(self):
+        self.verify_base()
+        self.verify_shippable()
         appier.verify(self.status == "created")
         appier.verify(self.paid == False)
         appier.verify(self.date == None)
         self.verify_vouchers()
 
     def verify_paid(self):
-        appier.verify(not self.shipping_address == None)
-        appier.verify(not self.billing_address == None)
-        appier.verify(not self.email == None)
-        appier.verify(not self.email == "")
+        self.verify_base()
+        self.verify_shippable()
         appier.verify(self.status == "waiting_payment")
         appier.verify(self.paid == False)
         appier.verify(self.date == None)
         self.verify_vouchers()
 
     def verify_sent(self):
-        appier.verify(not self.date == None)
+        self.verify_base()
+        self.verify_shippable()
         appier.verify(self.status == "paid")
         appier.verify(self.paid == True)
+        appier.verify(not self.date == None)
 
     def verify_canceled(self):
+        self.verify_base()
         appier.verify(not self.status == "created")
 
     def verify_vouchers(self):
