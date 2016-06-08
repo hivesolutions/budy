@@ -203,6 +203,28 @@ class BudyAccount(appier_extras.admin.Account):
             )
         )
 
+    @classmethod
+    @appier.link(
+        name = "Import Social CSV",
+        parameters = (
+            ("CSV File", "file", "file"),
+            ("Empty source", "empty", bool, True)
+        )
+    )
+    def import__social_csv_s(cls, file, empty):
+
+        def callback(line):
+            username, facebook_id, google_id = line
+            username = username or None
+            facebook_id = facebook_id or None
+            google_id = google_id or None
+            account = BudyAccount.get(username = username)
+            account.facebook_id = facebook_id
+            account.google_id = google_id
+            account.save()
+
+        cls._csv_import(file, callback)
+
     @property
     def title(self):
         return "Mrs." if self.gender == "Female" else "Mr."
