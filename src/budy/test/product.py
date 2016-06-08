@@ -127,3 +127,34 @@ class ProductTest(unittest.TestCase):
         product = product.reload()
 
         self.assertEqual(len(product.images), 0)
+
+    def test_measurements(self):
+        product = budy.Product(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0,
+            quantity_hand = None
+        )
+        product.save()
+
+        measurement = budy.Measurement(
+            name = "size",
+            value = 12,
+            price = None,
+            quantity_hand = None,
+            product = product
+        )
+        measurement.save()
+
+        product.measurements.append(measurement)
+        product.save()
+
+        result = product.get_measurement(12, name = "size")
+
+        self.assertEqual(result.id, 1)
+        self.assertEqual(result.name, "size")
+        self.assertEqual(result.value, 12)
+        self.assertEqual(result.price, None)
+        self.assertEqual(result.quantity_hand, None)
+        self.assertEqual(result.product.id, 1)
+        self.assertEqual(result.product.short_description, "product")
