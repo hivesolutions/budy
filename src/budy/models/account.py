@@ -145,15 +145,14 @@ class BudyAccount(appier_extras.admin.Account):
     @appier.link(
         name = "Import Social CSV",
         parameters = (
-            ("CSV File", "file", "file"),
-            ("Empty source", "empty", bool, True)
+            ("CSV File", "file", "file")
         )
     )
-    def import__social_csv_s(cls, file, empty):
+    def import__social_csv_s(cls, file):
 
         def callback(line):
             username, facebook_id, google_id = line
-            account = BudyAccount.get(username = username)
+            account = cls.get(username = username)
             if facebook_id: account.facebook_id = facebook_id
             if google_id: account.google_id = google_id
             account.save()
