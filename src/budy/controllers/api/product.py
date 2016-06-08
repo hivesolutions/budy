@@ -79,9 +79,10 @@ class ProductApiController(root.RootApiController):
 
     @appier.route("/api/products/<int:id>/related", "GET", json = True)
     def related(self, id):
-        limit = self.field("limit", 10, int)
+        limit = self.field("limit", 10, cast = int)
+        available = self.field("available", True, cast = bool)
         product = budy.Product.get(id = id)
-        products = product.related(limit = limit)
+        products = product.related(limit = limit, available = available)
         return products
 
     @appier.route("/api/products/simple.csv", "GET")

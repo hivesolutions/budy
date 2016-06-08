@@ -407,9 +407,10 @@ class Product(base.BudyBase):
         self.quantity_hand = sum(quantities_hand) if quantities_hand else None
         self.price = max(prices) if prices else 0.0
 
-    def related(self, limit = 6):
+    def related(self, limit = 6, available = True):
         cls = self.__class__
         kwargs = dict()
+        if available: kwargs["quantity_hand"] = {"$gt" : 0}
         if self.collections: kwargs["collections"] = {"$in" : [self.collections[0].id]}
         elif self.categories: kwargs["categories"] = {"$in" : [self.categories[0].id]}
         elif self.colors: kwargs["colors"] = {"$in" : [self.colors[0].id]}
