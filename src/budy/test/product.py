@@ -141,13 +141,17 @@ class ProductTest(unittest.TestCase):
             name = "size",
             value = 12,
             price = None,
-            quantity_hand = None,
+            quantity_hand = 2.0,
             product = product
         )
         measurement.save()
 
+        self.assertEqual(product.quantity_hand, None)
+
         product.measurements.append(measurement)
         product.save()
+
+        self.assertEqual(product.quantity_hand, 2.0)
 
         result = product.get_measurement(12, name = "size")
 
@@ -155,6 +159,7 @@ class ProductTest(unittest.TestCase):
         self.assertEqual(result.name, "size")
         self.assertEqual(result.value, 12)
         self.assertEqual(result.price, None)
-        self.assertEqual(result.quantity_hand, None)
+        self.assertEqual(result.quantity_hand, 2.0)
         self.assertEqual(result.product.id, 1)
         self.assertEqual(result.product.short_description, "product")
+        self.assertEqual(result.product.quantity_hand, 2.0)
