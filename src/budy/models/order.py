@@ -629,7 +629,7 @@ class Order(bundle.Bundle):
         self.store = self.account.store
         self.save()
 
-    @appier.link(name = "Export Lines CSV" )
+    @appier.link(name = "Export Lines CSV")
     def lines_csv_url(self, absolute = False):
         return appier.get_app().url_for(
             "order_api.lines_csv",
