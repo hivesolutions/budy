@@ -104,7 +104,7 @@ class Bag(bundle.Bundle):
         line.bag = self
         return bundle.Bundle.add_line_s(self, line)
 
-    def to_order_s(self):
+    def to_order_s(self, verify = True):
         self.refresh_s()
         _order = order.Order(
             currency = self.currency,
@@ -123,6 +123,7 @@ class Bag(bundle.Bundle):
             order_line = line.to_order_line_s(_order)
             _order.lines.append(order_line)
         _order.save()
+        if verify: _order.verify_base()
         return _order
 
     @appier.operation(name = "Empty")
