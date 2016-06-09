@@ -346,70 +346,6 @@ class Order(bundle.Bundle):
         refreshed = bundle.Bundle.refresh_s(self, *args, **kwargs)
         if refreshed: self.refresh_vouchers_s()
 
-    def verify_base(self):
-        """
-        Series of base verifications that define the basic integrity
-        check for the order, if any of these rules fail the order
-        is considered to be invalid under any scenario.
-        """
-
-        appier.verify(len(self.lines) > 0)
-
-    def verify_shippable(self):
-        appier.verify(not self.shipping_address == None)
-        appier.verify(not self.billing_address == None)
-        appier.verify(not self.email == None)
-        appier.verify(not self.email == "")
-
-    def verify_waiting_payment(self):
-        self.verify_base()
-        self.verify_shippable()
-        appier.verify(self.status == "created")
-        appier.verify(self.paid == False)
-        appier.verify(self.date == None)
-        self.verify_vouchers()
-
-    def verify_paid(self):
-        self.verify_base()
-        self.verify_shippable()
-        appier.verify(self.status == "waiting_payment")
-        appier.verify(self.paid == False)
-        appier.verify(self.date == None)
-        self.verify_vouchers()
-
-    def verify_sent(self):
-        self.verify_base()
-        self.verify_shippable()
-        appier.verify(self.status == "paid")
-        appier.verify(self.paid == True)
-        appier.verify(not self.date == None)
-
-    def verify_canceled(self):
-        self.verify_base()
-        appier.verify(not self.status == "created")
-
-    def verify_vouchers(self):
-        discount = self.calculate_discount()
-        pending = discount - self.discount_fixed - self.discount_used
-        if pending <= 0.0: return
-        for voucher in self.vouchers:
-            if pending == 0.0: break
-            open_amount = voucher.open_amount_r(currency = self.currency)
-            overflows = open_amount > pending
-            amount = pending if overflows else pending
-            result = voucher.is_valid(
-                amount = amount,
-                currency = self.currency
-            )
-            if not result: continue
-            pending -= commons.Decimal(amount)
-        appier.verify(pending == 0.0)
-
-    def verify_account(self, account):
-        appier.verify(not account == None)
-        appier.verify(self.account.username == account.username)
-        appier.verify(self.account.email == account.email)
-
     def wait_payment_s(self, notify = False):
         self.verify_waiting_payment()
         self.mark_waiting_payment_s()
@@ -533,6 +469,70 @@ class Order(bundle.Bundle):
                 cancel_url = cancel_url
             )
         )
+
+    def verify_base(self):
+        """
+        Series of base verifications that define the basic integrity
+        check for the order, if any of these rules fail the order
+        is considered to be invalid under any scenario.
+        """
+
+        appier.verify(len(self.lines) > 0)
+
+    def verify_shippable(self):
+        appier.verify(not self.shipping_address == None)
+        appier.verify(not self.billing_address == None)
+        appier.verify(not self.email == None)
+        appier.verify(not self.email == "")
+
+    def verify_waiting_payment(self):
+        self.verify_base()
+        self.verify_shippable()
+        appier.verify(self.status == "created")
+        appier.verify(self.paid == False)
+        appier.verify(self.date == None)
+        self.verify_vouchers()
+
+    def verify_paid(self):
+        self.verify_base()
+        self.verify_shippable()
+        appier.verify(self.status == "waiting_payment")
+        appier.verify(self.paid == False)
+        appier.verify(self.date == None)
+        self.verify_vouchers()
+
+    def verify_sent(self):
+        self.verify_base()
+        self.verify_shippable()
+        appier.verify(self.status == "paid")
+        appier.verify(self.paid == True)
+        appier.verify(not self.date == None)
+
+    def verify_canceled(self):
+        self.verify_base()
+        appier.verify(not self.status == "created")
+
+    def verify_vouchers(self):
+        discount = self.calculate_discount()
+        pending = discount - self.discount_fixed - self.discount_used
+        if pending <= 0.0: return
+        for voucher in self.vouchers:
+            if pending == 0.0: break
+            open_amount = voucher.open_amount_r(currency = self.currency)
+            overflows = open_amount > pending
+            amount = pending if overflows else pending
+            result = voucher.is_valid(
+                amount = amount,
+                currency = self.currency
+            )
+            if not result: continue
+            pending -= commons.Decimal(amount)
+        appier.verify(pending == 0.0)
+
+    def verify_account(self, account):
+        appier.verify(not account == None)
+        appier.verify(self.account.username == account.username)
+        appier.verify(self.account.email == account.email)
 
     @appier.operation(name = "Notify")
     def notify_s(self, name = None):

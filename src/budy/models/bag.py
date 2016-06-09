@@ -106,6 +106,7 @@ class Bag(bundle.Bundle):
 
     def to_order_s(self, verify = True):
         self.refresh_s()
+        if verify: self.verify_order()
         _order = order.Order(
             currency = self.currency,
             country = self.country,
@@ -125,6 +126,14 @@ class Bag(bundle.Bundle):
         _order.save()
         if verify: _order.verify_base()
         return _order
+
+    def verify_order(self):
+        """
+        Runs a series of verifications to make sure that the bag
+        is ready to be used to generate/create an order.
+        """
+
+        appier.verify(len(self.lines) > 0)
 
     @appier.operation(name = "Empty")
     def empty_s(self):
