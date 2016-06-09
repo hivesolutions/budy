@@ -510,7 +510,7 @@ class Order(bundle.Bundle):
 
     def verify_canceled(self):
         self.verify_base()
-        appier.verify(not self.status == "created")
+        appier.verify(not self.status in ("created", "canceled", "received"))
 
     def verify_vouchers(self):
         discount = self.calculate_discount()
