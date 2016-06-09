@@ -121,6 +121,10 @@ class Order(bundle.Bundle):
         type = dict
     )
 
+    cancel_data = appier.field(
+        type = dict
+    )
+
     notifications = appier.field(
         type = list,
         index = True,
@@ -380,9 +384,17 @@ class Order(bundle.Bundle):
         if notify: self.notify_s()
         return result
 
-    def cancel_s(self, cancel_data = {}, notify = False):
+    def cancel_s(
+        self,
+        cancel_data = {},
+        strict = False,
+        notify = False
+    ):
+        cancel_data.update(self.cancel_data)
+        result = self._cancel(cancel_data, strict = strict)
         self.mark_canceled_s()
         if notify: self.notify_s()
+        return result
 
     def use_vouchers_s(self, reset = True):
         """
@@ -776,3 +788,15 @@ class Order(bundle.Bundle):
         payer_id = payment_data["payer_id"]
         api.execute_payment(payment_id, payer_id)
         return True
+
+    def _cancel(self, cancel_data, strict = False):
+        cls = self.__class__
+        if self.payable == 0.0: return
+        methods = cls._pmethods()
+        type = cancel_data.get("engine", None)
+        type = cancel_data.get("type", type)
+        method = methods.get(type, type)
+        has_function = hasattr(self, "_cancel_" + method)
+        if not has_function and not strict: return
+        function = getattr(self, "_cancel_" + method)
+        return function(cancel_data)
