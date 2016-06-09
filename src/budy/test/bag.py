@@ -226,6 +226,10 @@ class BagTest(unittest.TestCase):
 
         self.assertRaises(appier.AssertionError, bag.to_order_s)
 
+        result = budy.Order.count()
+
+        self.assertEqual(result, 1)
+
     def test_duplicate(self):
         bag = budy.Bag()
         bag.save()
