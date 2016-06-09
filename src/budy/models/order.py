@@ -751,6 +751,7 @@ class Order(bundle.Bundle):
         approval_url = api.get_url(payment["links"], "approval_url")
         self.payment_data = dict(
             engine = "paypal",
+            type = "paypal",
             payment_id = payment_id,
             approval_url = approval_url
         )
