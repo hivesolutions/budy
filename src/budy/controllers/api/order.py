@@ -413,8 +413,15 @@ class OrderApiController(root.RootApiController):
             "quantity",
             "size",
             "scale",
-            "total",
-            "currency"
+            "gender",
+            "line_total",
+            "currency",
+            "order_id",
+            "order_reference",
+            "order_total",
+            "order_status",
+            "account",
+            "date",
         )]
         for line in order.lines:
             if not line.product: continue
@@ -425,8 +432,15 @@ class OrderApiController(root.RootApiController):
                 line.quantity,
                 line.size,
                 line.scale,
+                line.product.gender,
                 line.total,
-                line.currency
+                line.currency,
+                order.id,
+                order.reference,
+                order.total,
+                order.status,
+                order.account.username,
+                order.created_d.strftime("%d/%m/%Y"),
             )
             lines_s.append(line_s)
 
