@@ -81,6 +81,8 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.date, None)
         self.assertEqual(order.notifications, [])
 
+        self.assertRaises(appier.AssertionError, order.verify_base)
+        self.assertRaises(appier.AssertionError, order.verify_shippable)
         self.assertRaises(appier.AssertionError, order.mark_paid_s)
 
         order = order.reload()
@@ -99,18 +101,22 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.notifications, [])
         self.assertEqual(order.reference.startswith("BD-"), True)
 
+        self.assertRaises(appier.AssertionError, order.verify_base)
+        self.assertRaises(appier.AssertionError, order.verify_shippable)
         self.assertRaises(appier.AssertionError, order.mark_paid_s)
 
         order_line = budy.OrderLine(quantity = 2.0)
         order_line.product = product
         order_line.save()
         order.add_line_s(order_line)
+        order.verify_base()
 
         self.assertEqual(order_line.quantity, 2.0)
         self.assertEqual(order_line.total, 20.0)
         self.assertEqual(order.total, 20.0)
         self.assertEqual(len(order.lines), 1)
 
+        self.assertRaises(appier.AssertionError, order.verify_shippable)
         self.assertRaises(appier.AssertionError, order.mark_paid_s)
 
         address = budy.Address(

@@ -121,6 +121,10 @@ class Order(bundle.Bundle):
         type = dict
     )
 
+    cancel_data = appier.field(
+        type = dict
+    )
+
     notifications = appier.field(
         type = list,
         index = True,
@@ -346,56 +350,6 @@ class Order(bundle.Bundle):
         refreshed = bundle.Bundle.refresh_s(self, *args, **kwargs)
         if refreshed: self.refresh_vouchers_s()
 
-    def verify_waiting_payment(self):
-        appier.verify(not self.shipping_address == None)
-        appier.verify(not self.billing_address == None)
-        appier.verify(not self.email == None)
-        appier.verify(not self.email == "")
-        appier.verify(self.status == "created")
-        appier.verify(self.paid == False)
-        appier.verify(self.date == None)
-        self.verify_vouchers()
-
-    def verify_paid(self):
-        appier.verify(not self.shipping_address == None)
-        appier.verify(not self.billing_address == None)
-        appier.verify(not self.email == None)
-        appier.verify(not self.email == "")
-        appier.verify(self.status == "waiting_payment")
-        appier.verify(self.paid == False)
-        appier.verify(self.date == None)
-        self.verify_vouchers()
-
-    def verify_sent(self):
-        appier.verify(not self.date == None)
-        appier.verify(self.status == "paid")
-        appier.verify(self.paid == True)
-
-    def verify_canceled(self):
-        appier.verify(not self.status == "created")
-
-    def verify_vouchers(self):
-        discount = self.calculate_discount()
-        pending = discount - self.discount_fixed - self.discount_used
-        if pending <= 0.0: return
-        for voucher in self.vouchers:
-            if pending == 0.0: break
-            open_amount = voucher.open_amount_r(currency = self.currency)
-            overflows = open_amount > pending
-            amount = pending if overflows else pending
-            result = voucher.is_valid(
-                amount = amount,
-                currency = self.currency
-            )
-            if not result: continue
-            pending -= commons.Decimal(amount)
-        appier.verify(pending == 0.0)
-
-    def verify_account(self, account):
-        appier.verify(not account == None)
-        appier.verify(self.account.username == account.username)
-        appier.verify(self.account.email == account.email)
-
     def wait_payment_s(self, notify = False):
         self.verify_waiting_payment()
         self.mark_waiting_payment_s()
@@ -430,9 +384,17 @@ class Order(bundle.Bundle):
         if notify: self.notify_s()
         return result
 
-    def cancel_s(self, cancel_data = {}, notify = False):
+    def cancel_s(
+        self,
+        cancel_data = {},
+        strict = False,
+        notify = False
+    ):
+        cancel_data.update(self.cancel_data)
+        result = self._cancel(cancel_data, strict = strict)
         self.mark_canceled_s()
         if notify: self.notify_s()
+        return result
 
     def use_vouchers_s(self, reset = True):
         """
@@ -519,6 +481,70 @@ class Order(bundle.Bundle):
                 cancel_url = cancel_url
             )
         )
+
+    def verify_base(self):
+        """
+        Series of base verifications that define the basic integrity
+        check for the order, if any of these rules fail the order
+        is considered to be invalid under any scenario.
+        """
+
+        appier.verify(len(self.lines) > 0)
+
+    def verify_shippable(self):
+        appier.verify(not self.shipping_address == None)
+        appier.verify(not self.billing_address == None)
+        appier.verify(not self.email == None)
+        appier.verify(not self.email == "")
+
+    def verify_waiting_payment(self):
+        self.verify_base()
+        self.verify_shippable()
+        appier.verify(self.status == "created")
+        appier.verify(self.paid == False)
+        appier.verify(self.date == None)
+        self.verify_vouchers()
+
+    def verify_paid(self):
+        self.verify_base()
+        self.verify_shippable()
+        appier.verify(self.status == "waiting_payment")
+        appier.verify(self.paid == False)
+        appier.verify(self.date == None)
+        self.verify_vouchers()
+
+    def verify_sent(self):
+        self.verify_base()
+        self.verify_shippable()
+        appier.verify(self.status == "paid")
+        appier.verify(self.paid == True)
+        appier.verify(not self.date == None)
+
+    def verify_canceled(self):
+        self.verify_base()
+        appier.verify(not self.status in ("created", "canceled", "received"))
+
+    def verify_vouchers(self):
+        discount = self.calculate_discount()
+        pending = discount - self.discount_fixed - self.discount_used
+        if pending <= 0.0: return
+        for voucher in self.vouchers:
+            if pending == 0.0: break
+            open_amount = voucher.open_amount_r(currency = self.currency)
+            overflows = open_amount > pending
+            amount = pending if overflows else pending
+            result = voucher.is_valid(
+                amount = amount,
+                currency = self.currency
+            )
+            if not result: continue
+            pending -= commons.Decimal(amount)
+        appier.verify(pending == 0.0)
+
+    def verify_account(self, account):
+        appier.verify(not account == None)
+        appier.verify(self.account.username == account.username)
+        appier.verify(self.account.email == account.email)
 
     @appier.operation(name = "Notify")
     def notify_s(self, name = None):
@@ -745,6 +771,7 @@ class Order(bundle.Bundle):
         approval_url = api.get_url(payment["links"], "approval_url")
         self.payment_data = dict(
             engine = "paypal",
+            type = "paypal",
             payment_id = payment_id,
             approval_url = approval_url
         )
@@ -769,3 +796,15 @@ class Order(bundle.Bundle):
         payer_id = payment_data["payer_id"]
         api.execute_payment(payment_id, payer_id)
         return True
+
+    def _cancel(self, cancel_data, strict = False):
+        cls = self.__class__
+        if self.payable == 0.0: return
+        methods = cls._pmethods()
+        type = cancel_data.get("engine", None)
+        type = cancel_data.get("type", type)
+        method = methods.get(type, type)
+        has_function = hasattr(self, "_cancel_" + method)
+        if not has_function and not strict: return
+        function = getattr(self, "_cancel_" + method)
+        return function(cancel_data)
