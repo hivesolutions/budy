@@ -409,24 +409,24 @@ class OrderApiController(root.RootApiController):
         lines_s = [(
             "id",
             "product",
+            "product_id",
             "quantity",
             "size",
             "scale",
             "total",
-            "currency",
-            "country"
+            "currency"
         )]
         for line in order.lines:
             if not line.product: continue
             line_s = (
                 line.id,
                 line.product.id,
+                line.product.product_id,
                 line.quantity,
                 line.size,
                 line.scale,
                 line.total,
-                line.currency,
-                line.country
+                line.currency
             )
             lines_s.append(line_s)
 
