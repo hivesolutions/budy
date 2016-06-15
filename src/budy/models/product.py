@@ -83,6 +83,12 @@ class Product(base.BudyBase):
         initial = commons.Decimal(0.0)
     )
 
+    taxes = appier.field(
+        type = commons.Decimal,
+        index = True,
+        initial = commons.Decimal(0.0)
+    )
+
     currency = appier.field(
         index = True
     )
@@ -204,7 +210,10 @@ class Product(base.BudyBase):
             appier.not_empty("gender"),
 
             appier.not_null("price"),
-            appier.gte("price", 0.0)
+            appier.gte("price", 0.0),
+
+            appier.not_null("taxes"),
+            appier.gte("taxes", 0.0)
         ]
 
     @classmethod

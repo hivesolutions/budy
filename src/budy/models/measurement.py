@@ -70,6 +70,12 @@ class Measurement(base.BudyBase):
         index = True
     )
 
+    taxes = appier.field(
+        type = commons.Decimal,
+        index = True,
+        initial = commons.Decimal(0.0)
+    )
+
     currency = appier.field(
         index = True
     )
@@ -90,6 +96,8 @@ class Measurement(base.BudyBase):
             appier.not_null("value"),
 
             appier.gte("price", 0.0),
+
+            appier.gte("taxes", 0.0),
 
             appier.not_null("product")
         ]
