@@ -281,7 +281,8 @@ class Product(base.BudyBase):
         if "retail_price" in merchandise or force:
             product.price = merchandise.get("retail_price", 0.0)
         if "price" in merchandise or force:
-            base_price = (hasattr(product, "price") and product.price) or 0.0
+            base_price = product.price if hasattr(product, "price") else 0.0
+            base_price = base_price or 0.0
             product.taxes = base_price - merchandise.get("price", 0.0)
         return product
 

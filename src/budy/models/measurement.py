@@ -152,7 +152,8 @@ class Measurement(base.BudyBase):
         if "retail_price" in merchandise or force:
             measurement.price = merchandise.get("retail_price", 0.0)
         if "price" in merchandise or force:
-            base_price = (hasattr(measurement, "price") and _product.price) or 0.0
+            base_price = measurement.price if hasattr(measurement, "price") else 0.0
+            base_price = base_price or 0.0
             measurement.taxes = base_price - merchandise.get("price", 0.0)
         return measurement
 
