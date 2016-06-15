@@ -263,24 +263,27 @@ class Product(base.BudyBase):
         if _color: _color = color.Color.ensure_s(_color)
         if _category: _category = category.Category.ensure_s(_category)
         if _collection: _collection = collection.Collection.ensure_s(_collection)
-        _product = cls.get(product_id = company_product_code, raise_e = False)
-        if not _product: _product = cls()
-        _product.product_id = company_product_code
-        _product.short_description = merchandise["name"] or company_product_code
-        _product.description = merchandise["description"]
-        _product.gender = gender
-        _product.currency = currency
-        _product.order = order
-        _product.characteristics = metadata.get("characteristics", [])
-        _product.colors = [_color]
-        _product.categories = [_category]
-        _product.collections = [_collection]
-        _product.meta = dict(object_id = object_id)
+        product = cls.get(product_id = company_product_code, raise_e = False)
+        if not product: product = cls()
+        product.product_id = company_product_code
+        product.short_description = merchandise["name"] or company_product_code
+        product.description = merchandise["description"]
+        product.gender = gender
+        product.currency = currency
+        product.order = order
+        product.characteristics = metadata.get("characteristics", [])
+        product.colors = [_color]
+        product.categories = [_category]
+        product.collections = [_collection]
+        product.meta = dict(object_id = object_id)
         if "stock_on_hand" in merchandise or force:
-            _product.quantity_hand = merchandise.get("stock_on_hand", 0.0)
+            product.quantity_hand = merchandise.get("stock_on_hand", 0.0)
         if "retail_price" in merchandise or force:
-            _product.price = merchandise.get("retail_price", 0.0)
-        return _product
+            product.price = merchandise.get("retail_price", 0.0)
+        if "price" in merchandise or force:
+            base_price = (hasattr(product, "price") and product.price) or 0.0
+            product.taxes = base_price - merchandise.get("price", 0.0)
+        return product
 
     @classmethod
     @appier.operation(
