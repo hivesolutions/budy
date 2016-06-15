@@ -119,6 +119,7 @@ class OmniBot(base.Bot):
             if not merchandise: continue
             merchandise.pop("stock_on_hand", None)
             merchandise.pop("retail_price", None)
+            merchandise.pop("price", None)
             self.sync_product_safe(merchandise)
 
     def sync_measurements_db(self):
@@ -136,6 +137,7 @@ class OmniBot(base.Bot):
             if not merchandise: continue
             merchandise.pop("stock_on_hand", None)
             merchandise.pop("retail_price", None)
+            merchandise.pop("price", None)
             self.sync_sub_product_safe(merchandise)
 
     def fix_products_db(self):
