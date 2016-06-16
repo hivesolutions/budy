@@ -60,6 +60,13 @@ class Bundle(base.BudyBase):
         index = True
     )
 
+    quantity = appier.field(
+        type = commons.Decimal,
+        index = True,
+        initial = commons.Decimal(0.0),
+        safe = True
+    )
+
     sub_total = appier.field(
         type = commons.Decimal,
         index = True,
@@ -121,6 +128,9 @@ class Bundle(base.BudyBase):
     def validate(cls):
         return super(Bundle, cls).validate() + [
             appier.not_duplicate("key", cls._name()),
+
+            appier.not_null("quantity"),
+            appier.gte("quantity", 0.0),
 
             appier.not_null("sub_total"),
             appier.gte("sub_total", 0.0),
@@ -288,6 +298,7 @@ class Bundle(base.BudyBase):
 
     def calculate(self):
         lines = self.lines if hasattr(self, "lines") else []
+        self.quantity = sum(line.quantity for line in lines)
         self.sub_total = sum(line.total for line in lines)
         self.discount = self.calculate_discount()
         self.taxes = self.calculate_taxes()
@@ -358,10 +369,6 @@ class Bundle(base.BudyBase):
         if self.sub_total: return
         self.sub_total = self.total
         self.save()
-
-    @property
-    def quantity(self):
-        return sum(line.quantity for line in self.lines)
 
     @property
     def discountable(self):
