@@ -43,6 +43,7 @@ import commons
 import appier
 
 from . import base
+from . import bundle
 
 class Product(base.BudyBase):
 
@@ -407,6 +408,13 @@ class Product(base.BudyBase):
             "product_api.simple_csv",
             absolute = absolute
         )
+
+    @classmethod
+    def _build(cls, model, map):
+        price = model.get("price", None)
+        if price == None: shipping_cost = None
+        else: shipping_cost = bundle.Bundle.eval_shipping(price, 0.0, 0.0)
+        model["shipping_cost"] = shipping_cost
 
     def pre_save(self):
         base.BudyBase.pre_save(self)

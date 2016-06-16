@@ -143,6 +143,13 @@ class Bundle(base.BudyBase):
     def line_cls(cls):
         return bundle_line.BundleLine
 
+    @classmethod
+    def eval_shipping(cls, *args, **kwargs):
+        shipping = appier.conf("BUDY_SHIPPING", None)
+        if not shipping: return 0.0
+        shipping = eval(shipping)
+        return shipping(*args, **kwargs)
+
     def pre_validate(self):
         base.BudyBase.pre_validate(self)
         self.calculate()
@@ -305,10 +312,8 @@ class Bundle(base.BudyBase):
         return 0.0
 
     def build_shipping(self):
-        shipping = appier.conf("BUDY_SHIPPING", None)
-        if not shipping: return 0.0
-        shipping = eval(shipping)
-        return shipping(self.sub_total, self.taxes, self.quantity)
+        cls = self.__class__
+        return cls.eval_shipping(self.sub_total, self.taxes, self.quantity)
 
     def collect_empty(self):
         empty = []
