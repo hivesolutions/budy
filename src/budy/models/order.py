@@ -411,7 +411,7 @@ class Order(bundle.Bundle):
 
         discount = self.calculate_discount()
         if reset: self.discount_used = commons.Decimal(0.0)
-        pending = discount - self.discount_fixed - self.discount_used
+        pending = discount - self.discount_base - self.discount_used
         if pending <= 0.0: return
         for voucher in self.vouchers:
             if pending == 0.0: break
@@ -526,7 +526,7 @@ class Order(bundle.Bundle):
 
     def verify_vouchers(self):
         discount = self.calculate_discount()
-        pending = discount - self.discount_fixed - self.discount_used
+        pending = discount - self.discount_base - self.discount_used
         if pending <= 0.0: return
         for voucher in self.vouchers:
             if pending == 0.0: break
