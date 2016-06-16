@@ -176,7 +176,7 @@ class Media(base.BudyBase):
         return app.url_for("media_api.data", id = id, absolute = True)
 
     def get_url(self):
-        return self.__class__.get_url(self.id)
+        return self.__class__._get_url(self.id)
 
     @appier.operation(
         name = "Generate Thumbnail",

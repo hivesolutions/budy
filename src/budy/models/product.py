@@ -127,6 +127,16 @@ class Product(base.BudyBase):
         meta = "url"
     )
 
+    image_url = appier.field(
+        index = True,
+        meta = "url"
+    )
+
+    thumbnail_url = appier.field(
+        index = True,
+        meta = "url"
+    )
+
     characteristics = appier.field(
         type = list
     )
@@ -416,6 +426,10 @@ class Product(base.BudyBase):
         else: shipping_cost = bundle.Bundle.eval_shipping(price, 0.0, 1.0)
         model["shipping_cost"] = shipping_cost
 
+    def pre_validate(self):
+        base.BudyBase.pre_validate(self)
+        self.build_images()
+
     def pre_save(self):
         base.BudyBase.pre_save(self)
         if not self.measurements: return
@@ -427,6 +441,14 @@ class Product(base.BudyBase):
             not measurement.price == None]
         self.quantity_hand = sum(quantities_hand) if quantities_hand else None
         self.price = max(prices) if prices else 0.0
+
+    def build_images(self):
+        thumbnail = self.get_image(size = "thumbnail", order = 1)
+        thumbnail = thumbnail or self.get_image(size = "thumbnail")
+        image = self.get_image(size = "large", order = 1)
+        image = image or self.get_image(size = "large")
+        self.thumbnail_url = thumbnail.get_url()
+        self.image_url = image.get_url()
 
     def related(self, limit = 6, available = True):
         cls = self.__class__
@@ -517,6 +539,15 @@ class Product(base.BudyBase):
 
     def get_currency_ripe(self, currency = None):
         return self.currency or currency
+
+    def get_image(self, size = None, order = None):
+        for image in self.images:
+            is_size = size == None or image.size == size
+            if not is_size: continue
+            is_order = order == None or image.order == order
+            if not is_order: continue
+            return image
+        return None
 
     def get_size(self, currency = None, country = None, attributes = None):
         if not self.price_provider: return None, None
