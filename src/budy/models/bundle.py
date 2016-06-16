@@ -181,11 +181,6 @@ class Bundle(base.BudyBase):
             self.key = self.secret()
         self.description = self.key[:8]
 
-    def empty_s(self):
-        for line in self.lines: line.delete()
-        self.lines = []
-        self.save()
-
     def add_line_s(self, line):
         line.save()
         self.lines.append(line)
@@ -363,6 +358,12 @@ class Bundle(base.BudyBase):
         is_valid = True
         for line in self.lines: is_valid &= line.is_valid()
         return is_valid
+
+    @appier.operation(name = "Empty")
+    def empty_s(self):
+        for line in self.lines: line.delete()
+        self.lines = []
+        self.save()
 
     @appier.operation(name = "Fix Sub Total")
     def fix_sub_total_s(self):

@@ -38,6 +38,7 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import appier
+import appier_extras
 
 from . import order
 from . import bundle
@@ -57,7 +58,8 @@ class Bag(bundle.Bundle):
         type = appier.reference(
             "BudyAccount",
             name = "id"
-        )
+        ),
+        eager = True
     )
 
     @classmethod
@@ -135,12 +137,6 @@ class Bag(bundle.Bundle):
 
         appier.verify(len(self.lines) > 0)
 
-    @appier.operation(name = "Empty")
-    def empty_s(self):
-        for line in self.lines: line.delete()
-        self.lines = []
-        self.save()
-
     @appier.operation(name = "Garbage Collect")
     def collect_s(self):
         self.delete()
@@ -150,3 +146,24 @@ class Bag(bundle.Bundle):
         for line in self.lines:
             line.bag = self
             line.save()
+
+    @appier.operation(name = "Notify")
+    def notify(self, name = None):
+        name = name or "bag.new"
+        bag = self.reload(map = True)
+        account = bag.get("account", {})
+        receiver = account.get("email", None)
+        appier_extras.admin.Event.notify_g(
+            name,
+            arguments = dict(
+                params = dict(
+                    payload = bag,
+                    bag = bag,
+                    receiver = receiver
+                )
+            )
+        )
+
+    @appier.operation(name = "Remind")
+    def remind(self):
+        self.notify("bag.remind")
