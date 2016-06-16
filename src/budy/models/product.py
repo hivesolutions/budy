@@ -447,8 +447,8 @@ class Product(base.BudyBase):
         thumbnail = thumbnail or self.get_image(size = "thumbnail")
         image = self.get_image(size = "large", order = 1)
         image = image or self.get_image(size = "large")
-        self.thumbnail_url = thumbnail.get_url()
-        self.image_url = image.get_url()
+        self.thumbnail_url = thumbnail.get_url() if thumbnail else None
+        self.image_url = image.get_url() if image else None
 
     def related(self, limit = 6, available = True):
         cls = self.__class__
