@@ -312,8 +312,9 @@ class Bundle(base.BudyBase):
         return 0.0
 
     def build_shipping(self):
-        cls = self.__class__
-        return cls.eval_shipping(self.sub_total, self.taxes, self.quantity)
+        return self.__class__.eval_shipping(
+            self.sub_total, self.taxes, self.quantity
+        )
 
     def collect_empty(self):
         empty = []
