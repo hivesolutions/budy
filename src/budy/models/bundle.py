@@ -370,6 +370,11 @@ class Bundle(base.BudyBase):
         self.sub_total = self.total
         self.save()
 
+    @appier.operation(name = "Calculate")
+    def calculate_s(self):
+        self.calculate()
+        self.save()
+
     @property
     def discountable(self):
         return self.sub_total
