@@ -692,7 +692,7 @@ class Order(bundle.Bundle):
 
     def _pay(self, payment_data):
         cls = self.__class__
-        if self.payable == 0.0: return
+        if self.payable == 0.0: return True
         methods = cls._pmethods()
         type = payment_data.get("type", None)
         method = methods.get(type, None)
