@@ -505,3 +505,69 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.total, 24.0)
         self.assertEqual(order.payable, 24.0)
         self.assertEqual(order.discountable, 24.0)
+
+    def test_free(self):
+        product = budy.Product(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0
+        )
+        product.save()
+
+        order = budy.Order()
+        order.save()
+
+        order_line = budy.OrderLine(quantity = 2.0)
+        order_line.product = product
+        order_line.save()
+        order.add_line_s(order_line)
+
+        self.assertEqual(order_line.quantity, 2.0)
+        self.assertEqual(order_line.total, 20.0)
+        self.assertEqual(order.total, 20.0)
+        self.assertEqual(len(order.lines), 1)
+
+        address = budy.Address(
+            first_name = "first name",
+            last_name = "last name",
+            address = "address",
+            city = "city"
+        )
+        address.save()
+
+        order.shipping_address = address
+        order.billing_address = address
+        order.email = "username@email.com"
+        order.save()
+
+        voucher = budy.Voucher(amount = 20.0)
+        voucher.save()
+
+        order.add_voucher_s(voucher)
+
+        self.assertEqual(order.sub_total, 20.0)
+        self.assertEqual(order.discount, 20.0)
+        self.assertEqual(order.total, 0.0)
+        self.assertEqual(order.payable, 0.0)
+        self.assertEqual(order.discountable, 20.0)
+        self.assertEqual(order.paid, False)
+        self.assertEqual(isinstance(order.sub_total, commons.Decimal), True)
+        self.assertEqual(isinstance(order.discount, commons.Decimal), True)
+        self.assertEqual(isinstance(order.total, commons.Decimal), True)
+        self.assertEqual(isinstance(order.payable, commons.Decimal), True)
+        self.assertEqual(isinstance(order.discountable, commons.Decimal), True)
+
+        order.pay_s()
+
+        self.assertEqual(order.sub_total, 20.0)
+        self.assertEqual(order.discount, 20.0)
+        self.assertEqual(order.total, 0.0)
+        self.assertEqual(order.payable, 0.0)
+        self.assertEqual(order.discountable, 20.0)
+        self.assertEqual(order.paid, True)
+        self.assertEqual(order.payment_data, {})
+        self.assertEqual(isinstance(order.sub_total, commons.Decimal), True)
+        self.assertEqual(isinstance(order.discount, commons.Decimal), True)
+        self.assertEqual(isinstance(order.total, commons.Decimal), True)
+        self.assertEqual(isinstance(order.payable, commons.Decimal), True)
+        self.assertEqual(isinstance(order.discountable, commons.Decimal), True)
