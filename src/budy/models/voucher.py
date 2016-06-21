@@ -117,7 +117,6 @@ class Voucher(base.BudyBase):
     @classmethod
     def validate(cls):
         return super(Voucher, cls).validate() + [
-            appier.not_null("key"),
             appier.not_empty("key"),
             appier.not_duplicate("key", cls._name()),
 
