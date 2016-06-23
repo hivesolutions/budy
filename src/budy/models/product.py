@@ -271,9 +271,12 @@ class Product(base.BudyBase):
         _category = metadata.get("category")
         _collection = metadata.get("collection")
         order = metadata.get("order")
-        if _color: _color = color.Color.ensure_s(_color)
-        if _category: _category = category.Category.ensure_s(_category)
-        if _collection: _collection = collection.Collection.ensure_s(_collection)
+        colors = _color if isinstance(_color, list) else [_color or []]
+        categories = _category if isinstance(_category, list) else [_category or []]
+        collections = _collection if isinstance(_collection, list) else [_collection or []]
+        colors = [color.Color.ensure_s(_color) for _color in colors]
+        categories = [category.Category.ensure_s(_category) for _category in categories]
+        collections = [collection.Collection.ensure_s(_collection) for _collection in collections]
         product = cls.get(product_id = company_product_code, raise_e = False)
         if not product: product = cls()
         product.product_id = company_product_code
@@ -283,9 +286,9 @@ class Product(base.BudyBase):
         product.currency = currency
         product.order = order
         product.characteristics = metadata.get("characteristics", [])
-        product.colors = [_color]
-        product.categories = [_category]
-        product.collections = [_collection]
+        product.colors = colors
+        product.categories = categories
+        product.collections = collections
         product.meta = dict(object_id = object_id)
         if "stock_on_hand" in merchandise or force:
             product.quantity_hand = merchandise.get("stock_on_hand", 0.0)
