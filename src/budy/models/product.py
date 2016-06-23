@@ -292,6 +292,7 @@ class Product(base.BudyBase):
         object_id = merchandise["object_id"]
         company_product_code = merchandise["company_product_code"]
         metadata = merchandise["metadata"] or dict()
+        modify_date = metadata.get("modify_date") or []
         _color = metadata.get("material") or []
         _category = metadata.get("category") or []
         _collection = metadata.get("collection") or []
@@ -306,6 +307,8 @@ class Product(base.BudyBase):
         if _brand: _brand = brand.Brand.ensure_s(_brand)
         product = cls.get(product_id = company_product_code, raise_e = False)
         if not product: product = cls()
+        previous_date = product.meta.get("modify_date")
+        if modify_date == previous_date: return product
         product.product_id = company_product_code
         product.short_description = merchandise["name"] or company_product_code
         product.description = merchandise["description"]
@@ -317,7 +320,10 @@ class Product(base.BudyBase):
         product.categories = categories
         product.collections = collections
         product.brand = _brand
-        product.meta = dict(object_id = object_id)
+        product.meta = dict(
+            object_id = object_id,
+            modify_date = 0 if force else modify_date
+        )
         if "stock_on_hand" in merchandise or force:
             product.quantity_hand = merchandise.get("stock_on_hand", 0.0)
         if "retail_price" in merchandise or force:
