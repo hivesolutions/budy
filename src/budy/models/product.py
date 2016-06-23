@@ -261,6 +261,7 @@ class Product(base.BudyBase):
         currency = "EUR",
         force = False
     ):
+        from . import brand
         from . import color
         from . import category
         from . import collection
@@ -270,6 +271,7 @@ class Product(base.BudyBase):
         _color = metadata.get("material") or []
         _category = metadata.get("category") or []
         _collection = metadata.get("collection") or []
+        _brand = metadata.get("brand")
         order = metadata.get("order")
         colors = _color if isinstance(_color, list) else [_color]
         categories = _category if isinstance(_category, list) else [_category]
@@ -277,6 +279,7 @@ class Product(base.BudyBase):
         colors = [color.Color.ensure_s(_color) for _color in colors]
         categories = [category.Category.ensure_s(_category) for _category in categories]
         collections = [collection.Collection.ensure_s(_collection) for _collection in collections]
+        if _brand: _brand = brand.Brand.ensure_s(_brand)
         product = cls.get(product_id = company_product_code, raise_e = False)
         if not product: product = cls()
         product.product_id = company_product_code
@@ -289,6 +292,7 @@ class Product(base.BudyBase):
         product.colors = colors
         product.categories = categories
         product.collections = collections
+        product.brand = _brand
         product.meta = dict(object_id = object_id)
         if "stock_on_hand" in merchandise or force:
             product.quantity_hand = merchandise.get("stock_on_hand", 0.0)

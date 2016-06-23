@@ -58,3 +58,11 @@ class Brand(base.BudyBase):
     @classmethod
     def list_names(cls):
         return ["id", "name"]
+
+    @classmethod
+    def ensure_s(cls, name):
+        brand = cls.get(name = name, raise_e = False)
+        if brand: return brand
+        brand = cls(name = name)
+        brand.save()
+        return brand
