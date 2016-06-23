@@ -123,6 +123,7 @@ class Measurement(base.BudyBase):
         sub_product = sub_product or merchandise
         parent = sub_product["product"]
         object_id = sub_product["object_id"]
+        modify_date = merchandise["modify_date"]
         company_product_code = merchandise["company_product_code"]
 
         _product = product.Product.get(
@@ -146,7 +147,10 @@ class Measurement(base.BudyBase):
         measurement.value = value
         measurement.currency = currency
         measurement.product = _product
-        measurement.meta = dict(object_id = object_id)
+        measurement.meta = dict(
+            object_id = object_id,
+            modify_date = modify_date
+        )
         if "stock_on_hand" in merchandise or force:
             measurement.quantity_hand = merchandise.get("stock_on_hand", 0.0)
         if "retail_price" in merchandise or force:
