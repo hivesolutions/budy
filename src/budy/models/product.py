@@ -281,6 +281,7 @@ class Product(base.BudyBase):
     def from_omni(
         cls,
         merchandise,
+        inventory_line = None,
         gender = "Both",
         currency = "EUR",
         force = False
@@ -298,6 +299,14 @@ class Product(base.BudyBase):
         _collection = metadata.get("collection") or []
         _brand = metadata.get("brand")
         order = metadata.get("order")
+
+        # verifies if an inventory line has been provided, if that's the case
+        # it's possible to determine a proper modification date for the product
+        # taking into account also the modification date of its inventory line
+        if inventory_line:
+            modify_date_line = inventory_line["modify_date"]
+            if modify_date_line > modify_date: modify_date = modify_date_line
+
         colors = _color if isinstance(_color, list) else [_color]
         categories = _category if isinstance(_category, list) else [_category]
         collections = _collection if isinstance(_collection, list) else [_collection]

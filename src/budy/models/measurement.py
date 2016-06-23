@@ -115,6 +115,7 @@ class Measurement(base.BudyBase):
         cls,
         merchandise,
         sub_product = None,
+        inventory_line = None,
         name = "size",
         currency = "EUR",
         force = False
@@ -125,6 +126,13 @@ class Measurement(base.BudyBase):
         object_id = sub_product["object_id"]
         modify_date = merchandise["modify_date"]
         company_product_code = merchandise["company_product_code"]
+
+        # verifies if an inventory line has been provided, if that's the case
+        # it's possible to determine a proper modification date for the sub product
+        # taking into account also the modification date of its inventory line
+        if inventory_line:
+            modify_date_line = inventory_line["modify_date"]
+            if modify_date_line > modify_date: modify_date = modify_date_line
 
         _product = product.Product.get(
             product_id = parent["company_product_code"],

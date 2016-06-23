@@ -101,8 +101,19 @@ class OmniBot(base.Bot):
                 is_sub_product = _class in ("SubProduct",)
                 is_valid = is_product or is_sub_product
                 if not is_valid: continue
-                if is_product: self.sync_product_safe(merchandise)
-                else: self.sync_sub_product_safe(merchandise)
+                inventory_lines = api.list_inventory_lines(
+                    store_id = self.store,
+                    **{
+                        "filter_string" : "",
+                        "filters[]" : [
+                            "functional_unit:equals:%d" % self.store,
+                            "merchandise:equals:%d" % merchandise["object_id"]
+                        ]
+                    }
+                )
+                inventory_line = inventory_lines[0]
+                if is_product: self.sync_product_safe(merchandise, inventory_line = inventory_line)
+                else: self.sync_sub_product_safe(merchandise, inventory_line = inventory_line)
 
     def sync_products_db(self):
         api = self.get_api()
@@ -168,7 +179,7 @@ class OmniBot(base.Bot):
                 "Problem syncing product %d - %s ..." % (object_id, exception)
             )
 
-    def sync_product(self, merchandise, force = False):
+    def sync_product(self, merchandise, inventory_line = None, force = False):
         # retrieves the reference to the api object that is
         # going to be used for api based operations
         api = self.get_api()
@@ -180,7 +191,11 @@ class OmniBot(base.Bot):
 
         # builds a new product instance from the merchandise
         # information that has just been retrieved
-        product = budy.Product.from_omni(merchandise, force = force)
+        product = budy.Product.from_omni(
+            merchandise,
+            inventory_line = inventory_line,
+            force = force
+        )
         product.save()
         product.images = []
 
@@ -243,7 +258,7 @@ class OmniBot(base.Bot):
                 "Problem syncing sub product %d - %s ..." % (object_id, exception)
             )
 
-    def sync_sub_product(self, merchandise, force = False):
+    def sync_sub_product(self, merchandise, inventory_line = None, force = False):
         api = self.get_api()
 
         object_id = merchandise["object_id"]
@@ -258,6 +273,7 @@ class OmniBot(base.Bot):
         measurement = budy.Measurement.from_omni(
             merchandise,
             sub_product = sub_product,
+            inventory_line = inventory_line,
             force = force
         )
         if not measurement:
@@ -266,6 +282,7 @@ class OmniBot(base.Bot):
             measurement = budy.Measurement.from_omni(
                 merchandise,
                 sub_product = sub_product,
+                inventory_line = inventory_line,
                 force = force
             )
 
