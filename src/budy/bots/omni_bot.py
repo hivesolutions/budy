@@ -115,7 +115,8 @@ class OmniBot(base.Bot):
         for product in products:
             object_id = product.meta.get("object_id", None)
             if not object_id: continue
-            merchandise = api.get_product(object_id)
+            try: merchandise = api.get_product(object_id)
+            except self.get_exception(): continue
             if not merchandise: continue
             merchandise.pop("stock_on_hand", None)
             merchandise.pop("retail_price", None)
@@ -133,7 +134,8 @@ class OmniBot(base.Bot):
         for measurement in measurements:
             object_id = measurement.meta.get("object_id", None)
             if not object_id: continue
-            merchandise = api.get_sub_product(object_id)
+            try: merchandise = api.get_sub_product(object_id)
+            except self.get_exception(): continue
             if not merchandise: continue
             merchandise.pop("stock_on_hand", None)
             merchandise.pop("retail_price", None)
@@ -282,3 +284,7 @@ class OmniBot(base.Bot):
         if self.api: return self.api
         self.api = omni.Api()
         return self.api
+
+    def get_exception(self):
+        import omni
+        return omni.OmniError
