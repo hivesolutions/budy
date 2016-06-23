@@ -141,6 +141,22 @@ class Product(base.BudyBase):
         type = list
     )
 
+    brand_s = appier.field(
+        index = True
+    )
+
+    color_s = appier.field(
+        index = True
+    )
+
+    category_s = appier.field(
+        index = True
+    )
+
+    collection_s = appier.field(
+        index = True
+    )
+
     colors = appier.field(
         type = appier.references(
             "Color",
@@ -224,7 +240,15 @@ class Product(base.BudyBase):
             appier.gte("price", 0.0),
 
             appier.not_null("taxes"),
-            appier.gte("taxes", 0.0)
+            appier.gte("taxes", 0.0),
+
+            appier.not_empty("brand_s"),
+
+            appier.not_empty("color_s"),
+
+            appier.not_empty("category_s"),
+
+            appier.not_empty("collection_s")
         ]
 
     @classmethod
@@ -436,6 +460,7 @@ class Product(base.BudyBase):
     def pre_validate(self):
         base.BudyBase.pre_validate(self)
         self.build_images()
+        self.build_names()
 
     def pre_save(self):
         base.BudyBase.pre_save(self)
@@ -456,6 +481,12 @@ class Product(base.BudyBase):
         image = image or self.get_image(size = "large")
         self.thumbnail_url = thumbnail.get_url() if thumbnail else None
         self.image_url = image.get_url() if image else None
+
+    def build_names(self):
+        self.brand_s = self.brand.name if self.brand else None
+        self.color_s = self.colors[0].name if self.colors else None
+        self.category_s = self.categories[0].name if self.categories else None
+        self.collection_s = self.collections[0].name if self.collections else None
 
     def related(self, limit = 6, available = True):
         cls = self.__class__
