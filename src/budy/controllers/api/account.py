@@ -147,3 +147,36 @@ class AccountApiController(root.RootApiController):
         account.addresses.remove(address.id)
         account.save()
         address.delete()
+
+    @appier.route("/api/accounts/simple.csv", "GET")
+    @appier.ensure(token = "admin")
+    def simple_csv(self):
+        object = appier.get_object(
+            alias = True,
+            find = True,
+            limit = 0
+        )
+        accounts = budy.BudyAccount.find(
+            **object
+        )
+
+        accounts_s = [(
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "birth_date"
+        )]
+        for account in accounts:
+            account_s = (
+                account.username,
+                account.email,
+                account.first_name,
+                account.last_name,
+                account.birth_date
+            )
+            accounts_s.append(account_s)
+
+        result = appier.serialize_csv(accounts_s, delimiter = ",")
+        self.content_type("text/csv")
+        return result

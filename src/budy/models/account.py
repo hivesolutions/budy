@@ -161,6 +161,14 @@ class BudyAccount(appier_extras.admin.Account):
 
         cls._csv_import(file, callback)
 
+    @classmethod
+    @appier.link(name = "Export Simple")
+    def simple_csv_url(cls, absolute = False):
+        return appier.get_app().url_for(
+            "account_api.simple_csv",
+            absolute = absolute
+        )
+
     def pre_create(self):
         appier_extras.admin.Account.pre_create(self)
         if not hasattr(self, "first_name") or not self.first_name:
