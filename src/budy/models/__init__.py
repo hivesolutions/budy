@@ -49,6 +49,7 @@ from . import composition
 from . import country
 from . import currency
 from . import exchange_rate
+from . import group
 from . import live_model
 from . import measurement
 from . import media
@@ -76,6 +77,7 @@ from .composition import Composition
 from .country import Country
 from .currency import Currency
 from .exchange_rate import ExchangeRate
+from .group import Group
 from .live_model import LiveModel
 from .measurement import Measurement
 from .media import Media

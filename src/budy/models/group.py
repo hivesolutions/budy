@@ -37,7 +37,37 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
-from . import group
+import appier
 
-class Season(group.Group):
-    pass
+from . import base
+
+class Group(base.BudyBase):
+
+    name = appier.field(
+        index = True,
+        default = True
+    )
+
+    order = appier.field(
+        type = int,
+        index = True
+    )
+
+    @classmethod
+    def validate(cls):
+        return super(Group, cls).validate() + [
+            appier.not_null("name"),
+            appier.not_empty("name")
+        ]
+
+    @classmethod
+    def list_names(cls):
+        return ["id", "name"]
+
+    @classmethod
+    def ensure_s(cls, name):
+        group = cls.get(name = name, raise_e = False)
+        if group: return group
+        group = cls(name = name)
+        group.save()
+        return group

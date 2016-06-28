@@ -37,32 +37,7 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
-import appier
+from . import group
 
-from . import base
-
-class Brand(base.BudyBase):
-
-    name = appier.field(
-        index = True,
-        default = True
-    )
-
-    @classmethod
-    def validate(cls):
-        return super(Brand, cls).validate() + [
-            appier.not_null("name"),
-            appier.not_empty("name")
-        ]
-
-    @classmethod
-    def list_names(cls):
-        return ["id", "name"]
-
-    @classmethod
-    def ensure_s(cls, name):
-        brand = cls.get(name = name, raise_e = False)
-        if brand: return brand
-        brand = cls(name = name)
-        brand.save()
-        return brand
+class Brand(group.Group):
+    pass
