@@ -437,7 +437,7 @@ class Order(bundle.Bundle):
             items.append(
                 dict(
                     name = line.product.short_description,
-                    price = currency.Currency.format(line.product.price, line.currency),
+                    price = currency.Currency.format(line.price, line.currency),
                     currency = line.currency,
                     quantity = line.quantity
                 )
