@@ -693,6 +693,18 @@ class Product(base.BudyBase):
         if not self.exists(): return
         self.save()
 
+    @appier.operation(name = "Ensure Quantity", level = 2, devel = True)
+    def ensure_quantity_s(self, quantity = 1.0):
+        if self.quantity_hand: return
+        self.quantity_hand = quantity
+        self.save()
+
+    @appier.operation(name = "Ensure Price", level = 2, devel = True)
+    def ensure_price_s(self, price = 100.0):
+        if self.price: return
+        self.price = price
+        self.save()
+
     @property
     def quantity(self):
         return self.quantity_hand
