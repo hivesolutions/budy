@@ -324,7 +324,7 @@ class Bundle(base.BudyBase):
             self.sub_total,
             self.taxes,
             self.quantity,
-            b = self
+            self
         )
         discount += self.discount_dynamic
         discount += self.discount_fixed
@@ -340,7 +340,7 @@ class Bundle(base.BudyBase):
             self.sub_total,
             self.taxes,
             self.quantity,
-            b = self
+            self
         )
 
     def collect_empty(self):
