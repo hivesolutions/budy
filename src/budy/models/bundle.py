@@ -161,6 +161,13 @@ class Bundle(base.BudyBase):
         return bundle_line.BundleLine
 
     @classmethod
+    def eval_discount(cls, *args, **kwargs):
+        discount = appier.conf("BUDY_DISCOUNT", None)
+        if not discount: return 0.0
+        discount = eval(discount)
+        return discount(*args, **kwargs)
+
+    @classmethod
     def eval_shipping(cls, *args, **kwargs):
         shipping = appier.conf("BUDY_SHIPPING", None)
         if not shipping: return 0.0
@@ -313,10 +320,12 @@ class Bundle(base.BudyBase):
 
     def build_discount(self):
         discount = 0.0
-        discounter = appier.conf("BUDY_DISCOUNT", None)
-        discounter = eval(discounter) if discounter else None
-        self.discount_dynamic = discounter(self.sub_total, self.taxes, self.quantity) if\
-            discounter else 0.0
+        self.discount_dynamic = self.__class__.eval_discount(
+            self.sub_total,
+            self.taxes,
+            self.quantity,
+            b = self
+        )
         discount += self.discount_dynamic
         discount += self.discount_fixed
         return discount
@@ -328,7 +337,10 @@ class Bundle(base.BudyBase):
 
     def build_shipping(self):
         return self.__class__.eval_shipping(
-            self.sub_total, self.taxes, self.quantity
+            self.sub_total,
+            self.taxes,
+            self.quantity,
+            b = self
         )
 
     def collect_empty(self):
