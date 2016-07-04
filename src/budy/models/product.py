@@ -467,7 +467,7 @@ class Product(base.BudyBase):
     def _build(cls, model, map):
         price = model.get("price", None)
         if price == None: shipping_cost = None
-        else: shipping_cost = bundle.Bundle.eval_shipping(price, 0.0, 1.0)
+        else: shipping_cost = bundle.Bundle.eval_shipping(price, 0.0, 1.0, None)
         model["shipping_cost"] = shipping_cost
 
     def pre_validate(self):
