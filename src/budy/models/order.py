@@ -696,6 +696,7 @@ class Order(bundle.Bundle):
         methods = cls._pmethods()
         type = payment_data.get("type", None)
         method = methods.get(type, None)
+        if not method: return
         function = getattr(self, "_pay_" + method)
         return function(payment_data)
 
@@ -804,6 +805,7 @@ class Order(bundle.Bundle):
         type = cancel_data.get("engine", None)
         type = cancel_data.get("type", type)
         method = methods.get(type, type)
+        if not method: return
         has_function = hasattr(self, "_cancel_" + method)
         if not has_function and not strict: return
         function = getattr(self, "_cancel_" + method)
