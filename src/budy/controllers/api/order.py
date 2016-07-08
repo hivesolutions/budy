@@ -342,6 +342,16 @@ class OrderApiController(root.RootApiController):
         order = order.reload(map = True)
         return order
 
+    @appier.route("/api/orders/<str:key>/meta", "PUT", json = True)
+    @appier.ensure(token = "user")
+    def set_meta(self, key):
+        name = self.field("name", mandatory = True, not_empty = True)
+        value = self.field("value", mandatory = True)
+        order = budy.Order.get(key = key, rules = False)
+        order.set_meta_s(name, value)
+        order = order.reload(map = True)
+        return order
+
     @appier.route("/api/orders/<str:key>/wait_payment", "PUT", json = True)
     @appier.ensure(token = "user")
     def wait_payment(self, key):

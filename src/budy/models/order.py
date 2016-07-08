@@ -345,6 +345,10 @@ class Order(bundle.Bundle):
         self.empty_vouchers_s()
         for voucher in vouchers: self.add_voucher_s(voucher)
 
+    def set_meta_s(self, name, value):
+        self.meta[name] = value
+        self.save()
+
     def refresh_s(self, *args, **kwargs):
         if self.paid: return
         refreshed = bundle.Bundle.refresh_s(self, *args, **kwargs)
