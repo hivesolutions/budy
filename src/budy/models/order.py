@@ -551,10 +551,11 @@ class Order(bundle.Bundle):
         appier.verify(self.account.email == account.email)
 
     @appier.operation(name = "Notify")
-    def notify_s(self, name = None):
+    def notify_s(self, name = None, *args, **kwargs):
         name = name or "order.%s" % self.status
         order = self.reload(map = True)
         receiver = order.get("email", None)
+        receiver = kwargs.get("email", receiver)
         appier_extras.admin.Event.notify_g(
             name,
             arguments = dict(

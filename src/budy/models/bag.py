@@ -148,11 +148,13 @@ class Bag(bundle.Bundle):
             line.save()
 
     @appier.operation(name = "Notify")
-    def notify(self, name = None):
+    def notify(self, name = None, *args, **kwargs):
         name = name or "bag.new"
         bag = self.reload(map = True)
         account = bag.get("account", {})
+        account = kwargs.get("email", account)
         receiver = account.get("email", None)
+        receiver = kwargs.get("email", receiver)
         appier_extras.admin.Event.notify_g(
             name,
             arguments = dict(
@@ -165,5 +167,5 @@ class Bag(bundle.Bundle):
         )
 
     @appier.operation(name = "Remind")
-    def remind(self):
-        self.notify("bag.remind")
+    def remind(self, *args, **kwargs):
+        self.notify("bag.remind", *args, **kwargs)

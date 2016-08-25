@@ -116,11 +116,13 @@ class Wishlist(bundle.Bundle):
             line.save()
 
     @appier.operation(name = "Notify")
-    def notify(self, name = None):
+    def notify(self, name = None, *args, **kwargs):
         name = name or "wishlist.new"
         wishlist = self.reload(map = True)
         account = wishlist.get("account", {})
+        account = kwargs.get("account", account)
         receiver = account.get("email", None)
+        receiver = kwargs.get("email", receiver)
         appier_extras.admin.Event.notify_g(
             name,
             arguments = dict(

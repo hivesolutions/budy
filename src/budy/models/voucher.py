@@ -41,6 +41,7 @@ import time
 import commons
 
 import appier
+import appier_extras
 
 from . import base
 
@@ -280,6 +281,32 @@ class Voucher(base.BudyBase):
         open_amount = commons.Decimal(amount) * decimal
         if not currency: return open_amount
         return _currency.Currency.round(open_amount, currency)
+
+    @appier.operation(
+        name = "Notify",
+        parameters = (("Email", "email", str),)
+    )
+    def notify(self, name = None, *args, **kwargs):
+        name = name or "voucher.new"
+        voucher = self.reload(map = True)
+        receiver = kwargs.get("email", None)
+        appier_extras.admin.Event.notify_g(
+            name,
+            arguments = dict(
+                params = dict(
+                    payload = voucher,
+                    voucher = voucher,
+                    receiver = receiver
+                )
+            )
+        )
+
+    @appier.operation(
+        name = "Remind",
+        parameters = (("Email", "email", str),)
+    )
+    def remind(self, *args, **kwargs):
+        self.notify("voucher.remind", *args, **kwargs)
 
     @property
     def open_amount(self):

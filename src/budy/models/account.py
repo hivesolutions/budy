@@ -216,10 +216,11 @@ class BudyAccount(appier_extras.admin.Account):
         self.save()
 
     @appier.operation(name = "Notify")
-    def notify(self, name = None):
+    def notify(self, name = None, *args, **kwargs):
         name = name or "account.new"
         account = self.reload(rules = False, map = True)
         receiver = account.get("email", None)
+        receiver = kwargs.get("email", receiver)
         appier_extras.admin.Event.notify_g(
             name,
             arguments = dict(
