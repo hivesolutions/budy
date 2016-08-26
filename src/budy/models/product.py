@@ -720,14 +720,18 @@ class Product(base.BudyBase):
                 params = dict(
                     payload = product,
                     product = product,
-                    receiver = receiver
+                    receiver = receiver,
+                    extra = kwargs 
                 )
             )
         )
 
     @appier.operation(
         name = "Share",
-        parameters = (("Email", "email", str),)
+        parameters = (
+            ("Email", "email", str),
+            ("Sender", "sender", appier.legacy.UNICODE)
+        )
     )
     def share(self, *args, **kwargs):
         self.notify("product.share", *args, **kwargs)

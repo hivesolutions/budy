@@ -296,7 +296,8 @@ class Voucher(base.BudyBase):
                 params = dict(
                     payload = voucher,
                     voucher = voucher,
-                    receiver = receiver
+                    receiver = receiver,
+                    extra = kwargs
                 )
             )
         )

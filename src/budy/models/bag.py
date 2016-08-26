@@ -161,7 +161,8 @@ class Bag(bundle.Bundle):
                 params = dict(
                     payload = bag,
                     bag = bag,
-                    receiver = receiver
+                    receiver = receiver,
+                    extra = kwargs
                 )
             )
         )

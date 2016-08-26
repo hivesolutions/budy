@@ -227,7 +227,8 @@ class BudyAccount(appier_extras.admin.Account):
                 params = dict(
                     payload = account,
                     account = account,
-                    receiver = receiver
+                    receiver = receiver,
+                    extra = kwargs
                 )
             )
         )

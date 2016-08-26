@@ -562,7 +562,8 @@ class Order(bundle.Bundle):
                 params = dict(
                     payload = order,
                     order = order,
-                    receiver = receiver
+                    receiver = receiver,
+                    extra = kwargs
                 )
             )
         )

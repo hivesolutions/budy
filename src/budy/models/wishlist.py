@@ -129,7 +129,8 @@ class Wishlist(bundle.Bundle):
                 params = dict(
                     payload = wishlist,
                     wishlist = wishlist,
-                    receiver = receiver
+                    receiver = receiver,
+                    extra = kwargs
                 )
             )
         )
