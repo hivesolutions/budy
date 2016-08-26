@@ -59,18 +59,7 @@ class BudyBase(appier_extras.admin.Base):
 
     @classmethod
     def _simplify(cls, value):
-        value = value.lower()
-        value = value.replace(appier.legacy.u("á"), "a")
-        value = value.replace(appier.legacy.u("é"), "e")
-        value = value.replace(appier.legacy.u("í"), "i")
-        value = value.replace(appier.legacy.u("ó"), "o")
-        value = value.replace(appier.legacy.u("ú"), "u")
-        value = value.replace(appier.legacy.u("ã"), "a")
-        value = value.replace(appier.legacy.u("õ"), "o")
-        value = value.replace(appier.legacy.u("â"), "a")
-        value = value.replace(appier.legacy.u("ô"), "o")
-        value = value.replace(appier.legacy.u("ç"), "c")
-        return value
+        return appier.App._simplify(value)
 
     @classmethod
     def _pluralize(cls, value):
