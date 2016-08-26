@@ -721,7 +721,7 @@ class Product(base.BudyBase):
                     payload = product,
                     product = product,
                     receiver = receiver,
-                    extra = kwargs 
+                    extra = kwargs
                 )
             )
         )

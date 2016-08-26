@@ -85,6 +85,14 @@ class ProductApiController(root.RootApiController):
         products = product.related(limit = limit, available = available)
         return products
 
+    @appier.route("/api/products/<int:id>/share", "GET", json = True)
+    def share(self, id):
+        email = self.field("email", mandatory = True, not_empty = True)
+        sender = self.field("sender", mandatory = True, not_empty = True)
+        product = budy.Product.get(id = id)
+        share = product.share(email = email, sender = sender)
+        return share
+
     @appier.route("/api/products/simple.csv", "GET")
     @appier.ensure(token = "admin")
     def simple_csv(self):
