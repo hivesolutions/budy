@@ -42,6 +42,11 @@ import appier_extras
 
 class BudyBase(appier_extras.admin.Base):
 
+    slug = appier.field(
+        index = True,
+        safe = True
+    )
+
     tokens = appier.field(
         index = True,
         safe = True
@@ -65,14 +70,26 @@ class BudyBase(appier_extras.admin.Base):
     def _pluralize(cls, value):
         return value + "s"
 
+    def pre_save(self):
+        appier_extras.admin.Base.pre_save(self)
+        self._update_slug()
+        self._update_tokens()
+
+    @appier.operation(name = "Update Slug")
+    def update_slug_s(self):
+        self._update_slug()
+        self.save()
+
     @appier.operation(name = "Update Tokens")
-    def update_search_description_s(self):
+    def update_tokens_s(self):
         self._update_tokens()
         self.save()
 
-    def pre_save(self):
-        appier_extras.admin.Base.pre_save(self)
-        self._update_tokens()
+    def _update_slug(self):
+        cls = self.__class__
+        title_name = cls.title_name()
+        title_value = self[title_name]
+        self.slug = self.owner.slugify(title_value)
 
     def _update_tokens(self):
         cls = self.__class__
