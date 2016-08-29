@@ -47,6 +47,11 @@ class BudyBase(appier_extras.admin.Base):
         safe = True
     )
 
+    slug_id = appier.field(
+        index = True,
+        safe = True
+    )
+
     tokens = appier.field(
         index = True,
         safe = True
@@ -89,7 +94,9 @@ class BudyBase(appier_extras.admin.Base):
         cls = self.__class__
         title_name = cls.title_name()
         title_value = self[title_name]
-        self.slug = self.owner.slugify(title_value)
+        id_s = str(self.id) if hasattr(self, "id") else ""
+        self.slug = self.owner.slugify(title_value) if title_value else title_value
+        self.slug_id = self.slug + "-" + id_s if self.slug else id_s
 
     def _update_tokens(self):
         cls = self.__class__
