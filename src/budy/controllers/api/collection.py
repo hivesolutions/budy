@@ -55,3 +55,8 @@ class CollectionApiController(root.RootApiController):
     def show(self, id):
         collection = budy.Collection.get(id = id, map = True)
         return collection
+
+    @appier.route("/api/collections/slug/<str:slug>", "GET", json = True)
+    def slug(self, slug):
+        collection = budy.Collection.get(slug = slug, map = True)
+        return collection

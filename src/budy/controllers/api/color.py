@@ -50,3 +50,13 @@ class ColorApiController(root.RootApiController):
         object = appier.get_object(alias = True, find = True)
         colors = budy.Color.find(map = True, **object)
         return colors
+
+    @appier.route("/api/colors/<int:id>", "GET", json = True)
+    def show(self, id):
+        color = budy.Color.get(id = id, map = True)
+        return color
+
+    @appier.route("/api/colors/slug/<str:slug>", "GET", json = True)
+    def slug(self, slug):
+        color = budy.Color.get(slug = slug, map = True)
+        return color
