@@ -48,7 +48,11 @@ class CategoryApiController(root.RootApiController):
     @appier.route("/api/categories", "GET", json = True)
     def list(self):
         object = appier.get_object(alias = True, find = True)
-        categories = budy.Category.find(map = True, **object)
+        categories = budy.Category.find(
+            eager = ("images",),
+            map = True,
+            **object
+        )
         return categories
 
     @appier.route("/api/categories/<int:id>", "GET", json = True)

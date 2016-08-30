@@ -48,7 +48,11 @@ class ColorApiController(root.RootApiController):
     @appier.route("/api/colors", "GET", json = True)
     def list(self):
         object = appier.get_object(alias = True, find = True)
-        colors = budy.Color.find(map = True, **object)
+        colors = budy.Color.find(
+            eager = ("images",),
+            map = True,
+            **object
+        )
         return colors
 
     @appier.route("/api/colors/<int:id>", "GET", json = True)
