@@ -734,7 +734,8 @@ class Order(bundle.Bundle):
             address_line2 = self.shipping_address.address_extra,
             metadata = dict(
                 order = self.reference,
-                email = self.account.email,
+                email = self.email,
+                ip_address = self.ip_address,
                 first_name = self.shipping_address.first_name,
                 last_name = self.shipping_address.last_name
             )

@@ -302,6 +302,17 @@ class OrderApiController(root.RootApiController):
         order = order.reload(map = True)
         return order
 
+    @appier.route("/api/orders/<str:key>/ip_address", "PUT", json = True)
+    @appier.ensure(token = "user")
+    def set_ip_address(self, key):
+        data = appier.request_json()
+        ip_address = data["ip_address"]
+        order = budy.Order.get(key = key, rules = False)
+        order.ip_address = ip_address
+        order.save()
+        order = order.reload(map = True)
+        return order
+
     @appier.route("/api/orders/<str:key>/email", "PUT", json = True)
     @appier.ensure(token = "user")
     def set_email(self, key):

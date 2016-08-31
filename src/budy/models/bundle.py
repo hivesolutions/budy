@@ -116,6 +116,11 @@ class Bundle(base.BudyBase):
         safe = True
     )
 
+    ip_address = appier.field(
+        index = True,
+        safe = True
+    )
+
     referrals = appier.field(
         type = appier.references(
             "Referral",
