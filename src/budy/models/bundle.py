@@ -121,6 +121,12 @@ class Bundle(base.BudyBase):
         safe = True
     )
 
+    ip_country = appier.field(
+        index = True,
+        safe = True,
+        meta = "country"
+    )
+
     referrals = appier.field(
         type = appier.references(
             "Referral",
@@ -150,7 +156,9 @@ class Bundle(base.BudyBase):
             appier.gte("taxes", 0.0),
 
             appier.not_null("total"),
-            appier.gte("total", 0.0)
+            appier.gte("total", 0.0),
+
+            appier.string_eq("ip_country", 2)
         ]
 
     @classmethod
@@ -192,6 +200,14 @@ class Bundle(base.BudyBase):
         if not hasattr(self, "key") or not self.key:
             self.key = self.secret()
         self.description = self.key[:8]
+
+    def set_ip_address_s(self, ip_address):
+        result = appier.GeoResolver.resolve(ip_address) or {}
+        country = result.get("country", {})
+        ip_country = country.get("iso_code", None)
+        self.ip_address = ip_address
+        self.ip_country = ip_country
+        self.save()
 
     def add_line_s(self, line):
         line.save()

@@ -308,8 +308,7 @@ class OrderApiController(root.RootApiController):
         data = appier.request_json()
         ip_address = data["ip_address"]
         order = budy.Order.get(key = key, rules = False)
-        order.ip_address = ip_address
-        order.save()
+        order.set_ip_address_s(ip_address)
         order = order.reload(map = True)
         return order
 
