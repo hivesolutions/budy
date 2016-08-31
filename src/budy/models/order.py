@@ -736,6 +736,7 @@ class Order(bundle.Bundle):
                 order = self.reference,
                 email = self.email,
                 ip_address = self.ip_address,
+                ip_country = self.ip_country,
                 first_name = self.shipping_address.first_name,
                 last_name = self.shipping_address.last_name
             )
