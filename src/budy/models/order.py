@@ -725,7 +725,19 @@ class Order(bundle.Bundle):
             exp_year,
             number,
             cvc = cvc,
-            name = name
+            name = name,
+            description = self.reference_f,
+            address_country = self.shipping_address.country,
+            address_city = self.shipping_address.city,
+            address_zip = self.shipping_address.postal_code,
+            address_line1 = self.shipping_address.address,
+            address_line2 = self.shipping_address.address_extra,
+            metadata = dict(
+                order = self.reference_f,
+                email = self.account.email,
+                first_name = self.shipping_address.first_name,
+                last_name = self.shipping_address.last_name
+            )
         )
         self.payment_data = dict(
             engine = "stripe",
