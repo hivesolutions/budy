@@ -49,6 +49,10 @@ class BundleLine(base.BudyBase):
         type = commons.Decimal
     )
 
+    taxes = appier.field(
+        type = commons.Decimal
+    )
+
     currency = appier.field()
 
     country = appier.field()
@@ -59,6 +63,11 @@ class BundleLine(base.BudyBase):
     )
 
     total = appier.field(
+        type = commons.Decimal,
+        initial = commons.Decimal(0.0)
+    )
+
+    total_taxes = appier.field(
         type = commons.Decimal,
         initial = commons.Decimal(0.0)
     )
@@ -98,6 +107,11 @@ class BundleLine(base.BudyBase):
     def calculate(self, currency = None, country = None, force = False):
         currency = currency or self.currency
         country = country or self.country
+        self.total_taxes = self.quantity * self.get_taxes(
+            currency = currency,
+            country = country,
+            force = force
+        )
         self.total = self.quantity * self.get_price(
             currency = currency,
             country = country,
@@ -114,7 +128,7 @@ class BundleLine(base.BudyBase):
 
     def get_price(self, currency = None, country = None, force = False):
         is_dirty = self.is_dirty(currency = currency, country = country)
-        if not is_dirty and not force: return self.price
+        if self.price and not is_dirty and not force: return self.price
         self.price = self.merchandise.get_price(
             currency = currency,
             country = country,
@@ -123,6 +137,18 @@ class BundleLine(base.BudyBase):
         self.currency = self.merchandise.get_currency(currency = currency)
         self.country = country
         return self.price
+
+    def get_taxes(self, currency = None, country = None, force = False):
+        is_dirty = self.is_dirty(currency = currency, country = country)
+        if self.taxes and not is_dirty and not force: return self.taxes
+        self.taxes = self.merchandise.get_taxes(
+            currency = currency,
+            country = country,
+            attributes = self.attributes
+        )
+        self.currency = self.merchandise.get_currency(currency = currency)
+        self.country = country
+        return self.taxes
 
     def get_size(self, currency = None, country = None, force = False):
         if not self.product: return None, None

@@ -177,6 +177,14 @@ class Measurement(base.BudyBase):
     ):
         return self.price
 
+    def get_taxes(
+        self,
+        currency = None,
+        country = None,
+        attributes = None
+    ):
+        return self.taxes
+
     def get_currency(self, currency = None):
         return currency
 
