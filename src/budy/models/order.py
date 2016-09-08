@@ -551,17 +551,19 @@ class Order(bundle.Bundle):
         appier.verify(self.account.email == account.email)
 
     @appier.operation(name = "Notify")
-    def notify_s(self, name = None):
+    def notify_s(self, name = None, *args, **kwargs):
         name = name or "order.%s" % self.status
         order = self.reload(map = True)
         receiver = order.get("email", None)
+        receiver = kwargs.get("email", receiver)
         appier_extras.admin.Event.notify_g(
             name,
             arguments = dict(
                 params = dict(
                     payload = order,
                     order = order,
-                    receiver = receiver
+                    receiver = receiver,
+                    extra = kwargs
                 )
             )
         )
@@ -723,7 +725,21 @@ class Order(bundle.Bundle):
             exp_year,
             number,
             cvc = cvc,
-            name = name
+            name = name,
+            description = self.reference,
+            address_country = self.shipping_address.country,
+            address_city = self.shipping_address.city,
+            address_zip = self.shipping_address.postal_code,
+            address_line1 = self.shipping_address.address,
+            address_line2 = self.shipping_address.address_extra,
+            metadata = dict(
+                order = self.reference,
+                email = self.email,
+                ip_address = self.ip_address,
+                ip_country = self.ip_country,
+                first_name = self.shipping_address.first_name,
+                last_name = self.shipping_address.last_name
+            )
         )
         self.payment_data = dict(
             engine = "stripe",

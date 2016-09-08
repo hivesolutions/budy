@@ -40,15 +40,14 @@ __license__ = "Apache License, Version 2.0"
 import appier
 import appier_extras
 
-from . import order
 from . import bundle
-from . import bag_line
+from . import wishlist_line
 
-class Bag(bundle.Bundle):
+class Wishlist(bundle.Bundle):
 
     lines = appier.field(
         type = appier.references(
-            "BagLine",
+            "WishlistLine",
             name = "id"
         ),
         eager = True
@@ -68,31 +67,31 @@ class Bag(bundle.Bundle):
 
     @classmethod
     def line_cls(cls):
-        return bag_line.BagLine
+        return wishlist_line.WishlistLine
 
     @classmethod
     def from_session(cls, ensure = True, raise_e = False):
         from . import BudyAccount
         account = BudyAccount.from_session(raise_e = raise_e)
-        if account: return account.ensure_bag_s()
+        if account: return account.ensure_wishlist_s()
         session = appier.get_session()
-        key = session.get("bag", None)
-        bag = cls.get(key = key, raise_e = raise_e) if key else None
-        if bag: return bag
+        key = session.get("wishlist", None)
+        wishlist = cls.get(key = key, raise_e = raise_e) if key else None
+        if wishlist: return wishlist
         if not ensure: return None
-        bag = cls()
-        bag.save()
-        session["bag"] = bag.key
-        return bag
+        wishlist = cls()
+        wishlist.save()
+        session["wishlist"] = wishlist.key
+        return wishlist
 
     @classmethod
     def ensure_s(cls, key = None):
         from . import BudyAccount
         account = BudyAccount.from_session(raise_e = False)
-        if account: return account.ensure_bag_s(key = key)
-        bag = cls(key = key)
-        bag.save()
-        return bag
+        if account: return account.ensure_wishlist_s(key = key)
+        wishlist = cls(key = key)
+        wishlist.save()
+        return wishlist
 
     def pre_validate(self):
         bundle.Bundle.pre_validate(self)
@@ -103,39 +102,8 @@ class Bag(bundle.Bundle):
         for line in self.lines: line.delete()
 
     def add_line_s(self, line):
-        line.bag = self
+        line.wishlist = self
         return bundle.Bundle.add_line_s(self, line)
-
-    def to_order_s(self, verify = True):
-        self.refresh_s()
-        if verify: self.verify_order()
-        _order = order.Order(
-            currency = self.currency,
-            country = self.country,
-            sub_total = self.sub_total,
-            discount = self.discount,
-            shipping_cost = self.shipping_cost,
-            taxes = self.taxes,
-            total = self.total,
-            account = self.account,
-            store = self.account and self.account.store
-        )
-        _order.save()
-        _order.lines = []
-        for line in self.lines:
-            order_line = line.to_order_line_s(_order)
-            _order.lines.append(order_line)
-        _order.save()
-        if verify: _order.verify_base()
-        return _order
-
-    def verify_order(self):
-        """
-        Runs a series of verifications to make sure that the bag
-        is ready to be used to generate/create an order.
-        """
-
-        appier.verify(len(self.lines) > 0)
 
     @appier.operation(name = "Garbage Collect")
     def collect_s(self):
@@ -144,23 +112,23 @@ class Bag(bundle.Bundle):
     @appier.operation(name = "Fix Orphans")
     def fix_orphans_s(self):
         for line in self.lines:
-            line.bag = self
+            line.wishlist = self
             line.save()
 
     @appier.operation(name = "Notify")
     def notify(self, name = None, *args, **kwargs):
-        name = name or "bag.new"
-        bag = self.reload(map = True)
-        account = bag.get("account", {})
-        account = kwargs.get("email", account)
+        name = name or "wishlist.new"
+        wishlist = self.reload(map = True)
+        account = wishlist.get("account", {})
+        account = kwargs.get("account", account)
         receiver = account.get("email", None)
         receiver = kwargs.get("email", receiver)
         appier_extras.admin.Event.notify_g(
             name,
             arguments = dict(
                 params = dict(
-                    payload = bag,
-                    bag = bag,
+                    payload = wishlist,
+                    wishlist = wishlist,
                     receiver = receiver,
                     extra = kwargs
                 )
@@ -168,5 +136,5 @@ class Bag(bundle.Bundle):
         )
 
     @appier.operation(name = "Remind")
-    def remind(self, *args, **kwargs):
-        self.notify("bag.remind", *args, **kwargs)
+    def remind(self):
+        self.notify("wishlist.remind")

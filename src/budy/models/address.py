@@ -94,7 +94,9 @@ class Address(base.BudyBase):
             appier.not_empty("address"),
 
             appier.not_null("city"),
-            appier.not_empty("city")
+            appier.not_empty("city"),
+
+            appier.string_eq("country", 2)
         ]
 
     @classmethod

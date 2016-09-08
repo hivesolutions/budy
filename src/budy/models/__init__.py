@@ -61,6 +61,8 @@ from . import season
 from . import store
 from . import subscription
 from . import voucher
+from . import wishlist_line
+from . import wishlist
 
 from .account import BudyAccount
 from .address import Address
@@ -89,3 +91,5 @@ from .season import Season
 from .store import Store
 from .subscription import Subscription
 from .voucher import Voucher
+from .wishlist_line import WishlistLine
+from .wishlist import Wishlist
