@@ -41,6 +41,7 @@ import json
 import commons
 
 import appier
+import appier_extras
 
 from . import base
 from . import bundle
@@ -749,6 +750,36 @@ class Product(base.BudyBase):
         if self.price: return
         self.price = price
         self.save()
+
+    @appier.operation(
+        name = "Notify",
+        parameters = (("Email", "email", str),)
+    )
+    def notify(self, name = None, *args, **kwargs):
+        name = name or "product.new"
+        product = self.reload(map = True)
+        receiver = kwargs.get("email", None)
+        appier_extras.admin.Event.notify_g(
+            name,
+            arguments = dict(
+                params = dict(
+                    payload = product,
+                    product = product,
+                    receiver = receiver,
+                    extra = kwargs
+                )
+            )
+        )
+
+    @appier.operation(
+        name = "Share",
+        parameters = (
+            ("Email", "email", str),
+            ("Sender", "sender", appier.legacy.UNICODE)
+        )
+    )
+    def share(self, *args, **kwargs):
+        self.notify("product.share", *args, **kwargs)
 
     @property
     def quantity(self):

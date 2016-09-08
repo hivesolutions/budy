@@ -19,7 +19,7 @@
 # You should have received a copy of the Apache License along with
 # Hive Budy. If not, see <http://www.apache.org/licenses/>.
 
-__author__ = "Tiago Silva <tsilva@hive.pt>"
+__author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
 __version__ = "1.0.0"
@@ -39,28 +39,26 @@ __license__ = "Apache License, Version 2.0"
 
 import appier
 
-import budy
+from . import bundle_line
 
-from . import root
+class WishlistLine(bundle_line.BundleLine):
 
-class CollectionApiController(root.RootApiController):
-
-    @appier.route("/api/collections", "GET", json = True)
-    def list(self):
-        object = appier.get_object(alias = True, find = True)
-        collections = budy.Collection.find(
-            eager = ("images",),
-            map = True,
-            **object
+    wishlist = appier.field(
+        type = appier.reference(
+            "Wishlist",
+            name = "id"
         )
-        return collections
+    )
 
-    @appier.route("/api/collections/<int:id>", "GET", json = True)
-    def show(self, id):
-        collection = budy.Collection.get(id = id, map = True)
-        return collection
+    @classmethod
+    def list_names(cls):
+        return ["id", "quantity", "total", "currency", "product", "wishlist"]
 
-    @appier.route("/api/collections/slug/<str:slug>", "GET", json = True)
-    def slug(self, slug):
-        collection = budy.Collection.get(slug = slug, map = True)
-        return collection
+    def pre_validate(self):
+        bundle_line.BundleLine.pre_validate(self)
+        self.try_valid()
+
+    @appier.operation(name = "Garbage Collect")
+    def collect_s(self):
+        if self.wishlist: return
+        self.delete()

@@ -42,6 +42,16 @@ import appier_extras
 
 class BudyBase(appier_extras.admin.Base):
 
+    slug = appier.field(
+        index = True,
+        safe = True
+    )
+
+    slug_id = appier.field(
+        index = True,
+        safe = True
+    )
+
     tokens = appier.field(
         index = True,
         safe = True
@@ -59,31 +69,34 @@ class BudyBase(appier_extras.admin.Base):
 
     @classmethod
     def _simplify(cls, value):
-        value = value.lower()
-        value = value.replace(appier.legacy.u("á"), "a")
-        value = value.replace(appier.legacy.u("é"), "e")
-        value = value.replace(appier.legacy.u("í"), "i")
-        value = value.replace(appier.legacy.u("ó"), "o")
-        value = value.replace(appier.legacy.u("ú"), "u")
-        value = value.replace(appier.legacy.u("ã"), "a")
-        value = value.replace(appier.legacy.u("õ"), "o")
-        value = value.replace(appier.legacy.u("â"), "a")
-        value = value.replace(appier.legacy.u("ô"), "o")
-        value = value.replace(appier.legacy.u("ç"), "c")
-        return value
+        return appier.App._simplify(value)
 
     @classmethod
     def _pluralize(cls, value):
         return value + "s"
 
+    def pre_save(self):
+        appier_extras.admin.Base.pre_save(self)
+        self._update_slug()
+        self._update_tokens()
+
+    @appier.operation(name = "Update Slug")
+    def update_slug_s(self):
+        self._update_slug()
+        self.save()
+
     @appier.operation(name = "Update Tokens")
-    def update_search_description_s(self):
+    def update_tokens_s(self):
         self._update_tokens()
         self.save()
 
-    def pre_save(self):
-        appier_extras.admin.Base.pre_save(self)
-        self._update_tokens()
+    def _update_slug(self):
+        cls = self.__class__
+        title_name = cls.title_name()
+        title_value = self[title_name]
+        id_s = str(self.id) if hasattr(self, "id") else ""
+        self.slug = self.owner.slugify(title_value) if title_value else title_value
+        self.slug_id = self.slug + "-" + id_s if self.slug else id_s
 
     def _update_tokens(self):
         cls = self.__class__
