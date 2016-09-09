@@ -33,6 +33,9 @@ an order and/or bag or if instead only the largest of both should be used (defau
 * `BUDY_SHIPPING` (`str`) - String with the definition of the lambda function to be called for calculus of the
 shipping costs for a bundle (bag or order) the arguments provided are the sub total, taxes, quantity and bundle and the return
 value should be a valid float value for the shipping costs (default to `None`)
+* `BUDY_TAXES` (`str`) - String with the definition of the lambda function to be called for calculus of the
+taxes for a bundle (bag or order) the arguments provided are the sub total, taxes, quantity and bundle and the return
+value should be a valid float value for the total taxes (default to `None`)
 
 ## License
 
