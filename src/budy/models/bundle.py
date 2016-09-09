@@ -341,14 +341,18 @@ class Bundle(base.BudyBase):
 
     def build_discount(self):
         discount = 0.0
+        join_discount = appier.conf("BUDY_JOIN_DICOUNT", True, cast = bool)
         self.discount_dynamic = self.__class__.eval_discount(
             self.sub_total,
             self.taxes,
             self.quantity,
             self
         )
-        discount += self.discount_dynamic
-        discount += self.discount_fixed
+        if join_discount:
+            discount += self.discount_dynamic
+            discount += self.discount_fixed
+        else:
+            discount += max(self.discount_dynamic, self.discount_fixed)
         return discount
 
     def build_taxes(self):
