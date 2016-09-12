@@ -49,7 +49,7 @@ class BudyApp(appier.WebApp):
             self,
             name = "budy",
             parts = (
-                appier_extras.AdminPart
+                appier_extras.AdminPart,
             ),
             *args, **kwargs
         )
