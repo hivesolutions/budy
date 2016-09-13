@@ -128,19 +128,12 @@ class BundleLine(base.BudyBase):
 
     def get_price(self, currency = None, country = None, force = False):
         is_dirty = self.is_dirty(currency = currency, country = country)
-        if self.price and not is_dirty and not force: return self.price
+        if not is_dirty and not force: return self.price
         self.price = self.merchandise.get_price(
             currency = currency,
             country = country,
             attributes = self.attributes
         )
-        self.currency = self.merchandise.get_currency(currency = currency)
-        self.country = country
-        return self.price
-
-    def get_taxes(self, currency = None, country = None, force = False):
-        is_dirty = self.is_dirty(currency = currency, country = country)
-        if self.taxes and not is_dirty and not force: return self.taxes
         self.taxes = self.merchandise.get_taxes(
             currency = currency,
             country = country,
@@ -148,6 +141,11 @@ class BundleLine(base.BudyBase):
         )
         self.currency = self.merchandise.get_currency(currency = currency)
         self.country = country
+        self.get_taxes(currency = currency, country = country)
+        return self.price
+
+    def get_taxes(self, currency = None, country = None, force = False):
+        self.get_price(currency = currency, country = country, force = force)
         return self.taxes
 
     def get_size(self, currency = None, country = None, force = False):
@@ -178,6 +176,7 @@ class BundleLine(base.BudyBase):
         is_dirty = not self.currency == currency
         is_dirty |= not self.country == country
         is_dirty |= not hasattr(self, "price") or self.price == None
+        is_dirty |= not hasattr(self, "taxes") or self.taxes == None
         return is_dirty
 
     def is_valid(self):
