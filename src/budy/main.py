@@ -50,7 +50,6 @@ class BudyApp(appier.WebApp):
             name = "budy",
             parts = (
                 appier_extras.AdminPart,
-                appier_extras.OpbeatPart
             ),
             *args, **kwargs
         )
