@@ -66,5 +66,6 @@ class MediaApiController(root.RootApiController):
         return self.send_file(
             file.data,
             content_type = file.mime,
-            etag = file.etag
+            etag = file.etag,
+            cache = True
         )
