@@ -331,7 +331,7 @@ class Bundle(base.BudyBase):
         self.quantity = sum(line.quantity for line in lines)
         self.sub_total = sum(line.total for line in lines)
         self.discount = self.calculate_discount()
-        self.taxes = self.calculate_taxes()
+        self.taxes = self.calculate_taxes() or sum(line.total_taxes for line in lines)
         self.shipping_cost = self.calculate_shipping()
         self.total = self.sub_total - self.discount + self.shipping_cost
 
