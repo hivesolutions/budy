@@ -4,4 +4,3 @@ omni_api
 stripe_api
 easypay_api
 paypal_api
-requests
