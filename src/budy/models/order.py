@@ -322,7 +322,10 @@ class Order(bundle.Bundle):
         if self.discount_voucher > base_discount: return self.discount_voucher
         return base_discount
 
-    def set_account_s(self, account):
+    def set_account_s(self, account, force = False):
+        if not force:
+            self.verify_base()
+            appier.verify(self.status == "created")
         self.account = account
         self.store = self.account.store
         self.save()

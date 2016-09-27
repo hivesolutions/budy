@@ -367,6 +367,19 @@ class OrderApiController(root.RootApiController):
         order = order.reload(map = True)
         return order
 
+    @appier.route("/api/orders/<str:key>/account", "PUT", json = True)
+    @appier.ensure(token = "user")
+    def set_account(self, key):
+        data = appier.request_json()
+        username = data["username"]
+        order = budy.Order.get(key = key, rules = False)
+        account = budy.BudyAccount.from_session()
+        order.verify_account(account)
+        new_account = budy.BudyAccount.get(username = username)
+        order.set_account_s(new_account)
+        order = order.reload(map = True)
+        return order
+
     @appier.route("/api/orders/<str:key>/wait_payment", "PUT", json = True)
     @appier.ensure(token = "user")
     def wait_payment(self, key):
