@@ -322,10 +322,9 @@ class Order(bundle.Bundle):
         if self.discount_voucher > base_discount: return self.discount_voucher
         return base_discount
 
-    def set_account_s(self, account, force = False):
-        if not force:
-            self.verify_base()
-            appier.verify(self.status == "created")
+    def set_account_s(self, account):
+        self.verify_base()
+        self.verify_open()
         self.account = account
         self.store = self.account.store
         self.save()
@@ -504,6 +503,15 @@ class Order(bundle.Bundle):
         """
 
         appier.verify(len(self.lines) > 0)
+
+    def verify_open(self):
+        """
+        Verifies that the current order is considered open,
+        meaning that the it is still under the checkout stage.
+        """
+
+        appier.verify(self.status == "created")
+        appier.verify(self.paid == False)
 
     def verify_shippable(self):
         appier.verify(not self.shipping_address == None)
