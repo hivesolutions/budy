@@ -295,7 +295,7 @@ class Order(bundle.Bundle):
     def _on_paid_easypay(cls, reference, details):
         identifier = reference["identifier"]
         order = cls.get(key = identifier, raise_e = False)
-        order.end_pay_s(notify = True)
+        if not order.paid: order.end_pay_s(notify = True)
 
     @classmethod
     def _on_canceled_easypay(cls, reference):
