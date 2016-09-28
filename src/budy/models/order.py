@@ -295,7 +295,7 @@ class Order(bundle.Bundle):
     def _on_paid_easypay(cls, reference, details):
         identifier = reference["identifier"]
         order = cls.get(key = identifier, raise_e = False)
-        order.end_pay_s(notify = True)
+        if order.is_payable(): order.end_pay_s(notify = True)
 
     @classmethod
     def _on_canceled_easypay(cls, reference):
@@ -494,6 +494,12 @@ class Order(bundle.Bundle):
                 cancel_url = cancel_url
             )
         )
+
+    def is_payable(self):
+        if not self.status == "waiting_payment": return False
+        if self.paid: return False
+        if self.date: return False
+        return True
 
     def verify_base(self):
         """

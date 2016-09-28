@@ -36,6 +36,9 @@ value should be a valid float value for the shipping costs (default to `None`)
 * `BUDY_TAXES` (`str`) - String with the definition of the lambda function to be called for calculus of the
 taxes for a bundle (bag or order) the arguments provided are the sub total, taxes, quantity and bundle and the return
 value should be a valid float value for the total taxes (default to `None`)
+* `OMNI_BOT_ENABLED` (`bool`) - If the Omni bot should be enabled at startup
+* `OMNI_BOT_STORE` (`int`) - Object ID of the store that is going to be used for the sync operation
+* `OMNI_BOT_RECORDS` (`int`) - The number of records to be retriveved per each remote API call
 
 ## License
 
