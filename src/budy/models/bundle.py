@@ -363,12 +363,21 @@ class Bundle(base.BudyBase):
         return discount
 
     def build_taxes(self):
-        return self.__class__.eval_taxes(
+        taxes = 0.0
+        join_taxes = appier.conf("BUDY_JOIN_TAXES", True, cast = bool)
+        taxes_dynamic = self.__class__.eval_taxes(
             self.sub_total,
             self.taxes,
             self.quantity,
             self
         )
+        taxes_lines = sum(line.total_taxes for line in self.lines)
+        if join_taxes:
+            taxes += taxes_dynamic
+            taxes += taxes_lines
+        else:
+            taxes += max(taxes_dynamic, taxes_lines)
+        return taxes
 
     def build_shipping(self):
         return self.__class__.eval_shipping(

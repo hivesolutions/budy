@@ -549,6 +549,21 @@ class Product(base.BudyBase):
             attributes = attributes
         )
 
+    def get_taxes(
+        self,
+        currency = None,
+        country = None,
+        attributes = None
+    ):
+        if not self.price_provider: return self.taxes
+        method = getattr(self, "get_taxes_%s" % self.price_provider, None)
+        if not method: return self.taxes
+        return method(
+            currency = currency,
+            country = country,
+            attributes = attributes
+        )
+
     def get_price_ripe(
         self,
         currency = None,
@@ -556,6 +571,37 @@ class Product(base.BudyBase):
         attributes = None
     ):
         if not self.price_url: return self.price
+
+        result = self.get_availability_ripe(
+            currency = currency,
+            country = country,
+            attributes = attributes
+        )
+        total = result["total"]
+        return total["price_final"]
+
+    def get_taxes_ripe(
+        self,
+        currency = None,
+        country = None,
+        attributes = None
+    ):
+        if not self.price_url: return self.price
+
+        result = self.get_availability_ripe(
+            currency = currency,
+            country = country,
+            attributes = attributes
+        )
+        total = result["total"]
+        return total["ddp"] + total["vat"]
+
+    def get_availability_ripe(
+        self,
+        currency = None,
+        country = None,
+        attributes = None
+    ):
         attributes_m = json.loads(attributes)
         p = []
         parts = attributes_m.get("parts", {})
@@ -581,8 +627,7 @@ class Product(base.BudyBase):
             self.price_url,
             params = params
         )
-        total = result["total"]
-        return total["price_final"]
+        return result
 
     def get_currency(self, currency = None):
         if not self.price_provider: return self.currency or currency

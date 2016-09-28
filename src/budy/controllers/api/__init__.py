@@ -48,6 +48,7 @@ from . import easypay
 from . import media
 from . import order
 from . import product
+from . import referral
 from . import root
 from . import subscription
 from . import voucher
@@ -66,6 +67,7 @@ from .easypay import EasypayApiController
 from .media import MediaApiController
 from .order import OrderApiController
 from .product import ProductApiController
+from .referral import ReferralApiController
 from .root import RootApiController
 from .subscription import SubscriptionApiController
 from .voucher import VoucherApiController

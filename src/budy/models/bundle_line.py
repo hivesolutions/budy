@@ -49,6 +49,10 @@ class BundleLine(base.BudyBase):
         type = commons.Decimal
     )
 
+    taxes = appier.field(
+        type = commons.Decimal
+    )
+
     currency = appier.field()
 
     country = appier.field()
@@ -59,6 +63,11 @@ class BundleLine(base.BudyBase):
     )
 
     total = appier.field(
+        type = commons.Decimal,
+        initial = commons.Decimal(0.0)
+    )
+
+    total_taxes = appier.field(
         type = commons.Decimal,
         initial = commons.Decimal(0.0)
     )
@@ -98,6 +107,11 @@ class BundleLine(base.BudyBase):
     def calculate(self, currency = None, country = None, force = False):
         currency = currency or self.currency
         country = country or self.country
+        self.total_taxes = self.quantity * self.get_taxes(
+            currency = currency,
+            country = country,
+            force = force
+        )
         self.total = self.quantity * self.get_price(
             currency = currency,
             country = country,
@@ -120,9 +134,19 @@ class BundleLine(base.BudyBase):
             country = country,
             attributes = self.attributes
         )
+        self.taxes = self.merchandise.get_taxes(
+            currency = currency,
+            country = country,
+            attributes = self.attributes
+        )
         self.currency = self.merchandise.get_currency(currency = currency)
         self.country = country
+        self.get_taxes(currency = currency, country = country)
         return self.price
+
+    def get_taxes(self, currency = None, country = None, force = False):
+        self.get_price(currency = currency, country = country, force = force)
+        return self.taxes
 
     def get_size(self, currency = None, country = None, force = False):
         if not self.product: return None, None
@@ -152,6 +176,7 @@ class BundleLine(base.BudyBase):
         is_dirty = not self.currency == currency
         is_dirty |= not self.country == country
         is_dirty |= not hasattr(self, "price") or self.price == None
+        is_dirty |= not hasattr(self, "taxes") or self.taxes == None
         return is_dirty
 
     def is_valid(self):

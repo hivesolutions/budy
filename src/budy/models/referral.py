@@ -65,3 +65,23 @@ class Referral(base.BudyBase):
     @classmethod
     def order_name(self):
         return ["id", -1]
+
+    @classmethod
+    @appier.operation(
+        name = "Import CSV",
+        parameters = (
+                ("CSV File", "file", "file"),
+                ("Empty source", "empty", bool, True)
+        )
+    )
+    def import_csv_s(cls, file, empty):
+        def callback(line):
+            store, name = line
+            composed_name = "%s|%s" % (name, store)
+            referral = cls(
+                name = composed_name
+            )
+            referral.save()
+
+        if empty: cls.delete_c()
+        cls._csv_import(file, callback)
