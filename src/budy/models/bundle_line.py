@@ -141,7 +141,6 @@ class BundleLine(base.BudyBase):
         )
         self.currency = self.merchandise.get_currency(currency = currency)
         self.country = country
-        self.get_taxes(currency = currency, country = country)
         return self.price
 
     def get_taxes(self, currency = None, country = None, force = False):
