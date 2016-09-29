@@ -380,6 +380,30 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(voucher.open_amount, 3.0)
         self.assertEqual(voucher.usage_count, 1)
 
+    def test_taxes(self):
+        product = budy.Product(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0,
+            taxes = 3.0
+        )
+        product.save()
+
+        order = budy.Order()
+        order.save()
+
+        order_line = budy.OrderLine(quantity = 2.0)
+        order_line.product = product
+        order_line.save()
+        order.add_line_s(order_line)
+
+        self.assertEqual(order.sub_total, 20.0)
+        self.assertEqual(order.discount, 0.0)
+        self.assertEqual(order.total, 20.0)
+        self.assertEqual(order.taxes, 6.0)
+        self.assertEqual(order.payable, 20.0)
+        self.assertEqual(order.discountable, 20.0)
+
     def test_quantity(self):
         product = budy.Product(
             short_description = "product",
