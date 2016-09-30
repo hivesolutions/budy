@@ -37,7 +37,6 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
-import json
 import commons
 
 import appier
@@ -83,7 +82,8 @@ class BundleLine(base.BudyBase):
 
     closed = appier.field(
         type = bool,
-        initial = False
+        initial = False,
+        index = True
     )
 
     attributes = appier.field()
@@ -106,15 +106,14 @@ class BundleLine(base.BudyBase):
 
     def pre_save(self):
         base.BudyBase.pre_save(self)
-        if self.closed: return
         self.calculate()
         self.measure()
         self.ensure_valid()
 
     def calculate(self, currency = None, country = None, force = False):
+        if self.closed: return
         currency = currency or self.currency
         country = country or self.country
-        if self.total_taxes or self.total: return
         self.total_taxes = self.quantity * self.get_taxes(
             currency = currency,
             country = country,
@@ -127,6 +126,7 @@ class BundleLine(base.BudyBase):
         )
 
     def measure(self, currency = None, country = None, force = False):
+        if self.closed: return
         if self.size and self.scale and not force: return
         self.size, self.scale = self.get_size(
             currency = currency,
@@ -233,49 +233,3 @@ class BundleLine(base.BudyBase):
         measurement = self.product.get_measurement(self.size, name = name)
         if measurement or strict: return measurement
         return self.product
-
-    @appier.operation(name = "Patch Cotton to Nylon")
-    def patch1_s(self):
-        self.rename_material("cotton", "nylon")
-
-    @appier.operation(name = "Patch Croc Beige to Nude")
-    def patch2_s(self):
-        self.rename_color_for_material("crocodile", "beige", "nude")
-
-    def rename_color_for_material(self, material, old, new):
-        attributes = self.attributes
-        attributes = json.loads(attributes)
-        image_url = attributes["image_url"]
-        product_url = attributes["product_url"]
-        old_quoted = appier.legacy.quote("%s:%s" % (material, old))
-        new_quoted = appier.legacy.quote("%s:%s" % (material, new))
-        image_url = image_url.replace(old_quoted, new_quoted)
-        product_url = product_url.replace(old_quoted, new_quoted)
-        attributes["image_url"] = image_url
-        attributes["product_url"] = product_url
-        parts = attributes["parts"]
-        for part, values in parts.items():
-            part_material = values["material"]
-            part_color = values["color"]
-            if part_material != material: continue
-            part_color = new if part_color == old else part_color
-            values["color"] = part_color
-        self.attributes = json.dumps(attributes)
-        self.save()
-
-    def rename_material(self, old, new):
-        attributes = self.attributes
-        attributes = json.loads(attributes)
-        image_url = attributes["image_url"]
-        product_url = attributes["product_url"]
-        image_url = image_url.replace(old, new)
-        product_url = product_url.replace(old, new)
-        attributes["image_url"] = image_url
-        attributes["product_url"] = product_url
-        parts = attributes["parts"]
-        for part, values in parts.items():
-            material = values["material"]
-            material = new if material == old else material
-            values["material"] = material
-        self.attributes = json.dumps(attributes)
-        self.save()

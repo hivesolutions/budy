@@ -706,7 +706,8 @@ class Order(bundle.Bundle):
 
     @appier.operation(name = "Fix Closed Lines")
     def fix_closed_s(self):
-        if self.is_closed(): self.close_lines_s()
+        if not self.is_closed(): return
+        self.close_lines_s()
 
     @property
     def payable(self):
