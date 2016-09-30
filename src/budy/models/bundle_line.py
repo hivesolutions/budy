@@ -80,6 +80,12 @@ class BundleLine(base.BudyBase):
         type = int
     )
 
+    closed = appier.field(
+        type = bool,
+        initial = False,
+        index = True
+    )
+
     attributes = appier.field()
 
     product = appier.field(
@@ -105,6 +111,7 @@ class BundleLine(base.BudyBase):
         self.ensure_valid()
 
     def calculate(self, currency = None, country = None, force = False):
+        if self.closed: return
         currency = currency or self.currency
         country = country or self.country
         self.total_taxes = self.quantity * self.get_taxes(
@@ -119,12 +126,17 @@ class BundleLine(base.BudyBase):
         )
 
     def measure(self, currency = None, country = None, force = False):
+        if self.closed: return
         if self.size and self.scale and not force: return
         self.size, self.scale = self.get_size(
             currency = currency,
             country = country,
             force = force
         )
+
+    def close_s(self):
+        self.closed = True
+        self.save()
 
     def get_price(self, currency = None, country = None, force = False):
         is_dirty = self.is_dirty(currency = currency, country = country)
