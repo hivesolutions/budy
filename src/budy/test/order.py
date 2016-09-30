@@ -596,7 +596,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(isinstance(order.payable, commons.Decimal), True)
         self.assertEqual(isinstance(order.discountable, commons.Decimal), True)
 
-    def test_is_open(self):
+    def test_closed(self):
         order = budy.Order()
         order.save()
 
