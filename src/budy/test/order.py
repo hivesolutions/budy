@@ -571,3 +571,40 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(isinstance(order.total, commons.Decimal), True)
         self.assertEqual(isinstance(order.payable, commons.Decimal), True)
         self.assertEqual(isinstance(order.discountable, commons.Decimal), True)
+
+    def test_is_open(self):
+        order = budy.Order()
+        order.save()
+
+        product = budy.Product(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0
+        )
+        product.save()
+
+        order_line = budy.OrderLine(quantity = 2.0)
+        order_line.product = product
+        order_line.save()
+        order.add_line_s(order_line)
+
+        address = budy.Address(
+            first_name = "first name",
+            last_name = "last name",
+            address = "address",
+            city = "city"
+        )
+        address.save()
+
+        order.shipping_address = address
+        order.billing_address = address
+        order.email = "username@email.com"
+        order.save()
+
+        self.assertEqual(order.is_open(), True)
+        self.assertEqual(order.is_closed(), False)
+
+        order.mark_waiting_payment_s()
+
+        self.assertEqual(order.is_open(), False)
+        self.assertEqual(order.is_closed(), True)

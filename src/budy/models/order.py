@@ -444,6 +444,9 @@ class Order(bundle.Bundle):
         if not self.status == "created": return
         self.mark_waiting_payment_s()
 
+    def close_lines_s(self):
+        for line in self.lines: line.close_s()
+
     def get_paypal(self, return_url = None, cancel_url = None):
         items = []
         for line in self.lines:
@@ -500,6 +503,14 @@ class Order(bundle.Bundle):
         if self.paid: return False
         if self.date: return False
         return True
+
+    def is_open(self):
+        if not self.status == "created": return False
+        if self.paid: return False
+        return True
+
+    def is_closed(self):
+        return not self.is_open()
 
     def verify_base(self):
         """
@@ -692,6 +703,10 @@ class Order(bundle.Bundle):
             key = self.key,
             absolute = absolute
         )
+
+    @appier.operation(name = "Fix Closed Lines")
+    def fix_closed_s(self):
+        if self.is_closed(): self.close_lines_s()
 
     @property
     def payable(self):
