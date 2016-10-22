@@ -235,6 +235,15 @@ class BudyAccount(appier_extras.admin.Account):
 
     @property
     def title(self):
+        """
+        Retrieves the title of the account, this value should
+        be used as a prefix for the full name generation.
+
+        :rtype: String
+        :return: The title value for the current account, taking
+        into account the selected gender.
+        """
+
         return "Mrs." if self.gender == "Female" else "Mr."
 
     def _set_avatar_d(self, image = "avatar.png", mime = "image/png"):
