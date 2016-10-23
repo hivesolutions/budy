@@ -1,18 +1,37 @@
 {
     "version": "0.2.0",
-    "configurations": [{
-        "name": "Python",
-        "type": "python",
-        "request": "launch",
-        "pythonPath": "${config.python.pythonPath}",
-        "program": "${workspaceRoot}/src/budy/main.py",
-        "debugOptions": [
-            "WaitOnAbnormalExit",
-            "WaitOnNormalExit",
-            "RedirectOutput"
-        ],
-        "env": {
-            "PYTHONPATH": "${workspaceRoot}/src:{env.PYTHONPATH}"
+    "configurations": [
+        {
+            "name": "Python",
+            "type": "python",
+            "request": "launch",
+            "pythonPath": "python",
+            "program": "${workspaceRoot}/src/budy/main.py",
+            "debugOptions": [
+                "WaitOnAbnormalExit",
+                "WaitOnNormalExit",
+                "RedirectOutput"
+            ],
+            "env": {
+                "PYTHONPATH": "${workspaceRoot}/src:{env.PYTHONPATH}",
+                "OMNI_BOT_ENABLED": "0"
+            }
+        },
+        {
+            "name": "Python 3",
+            "type": "python",
+            "request": "launch",
+            "pythonPath": "python3",
+            "program": "${workspaceRoot}/src/budy/main.py",
+            "debugOptions": [
+                "WaitOnAbnormalExit",
+                "WaitOnNormalExit",
+                "RedirectOutput"
+            ],
+            "env": {
+                "PYTHONPATH": "${workspaceRoot}/src:{env.PYTHONPATH}",
+                "OMNI_BOT_ENABLED": "0"
+            }
         }
-    }]
+    ]
 }
