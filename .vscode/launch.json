@@ -16,7 +16,7 @@
             "OMNI_BOT_ENABLED": "0"
         }
     }, {
-        "name": "Python 3",
+        "name": "Python3",
         "type": "python",
         "request": "launch",
         "pythonPath": "python3",
