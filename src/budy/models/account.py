@@ -41,6 +41,7 @@ import appier
 import appier_extras
 
 from . import bag
+from . import order
 
 class BudyAccount(appier_extras.admin.Account):
 
@@ -199,6 +200,21 @@ class BudyAccount(appier_extras.admin.Account):
 
     def get_bag(self):
         return bag.Bag.get(account = self.id, raise_e = False)
+
+    def get_store_orders(self, status = "waiting_payment"):
+        if not self.store: raise appier.OperationalError(
+            message = "No store associated with user",
+            code = 403
+        )
+        kwargs = dict()
+        if self.store.is_restricted: kwargs["account"] = self.id
+        orders = order.Order.find(
+            status = status,
+            store = self.store.id,
+            sort = [("id", -1)],
+            **kwargs
+        )
+        return orders
 
     @appier.operation(
         name = "Set Store",

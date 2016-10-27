@@ -64,6 +64,12 @@ class Store(base.BudyBase):
         index = True
     )
 
+    restrict_mode = appier.field(
+        type = bool,
+        index = True,
+        initial = True
+    )
+
     @classmethod
     def validate(cls):
         return super(Store, cls).validate() + [
@@ -76,3 +82,7 @@ class Store(base.BudyBase):
     @classmethod
     def list_names(cls):
         return ["id", "name", "currency_code", "checkout_mode"]
+
+    @property
+    def is_restricted(self):
+        return self.restrict_mode

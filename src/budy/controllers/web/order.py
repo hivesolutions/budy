@@ -48,16 +48,7 @@ class OrderController(appier.Controller):
     @appier.ensure(token = "user")
     def me(self, status = "waiting_payment"):
         account = budy.BudyAccount.from_session()
-        if not account.store: raise appier.OperationalError(
-            message = "No store associated with user",
-            code = 403
-        )
-        orders = budy.Order.find(
-            status = status,
-            account = account.id,
-            store = account.store.id,
-            sort = [("id", -1)]
-        )
+        orders = account.get_store_orders(status = status)
         return self.template(
             "order/me.html.tpl",
             orders = orders
