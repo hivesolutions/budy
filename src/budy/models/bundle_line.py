@@ -226,18 +226,18 @@ class BundleLine(base.BudyBase):
     def measure_s(self):
         self.measure(force = True)
         self.save()
-        
+
     @appier.operation(name = "Recover product")
     def recover_s(self):
         self.product.resolve()
         if self.product.is_resolved():
             return
-        
+
         from . import product
         attributes = json.loads(self.attributes)
         product_id = attributes.get("product_id", None)
         product_id_s = str(product_id)
-        
+
         _product = product.Product.get(product_id = product_id_s)
         self.product = _product
         self.save(validate = False)
