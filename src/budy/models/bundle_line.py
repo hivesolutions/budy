@@ -233,7 +233,7 @@ class BundleLine(base.BudyBase):
 
         self.product.resolve()
         if self.product.is_resolved(): return
-    
+
         if not self.attributes: return
         attributes = json.loads(self.attributes)
 
@@ -242,6 +242,8 @@ class BundleLine(base.BudyBase):
         product_id_s = str(product_id)
 
         _product = product.Product.get(product_id = product_id_s)
+        if not _product: return
+
         self.product = _product
         self.save(validate = False, pre_save = False)
 
