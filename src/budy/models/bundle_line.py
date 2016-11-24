@@ -229,11 +229,12 @@ class BundleLine(base.BudyBase):
 
     @appier.operation(name = "Recover product")
     def recover_s(self):
+        from . import product
         self.product.resolve()
         if self.product.is_resolved():
             return
 
-        from . import product
+        
         attributes = json.loads(self.attributes)
         product_id = attributes.get("product_id", None)
         product_id_s = str(product_id)
