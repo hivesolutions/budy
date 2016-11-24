@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008-2016 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import json
 import commons
 
 import appier
@@ -225,6 +226,26 @@ class BundleLine(base.BudyBase):
     def measure_s(self):
         self.measure(force = True)
         self.save()
+
+    @appier.operation(name = "Recover product")
+    def recover_s(self):
+        from . import product
+
+        self.product.resolve()
+        if self.product.is_resolved(): return
+
+        if not self.attributes: return
+        attributes = json.loads(self.attributes)
+
+        product_id = attributes.get("product_id", None)
+        if not product_id: return
+        product_id_s = str(product_id)
+
+        _product = product.Product.get(product_id = product_id_s)
+        if not _product: return
+
+        self.product = _product
+        self.save(validate = False, pre_save = False)
 
     @property
     def merchandise(self, name = "size", strict = False):
