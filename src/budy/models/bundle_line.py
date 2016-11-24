@@ -234,14 +234,13 @@ class BundleLine(base.BudyBase):
         if self.product.is_resolved():
             return
 
-        
         attributes = json.loads(self.attributes)
         product_id = attributes.get("product_id", None)
         product_id_s = str(product_id)
 
         _product = product.Product.get(product_id = product_id_s)
         self.product = _product
-        self.save(validate = False)
+        self.save(validate = False, pre_save = False)
 
     @property
     def merchandise(self, name = "size", strict = False):
