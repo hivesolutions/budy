@@ -92,6 +92,7 @@ class Order(bundle.Bundle):
 
     paid = appier.field(
         type = bool,
+        index = True,
         initial = False,
         safe = True
     )
@@ -106,6 +107,12 @@ class Order(bundle.Bundle):
     email = appier.field(
         index = True,
         safe = True
+    )
+
+    gift_wrap = appier.field(
+        type = bool,
+        index = True,
+        initial = False
     )
 
     tracking_number = appier.field(
