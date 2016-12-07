@@ -328,6 +328,17 @@ class OrderApiController(root.RootApiController):
         order = order.reload(map = True)
         return order
 
+    @appier.route("/api/orders/<str:key>/gift_wrap", "PUT", json = True)
+    @appier.ensure(token = "user")
+    def set_gift_wrap(self, key):
+        data = appier.request_json()
+        gift_wrap = data["gift_wrap"]
+        order = budy.Order.get(key = key, rules = False)
+        order.gift_wrap = gift_wrap
+        order.save()
+        order = order.reload(map = True)
+        return order
+
     @appier.route("/api/orders/<str:key>/referral", "PUT", json = True)
     @appier.ensure(token = "user")
     def set_referral(self, key):

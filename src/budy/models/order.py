@@ -112,7 +112,8 @@ class Order(bundle.Bundle):
     gift_wrap = appier.field(
         type = bool,
         index = True,
-        initial = False
+        initial = False,
+        safe = True
     )
 
     tracking_number = appier.field(
