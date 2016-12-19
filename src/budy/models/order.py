@@ -794,10 +794,14 @@ class Order(bundle.Bundle):
                 int(self.payable * 100),
                 self.currency,
                 return_url,
-                token["id"]
+                token_id
             )
-            redirect = secure["redirect_url"]
+            redirect = secure.get("redirect_url", None)
 
+            redirect_valid = True if redirect else False
+            use_secure &= redirect_valid
+
+        if use_secure:
             redirect_url = appier.get_app().url_for(
                 "stripe.redirect",
                 redirect_url = redirect,
@@ -917,12 +921,12 @@ class Order(bundle.Bundle):
         cls = self.__class__
         api = cls._get_api_stripe()
         secure = payment_data.get("secure", False)
-        token = payment_data.get("token", None)
+        token_return = payment_data.get("token_return", None)
         if not secure: return
         api.create_charge_token(
             int(self.payable * 100),
             self.currency,
-            token,
+            token_return,
             description = self.reference,
             metadata = dict(
                 order = self.reference,
