@@ -757,6 +757,10 @@ class Order(bundle.Bundle):
     def _pay_stripe(self, payment_data):
         cls = self.__class__
         api = cls._get_api_stripe()
+
+        three_d_enable = appier.conf("BUDY_3D_SECURE", False, cast = bool)
+        three_d_ensure = appier.conf("BUDY_3D_ENSURE", False, cast = bool)
+
         type = payment_data["type"]
         number = payment_data["card_number"]
         exp_month = int(payment_data["expiration_month"])
@@ -786,8 +790,8 @@ class Order(bundle.Bundle):
         three_d_secure = card.get("three_d_secure", {})
         secure_supported = three_d_secure.get("supported", None)
 
-        use_secure = secure_supported in ("required", "optional")
-        use_secure &= appier.conf("BUDY_3D_SECURE", False, cast = bool)
+        use_secure = three_d_enable
+        use_secure &= secure_supported in ("required", "optional")
 
         if use_secure:
             secure = api.create_3d_secure(
@@ -821,6 +825,10 @@ class Order(bundle.Bundle):
 
             return redirect_url
         else:
+            if three_d_ensure: raise appier.SecurityError(
+                message = "No 3-D Secure enabled for provided card"
+            )
+
             api.create_charge(
                 int(self.payable * 100),
                 self.currency,

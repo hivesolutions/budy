@@ -45,6 +45,8 @@ value should be a valid float value for the total taxes (defaults to `None`)
 * `BUDY_3D_SECURE` (`bool`) - If the [3-D Secure](https://en.wikipedia.org/wiki/3-D_Secure) mode should be enabled for cards that
 require or support that mode of execution, note that "normal" card execution mode will be applied for cards that do not support
 this method (defaults to `False`)
+* `BUDY_3D_ENSURE` (`bool`) - If the [3-D Secure](https://en.wikipedia.org/wiki/3-D_Secure) mode is enabled, forces all the credit
+card operations to be performed using the 3-D Secure approach (defaults to `False`)
 
 ### Bots
 
