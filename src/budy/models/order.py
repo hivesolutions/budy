@@ -763,40 +763,95 @@ class Order(bundle.Bundle):
         exp_year = int(payment_data["expiration_year"])
         cvc = payment_data.get("security_code", None)
         name = payment_data.get("card_name", None)
+        return_url = payment_data.get("stripe_return_url", None)
         if number: number = number.replace(" ", "")
         if cvc: cvc = cvc.replace(" ", "")
         if name: name = name.strip()
-        api.create_charge(
-            int(self.payable * 100),
-            self.currency,
+
+        token = api.create_token(
             exp_month,
             exp_year,
             number,
             cvc = cvc,
             name = name,
-            description = self.reference,
             address_country = self.shipping_address.country,
             address_city = self.shipping_address.city,
             address_zip = self.shipping_address.postal_code,
             address_line1 = self.shipping_address.address,
-            address_line2 = self.shipping_address.address_extra,
-            metadata = dict(
-                order = self.reference,
-                email = self.email,
-                ip_address = self.ip_address,
-                ip_country = self.ip_country,
-                first_name = self.shipping_address.first_name,
-                last_name = self.shipping_address.last_name
+            address_line2 = self.shipping_address.address_extra
+        )
+
+        token_id = token["id"]
+        card = token.get("card", {})
+        three_d_secure = card.get("three_d_secure", {})
+        secure_supported = three_d_secure.get("supported", None)
+
+        use_secure = secure_supported in ("required", "optional")
+        use_secure &= appier.conf("BUDY_3D_SECURE", False, cast = bool)
+
+        if use_secure:
+            secure = api.create_3d_secure(
+                int(self.payable * 100),
+                self.currency,
+                return_url,
+                token["id"]
             )
-        )
-        self.payment_data = dict(
-            engine = "stripe",
-            type = type,
-            number = "*" * 12 + number[-4:],
-            exp_month = exp_month,
-            exp_year = exp_year
-        )
-        return True
+            redirect = secure["redirect_url"]
+
+            redirect_url = appier.get_app().url_for(
+                "stripe.redirect",
+                redirect_url = redirect,
+                absolute = True
+            )
+
+            self.payment_data = dict(
+                engine = "stripe",
+                type = type,
+                number = "*" * 12 + number[-4:],
+                exp_month = exp_month,
+                exp_year = exp_year,
+                token = token_id,
+                redirect = redirect,
+                secure = True
+            )
+
+            return redirect_url
+        else:
+            api.create_charge(
+                int(self.payable * 100),
+                self.currency,
+                exp_month,
+                exp_year,
+                number,
+                cvc = cvc,
+                name = name,
+                description = self.reference,
+                address_country = self.shipping_address.country,
+                address_city = self.shipping_address.city,
+                address_zip = self.shipping_address.postal_code,
+                address_line1 = self.shipping_address.address,
+                address_line2 = self.shipping_address.address_extra,
+                metadata = dict(
+                    order = self.reference,
+                    email = self.email,
+                    ip_address = self.ip_address,
+                    ip_country = self.ip_country,
+                    first_name = self.shipping_address.first_name,
+                    last_name = self.shipping_address.last_name
+                )
+            )
+
+            self.payment_data = dict(
+                engine = "stripe",
+                type = type,
+                number = "*" * 12 + number[-4:],
+                exp_month = exp_month,
+                exp_year = exp_year,
+                token = token_id,
+                secure = False
+            )
+
+            return True
 
     def _pay_easypay(self, payment_data, warning_d = 172800, cancel_d = 259200):
         cls = self.__class__
@@ -829,8 +884,8 @@ class Order(bundle.Bundle):
     def _pay_paypal(self, payment_data):
         cls = self.__class__
         api = cls._get_api_paypal()
-        return_url = payment_data.get("return_url", None)
-        cancel_url = payment_data.get("cancel_url", None)
+        return_url = payment_data.get("paypal_return_url", None)
+        cancel_url = payment_data.get("paypal_cancel_url", None)
         paypal_order = self.get_paypal(
             return_url = return_url,
             cancel_url = cancel_url
@@ -857,6 +912,28 @@ class Order(bundle.Bundle):
         if not has_function and not strict: return
         function = getattr(self, "_end_pay_" + method)
         return function(payment_data)
+
+    def _end_pay_stripe(self, payment_data):
+        cls = self.__class__
+        api = cls._get_api_stripe()
+        secure = payment_data.get("secure", False)
+        token = payment_data.get("token", None)
+        if not secure: return
+        api.create_charge_token(
+            int(self.payable * 100),
+            self.currency,
+            token,
+            description = self.reference,
+            metadata = dict(
+                order = self.reference,
+                email = self.email,
+                ip_address = self.ip_address,
+                ip_country = self.ip_country,
+                first_name = self.shipping_address.first_name,
+                last_name = self.shipping_address.last_name
+            )
+        )
+        return True
 
     def _end_pay_paypal(self, payment_data):
         cls = self.__class__
