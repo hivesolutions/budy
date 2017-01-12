@@ -5,7 +5,7 @@
 # Copyright (c) 2008-2017 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
-#
+# 
 # Hive Budy is free software: you can redistribute it and/or modify
 # it under the terms of the Apache License as published by the Apache
 # Foundation, either version 2.0 of the License, or (at your option) any
