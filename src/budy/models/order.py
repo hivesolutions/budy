@@ -767,7 +767,8 @@ class Order(bundle.Bundle):
         exp_year = int(payment_data["expiration_year"])
         cvc = payment_data.get("security_code", None)
         name = payment_data.get("card_name", None)
-        return_url = payment_data.get("stripe_return_url", None)
+        return_url = payment_data.get("return_url", None)
+        return_url = payment_data.get("stripe_return_url", return_url)
         if number: number = number.replace(" ", "")
         if cvc: cvc = cvc.replace(" ", "")
         if name: name = name.strip()
@@ -896,8 +897,10 @@ class Order(bundle.Bundle):
     def _pay_paypal(self, payment_data):
         cls = self.__class__
         api = cls._get_api_paypal()
-        return_url = payment_data.get("paypal_return_url", None)
-        cancel_url = payment_data.get("paypal_cancel_url", None)
+        return_url = payment_data.get("return_url", None)
+        return_url = payment_data.get("paypal_return_url", return_url)
+        cancel_url = payment_data.get("cancel_url", None)
+        cancel_url = payment_data.get("paypal_cancel_url", cancel_url)
         paypal_order = self.get_paypal(
             return_url = return_url,
             cancel_url = cancel_url
