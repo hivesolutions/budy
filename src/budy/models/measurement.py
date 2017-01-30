@@ -233,8 +233,9 @@ class Measurement(base.BudyBase):
         self.product.save()
         return measurement
 
-    def _fix_value_s(self):
-        self.value = int(self.value)
+    def _fix_value_s(self, default = -1):
+        try: self.value = int(self.value)
+        except ValueError: self.value = default
         self.save()
 
     def _fix_invalid_s(self):
