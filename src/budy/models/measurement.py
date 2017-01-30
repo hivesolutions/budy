@@ -157,6 +157,9 @@ class Measurement(base.BudyBase):
         try: value = int(value)
         except ValueError: value = -1
 
+        # tries to retrieve a measurement that is considered to be equivalent
+        # to the one described by the associated subproduct in case it does
+        # not exists creates a new instance that is going to be populate
         measurement = cls.get(
             product = _product.id,
             name = name,
