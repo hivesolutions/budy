@@ -268,8 +268,8 @@ class OmniBot(base.Bot):
 
         # tries to run the conversion process from the sub product and
         # associated merchandise value to the measurement in case it fails
-        # (meaning that no product was found) a new try is made after the
-        # proper associated (parent) product is created
+        # (meaning that no product was found) a new try will be made after
+        # the proper associated (parent) product is created
         measurement = budy.Measurement.from_omni(
             merchandise,
             sub_product = sub_product,
