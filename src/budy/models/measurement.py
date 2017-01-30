@@ -223,6 +223,7 @@ class Measurement(base.BudyBase):
             product = self.product.id,
             name = self.name,
             value = self.value,
+            value_s = self.value_s,
             quantity_hand = self.quantity_hand,
             price = self.price,
             currency = self.currency,
