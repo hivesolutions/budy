@@ -168,6 +168,7 @@ class Measurement(base.BudyBase):
 
         measurement.name = name
         measurement.value = value
+        measurement.value_s = value_s
         measurement.currency = currency
         measurement.product = _product
         measurement.meta = dict(
