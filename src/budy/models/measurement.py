@@ -148,14 +148,14 @@ class Measurement(base.BudyBase):
         # and the sub code part (to be used as the measure value)
         value = company_product_code.split("-", 1)[1]
 
+        # sets the string based value of the measurement as the raw
+        # value of company product code split (as expected)
+        value_s = value
+
         # tries converts the value into an integer value, falling back
         # to the default (minus one) value in case it's not possible
         try: value = int(value)
         except ValueError: value = -1
-
-        # sets the string based value of the measurement as the raw
-        # value of company product code split (as expected)
-        value_s = value
 
         measurement = cls.get(
             product = _product.id,
