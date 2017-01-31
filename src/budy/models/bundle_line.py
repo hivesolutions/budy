@@ -170,6 +170,11 @@ class BundleLine(base.BudyBase):
             attributes = self.attributes
         )
 
+    def ensure_size_s(self):
+        if not self.size: return
+        if not hasattr(self.merchandise, "value_s"): return
+        self.size_s = self.merchandise.value_s
+
     def ensure_valid(self):
         appier.verify(self.is_valid())
 

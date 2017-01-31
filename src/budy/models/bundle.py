@@ -254,6 +254,7 @@ class Bundle(base.BudyBase):
         for line in self.lines:
             is_same = line.product.id == product.id
             is_same &= line.size == size
+            is_same &= line.size_s == size_s
             is_same &= line.scale == scale
             is_same &= line.attributes == attributes
             if not is_same: continue
@@ -283,6 +284,7 @@ class Bundle(base.BudyBase):
             line.product,
             quantity = line.quantity,
             size = line.size,
+            size_s = line.size_s,
             scale = line.scale,
             attributes = line.attributes,
             increment = increment
