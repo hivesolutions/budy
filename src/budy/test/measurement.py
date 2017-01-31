@@ -129,5 +129,5 @@ class MeasurementTest(unittest.TestCase):
 
         self.assertEqual(measurement.product.id, product.id)
         self.assertEqual(measurement.name, "measurement")
-        self.assertEqual(measurement.value, 516032781025820288067766219337589345)
+        self.assertEqual(measurement.value, 7089056562649719393)
         self.assertEqual(measurement.value_s, "2")

@@ -195,11 +195,14 @@ class Measurement(base.BudyBase):
         return measurement
 
     @classmethod
-    def _hash(cls, value):
+    def _hash(cls, value, max_size = 8):
         counter = 0
         for index in range(len(value)):
             value_i = appier.legacy.ord(value[index])
             counter += value_i * pow(256, index)
+        if not max_size: return counter
+        modulus = pow(256, max_size)
+        counter = counter % modulus
         return counter
 
     def pre_delete(self):
