@@ -191,7 +191,7 @@ class OmniBot(base.Bot):
         object_ids = []
 
         for measurement in list(measurements):
-            object_id = measurement.meta["object_id"]
+            object_id = measurement.meta.get("object_id", 0)
             if object_id in object_ids:
                 measurements.remove(measurement)
                 measurement.delete()
