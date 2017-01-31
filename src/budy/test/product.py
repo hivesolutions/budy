@@ -140,6 +140,7 @@ class ProductTest(unittest.TestCase):
         measurement = budy.Measurement(
             name = "size",
             value = 12,
+            value_s = "12",
             price = None,
             quantity_hand = 2.0,
             product = product
@@ -158,6 +159,7 @@ class ProductTest(unittest.TestCase):
         self.assertEqual(result.id, 1)
         self.assertEqual(result.name, "size")
         self.assertEqual(result.value, 12)
+        self.assertEqual(result.value_s, "12")
         self.assertEqual(result.price, None)
         self.assertEqual(result.quantity_hand, 2.0)
         self.assertEqual(result.product.id, 1)
