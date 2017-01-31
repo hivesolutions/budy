@@ -150,7 +150,9 @@ class Measurement(base.BudyBase):
         value = company_product_code.split("-", 1)[1]
 
         # sets the string based value of the measurement as the raw
-        # value of company product code split (as expected)
+        # value of company product code split (as expected) note that
+        # the strip flag controls if extra zeroes to the left should
+        # be removed from the value (avoids extra values)
         value_s = value.lstrip("0") if strip else value
 
         # tries converts the value into an integer value, falling back
