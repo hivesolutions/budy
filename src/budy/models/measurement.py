@@ -122,6 +122,7 @@ class Measurement(base.BudyBase):
         inventory_line = None,
         name = "size",
         currency = "EUR",
+        strip = True,
         force = False
     ):
         from . import product
@@ -150,7 +151,7 @@ class Measurement(base.BudyBase):
 
         # sets the string based value of the measurement as the raw
         # value of company product code split (as expected)
-        value_s = value
+        value_s = value.lstrip("0") if strip else value
 
         # tries converts the value into an integer value, falling back
         # to the absolute hash value of it in case there's an error
