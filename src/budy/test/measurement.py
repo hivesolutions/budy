@@ -105,14 +105,29 @@ class MeasurementTest(unittest.TestCase):
 
         self.assertEqual(measurement.product.id, product.id)
         self.assertEqual(measurement.name, "measurement")
-        self.assertEqual(measurement.value, 1)
+        self.assertEqual(measurement.value, 97)
         self.assertEqual(measurement.value_s, "2")
 
-        for _index in range(10):
-            measurement.value = "a"
-            measurement._fix_value_s()
+        measurement.value = "b"
+        measurement._fix_value_s()
 
         self.assertEqual(measurement.product.id, product.id)
         self.assertEqual(measurement.name, "measurement")
-        self.assertEqual(measurement.value, 11)
+        self.assertEqual(measurement.value, 98)
+        self.assertEqual(measurement.value_s, "2")
+
+        measurement.value = "abc"
+        measurement._fix_value_s()
+
+        self.assertEqual(measurement.product.id, product.id)
+        self.assertEqual(measurement.name, "measurement")
+        self.assertEqual(measurement.value, 6513249)
+        self.assertEqual(measurement.value_s, "2")
+
+        measurement.value = "abcabcabcabcabc"
+        measurement._fix_value_s()
+
+        self.assertEqual(measurement.product.id, product.id)
+        self.assertEqual(measurement.name, "measurement")
+        self.assertEqual(measurement.value, 516032781025820288067766219337589345)
         self.assertEqual(measurement.value_s, "2")

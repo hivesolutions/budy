@@ -126,6 +126,10 @@ class Measurement(base.BudyBase):
         force = False
     ):
         from . import product
+
+        # tries to retrieve the various elements that are going to be used
+        # for the proper construction of the measurement from an omni
+        # sub product entity (as expected)
         sub_product = sub_product or merchandise
         parent = sub_product["product"]
         object_id = sub_product["object_id"]
@@ -158,7 +162,7 @@ class Measurement(base.BudyBase):
         # tries converts the value into an integer value, falling back
         # to the absolute hash value of it in case there's an error
         try: value = int(value)
-        except ValueError: value = cls._increment("measurement:value")
+        except ValueError: value = cls._hash(value)
 
         # tries to retrieve a measurement that is considered to be equivalent
         # to the one described by the associated subproduct in case it does
@@ -189,6 +193,14 @@ class Measurement(base.BudyBase):
             base_price = base_price or 0.0
             measurement.taxes = base_price - merchandise.get("price", 0.0)
         return measurement
+
+    @classmethod
+    def _hash(cls, value):
+        counter = 0
+        for index in range(len(value)):
+            value_i = appier.legacy.ord(value[index])
+            counter += value_i * pow(256, index)
+        return counter
 
     def pre_delete(self):
         base.BudyBase.pre_delete(self)
@@ -249,7 +261,7 @@ class Measurement(base.BudyBase):
     def _fix_value_s(self):
         cls = self.__class__
         try: self.value = int(self.value)
-        except ValueError: self.value = cls._increment("measurement:value")
+        except ValueError: self.value = self._hash(self.value)
         self.save()
 
     def _fix_invalid_s(self):
