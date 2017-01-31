@@ -238,6 +238,7 @@ class Bundle(base.BudyBase):
         product,
         quantity = 1.0,
         size = None,
+        size_s = None,
         scale = None,
         attributes = None,
         increment = True
@@ -269,6 +270,7 @@ class Bundle(base.BudyBase):
             product = product,
             quantity = quantity,
             size = size,
+            size_s = size_s,
             scale = scale,
             attributes = attributes
         )

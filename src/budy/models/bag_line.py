@@ -67,6 +67,7 @@ class BagLine(bundle_line.BundleLine):
             quantity = self.quantity,
             total = self.total,
             size = self.size,
+            size_s = self.size_s,
             scale = self.scale,
             attributes = self.attributes,
             product = self.product,

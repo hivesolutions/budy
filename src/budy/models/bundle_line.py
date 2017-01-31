@@ -77,6 +77,8 @@ class BundleLine(base.BudyBase):
         type = int
     )
 
+    size_s = appier.field()
+
     scale = appier.field(
         type = int
     )
