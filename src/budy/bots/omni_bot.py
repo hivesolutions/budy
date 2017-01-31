@@ -188,15 +188,21 @@ class OmniBot(base.Bot):
             reverse = True
         )
 
+        # creates the list that is going to be used to detect possible
+        # duplicated sub product object ids
         object_ids = []
 
+        # iterates over the complete set of measurements, trying to
+        # discover any possible duplicated measurement in case it exists
+        # removes it immediately from the data source, to avoid any
+        # possible duplicated value (would create issue in product)
         for measurement in list(measurements):
             object_id = measurement.meta.get("object_id", 0)
             if object_id in object_ids:
                 measurements.remove(measurement)
                 measurement.delete()
             else:
-                object_ids.append(measurement)
+                object_ids.append(object_id)
 
     def sync_product_safe(self, merchandise, *args, **kwargs):
         try: self.sync_product(merchandise, *args, **kwargs)
