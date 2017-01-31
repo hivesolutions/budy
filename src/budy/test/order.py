@@ -491,6 +491,7 @@ class OrderTest(unittest.TestCase):
         measurement = budy.Measurement(
             name = "size",
             value = 12,
+            value_s = "12",
             price = 12.0,
             quantity_hand = None,
             product = product
@@ -520,6 +521,11 @@ class OrderTest(unittest.TestCase):
         order_line.product = product
 
         self.assertEqual(order_line.is_valid(), True)
+        self.assertEqual(order_line.size_s, None)
+
+        order_line.ensure_size_s()
+
+        self.assertEqual(order_line.size_s, "12")
 
         order_line.save()
         order.add_line_s(order_line)
