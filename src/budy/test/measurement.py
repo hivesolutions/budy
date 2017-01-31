@@ -77,3 +77,42 @@ class MeasurementTest(unittest.TestCase):
         self.assertEqual(measurement.name, "measurement")
         self.assertEqual(measurement.value, 1)
         self.assertEqual(measurement.value_s, "1")
+
+    def test__fix_value_s(self):
+        product = budy.Product(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0,
+            quantity_hand = None
+        )
+        product.save()
+
+        measurement = budy.Measurement(
+            product = product,
+            name = "measurement",
+            value = 2,
+            value_s = "2"
+        )
+        measurement.save()
+
+        self.assertEqual(measurement.product.id, product.id)
+        self.assertEqual(measurement.name, "measurement")
+        self.assertEqual(measurement.value, 2)
+        self.assertEqual(measurement.value_s, "2")
+
+        measurement.value = "a"
+        measurement._fix_value_s()
+
+        self.assertEqual(measurement.product.id, product.id)
+        self.assertEqual(measurement.name, "measurement")
+        self.assertEqual(measurement.value, 1)
+        self.assertEqual(measurement.value_s, "2")
+
+        for _index in range(10):
+            measurement.value = "a"
+            measurement._fix_value_s()
+
+        self.assertEqual(measurement.product.id, product.id)
+        self.assertEqual(measurement.name, "measurement")
+        self.assertEqual(measurement.value, 11)
+        self.assertEqual(measurement.value_s, "2")
