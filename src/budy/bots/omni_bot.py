@@ -61,6 +61,7 @@ class OmniBot(base.Bot):
         if not self.enabled: return
         self.sync_products()
         self.fix_products()
+        self.gc_products()
 
     def sync_products(self):
         self.owner.logger.info("Starting Omni sync ...")
@@ -74,6 +75,10 @@ class OmniBot(base.Bot):
         self.fix_products_db()
         self.fix_measurements_db()
         self.owner.logger.info("Ended Omni fix")
+
+    def gc_products(self):
+        self.owner.logger.info("Starting Omni gc ...")
+        self.gc_measurements_db()
 
     def sync_products_store(self):
         api = self.get_api()
@@ -170,6 +175,28 @@ class OmniBot(base.Bot):
         )
 
         for measurement in measurements: measurement.fix_s()
+
+    def gc_measurements_db(self):
+        measurements = budy.Measurement.find()
+
+        self.owner.logger.info(
+            "Running GC for %d measurements in database ..." % len(measurements)
+        )
+
+        measurements.sort(
+            key = lambda v: v.meta.get("modify_date", 0),
+            reverse = True
+        )
+
+        object_ids = []
+
+        for measurement in list(measurements):
+            object_id = measurement.meta["object_id"]
+            if object_id in object_ids:
+                measurements.remove(measurement)
+                measurement.delete()
+            else:
+                object_ids.append(measurement)
 
     def sync_product_safe(self, merchandise, *args, **kwargs):
         try: self.sync_product(merchandise, *args, **kwargs)

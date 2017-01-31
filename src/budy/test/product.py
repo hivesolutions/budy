@@ -163,3 +163,9 @@ class ProductTest(unittest.TestCase):
         self.assertEqual(result.product.id, 1)
         self.assertEqual(result.product.short_description, "product")
         self.assertEqual(result.product.quantity_hand, 2.0)
+
+        measurement.delete()
+
+        product = product.reload()
+
+        self.assertEqual(len(product.measurements), 0)

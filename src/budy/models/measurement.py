@@ -188,6 +188,13 @@ class Measurement(base.BudyBase):
             measurement.taxes = base_price - merchandise.get("price", 0.0)
         return measurement
 
+    def pre_delete(self):
+        base.BudyBase.pre_delete(self)
+        if not self.product: return
+        if not self in self.product.measurements: return
+        self.product.measurements.remove(self)
+        self.product.save()
+
     def get_price(
         self,
         currency = None,

@@ -68,7 +68,7 @@ class AccountTest(unittest.TestCase):
         self.assertEqual(account.get_bag().__class__, budy.Bag)
         self.assertEqual(account.get_bag().total, 0.0)
 
-        account.reload()
+        account = account.reload()
 
         self.assertEqual(account.username, "username")
         self.assertEqual(account.get_bag().__class__, budy.Bag)
