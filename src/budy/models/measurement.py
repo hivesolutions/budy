@@ -153,9 +153,9 @@ class Measurement(base.BudyBase):
         value_s = value
 
         # tries converts the value into an integer value, falling back
-        # to the default (minus one) value in case it's not possible
+        # to the absolute hash value of it in case there's an error
         try: value = int(value)
-        except ValueError: value = -1
+        except ValueError: value = cls._increment("measurement:value")
 
         # tries to retrieve a measurement that is considered to be equivalent
         # to the one described by the associated subproduct in case it does
@@ -164,7 +164,6 @@ class Measurement(base.BudyBase):
             product = _product.id,
             name = name,
             value = value,
-            value_s = value_s,
             raise_e = False
         )
         if not measurement: measurement = cls()
@@ -244,9 +243,10 @@ class Measurement(base.BudyBase):
         self.product.save()
         return measurement
 
-    def _fix_value_s(self, default = -1):
+    def _fix_value_s(self):
+        cls = self.__class__
         try: self.value = int(self.value)
-        except ValueError: self.value = default
+        except ValueError: self.value = cls._increment("measurement:value")
         self.save()
 
     def _fix_invalid_s(self):
