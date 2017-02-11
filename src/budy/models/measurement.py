@@ -208,6 +208,7 @@ class Measurement(base.BudyBase):
     def pre_delete(self):
         base.BudyBase.pre_delete(self)
         if not self.product: return
+        if not hasattr(self.product, "measurements") : return
         if not self in self.product.measurements: return
         self.product.measurements.remove(self)
         self.product.save()
