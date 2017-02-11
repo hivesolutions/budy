@@ -54,3 +54,9 @@ class EasypayApiController(root.RootApiController):
         result = api.notify_mb(cin, username, doc)
         self.content_type("application/xml")
         return result
+
+    @appier.route("/api/easypay/diagnostics", "GET")
+    @appier.ensure("admin")
+    def easypay(self):
+        api = budy.Order._get_api_easypay()
+        return api.diagnostics()
