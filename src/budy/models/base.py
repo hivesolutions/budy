@@ -43,17 +43,17 @@ import appier_extras
 class BudyBase(appier_extras.admin.Base):
 
     slug = appier.field(
-        index = True,
+        index = "hashed",
         safe = True
     )
 
     slug_id = appier.field(
-        index = True,
+        index = "hashed",
         safe = True
     )
 
     tokens = appier.field(
-        index = True,
+        index = "hashed",
         safe = True
     )
 

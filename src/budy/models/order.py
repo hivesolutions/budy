@@ -80,19 +80,19 @@ class Order(bundle.Bundle):
     )
 
     reference = appier.field(
-        index = True,
+        index = "hashed",
         default = True,
         safe = True
     )
 
     reference_f = appier.field(
-        index = True,
+        index = "hashed",
         safe = True
     )
 
     paid = appier.field(
         type = bool,
-        index = True,
+        index = "hashed",
         initial = False,
         safe = True
     )
@@ -105,23 +105,23 @@ class Order(bundle.Bundle):
     )
 
     email = appier.field(
-        index = True,
+        index = "hashed",
         safe = True
     )
 
     gift_wrap = appier.field(
         type = bool,
-        index = True,
+        index = "hashed",
         initial = False,
         safe = True
     )
 
     tracking_number = appier.field(
-        index = True
+        index = "hashed",
     )
 
     tracking_url = appier.field(
-        index = True,
+        index = "hashed",
         meta = "url"
     )
 
@@ -135,21 +135,21 @@ class Order(bundle.Bundle):
 
     notifications = appier.field(
         type = list,
-        index = True,
+        index = "hashed",
         initial = [],
         safe = True
     )
 
     discount_voucher = appier.field(
         type = commons.Decimal,
-        index = True,
+        index = "hashed",
         initial = commons.Decimal(0.0),
         safe = True
     )
 
     discount_used = appier.field(
         type = commons.Decimal,
-        index = True,
+        index = "hashed",
         initial = commons.Decimal(0.0),
         safe = True
     )

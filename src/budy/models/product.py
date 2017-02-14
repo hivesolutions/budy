@@ -55,16 +55,16 @@ class Product(base.BudyBase):
     }
 
     short_description = appier.field(
-        index = True,
+        index = "hashed",
         default = True
     )
 
     product_id = appier.field(
-        index = True
+        index = "hashed"
     )
 
     gender = appier.field(
-        index = True,
+        index = "hashed",
         meta = "enum",
         enum = GENDER_S
     )
@@ -92,12 +92,12 @@ class Product(base.BudyBase):
     )
 
     currency = appier.field(
-        index = True
+        index = "hashed"
     )
 
     order = appier.field(
         type = int,
-        index = True
+        index = "hashed"
     )
 
     tag = appier.field()
@@ -109,32 +109,32 @@ class Product(base.BudyBase):
     )
 
     price_url = appier.field(
-        index = True,
+        index = "hashed",
         meta = "url"
     )
 
     farfetch_url = appier.field(
-        index = True,
+        index = "hashed",
         meta = "url"
     )
 
     farfetch_male_url = appier.field(
-        index = True,
+        index = "hashed",
         meta = "url"
     )
 
     farfetch_female_url = appier.field(
-        index = True,
+        index = "hashed",
         meta = "url"
     )
 
     image_url = appier.field(
-        index = True,
+        index = "hashed",
         meta = "url"
     )
 
     thumbnail_url = appier.field(
-        index = True,
+        index = "hashed",
         meta = "url"
     )
 
@@ -143,19 +143,19 @@ class Product(base.BudyBase):
     )
 
     brand_s = appier.field(
-        index = True
+        index = "hashed"
     )
 
     color_s = appier.field(
-        index = True
+        index = "hashed"
     )
 
     category_s = appier.field(
-        index = True
+        index = "hashed"
     )
 
     collection_s = appier.field(
-        index = True
+        index = "hashed"
     )
 
     colors = appier.field(

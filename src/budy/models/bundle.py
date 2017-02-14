@@ -47,17 +47,17 @@ from . import bundle_line
 class Bundle(base.BudyBase):
 
     key = appier.field(
-        index = True,
+        index = "hashed",
         safe = True,
         immutable = True
     )
 
     currency = appier.field(
-        index = True
+        index = "hashed"
     )
 
     country = appier.field(
-        index = True
+        index = "hashed"
     )
 
     quantity = appier.field(
@@ -117,12 +117,12 @@ class Bundle(base.BudyBase):
     )
 
     ip_address = appier.field(
-        index = True,
+        index = "hashed",
         safe = True
     )
 
     ip_country = appier.field(
-        index = True,
+        index = "hashed",
         safe = True,
         meta = "country"
     )
