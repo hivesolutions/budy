@@ -135,7 +135,6 @@ class Order(bundle.Bundle):
 
     notifications = appier.field(
         type = list,
-        index = "hashed",
         initial = [],
         safe = True
     )
