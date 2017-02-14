@@ -38,6 +38,7 @@ __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
 import time
+import uuid
 import commons
 
 import appier
@@ -258,6 +259,7 @@ class Order(bundle.Bundle):
             ("Product Gender", "gender", str, "Male"),
             ("Product Price", "price", float, 10.0),
             ("Quantity", "quantity", float, 1.0),
+            ("Set Account", "set_account", bool, True)
         ),
         devel = True
     )
@@ -266,7 +268,8 @@ class Order(bundle.Bundle):
         short_description = "product",
         gender = "Male",
         price = 10.0,
-        quantity = 1.0
+        quantity = 1.0,
+        set_account = True
     ):
         _product = product.Product(
             short_description = short_description,
@@ -282,6 +285,23 @@ class Order(bundle.Bundle):
         _order_line.product = _product
         _order_line.save()
         order.add_line_s(_order_line)
+
+        if not set_account: return
+
+        from . import account
+
+        username = str(uuid.uuid4())
+        email = "%s@account.com" % username
+
+        _account = account.BudyAccount(
+            username = username,
+            email = email,
+            password = "password",
+            password_confirm = "password"
+        )
+        _account.save()
+
+        order.set_account_s(_account)
 
     @classmethod
     @appier.operation(
