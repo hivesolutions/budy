@@ -44,6 +44,7 @@ import appier
 import appier_extras
 
 from . import bundle
+from . import product
 from . import country
 from . import currency
 from . import order_line
@@ -207,7 +208,7 @@ class Order(bundle.Bundle):
 
     @classmethod
     def list_names(cls):
-        return ["reference", "total", "currency", "account", "email", "status"]
+        return ["reference", "total", "currency", "email", "status"]
 
     @classmethod
     def line_cls(cls):
@@ -248,6 +249,50 @@ class Order(bundle.Bundle):
             end = end,
             absolute = absolute
         )
+
+    @classmethod
+    @appier.operation(
+        name = "Generate Dummy",
+        parameters = (
+            ("Product Description", "short_description", str, "product"),
+            ("Product Gender", "gender", str, "Male"),
+            ("Product Price", "price", float, 10.0),
+            ("Quantity", "quantity", float, 1.0),
+        ),
+        devel = True
+    )
+    def generate_dummy_s(
+        cls,
+        short_description = "product",
+        gender = "Male",
+        price = 10.0,
+        quantity = 1.0
+    ):
+        _product = product.Product(
+            short_description = short_description,
+            gender = gender,
+            price = price
+        )
+        _product.save()
+
+        order = cls()
+        order.save()
+
+        _order_line = order_line.OrderLine(quantity = quantity)
+        _order_line.product = _product
+        _order_line.save()
+        order.add_line_s(_order_line)
+
+    @classmethod
+    @appier.operation(
+        name = "Multiple Dummy",
+        parameters = (
+            ("Quantity", "quantity", int, 10),
+        ),
+        devel = True
+    )
+    def multiple_dummy_s(cls, quantity):
+        for _index in range(quantity): cls.generate_dummy_s()
 
     @classmethod
     def _pmethods(cls):
