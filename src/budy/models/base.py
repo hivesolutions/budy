@@ -68,6 +68,12 @@ class BudyBase(appier_extras.admin.Base):
         return cls.find(*args, **kwargs)
 
     @classmethod
+    def find_se(cls, *args, **kwargs):
+        find_s = kwargs.get("find_s", None)
+        if find_s: kwargs["find_s"] = cls._simplify(find_s)
+        return cls.find_e(*args, **kwargs)
+
+    @classmethod
     def _simplify(cls, value):
         return appier.App._simplify(value)
 

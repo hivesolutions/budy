@@ -48,7 +48,7 @@ class ProductApiController(root.RootApiController):
     @appier.route("/api/products", "GET", json = True)
     def list(self):
         object = appier.get_object(alias = True, find = True)
-        products = budy.Product.find(
+        products = budy.Product.find_e(
             find_t = "right",
             eager = ("images", "brand"),
             map = True,
@@ -58,7 +58,7 @@ class ProductApiController(root.RootApiController):
 
     @appier.route("/api/products/<int:id>", "GET", json = True)
     def show(self, id):
-        product = budy.Product.get(
+        product = budy.Product.get_e(
             id = id,
             eager = ("images", "brand", "measurements"),
             map = True
@@ -68,7 +68,7 @@ class ProductApiController(root.RootApiController):
     @appier.route("/api/products/search", "GET", json = True)
     def search(self):
         object = appier.get_object(alias = True, find = True)
-        products = budy.Product.find_s(
+        products = budy.Product.find_se(
             find_t = "both",
             find_n = "tokens",
             eager = ("images", "brand"),
@@ -81,15 +81,19 @@ class ProductApiController(root.RootApiController):
     def related(self, id):
         limit = self.field("limit", 10, cast = int)
         available = self.field("available", True, cast = bool)
-        product = budy.Product.get(id = id)
-        products = product.related(limit = limit, available = available)
+        product = budy.Product.get_e(id = id)
+        products = product.related(
+            limit = limit,
+            available = available,
+            enabled = True
+        )
         return products
 
     @appier.route("/api/products/<int:id>/share", "GET", json = True)
     def share(self, id):
         email = self.field("email", mandatory = True, not_empty = True)
         sender = self.field("sender", mandatory = True, not_empty = True)
-        product = budy.Product.get(id = id)
+        product = budy.Product.get_e(id = id)
         share = product.share(email = email, sender = sender)
         return share
 
@@ -101,7 +105,7 @@ class ProductApiController(root.RootApiController):
             find = True,
             limit = 0
         )
-        products = budy.Product.find(
+        products = budy.Product.find_e(
             eager = (
                 "colors",
                 "categories",

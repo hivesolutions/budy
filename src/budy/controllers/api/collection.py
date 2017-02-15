@@ -48,7 +48,7 @@ class CollectionApiController(root.RootApiController):
     @appier.route("/api/collections", "GET", json = True)
     def list(self):
         object = appier.get_object(alias = True, find = True)
-        collections = budy.Collection.find(
+        collections = budy.Collection.find_e(
             eager = ("images",),
             map = True,
             **object
@@ -57,10 +57,10 @@ class CollectionApiController(root.RootApiController):
 
     @appier.route("/api/collections/<int:id>", "GET", json = True)
     def show(self, id):
-        collection = budy.Collection.get(id = id, map = True)
+        collection = budy.Collection.get_e(id = id, map = True)
         return collection
 
     @appier.route("/api/collections/slug/<str:slug>", "GET", json = True)
     def slug(self, slug):
-        collection = budy.Collection.get(slug = slug, map = True)
+        collection = budy.Collection.get_e(slug = slug, map = True)
         return collection

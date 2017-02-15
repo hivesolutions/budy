@@ -502,7 +502,7 @@ class Product(base.BudyBase):
         self.category_s = self.categories[0].name if self.categories else None
         self.collection_s = self.collections[0].name if self.collections else None
 
-    def related(self, limit = 6, available = True):
+    def related(self, limit = 6, available = True, enabled = True):
         cls = self.__class__
         kwargs = dict()
         if available: kwargs["quantity_hand"] = {"$gt" : 0}
@@ -516,7 +516,8 @@ class Product(base.BudyBase):
         delta = skip + limit - count
         if delta > 0: skip = count - skip - delta
         if skip < 0: skip = 0
-        products = cls.find(
+        find = cls.find_e if enabled else cls.find
+        products = find(
             eager = ("images",),
             skip = skip,
             limit = limit,
