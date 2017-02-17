@@ -106,6 +106,13 @@ class Order(bundle.Bundle):
         meta = "datetime"
     )
 
+    delivery_date = appier.field(
+        type = int,
+        index = True,
+        safe = True,
+        meta = "datetime"
+    )
+
     email = appier.field(
         index = "hashed",
         safe = True
