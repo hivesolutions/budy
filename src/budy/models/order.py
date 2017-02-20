@@ -65,7 +65,7 @@ class Order(bundle.Bundle):
     STATUS_C = dict(
         created = "grey",
         waiting_payment = "orange",
-        paid = "blue",
+        paid = "purple",
         sent = "blue",
         received = "green",
         returned = "red",
@@ -638,6 +638,13 @@ class Order(bundle.Bundle):
         appier.verify(self.paid == True)
         appier.verify(not self.date == None)
 
+    def verify_received(self):
+        self.verify_base()
+        self.verify_shippable()
+        appier.verify(self.status == "sent")
+        appier.verify(self.paid == True)
+        appier.verify(not self.date == None)
+
     def verify_canceled(self):
         self.verify_base()
         appier.verify(not self.status in ("created", "canceled", "received"))
@@ -711,6 +718,12 @@ class Order(bundle.Bundle):
     def mark_sent_s(self):
         self.verify_sent()
         self.status = "sent"
+        self.save()
+
+    @appier.operation(name = "Mark Received")
+    def mark_received_s(self):
+        self.verify_received()
+        self.status = "received"
         self.save()
 
     @appier.operation(name = "Mark Canceled")
