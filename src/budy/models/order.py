@@ -395,7 +395,7 @@ class Order(bundle.Bundle):
         return bundle.Bundle.add_line_s(self, line)
 
     def build_discount(self):
-        join = appier.conf("BUDY_DISCOUNT_JOIN", True, cast = bool)
+        join = appier.conf("BUDY_JOIN_DISCOUNT", True, cast = bool)
         base_discount = bundle.Bundle.build_discount(self)
         if join: return base_discount + self.discount_voucher
         if self.discount_voucher > base_discount: return self.discount_voucher
@@ -409,7 +409,7 @@ class Order(bundle.Bundle):
         self.save()
 
     def add_voucher_s(self, voucher):
-        join = appier.conf("BUDY_DISCOUNT_JOIN", True, cast = bool)
+        join = appier.conf("BUDY_JOIN_DISCOUNT", True, cast = bool)
         appier.verify(voucher.is_valid(currency = self.currency))
         discount = voucher.discount(self.discountable, currency = self.currency)
         base_discount = bundle.Bundle.build_discount(self)

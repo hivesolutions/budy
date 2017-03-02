@@ -30,7 +30,7 @@ currency to be used, use this value only for situations where binding a currency
 * `BUDY_DISCOUNT` (`str`) - String with the definition of the lambda function to be called for calculus of the
 discount value for a bundle (bag or order) the arguments provided are the sub total, taxes, quantity and bundle and the return
 value should be a valid float value for the discount (defaults to `None`)
-* `BUDY_JOIN_DICOUNT` (`bool`) - If both the voucher and the base discount values should be applied at the same time for
+* `BUDY_JOIN_DISCOUNT` (`bool`) - If both the voucher and the base discount values should be applied at the same time for
 an order and/or bag or if instead only the largest of both should be used (defaults to `True`)
 * `BUDY_JOIN_TAXES` (`bool`) - If both the order and/or bag line taxes and the complete order and/or bag values should be applied at the
 same time or if instead only the largest of both should be used (defaults to `True`)
