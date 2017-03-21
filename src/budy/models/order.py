@@ -879,11 +879,11 @@ class Order(bundle.Bundle):
         use_secure &= secure_supported in ("required", "optional")
 
         if use_secure:
-            secure = api.create_3d_secure(
+            secure = api.create_source(
                 int(self.payable * 100),
                 self.currency,
                 return_url,
-                token_id
+                card = token_id
             )
             redirect = secure.get("redirect_url", None)
 
