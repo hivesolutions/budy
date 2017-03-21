@@ -43,6 +43,7 @@ value should be a valid float value for the total taxes (defaults to `None`)
 
 ### Payments
 
+* `BUDY_STRIPE_LEGACY` (`bool`) - If the legacy mode (old Stripe API) should be used (defaults to `False`)
 * `BUDY_3D_SECURE` (`bool`) - If the [3-D Secure](https://en.wikipedia.org/wiki/3-D_Secure) mode should be enabled for cards that
 require or support that mode of execution, note that "normal" card execution mode will be applied for cards that do not support
 this method (defaults to `False`)

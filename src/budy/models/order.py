@@ -842,9 +842,9 @@ class Order(bundle.Bundle):
         cls = self.__class__
         api = cls._get_api_stripe()
 
+        stripe_legacy = appier.conf("BUDY_STRIPE_LEGACY", False, cast = bool)
         three_d_enable = appier.conf("BUDY_3D_SECURE", False, cast = bool)
         three_d_ensure = appier.conf("BUDY_3D_ENSURE", False, cast = bool)
-        stripe_legacy = appier.conf("USTORE_STRIPE_LEGACY", False, cast = bool)
 
         type = payment_data["type"]
         number = payment_data["card_number"]
