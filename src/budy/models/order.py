@@ -904,11 +904,15 @@ class Order(bundle.Bundle):
             use_secure &= redirect_valid
 
         if use_secure:
-            redirect_url = appier.get_app().url_for(
-                "stripe.redirect",
-                redirect_url = redirect,
-                absolute = True
-            )
+            is_legacy = False #@todo use a configuration variable for this
+            if is_legacy:
+                redirect_url = appier.get_app().url_for(
+                    "stripe.redirect",
+                    redirect_url = redirect,
+                    absolute = True
+                )
+            else:
+                redirect_url = redirect
 
             self.payment_data = dict(
                 engine = "stripe",
