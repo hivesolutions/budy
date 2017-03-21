@@ -879,13 +879,26 @@ class Order(bundle.Bundle):
         use_secure &= secure_supported in ("required", "optional")
 
         if use_secure:
-            secure = api.create_source(
+            source = api.create_card_source(
+                exp_month,
+                exp_year,
+                number,
+                cvc = cvc,
+                name = name,
+                address_country = self.shipping_address.country,
+                address_city = self.shipping_address.city,
+                address_zip = self.shipping_address.postal_code,
+                address_line1 = self.shipping_address.address,
+                address_line2 = self.shipping_address.address_extra
+            )
+            source = api.create_3d_secure_source(
                 int(self.payable * 100),
                 self.currency,
                 return_url,
-                card = token_id
+                card = source["id"]
             )
-            redirect = secure.get("redirect_url", None)
+            redirect = source.get("redirect", {})
+            redirect = redirect.get("url", None)
 
             redirect_valid = True if redirect else False
             use_secure &= redirect_valid
