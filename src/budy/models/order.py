@@ -844,6 +844,7 @@ class Order(bundle.Bundle):
 
         three_d_enable = appier.conf("BUDY_3D_SECURE", False, cast = bool)
         three_d_ensure = appier.conf("BUDY_3D_ENSURE", False, cast = bool)
+        stripe_legacy = appier.conf("USTORE_STRIPE_LEGACY", False, cast = bool)
 
         type = payment_data["type"]
         number = payment_data["card_number"]
@@ -904,8 +905,7 @@ class Order(bundle.Bundle):
             use_secure &= redirect_valid
 
         if use_secure:
-            is_legacy = False #@todo use a configuration variable for this
-            if is_legacy:
+            if stripe_legacy:
                 redirect_url = appier.get_app().url_for(
                     "stripe.redirect",
                     redirect_url = redirect,
