@@ -58,6 +58,10 @@ class BudyBase(appier_extras.admin.Base):
     )
 
     @classmethod
+    def is_abstract(cls):
+        return True
+
+    @classmethod
     def token_names(cls):
         return []
 
