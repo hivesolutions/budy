@@ -476,7 +476,7 @@ class Product(base.BudyBase):
         else: shipping_cost = bundle.Bundle.eval_shipping(price, 0.0, 1.0, None)
         model["shipping_cost"] = shipping_cost
         model["new_in"] = "new_in" in labels
-        model["new_in_s"] = "new_in" if "new_in" in labels else ""
+        model["new_in_s"] = "true" if "new_in" in labels else "false"
 
     def pre_validate(self):
         base.BudyBase.pre_validate(self)
