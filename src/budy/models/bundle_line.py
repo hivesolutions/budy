@@ -107,6 +107,10 @@ class BundleLine(base.BudyBase):
     def order_name(self):
         return ["id", -1]
 
+    @classmethod
+    def is_abstract(cls):
+        return True
+
     def pre_save(self):
         base.BudyBase.pre_save(self)
         self.calculate()

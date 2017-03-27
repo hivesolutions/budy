@@ -77,6 +77,10 @@ class Group(base.BudyBase):
         return ["id", "name"]
 
     @classmethod
+    def is_abstract(cls):
+        return True
+
+    @classmethod
     def ensure_s(cls, name):
         group = cls.get(name = name, raise_e = False)
         if group: return group

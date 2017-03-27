@@ -170,6 +170,10 @@ class Bundle(base.BudyBase):
         return ["id", -1]
 
     @classmethod
+    def is_abstract(cls):
+        return True
+
+    @classmethod
     def line_cls(cls):
         return bundle_line.BundleLine
 
