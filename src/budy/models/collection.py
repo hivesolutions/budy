@@ -37,7 +37,12 @@ __copyright__ = "Copyright (c) 2008-2017 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import appier
+
 from . import group
 
 class Collection(group.Group):
-    pass
+
+    new_in = appier.field(
+        type = bool
+    )

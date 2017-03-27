@@ -142,6 +142,10 @@ class Product(base.BudyBase):
         type = list
     )
 
+    labels = appier.field(
+        type = list
+    )
+
     brand_s = appier.field(
         index = "hashed"
     )
@@ -467,14 +471,18 @@ class Product(base.BudyBase):
     @classmethod
     def _build(cls, model, map):
         price = model.get("price", None)
+        labels = model.get("labels", ())
         if price == None: shipping_cost = None
         else: shipping_cost = bundle.Bundle.eval_shipping(price, 0.0, 1.0, None)
         model["shipping_cost"] = shipping_cost
+        model["new_in"] = "new_in" in labels
+        model["new_in_s"] = "new_in" if "new_in" in labels else ""
 
     def pre_validate(self):
         base.BudyBase.pre_validate(self)
         self.build_images()
         self.build_names()
+        self.build_labels()
 
     def pre_save(self):
         base.BudyBase.pre_save(self)
@@ -501,6 +509,13 @@ class Product(base.BudyBase):
         self.color_s = self.colors[0].name if self.colors else None
         self.category_s = self.categories[0].name if self.categories else None
         self.collection_s = self.collections[0].name if self.collections else None
+
+    def build_labels(self):
+        self.labels = []
+        for collection in self.collections:
+            if not collection.new_in: continue
+            if "new_in" in self.labels: continue
+            self.labels.append("new_in")
 
     def related(self, limit = 6, available = True, enabled = True):
         cls = self.__class__
