@@ -475,8 +475,9 @@ class Product(base.BudyBase):
         if price == None: shipping_cost = None
         else: shipping_cost = bundle.Bundle.eval_shipping(price, 0.0, 1.0, None)
         model["shipping_cost"] = shipping_cost
-        model["new_in"] = "new_in" in labels
-        model["new_in_s"] = "true" if "new_in" in labels else "false"
+        for label in labels:
+            model[label] = label
+            model[label + "s"] = "true"
 
     def pre_validate(self):
         base.BudyBase.pre_validate(self)
@@ -511,11 +512,9 @@ class Product(base.BudyBase):
         self.collection_s = self.collections[0].name if self.collections else None
 
     def build_labels(self):
-        self.labels = []
-        for collection in self.collections:
-            if not collection.new_in: continue
-            if "new_in" in self.labels: continue
-            self.labels.append("new_in")
+        self._build_labels(self.colors)
+        self._build_labels(self.categories)
+        self._build_labels(self.collections)
 
     def related(self, limit = 6, available = True, enabled = True):
         cls = self.__class__
@@ -806,6 +805,12 @@ class Product(base.BudyBase):
         if not hasattr(self, "measurements"): return False
         if not self.measurements: return False
         return len(self.measurements) > 0
+
+    def _build_labels(self, groups):
+        for group in groups:
+            for label in group.labels:
+                if label in self.labels: continue
+                self.labels.append(label)
 
     def _get_offset(self, count, limit, kwargs):
         return self._get_offset_offset(count, limit, kwargs)

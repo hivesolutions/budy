@@ -171,3 +171,51 @@ class ProductTest(unittest.TestCase):
         product = product.reload()
 
         self.assertEqual(len(product.measurements), 0)
+
+    def test_labels(self):
+        product = budy.Product(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0,
+            quantity_hand = None
+        )
+        product.save()
+
+        collection = budy.Collection(
+            name = "collection",
+            new_in = True
+        )
+        collection.save()
+
+        self.assertEqual(product.labels, [])
+        self.assertEqual(len(product.collections), 0)
+        self.assertEqual(collection.new_in, True)
+        self.assertEqual(collection.labels, ["new_in"])
+
+        product.add_collection_s(collection)
+
+        self.assertEqual(product.labels, ["new_in"])
+        self.assertEqual(len(product.collections), 1)
+        self.assertEqual(product.collections[0].id, collection.id)
+
+        product.save()
+
+        self.assertEqual(product.labels, ["new_in"])
+        self.assertEqual(len(product.collections), 1)
+        self.assertEqual(product.collections[0].id, collection.id)
+
+        collection.labels.append("extra")
+        collection.save()
+
+        self.assertEqual(product.labels, ["new_in"])
+        self.assertEqual(len(product.collections), 1)
+        self.assertEqual(product.collections[0].id, collection.id)
+        self.assertEqual(collection.new_in, True)
+        self.assertEqual(collection.labels, ["new_in", "extra"])
+
+        product = product.reload()
+        product.save()
+
+        self.assertEqual(product.labels, ["new_in", "extra"])
+        self.assertEqual(len(product.collections), 1)
+        self.assertEqual(product.collections[0].id, collection.id)

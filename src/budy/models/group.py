@@ -53,6 +53,10 @@ class Group(base.BudyBase):
         index = True
     )
 
+    labels = appier.field(
+        type = list
+    )
+
     image_url = appier.field(
         index = True,
         meta = "url"

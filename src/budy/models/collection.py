@@ -46,3 +46,15 @@ class Collection(group.Group):
     new_in = appier.field(
         type = bool
     )
+
+    def pre_save(self):
+        group.Group.pre_save(self)
+        self.build_new_in()
+
+    def build_new_in(self):
+        if self.new_in:
+            if "new_in" in self.labels: return
+            self.labels.append("new_in")
+        else:
+            if not "new_in" in self.labels: return
+            self.labels.remove("new_in")
