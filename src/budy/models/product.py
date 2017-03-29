@@ -477,7 +477,7 @@ class Product(base.BudyBase):
         model["shipping_cost"] = shipping_cost
         for label in labels:
             model[label] = label
-            model[label + "s"] = "true"
+            model[label + "_s"] = "true"
 
     def pre_validate(self):
         base.BudyBase.pre_validate(self)
