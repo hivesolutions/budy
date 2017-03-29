@@ -113,6 +113,14 @@ class Group(base.BudyBase):
             return image
         return None
 
+    def update_label(self, value, name):
+        if value:
+            if name in self.labels: return
+            self.labels.append(name)
+        else:
+            if not name in self.labels: return
+            self.labels.remove(name)
+
     @appier.operation(
         name = "Add Image",
         parameters = (
