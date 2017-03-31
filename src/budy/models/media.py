@@ -102,7 +102,7 @@ class Media(base.BudyBase):
         name = "Import Media",
         parameters = (
             ("Media File", "file", "file"),
-            ("Empty source", "empty", bool, True)
+            ("Empty source", "empty", bool, False)
         )
     )
     def import_media_s(cls, file, empty, strict = False):

@@ -364,7 +364,7 @@ class Product(base.BudyBase):
         name = "Import CSV",
         parameters = (
             ("CSV File", "file", "file"),
-            ("Empty source", "empty", bool, True)
+            ("Empty source", "empty", bool, False)
         )
     )
     def import_csv_s(cls, file, empty):

@@ -70,8 +70,8 @@ class Referral(base.BudyBase):
     @appier.operation(
         name = "Import CSV",
         parameters = (
-                ("CSV File", "file", "file"),
-                ("Empty source", "empty", bool, True)
+            ("CSV File", "file", "file"),
+            ("Empty source", "empty", bool, False)
         )
     )
     def import_csv_s(cls, file, empty):
