@@ -54,7 +54,8 @@ class BudyApp(appier.WebApp):
             *args, **kwargs
         )
         self.login_route = "base.signin"
-        self.budy_login_redirect = "base.index_store"
+        self.login_redirect = "base.index_store"
+        self.logout_redirect = "base.signin"
         self.scheduler = bots.Scheduler(self)
 
     def start(self):

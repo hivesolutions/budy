@@ -82,7 +82,7 @@ class BaseController(appier.Controller):
         account._set_session()
 
         return self.redirect(
-            next or self.url_for(self.budy_login_redirect)
+            next or self.url_for(self.login_redirect)
         )
 
     @appier.route("/signout", "GET")
@@ -90,5 +90,5 @@ class BaseController(appier.Controller):
         next = self.field("next")
         budy.BudyAccount._unset_session()
         return self.redirect(
-            next or self.url_for(self.login_route)
+            next or self.url_for(self.logout_redirect)
         )
