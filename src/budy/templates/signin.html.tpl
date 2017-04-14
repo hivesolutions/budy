@@ -1,7 +1,7 @@
 {% extends "partials/external.html.tpl" %}
 {% block title %}Login{% endblock %}
 {% block content %}
-    <div class="login-panel">
+    <div class="login-panel {% if error %}login-panel-message{% endif %}">
         <h1>Login</h1>
         <h3>Sign in to continue to <strong>{{ own.description }}</strong></h3>
         <div class="quote error">
