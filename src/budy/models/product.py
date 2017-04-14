@@ -130,12 +130,12 @@ class Product(base.BudyBase):
 
     image_url = appier.field(
         index = "hashed",
-        meta = "url"
+        meta = "image_url"
     )
 
     thumbnail_url = appier.field(
         index = "hashed",
-        meta = "url"
+        meta = "image_url"
     )
 
     characteristics = appier.field(
