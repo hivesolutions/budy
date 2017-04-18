@@ -84,15 +84,6 @@ class BudyAccount(appier_extras.admin.Account):
         initial = False
     )
 
-    avatar = appier.field(
-        type = appier.image(
-            width = 400,
-            height = 400,
-            format = "png"
-        ),
-        private = True
-    )
-
     store = appier.field(
         type = appier.reference(
             "Store",
@@ -261,13 +252,3 @@ class BudyAccount(appier_extras.admin.Account):
         """
 
         return "Mrs." if self.gender == "Female" else "Mr."
-
-    def _set_avatar_d(self, image = "avatar.png", mime = "image/png"):
-        app = appier.get_app()
-
-        file = open(app.static_path + "/images/" + image, "rb")
-        try: data = file.read()
-        finally: file.close()
-
-        file_t = (image, mime, data)
-        self.avatar = appier.File(file_t)

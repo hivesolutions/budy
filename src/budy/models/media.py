@@ -171,9 +171,9 @@ class Media(base.BudyBase):
         if id: model["url"] = cls._get_url(id)
 
     @classmethod
-    def _get_url(cls, id):
+    def _get_url(cls, id, absolute = True):
         app = appier.get_app()
-        return app.url_for("media_api.data", id = id, absolute = True)
+        return app.url_for("media_api.data", id = id, absolute = absolute)
 
     def get_url(self):
         return self.__class__._get_url(self.id)
