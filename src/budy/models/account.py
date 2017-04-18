@@ -164,7 +164,7 @@ class BudyAccount(appier_extras.admin.Account):
     def pre_create(self):
         appier_extras.admin.Account.pre_create(self)
         if not hasattr(self, "first_name") or not self.first_name:
-            self.first_name = self.username()
+            self.first_name = self.username
 
     def post_create(self):
         appier_extras.admin.Account.post_create(self)
