@@ -49,7 +49,8 @@ class BudyBase(appier_extras.admin.Base):
 
     slug_id = appier.field(
         index = "hashed",
-        safe = True
+        safe = True,
+        description = "Slug ID"
     )
 
     tokens = appier.field(
