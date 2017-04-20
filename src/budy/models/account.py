@@ -238,6 +238,15 @@ class BudyAccount(appier_extras.admin.Account):
             )
         )
 
+    @appier.view(name = "Orders")
+    def orders(self, *args, **kwargs):
+        return dict(
+            model = order.Order,
+            entities = order.Order.find(account = self.id, *args, **kwargs),
+            page = order.Order.paginate(account = self.id, *args, **kwargs),
+            names = ["reference", "created", "total", "currency", "status"]
+        )
+
     @property
     def title(self):
         """

@@ -801,6 +801,15 @@ class Order(bundle.Bundle):
         if not self.is_closed(): return
         self.close_lines_s()
 
+    @appier.view(name = "Lines")
+    def lines_v(self, *args, **kwargs):
+        return dict(
+            model = order_line.OrderLine,
+            entities = self.lines.find(*args, **kwargs),
+            page = self.lines.paginate(*args, **kwargs),
+            names = ["product", "quantity", "total", "currency"]
+        )
+
     @property
     def payable(self):
         return self.total
