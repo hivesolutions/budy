@@ -42,6 +42,7 @@ import appier_extras
 
 from . import bag
 from . import order
+from . import address
 
 class BudyAccount(appier_extras.admin.Account):
 
@@ -245,6 +246,15 @@ class BudyAccount(appier_extras.admin.Account):
             entities = order.Order.find(account = self.id, *args, **kwargs),
             page = order.Order.paginate(account = self.id, *args, **kwargs),
             names = ["reference", "created", "total", "currency", "status"]
+        )
+
+    @appier.view(name = "Addresses")
+    def addresses_v(self, *args, **kwargs):
+        return dict(
+            model = address.Address,
+            entities = self.addresses.find(*args, **kwargs),
+            page = self.addresses.paginate(*args, **kwargs),
+            names = ["first_name", "last_name", "address", "country"]
         )
 
     @property
