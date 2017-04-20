@@ -118,13 +118,15 @@ class Bundle(base.BudyBase):
 
     ip_address = appier.field(
         index = "hashed",
-        safe = True
+        safe = True,
+        description = "IP Address"
     )
 
     ip_country = appier.field(
         index = "hashed",
         safe = True,
-        meta = "country"
+        meta = "country",
+        description = "IP Country"
     )
 
     referrals = appier.field(
