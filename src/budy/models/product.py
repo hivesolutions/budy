@@ -110,32 +110,38 @@ class Product(base.BudyBase):
 
     price_url = appier.field(
         index = "hashed",
-        meta = "url"
+        meta = "url",
+        description = "Price URL"
     )
 
     farfetch_url = appier.field(
         index = "hashed",
-        meta = "url"
+        meta = "url",
+        description = "Farfetch URL"
     )
 
     farfetch_male_url = appier.field(
         index = "hashed",
-        meta = "url"
+        meta = "url",
+        description = "Farfetch Male URL"
     )
 
     farfetch_female_url = appier.field(
         index = "hashed",
-        meta = "url"
+        meta = "url",
+        description = "Farfetch Female URL"
     )
 
     image_url = appier.field(
         index = "hashed",
-        meta = "image_url"
+        meta = "image_url",
+        description = "Image URL"
     )
 
     thumbnail_url = appier.field(
         index = "hashed",
-        meta = "image_url"
+        meta = "image_url",
+        description = "Thumbnail URL"
     )
 
     characteristics = appier.field(
