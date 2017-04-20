@@ -42,7 +42,6 @@ import appier_extras
 
 from . import bag
 from . import order
-from . import address
 
 class BudyAccount(appier_extras.admin.Account):
 
