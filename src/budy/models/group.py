@@ -59,7 +59,8 @@ class Group(base.BudyBase):
 
     image_url = appier.field(
         index = True,
-        meta = "image_url"
+        meta = "image_url",
+        description = "Image URL"
     )
 
     images = appier.field(
