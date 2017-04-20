@@ -251,7 +251,7 @@ class BudyAccount(appier_extras.admin.Account):
     @appier.view(name = "Addresses")
     def addresses_v(self, *args, **kwargs):
         return dict(
-            model = address.Address,
+            model = self.addresses._target,
             entities = self.addresses.find(*args, **kwargs),
             page = self.addresses.paginate(*args, **kwargs),
             names = ["first_name", "last_name", "address", "country"]

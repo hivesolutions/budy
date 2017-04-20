@@ -174,7 +174,7 @@ class Bag(bundle.Bundle):
     @appier.view(name = "Lines")
     def lines_v(self, *args, **kwargs):
         return dict(
-            model = bag_line.BagLine,
+            model = self.lines._target,
             entities = self.lines.find(*args, **kwargs),
             page = self.lines.paginate(*args, **kwargs),
             names = ["product", "quantity", "total", "currency"]

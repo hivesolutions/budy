@@ -804,7 +804,7 @@ class Order(bundle.Bundle):
     @appier.view(name = "Lines")
     def lines_v(self, *args, **kwargs):
         return dict(
-            model = order_line.OrderLine,
+            model = self.lines._target,
             entities = self.lines.find(*args, **kwargs),
             page = self.lines.paginate(*args, **kwargs),
             names = ["product", "quantity", "total", "currency"]
