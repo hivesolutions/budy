@@ -131,7 +131,8 @@ class Order(bundle.Bundle):
 
     tracking_url = appier.field(
         index = "hashed",
-        meta = "url"
+        meta = "url",
+        description = "Tracking URL"
     )
 
     payment_data = appier.field(
