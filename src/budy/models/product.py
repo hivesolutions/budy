@@ -60,7 +60,10 @@ class Product(base.BudyBase):
     )
 
     product_id = appier.field(
-        index = "hashed"
+        index = "hashed",
+        description = "Product ID",
+        observations = """The primary identifier
+        of a product, should be globally unique"""
     )
 
     gender = appier.field(
