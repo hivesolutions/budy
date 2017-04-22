@@ -98,12 +98,7 @@ class AccountApiController(root.RootApiController):
     @appier.ensure(token = "user")
     def avatar_me(self):
         account = budy.BudyAccount.from_session(rules = False)
-        avatar = account.avatar
-        return self.send_file(
-            avatar.data,
-            content_type = avatar.mime,
-            etag = avatar.etag
-        )
+        return account._send_avatar()
 
     @appier.route("/api/accounts/me/orders", "GET", json = True)
     @appier.ensure(token = "user")
