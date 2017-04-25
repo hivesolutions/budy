@@ -173,6 +173,7 @@ class Bag(bundle.Bundle):
 
     @appier.view(name = "Lines")
     def lines_v(self, *args, **kwargs):
+        kwargs["sort"] = kwargs.get("sort", [("created", -1)])
         return dict(
             model = self.lines._target,
             entities = self.lines.find(*args, **kwargs),
