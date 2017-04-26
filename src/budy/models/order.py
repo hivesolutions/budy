@@ -323,6 +323,16 @@ class Order(bundle.Bundle):
         for _index in range(quantity): cls.generate_dummy_s()
 
     @classmethod
+    @appier.view(name = "Paid")
+    def paid_v(cls, *args, **kwargs):
+        kwargs["sort"] = kwargs.get("sort", [("id", -1)])
+        return dict(
+            model = cls,
+            entities = cls.find(paid = True, *args, **kwargs),
+            page = cls.paginate(paid = True, *args, **kwargs)
+        )
+
+    @classmethod
     def _pmethods(cls):
         methods = dict()
         for engine in ("stripe", "easypay", "paypal"):
