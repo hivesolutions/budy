@@ -137,3 +137,7 @@ class Currency(base.BudyBase):
             "currency_api.simple_csv",
             absolute = absolute
         )
+
+    @classmethod
+    def _plural(self):
+        return "Currencies"

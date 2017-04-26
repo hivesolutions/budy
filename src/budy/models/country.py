@@ -121,3 +121,7 @@ class Country(base.BudyBase):
             "country_api.simple_csv",
             absolute = absolute
         )
+
+    @classmethod
+    def _plural(self):
+        return "Countries"
