@@ -219,3 +219,13 @@ class ProductTest(unittest.TestCase):
         self.assertEqual(product.labels, ["new_in", "extra"])
         self.assertEqual(len(product.collections), 1)
         self.assertEqual(product.collections[0].id, collection.id)
+
+        collection.labels.remove("extra")
+        collection.save()
+
+        product = product.reload()
+        product.save()
+
+        self.assertEqual(product.labels, ["new_in"])
+        self.assertEqual(len(product.collections), 1)
+        self.assertEqual(product.collections[0].id, collection.id)
