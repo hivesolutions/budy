@@ -521,6 +521,7 @@ class Product(base.BudyBase):
         self.collection_s = self.collections[0].name if self.collections else None
 
     def build_labels(self):
+        self._reset_labels()
         self._build_labels(self.colors)
         self._build_labels(self.categories)
         self._build_labels(self.collections)
@@ -814,6 +815,9 @@ class Product(base.BudyBase):
         if not hasattr(self, "measurements"): return False
         if not self.measurements: return False
         return len(self.measurements) > 0
+
+    def _reset_labels(self):
+        self.labels = []
 
     def _build_labels(self, groups):
         for group in groups:
