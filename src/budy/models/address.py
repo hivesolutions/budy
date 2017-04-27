@@ -77,7 +77,9 @@ class Address(base.BudyBase):
 
     phone_number = appier.field()
 
-    vat_number = appier.field()
+    vat_number = appier.field(
+        description = "VAT Number"
+    )
 
     neighborhood = appier.field()
 
