@@ -123,5 +123,5 @@ class Country(base.BudyBase):
         )
 
     @classmethod
-    def _plural(self):
+    def _plural(cls):
         return "Countries"

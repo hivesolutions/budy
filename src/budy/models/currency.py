@@ -139,5 +139,5 @@ class Currency(base.BudyBase):
         )
 
     @classmethod
-    def _plural(self):
+    def _plural(cls):
         return "Currencies"

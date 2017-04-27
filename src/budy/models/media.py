@@ -171,7 +171,7 @@ class Media(base.BudyBase):
         if id: model["url"] = cls._get_url(id)
 
     @classmethod
-    def _plural(self):
+    def _plural(cls):
         return "Media"
 
     @classmethod
