@@ -479,6 +479,7 @@ class Product(base.BudyBase):
 
     @classmethod
     def _build(cls, model, map):
+        super(Product, cls)._build(model, map)
         price = model.get("price", None)
         labels = model.get("labels", ())
         if price == None: shipping_cost = None

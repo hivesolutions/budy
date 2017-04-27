@@ -101,6 +101,7 @@ class BudyAccount(appier_extras.admin.Account):
 
     @classmethod
     def _build(cls, model, map):
+        super(BudyAccount, cls)._build(model, map)
         id = model.get("id", None)
         first_name = model.get("first_name", None)
         last_name = model.get("last_name", None)
