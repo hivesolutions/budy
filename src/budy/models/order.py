@@ -818,7 +818,7 @@ class Order(bundle.Bundle):
             model = self.lines._target,
             entities = self.lines.find(*args, **kwargs),
             page = self.lines.paginate(*args, **kwargs),
-            names = ["product", "quantity", "total", "currency"]
+            names = ["id", "product", "quantity", "total", "currency"]
         )
 
     @property

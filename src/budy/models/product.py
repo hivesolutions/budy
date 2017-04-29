@@ -234,7 +234,7 @@ class Product(base.BudyBase):
         )
     )
 
-    live_movel = appier.field(
+    live_model = appier.field(
         type = appier.references(
             "LiveModel",
             name = "id"
