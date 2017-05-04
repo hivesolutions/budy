@@ -113,6 +113,10 @@ class Address(base.BudyBase):
     def order_name(self):
         return ["id", -1]
 
+    @classmethod
+    def _plural(cls):
+        return "Addresses"
+
     def pre_create(self):
         base.BudyBase.pre_create(self)
         if not hasattr(self, "key") or not self.key:
