@@ -45,7 +45,8 @@ class Currency(base.BudyBase):
 
     iso = appier.field(
         default = True,
-        index = True
+        index = True,
+        description = "ISO"
     )
 
     decimal_places = appier.field(
