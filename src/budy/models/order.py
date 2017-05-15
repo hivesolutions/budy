@@ -836,6 +836,20 @@ class Order(bundle.Bundle):
             names = ["id", "product", "quantity", "total", "currency"]
         )
 
+    @appier.view(
+        name = "Lines Currency",
+        parameters = (
+            ("Currency", "currency", str, "EUR"),
+        )
+    )
+    def lines_currency_v(self, currency, *args, **kwargs):
+        return dict(
+            model = self.lines._target,
+            entities = self.lines.find(currency = currency, *args, **kwargs),
+            page = self.lines.paginate(currency = currency, *args, **kwargs),
+            names = ["id", "product", "quantity", "total", "currency"]
+        )
+
     @property
     def payable(self):
         return self.total
