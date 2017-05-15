@@ -333,6 +333,21 @@ class Order(bundle.Bundle):
         )
 
     @classmethod
+    @appier.view(
+        name = "Status",
+        parameters = (
+            ("Status", "status", str, "paid"),
+        )
+    )
+    def status_v(cls, status, *args, **kwargs):
+        kwargs["sort"] = kwargs.get("sort", [("id", -1)])
+        return dict(
+            model = cls,
+            entities = cls.find(status = status, *args, **kwargs),
+            page = cls.paginate(status = status, *args, **kwargs)
+        )
+
+    @classmethod
     def _pmethods(cls):
         methods = dict()
         for engine in ("stripe", "easypay", "paypal"):
