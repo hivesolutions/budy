@@ -270,7 +270,7 @@ class Product(base.BudyBase):
         return ["id", "product_id", "short_description", "enabled", "gender", "tag"]
 
     @classmethod
-    def order_name(self):
+    def order_name(cls):
         return ["id", -1]
 
     @classmethod

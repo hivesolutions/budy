@@ -110,7 +110,7 @@ class Address(base.BudyBase):
         return super(Address, cls).unique_names() + ["key"]
 
     @classmethod
-    def order_name(self):
+    def order_name(cls):
         return ["id", -1]
 
     @classmethod

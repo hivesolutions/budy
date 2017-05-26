@@ -111,7 +111,7 @@ class Measurement(base.BudyBase):
         return ["id", "name", "value"]
 
     @classmethod
-    def order_name(self):
+    def order_name(cls):
         return ["id", -1]
 
     @classmethod

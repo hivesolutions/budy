@@ -151,7 +151,7 @@ class Voucher(base.BudyBase):
         ]
 
     @classmethod
-    def order_name(self):
+    def order_name(cls):
         return ["id", -1]
 
     @classmethod

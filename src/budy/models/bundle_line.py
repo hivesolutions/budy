@@ -104,7 +104,7 @@ class BundleLine(base.BudyBase):
         return ["id", "quantity", "total", "currency", "product"]
 
     @classmethod
-    def order_name(self):
+    def order_name(cls):
         return ["id", -1]
 
     @classmethod

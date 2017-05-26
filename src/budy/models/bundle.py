@@ -168,7 +168,7 @@ class Bundle(base.BudyBase):
         return ["id", "key", "total", "currency"]
 
     @classmethod
-    def order_name(self):
+    def order_name(cls):
         return ["id", -1]
 
     @classmethod
