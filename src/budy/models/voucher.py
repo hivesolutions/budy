@@ -309,14 +309,33 @@ class Voucher(base.BudyBase):
     def remind(self, *args, **kwargs):
         self.notify("voucher.remind", *args, **kwargs)
 
-    @appier.view(name = "Orders")
-    def orders_v(self, *args, **kwargs):
+    @appier.view(name = "All Orders")
+    def all_orders_v(self, *args, **kwargs):
         from . import order
         kwargs["sort"] = kwargs.get("sort", [("created", -1)])
         return dict(
             model = order.Order,
             entities = order.Order.find(vouchers = {"$in" : (self.id,)}, *args, **kwargs),
             page = order.Order.paginate(vouchers = {"$in" : (self.id,)}, *args, **kwargs),
+            names = ["reference", "created", "total", "currency", "status"]
+        )
+
+    @appier.view(name = "Paid Orders")
+    def paid_orders_v(self, *args, **kwargs):
+        from . import order
+        kwargs["sort"] = kwargs.get("sort", [("created", -1)])
+        return dict(
+            model = order.Order,
+            entities = order.Order.find(
+                vouchers = {"$in" : (self.id,)},
+                paid = True,
+                *args, **kwargs
+            ),
+            page = order.Order.paginate(
+                vouchers = {"$in" : (self.id,)},
+                paid = True,
+                *args, **kwargs
+            ),
             names = ["reference", "created", "total", "currency", "status"]
         )
 
