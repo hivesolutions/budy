@@ -419,7 +419,7 @@ class Bundle(base.BudyBase):
     def build_shipping(self):
         shipping_cost = 0.0
         join_shipping = appier.conf("BUDY_JOIN_SHIPPING", True, cast = bool)
-        self.discount_dynamic = self.__class__.eval_shipping(
+        self.shipping_dynamic = self.__class__.eval_shipping(
             self.sub_total,
             self.taxes,
             self.quantity,
