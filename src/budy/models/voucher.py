@@ -109,22 +109,27 @@ class Voucher(base.BudyBase):
         type = int,
         initial = 0,
         index = True,
-        safe = True
-    )
-
-    used = appier.field(
-        type = bool,
-        index = True,
-        safe = True
+        safe = True,
+        observations = """The maximum number of usages of the
+        voucher before it's considered invalid, if the number
+        is set to zero the voucher is considered to have no
+        limit in the number of usages"""
     )
 
     unlimited = appier.field(
         type = bool,
         initial = False,
         index = True,
+        safe = True,
         observations = """If the value based voucher should not
         have its used amount deducted and instead be considered
         an unlimited voucher"""
+    )
+
+    used = appier.field(
+        type = bool,
+        index = True,
+        safe = True
     )
 
     @classmethod
