@@ -161,8 +161,11 @@ class Bundle(base.BudyBase):
     )
 
     def __init__(self, model = None, **kwargs):
-        base.BudyBase.__init__(self, model = None, **kwargs)
-        self.discountable_full = appier.conf("BUDY_FULL_DISCOUNTABLE", False, cast = bool)
+        base.BudyBase.__init__(self, model = model, **kwargs)
+        if not hasattr(self, "discountable_full"):
+            self.discountable_full = appier.conf(
+                "BUDY_FULL_DISCOUNTABLE", False, cast = bool
+            )
 
     @classmethod
     def validate(cls):

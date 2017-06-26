@@ -388,9 +388,10 @@ class OrderTest(unittest.TestCase):
         )
         product.save()
 
-        order = budy.Order()
-        order.discountable_full = True
-        order.shipping_fixed = 10.0
+        order = budy.Order(
+            discountable_full = True,
+            shipping_fixed = 10.0
+        )
         order.save()
 
         order_line = budy.OrderLine(quantity = 2.0)
