@@ -78,7 +78,10 @@ class Voucher(base.BudyBase):
 
     currency = appier.field(
         index = True,
-        safe = True
+        safe = True,
+        observations = """The base currency to be used for
+        the voucher, usage of the voucher under other currency
+        will be performed using proper exchange rate conversion"""
     )
 
     start = appier.field(
