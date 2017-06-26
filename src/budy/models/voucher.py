@@ -115,6 +115,15 @@ class Voucher(base.BudyBase):
         safe = True
     )
 
+    unlimited = appier.field(
+        type = bool,
+        initial = False,
+        index = True,
+        observations = """If the value based voucher should not
+        have its used amount deducted and instead be considered
+        an unlimited voucher"""
+    )
+
     @classmethod
     def validate(cls):
         return super(Voucher, cls).validate() + [
@@ -164,15 +173,17 @@ class Voucher(base.BudyBase):
         parameters = (
             ("Key", "key", str),
             ("Amount", "amount", commons.Decimal),
-            ("Currency", "currency", str)
+            ("Currency", "currency", str),
+            ("Unlimited", "unlimited", bool, False),
         ),
         factory = True
     )
-    def create_value_s(cls, key, amount, currency):
+    def create_value_s(cls, key, amount, currency, unlimited):
         voucher = cls(
             key = key,
             amount = amount,
-            currency = currency
+            currency = currency,
+            unlimited = unlimited
         )
         voucher.save()
         return voucher
@@ -207,7 +218,8 @@ class Voucher(base.BudyBase):
     def use_s(self, amount, currency = None):
         amount_l = self.to_local(amount, currency)
         appier.verify(self.is_valid(amount = amount, currency = currency))
-        if self.is_value: self.used_amount += commons.Decimal(amount_l)
+        if self.is_value and not self.unlimited:
+            self.used_amount += commons.Decimal(amount_l)
         self.usage_count += 1
         self.save()
 
@@ -354,3 +366,7 @@ class Voucher(base.BudyBase):
     @property
     def is_value(self):
         return not self.is_percent
+
+    @property
+    def is_unlimited(self):
+        return not self.unlimited

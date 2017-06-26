@@ -112,6 +112,7 @@ class VoucherTest(unittest.TestCase):
         self.assertEqual(voucher.open_amount, 100.0)
         self.assertEqual(voucher.used_amount, 100.0)
         self.assertEqual(voucher.usage_count, 1)
+        self.assertEqual(voucher.is_percent, False)
 
         voucher.use_s(100.0, currency = "USD")
 
@@ -122,6 +123,7 @@ class VoucherTest(unittest.TestCase):
         self.assertEqual(voucher.open_amount, 11.90)
         self.assertEqual(voucher.used_amount, 188.10)
         self.assertEqual(voucher.usage_count, 2)
+        self.assertEqual(voucher.is_percent, False)
 
         value = voucher.open_amount_r(currency = "USD")
         voucher.use_s(value, currency = "USD")
@@ -145,6 +147,35 @@ class VoucherTest(unittest.TestCase):
         self.assertEqual(voucher.used_amount, 200.0)
         self.assertEqual(voucher.usage_count, 4)
         self.assertEqual(voucher.is_percent, False)
+
+        voucher = budy.Voucher(
+            amount = 200.0,
+            currency = "EUR",
+            unlimited = True
+        )
+        voucher.use_s(100.0, currency = "EUR")
+
+        self.assertEqual(voucher.is_valid(), True)
+        self.assertEqual(voucher.used, False)
+        self.assertEqual(voucher.amount, 200.0)
+        self.assertEqual(voucher.currency, "EUR")
+        self.assertEqual(voucher.open_amount, 200.0)
+        self.assertEqual(voucher.used_amount, 0.0)
+        self.assertEqual(voucher.usage_count, 1)
+        self.assertEqual(voucher.is_percent, False)
+        self.assertEqual(voucher.is_unlimited, True)
+
+        voucher.use_s(100.0, currency = "USD")
+
+        self.assertEqual(voucher.is_valid(), True)
+        self.assertEqual(voucher.used, False)
+        self.assertEqual(voucher.amount, 200.0)
+        self.assertEqual(voucher.currency, "EUR")
+        self.assertEqual(voucher.open_amount, 200.0)
+        self.assertEqual(voucher.used_amount, 0.0)
+        self.assertEqual(voucher.usage_count, 1)
+        self.assertEqual(voucher.is_percent, False)
+        self.assertEqual(voucher.is_unlimited, True)
 
     def test_single(self):
         voucher = budy.Voucher(amount = 200.0, usage_limit = 1)
