@@ -102,6 +102,20 @@ class Bundle(base.BudyBase):
         safe = True
     )
 
+    shipping_fixed = appier.field(
+        type = commons.Decimal,
+        index = True,
+        initial = commons.Decimal(0.0),
+        safe = True
+    )
+
+    shipping_dynamic = appier.field(
+        type = commons.Decimal,
+        index = True,
+        initial = commons.Decimal(0.0),
+        safe = True
+    )
+
     taxes = appier.field(
         type = commons.Decimal,
         index = True,
@@ -114,6 +128,15 @@ class Bundle(base.BudyBase):
         index = True,
         initial = commons.Decimal(0.0),
         safe = True
+    )
+
+    discountable_full = appier.field(
+        type = bool,
+        index = True,
+        initial = False,
+        safe = True,
+        observations = """If the bundle should be fully discountable,
+        meaning that the shipping costs may be discounted"""
     )
 
     ip_address = appier.field(
@@ -136,6 +159,10 @@ class Bundle(base.BudyBase):
         ),
         eager = True
     )
+
+    def __init__(self, model = None, **kwargs):
+        base.BudyBase.__init__(self, model = None, **kwargs)
+        self.discountable_full = appier.conf("BUDY_FULL_DISCOUNTABLE", False, cast = bool)
 
     @classmethod
     def validate(cls):
@@ -340,9 +367,9 @@ class Bundle(base.BudyBase):
         lines = self.lines if hasattr(self, "lines") else []
         self.quantity = sum(line.quantity for line in lines)
         self.sub_total = sum(line.total for line in lines)
-        self.discount = self.calculate_discount()
         self.taxes = self.calculate_taxes()
         self.shipping_cost = self.calculate_shipping()
+        self.discount = self.calculate_discount()
         self.total = self.sub_total - self.discount + self.shipping_cost
 
     def calculate_discount(self):
@@ -358,9 +385,9 @@ class Bundle(base.BudyBase):
 
     def build_discount(self):
         discount = 0.0
-        join_discount = appier.conf("BUDY_JOIN_DICOUNT", True, cast = bool)
+        join_discount = appier.conf("BUDY_JOIN_DISCOUNT", True, cast = bool)
         self.discount_dynamic = self.__class__.eval_discount(
-            self.sub_total,
+            self.discountable,
             self.taxes,
             self.quantity,
             self
@@ -390,12 +417,20 @@ class Bundle(base.BudyBase):
         return taxes
 
     def build_shipping(self):
-        return self.__class__.eval_shipping(
+        shipping_cost = 0.0
+        join_shipping = appier.conf("BUDY_JOIN_SHIPPING", True, cast = bool)
+        self.discount_dynamic = self.__class__.eval_shipping(
             self.sub_total,
             self.taxes,
             self.quantity,
             self
         )
+        if join_shipping:
+            shipping_cost += self.shipping_dynamic
+            shipping_cost += self.shipping_fixed
+        else:
+            shipping_cost += max(self.shipping_dynamic, self.shipping_fixed)
+        return shipping_cost
 
     def collect_empty(self):
         empty = []
@@ -444,7 +479,8 @@ class Bundle(base.BudyBase):
 
     @property
     def discountable(self):
-        return self.sub_total
+        return self.sub_total + self.shipping_cost if\
+            self.discountable_full else self.sub_total
 
     @property
     def discount_base(self):
