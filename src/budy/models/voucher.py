@@ -377,4 +377,4 @@ class Voucher(base.BudyBase):
 
     @property
     def is_unlimited(self):
-        return not self.unlimited
+        return self.unlimited

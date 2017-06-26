@@ -173,7 +173,7 @@ class VoucherTest(unittest.TestCase):
         self.assertEqual(voucher.currency, "EUR")
         self.assertEqual(voucher.open_amount, 200.0)
         self.assertEqual(voucher.used_amount, 0.0)
-        self.assertEqual(voucher.usage_count, 1)
+        self.assertEqual(voucher.usage_count, 2)
         self.assertEqual(voucher.is_percent, False)
         self.assertEqual(voucher.is_unlimited, True)
 
