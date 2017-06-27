@@ -142,14 +142,18 @@ class Bundle(base.BudyBase):
     ip_address = appier.field(
         index = "hashed",
         safe = True,
-        description = "IP Address"
+        description = "IP Address",
+        observations = """The IP address of the device used to perform
+        the creation of the bundle"""
     )
 
     ip_country = appier.field(
         index = "hashed",
         safe = True,
         meta = "country",
-        description = "IP Country"
+        description = "IP Country",
+        observations = """Country obtained through GEO IP operation
+        may be used for statistics and tracing"""
     )
 
     referrals = appier.field(
