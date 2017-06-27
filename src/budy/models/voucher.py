@@ -128,8 +128,12 @@ class Voucher(base.BudyBase):
 
     used = appier.field(
         type = bool,
+        initial = False,
         index = True,
-        safe = True
+        safe = True,
+        observations = """Calculated value used to determine if
+        the voucher is already used and should not be used anymore
+        under any circumstance"""
     )
 
     @classmethod
@@ -152,7 +156,11 @@ class Voucher(base.BudyBase):
             appier.gte("usage_count", 0),
 
             appier.not_null("usage_limit"),
-            appier.gte("usage_limit", 0)
+            appier.gte("usage_limit", 0),
+
+            appier.not_null("unlimited"),
+
+            appier.not_null("used")
         ]
 
     @classmethod
