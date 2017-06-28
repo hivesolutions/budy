@@ -102,7 +102,11 @@ class Voucher(base.BudyBase):
         type = int,
         initial = 0,
         index = True,
-        safe = True
+        safe = True,
+        observations = """The number of time the voucher has
+        already been used, if this value reached the usage limit
+        the voucher is marked as used and no further usages are
+        possible"""
     )
 
     usage_limit = appier.field(
@@ -121,9 +125,9 @@ class Voucher(base.BudyBase):
         initial = False,
         index = True,
         safe = True,
-        observations = """If the value based voucher should not
-        have its used amount deducted and instead be considered
-        an unlimited voucher"""
+        observations = """Flag that indicated if the value based
+        voucher should not have its used amount deducted and instead
+        be considered an unlimited voucher"""
     )
 
     used = appier.field(
