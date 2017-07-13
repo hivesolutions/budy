@@ -367,6 +367,7 @@ class Product(base.BudyBase):
         product = json.loads(product)
         product = cls.from_omni(product)
         product.save()
+        return product
 
     @classmethod
     @appier.operation(
