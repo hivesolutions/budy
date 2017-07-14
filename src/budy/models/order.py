@@ -475,39 +475,43 @@ class Order(bundle.Bundle):
 
     def pay_s(
         self,
-        payment_data = {},
-        vouchers = True,
+        payment_data = None,
+        strict = True,
         notify = False,
         ensure_waiting = True
     ):
+        payment_data = payment_data or dict()
         if ensure_waiting: self.ensure_waiting_s()
         self.verify_paid()
-        result = self._pay(payment_data)
+        result = self._pay(payment_data, strict = strict)
         confirmed = result == True
         self.save()
-        if vouchers: self.use_vouchers_s()
         if confirmed: self.end_pay_s()
         if notify: self.notify_s()
         return result
 
     def end_pay_s(
         self,
-        payment_data = {},
+        payment_data = None,
         strict = False,
+        vouchers = True,
         notify = False
     ):
+        payment_data = payment_data or dict()
         payment_data.update(self.payment_data)
         result = self._end_pay(payment_data, strict = strict)
         self.mark_paid_s()
+        if vouchers: self.use_vouchers_s()
         if notify: self.notify_s()
         return result
 
     def cancel_s(
         self,
-        cancel_data = {},
+        cancel_data = None,
         strict = False,
         notify = False
     ):
+        cancel_data = cancel_data or dict()
         cancel_data.update(self.cancel_data)
         result = self._cancel(cancel_data, strict = strict)
         self.mark_canceled_s()
@@ -877,13 +881,17 @@ class Order(bundle.Bundle):
         if has_store_currency: return self.store.currency_code
         return self.shipping_currency
 
-    def _pay(self, payment_data):
+    def _pay(self, payment_data, strict = True):
         cls = self.__class__
         if self.payable == 0.0: return True
         methods = cls._pmethods()
         type = payment_data.get("type", None)
-        method = methods.get(type, None)
-        if not method: return
+        method = methods.get(type, type)
+        if not method: raise appier.SecurityError(
+            message = "No payment method defined"
+        )
+        has_function = hasattr(self, "_pay_" + method)
+        if not has_function and not strict: return
         function = getattr(self, "_pay_" + method)
         return function(payment_data)
 
@@ -1082,6 +1090,9 @@ class Order(bundle.Bundle):
         type = payment_data.get("engine", None)
         type = payment_data.get("type", type)
         method = methods.get(type, type)
+        if not method: raise appier.SecurityError(
+            message = "No payment method defined"
+        )
         has_function = hasattr(self, "_end_pay_" + method)
         if not has_function and not strict: return
         function = getattr(self, "_end_pay_" + method)

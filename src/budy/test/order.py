@@ -239,6 +239,7 @@ class OrderTest(unittest.TestCase):
         )
         address.save()
 
+        order.shipping_address = address
         order.billing_address = address
         order.email = "username@email.com"
         order.save()
@@ -267,8 +268,6 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(voucher.used_amount, 5.0)
         self.assertEqual(voucher.open_amount, 0.0)
         self.assertEqual(voucher.usage_count, 1)
-
-        order.unmark_paid_s()
 
         small_voucher = budy.Voucher(amount = 1.0)
         small_voucher.save()
@@ -327,6 +326,41 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(voucher.used_amount, 0.0)
         self.assertEqual(voucher.open_amount, 0.0)
         self.assertEqual(voucher.usage_count, 1)
+
+        small_voucher = budy.Voucher(amount = 1.0)
+        small_voucher.save()
+
+        order.set_voucher_s(small_voucher)
+
+        order.pay_s(
+            payment_data = dict(type = "simple"),
+            strict = False
+        )
+
+        self.assertEqual(small_voucher.is_valid(), True)
+        self.assertEqual(small_voucher.used_amount, 0.0)
+        self.assertEqual(small_voucher.open_amount, 1.0)
+        self.assertEqual(small_voucher.usage_count, 0)
+
+        self.assertEqual(order.is_valid(), True)
+        self.assertEqual(order_line.is_valid_quantity(), True)
+        self.assertEqual(order.paid, False)
+        self.assertEqual(order.status, "waiting_payment")
+
+        order.end_pay_s(
+            payment_data = dict(type = "simple"),
+            strict = False
+        )
+
+        self.assertEqual(small_voucher.is_valid(), False)
+        self.assertEqual(small_voucher.used_amount, 1.0)
+        self.assertEqual(small_voucher.open_amount, 0.0)
+        self.assertEqual(small_voucher.usage_count, 1)
+
+        self.assertEqual(order.is_valid(), True)
+        self.assertEqual(order_line.is_valid_quantity(), True)
+        self.assertEqual(order.paid, True)
+        self.assertEqual(order.status, "paid")
 
     def test_discount(self):
         product = budy.Product(
