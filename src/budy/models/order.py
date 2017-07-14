@@ -940,6 +940,9 @@ class Order(bundle.Bundle):
         )
         has_function = hasattr(self, "_pay_" + method)
         if not has_function and not strict: return
+        if not has_function: raise appier.SecurityError(
+            message = "Invalid payment method"
+        )
         function = getattr(self, "_pay_" + method)
         return function(payment_data)
 
@@ -1143,6 +1146,9 @@ class Order(bundle.Bundle):
         )
         has_function = hasattr(self, "_end_pay_" + method)
         if not has_function and not strict: return
+        if not has_function: raise appier.SecurityError(
+            message = "Invalid payment method"
+        )
         function = getattr(self, "_end_pay_" + method)
         return function(payment_data)
 
