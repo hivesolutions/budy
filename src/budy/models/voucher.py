@@ -248,8 +248,8 @@ class Voucher(base.BudyBase):
         appier.verify(self.usage_count > 0)
         amount_l = self.to_local(amount, currency)
         if self.is_value and not self.unlimited:
-            appier.verify(self.used_amount >= commons.Decimal(amount_l))
             self.used_amount -= commons.Decimal(amount_l)
+            self.used_amount = max(self.used_amount, commons.Decimal(0.0))
         self.usage_count -= 1
         self.save()
 

@@ -591,7 +591,12 @@ class Order(bundle.Bundle):
         as waiting payment.
         """
 
+        # in case the discount data is not valid there's no voucher
+        # value to be reverted/disused, should return immediately
         if not self.discount_data: return
+
+        # iterates over the complete set of vouchers and associated amount
+        # to disuse the associated amount in the related vouchers
         for voucher_id, amount in appier.legacy.items(self.discount_data):
             voucher_id = int(voucher_id)
             _voucher = voucher.Voucher.get(id = voucher_id)
