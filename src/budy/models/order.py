@@ -583,13 +583,22 @@ class Order(bundle.Bundle):
         appier.verify(pending == 0.0)
         self.save()
 
-    def disuse_vouchers_s(self):
+    def disuse_vouchers_s(self, force = False):
         """
         Disuses the complete set of voucher associated with the current
         order, note that only vouchers set in the discount data will be
         used. This map is typically populated once the order is marked
         as waiting payment.
+
+        :type force: bool
+        :param force: If the disuse operation should be forced meaning
+        that even if the order is paid the disuse will proceed.
         """
+
+        # in case the order is already paid and the force flag is not
+        # set the disuse of the voucher is skipped, otherwise it would
+        # "return vouchers" for an already paid order
+        if self.paid and force: return
 
         # in case the discount data is not valid there's no voucher
         # value to be reverted/disused, should return immediately
