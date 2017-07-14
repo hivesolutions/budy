@@ -438,6 +438,51 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.paid, False)
         self.assertEqual(order.status, "canceled")
 
+        order.date = None
+        order.status = "created"
+        order.unmark_paid_s()
+
+        voucher = budy.Voucher(amount = 1.0)
+        voucher.save()
+
+        order.set_voucher_s(voucher)
+
+        order.pay_s(
+            payment_data = dict(type = "simple"),
+            strict = False
+        )
+
+        order.end_pay_s(
+            payment_data = dict(type = "simple"),
+            strict = False
+        )
+
+        self.assertEqual(voucher.is_valid(), False)
+        self.assertEqual(voucher.amount, 1.0)
+        self.assertEqual(voucher.used_amount, 1.0)
+        self.assertEqual(voucher.open_amount, 0.0)
+        self.assertEqual(voucher.usage_count, 1)
+
+        self.assertEqual(order.is_valid(), True)
+        self.assertEqual(order_line.is_valid_quantity(), True)
+        self.assertEqual(order.paid, True)
+        self.assertEqual(order.status, "paid")
+
+        order.cancel_s()
+
+        voucher = voucher.reload()
+
+        self.assertEqual(voucher.is_valid(), False)
+        self.assertEqual(voucher.amount, 1.0)
+        self.assertEqual(voucher.used_amount, 1.0)
+        self.assertEqual(voucher.open_amount, 0.0)
+        self.assertEqual(voucher.usage_count, 1)
+
+        self.assertEqual(order.is_valid(), True)
+        self.assertEqual(order_line.is_valid_quantity(), True)
+        self.assertEqual(order.paid, True)
+        self.assertEqual(order.status, "canceled")
+
     def test_discount(self):
         product = budy.Product(
             short_description = "product",

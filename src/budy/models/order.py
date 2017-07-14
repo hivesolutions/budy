@@ -598,7 +598,7 @@ class Order(bundle.Bundle):
         # in case the order is already paid and the force flag is not
         # set the disuse of the voucher is skipped, otherwise it would
         # "return vouchers" for an already paid order
-        if self.paid and force: return
+        if self.paid and not force: return
 
         # in case the discount data is not valid there's no voucher
         # value to be reverted/disused, should return immediately
