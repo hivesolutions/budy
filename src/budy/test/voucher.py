@@ -276,3 +276,96 @@ class VoucherTest(unittest.TestCase):
             appier.AssertionError,
             lambda: voucher.use_s(100.0)
         )
+
+    def test_disuse(self):
+        voucher = budy.Voucher(amount = 200.0)
+        voucher.save()
+
+        voucher.use_s(100.0)
+
+        self.assertEqual(voucher.is_valid(), True)
+        self.assertEqual(voucher.is_valid(amount = 100.0), True)
+        self.assertEqual(voucher.is_valid(amount = 200.0), False)
+        self.assertEqual(voucher.used, False)
+        self.assertEqual(voucher.amount, 200.0)
+        self.assertEqual(voucher.open_amount, 100.0)
+        self.assertEqual(voucher.used_amount, 100.0)
+        self.assertEqual(voucher.usage_count, 1)
+        self.assertEqual(voucher.is_percent, False)
+        self.assertEqual(isinstance(voucher.amount, commons.Decimal), True)
+        self.assertEqual(isinstance(voucher.open_amount, commons.Decimal), True)
+
+        voucher.use_s(100.0)
+
+        self.assertEqual(voucher.is_valid(), False)
+        self.assertEqual(voucher.is_valid(amount = 100.0), False)
+        self.assertEqual(voucher.is_valid(amount = 200.0), False)
+        self.assertEqual(voucher.used, True)
+        self.assertEqual(voucher.amount, 200.0)
+        self.assertEqual(voucher.open_amount, 0.0)
+        self.assertEqual(voucher.used_amount, 200.0)
+        self.assertEqual(voucher.usage_count, 2)
+        self.assertEqual(voucher.is_percent, False)
+        self.assertEqual(isinstance(voucher.amount, commons.Decimal), True)
+        self.assertEqual(isinstance(voucher.open_amount, commons.Decimal), True)
+
+        voucher.disuse_s(100.0)
+
+        self.assertEqual(voucher.is_valid(), True)
+        self.assertEqual(voucher.is_valid(amount = 100.0), True)
+        self.assertEqual(voucher.is_valid(amount = 200.0), False)
+        self.assertEqual(voucher.used, False)
+        self.assertEqual(voucher.amount, 200.0)
+        self.assertEqual(voucher.open_amount, 100.0)
+        self.assertEqual(voucher.used_amount, 100.0)
+        self.assertEqual(voucher.usage_count, 1)
+        self.assertEqual(voucher.is_percent, False)
+        self.assertEqual(isinstance(voucher.amount, commons.Decimal), True)
+        self.assertEqual(isinstance(voucher.open_amount, commons.Decimal), True)
+
+        voucher.disuse_s(100.0)
+
+        self.assertEqual(voucher.is_valid(), True)
+        self.assertEqual(voucher.is_valid(amount = 100.0), True)
+        self.assertEqual(voucher.is_valid(amount = 200.0), True)
+        self.assertEqual(voucher.used, False)
+        self.assertEqual(voucher.amount, 200.0)
+        self.assertEqual(voucher.open_amount, 200.0)
+        self.assertEqual(voucher.used_amount, 0.0)
+        self.assertEqual(voucher.usage_count, 0)
+        self.assertEqual(voucher.is_percent, False)
+        self.assertEqual(isinstance(voucher.amount, commons.Decimal), True)
+        self.assertEqual(isinstance(voucher.open_amount, commons.Decimal), True)
+
+        self.assertRaises(
+            appier.AssertionError,
+            lambda: voucher.disuse_s(1.0)
+        )
+
+        voucher = budy.Voucher(percentage = 10.0)
+        voucher.save()
+
+        self.assertEqual(voucher.open_amount_p(100.0), 10.0)
+        self.assertEqual(voucher.used, False)
+        self.assertEqual(voucher.usage_count, 0)
+        self.assertEqual(voucher.is_percent, True)
+        self.assertEqual(isinstance(voucher.amount, commons.Decimal), True)
+        self.assertEqual(isinstance(voucher.open_amount, commons.Decimal), True)
+
+        voucher.use_s(100.0)
+
+        self.assertEqual(voucher.open_amount_p(100.0), 10.0)
+        self.assertEqual(voucher.used, False)
+        self.assertEqual(voucher.usage_count, 1)
+        self.assertEqual(voucher.is_percent, True)
+        self.assertEqual(isinstance(voucher.amount, commons.Decimal), True)
+        self.assertEqual(isinstance(voucher.open_amount, commons.Decimal), True)
+
+        voucher.disuse_s(100.0)
+
+        self.assertEqual(voucher.open_amount_p(100.0), 10.0)
+        self.assertEqual(voucher.used, False)
+        self.assertEqual(voucher.usage_count, 0)
+        self.assertEqual(voucher.is_percent, True)
+        self.assertEqual(isinstance(voucher.amount, commons.Decimal), True)
+        self.assertEqual(isinstance(voucher.open_amount, commons.Decimal), True)

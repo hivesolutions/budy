@@ -234,6 +234,7 @@ class Voucher(base.BudyBase):
     def pre_update(self):
         base.BudyBase.pre_update(self)
         if not self.used and self.is_used(): self.used = True
+        if self.used and not self.is_used(): self.used = False
 
     def use_s(self, amount, currency = None):
         amount_l = self.to_local(amount, currency)
@@ -241,6 +242,15 @@ class Voucher(base.BudyBase):
         if self.is_value and not self.unlimited:
             self.used_amount += commons.Decimal(amount_l)
         self.usage_count += 1
+        self.save()
+
+    def disuse_s(self, amount, currency = None):
+        appier.verify(self.usage_count > 0)
+        amount_l = self.to_local(amount, currency)
+        if self.is_value and not self.unlimited:
+            appier.verify(self.used_amount >= commons.Decimal(amount_l))
+            self.used_amount -= commons.Decimal(amount_l)
+        self.usage_count -= 1
         self.save()
 
     def discount(self, amount, currency = None):

@@ -47,6 +47,7 @@ import appier_extras
 from . import bundle
 from . import product
 from . import country
+from . import voucher
 from . import currency
 from . import order_line
 
@@ -140,6 +141,10 @@ class Order(bundle.Bundle):
     )
 
     cancel_data = appier.field(
+        type = dict
+    )
+
+    discount_data = appier.field(
         type = dict
     )
 
@@ -476,6 +481,7 @@ class Order(bundle.Bundle):
     def pay_s(
         self,
         payment_data = None,
+        vouchers = True,
         strict = True,
         notify = False,
         ensure_waiting = True
@@ -486,6 +492,7 @@ class Order(bundle.Bundle):
         result = self._pay(payment_data, strict = strict)
         confirmed = result == True
         self.save()
+        if vouchers: self.use_vouchers_s()
         if confirmed: self.end_pay_s()
         if notify: self.notify_s()
         return result
@@ -494,20 +501,19 @@ class Order(bundle.Bundle):
         self,
         payment_data = None,
         strict = False,
-        vouchers = True,
         notify = False
     ):
         payment_data = payment_data or dict()
         payment_data.update(self.payment_data)
         result = self._end_pay(payment_data, strict = strict)
         self.mark_paid_s()
-        if vouchers: self.use_vouchers_s()
         if notify: self.notify_s()
         return result
 
     def cancel_s(
         self,
         cancel_data = None,
+        vouchers = True,
         strict = False,
         notify = False
     ):
@@ -515,6 +521,7 @@ class Order(bundle.Bundle):
         cancel_data.update(self.cancel_data)
         result = self._cancel(cancel_data, strict = strict)
         self.mark_canceled_s()
+        if vouchers: self.disuse_vouchers_s()
         if notify: self.notify_s()
         return result
 
@@ -532,7 +539,9 @@ class Order(bundle.Bundle):
         """
 
         discount = self.calculate_discount()
-        if reset: self.discount_used = commons.Decimal(0.0)
+        if reset:
+            self.discount_used = commons.Decimal(0.0)
+            self.discount_data = dict()
         pending = discount - self.discount_base - self.discount_used
         if pending <= 0.0: return
         for voucher in self.vouchers:
@@ -546,8 +555,22 @@ class Order(bundle.Bundle):
             voucher.use_s(amount, currency = self.currency)
             pending -= commons.Decimal(amount)
             self.discount_used += commons.Decimal(amount)
+            self.discount_data[voucher.id] = amount
         appier.verify(pending == 0.0)
         self.save()
+
+    def disuse_vouchers_s(self):
+        """
+        Disuses the complete set of voucher associated with the current
+        order, note that only vouchers set in the discount data will be
+        used. This map is typically populated once the order is marked
+        as waiting payment.
+        """
+
+        if not self.discount_data: return
+        for voucher_id, amount in appier.legacy.items(self.discount_data):
+            _voucher = voucher.Voucher.get(id = voucher_id)
+            _voucher.disuse_s(amount, currency = self.currency)
 
     def ensure_waiting_s(self):
         if not self.status == "created": return

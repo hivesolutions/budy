@@ -327,6 +327,40 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(voucher.open_amount, 0.0)
         self.assertEqual(voucher.usage_count, 1)
 
+    def test_voucher_redeem(self):
+        product = budy.Product(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0
+        )
+        product.save()
+
+        order = budy.Order()
+        order.save()
+
+        order_line = budy.OrderLine(quantity = 2.0)
+        order_line.product = product
+        order_line.save()
+        order.add_line_s(order_line)
+
+        self.assertEqual(order_line.quantity, 2.0)
+        self.assertEqual(order_line.total, 20.0)
+        self.assertEqual(order.total, 20.0)
+        self.assertEqual(len(order.lines), 1)
+
+        address = budy.Address(
+            first_name = "first name",
+            last_name = "last name",
+            address = "address",
+            city = "city"
+        )
+        address.save()
+
+        order.shipping_address = address
+        order.billing_address = address
+        order.email = "username@email.com"
+        order.save()
+
         small_voucher = budy.Voucher(amount = 1.0)
         small_voucher.save()
 
@@ -337,10 +371,11 @@ class OrderTest(unittest.TestCase):
             strict = False
         )
 
-        self.assertEqual(small_voucher.is_valid(), True)
-        self.assertEqual(small_voucher.used_amount, 0.0)
-        self.assertEqual(small_voucher.open_amount, 1.0)
-        self.assertEqual(small_voucher.usage_count, 0)
+        self.assertEqual(small_voucher.is_valid(), False)
+        self.assertEqual(small_voucher.amount, 1.0)
+        self.assertEqual(small_voucher.used_amount, 1.0)
+        self.assertEqual(small_voucher.open_amount, 0.0)
+        self.assertEqual(small_voucher.usage_count, 1)
 
         self.assertEqual(order.is_valid(), True)
         self.assertEqual(order_line.is_valid_quantity(), True)
@@ -353,6 +388,7 @@ class OrderTest(unittest.TestCase):
         )
 
         self.assertEqual(small_voucher.is_valid(), False)
+        self.assertEqual(small_voucher.amount, 1.0)
         self.assertEqual(small_voucher.used_amount, 1.0)
         self.assertEqual(small_voucher.open_amount, 0.0)
         self.assertEqual(small_voucher.usage_count, 1)
@@ -361,6 +397,41 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order_line.is_valid_quantity(), True)
         self.assertEqual(order.paid, True)
         self.assertEqual(order.status, "paid")
+
+        order.date = None
+        order.status = "created"
+        order.unmark_paid_s()
+
+        small_voucher = budy.Voucher(amount = 1.0)
+        small_voucher.save()
+
+        order.set_voucher_s(small_voucher)
+
+        order.pay_s(
+            payment_data = dict(type = "simple"),
+            strict = False
+        )
+
+        self.assertEqual(small_voucher.is_valid(), False)
+        self.assertEqual(small_voucher.amount, 1.0)
+        self.assertEqual(small_voucher.used_amount, 1.0)
+        self.assertEqual(small_voucher.open_amount, 0.0)
+        self.assertEqual(small_voucher.usage_count, 1)
+
+        self.assertEqual(order.is_valid(), True)
+        self.assertEqual(order_line.is_valid_quantity(), True)
+        self.assertEqual(order.paid, False)
+        self.assertEqual(order.status, "waiting_payment")
+
+        order.cancel_s()
+
+        small_voucher = small_voucher.reload()
+
+        self.assertEqual(small_voucher.is_valid(), True)
+        self.assertEqual(small_voucher.amount, 1.0)
+        self.assertEqual(small_voucher.used_amount, 0.0)
+        self.assertEqual(small_voucher.open_amount, 1.0)
+        self.assertEqual(small_voucher.usage_count, 0)
 
     def test_discount(self):
         product = budy.Product(
