@@ -538,24 +538,46 @@ class Order(bundle.Bundle):
         before the use/redeem operation is performed.
         """
 
-        discount = self.calculate_discount()
         if reset:
             self.discount_used = commons.Decimal(0.0)
             self.discount_data = dict()
+
+        discount = self.calculate_discount()
         pending = discount - self.discount_base - self.discount_used
         if pending <= 0.0: return
+
+        # iterates over the complete set of voucher currently associated
+        # with the order (both value and percentage) to try to retrieve
+        # the possible discount value for each of them
         for voucher in self.vouchers:
+            # in case there's no more discount pending/allowed to be
+            # applied breaks the current loop (no more usage allowed)
             if pending == 0.0: break
+
+            # retrieves the "possible" discount value from the voucher
+            # according to the order's currency
             discount = voucher.discount(
                 self.discountable,
                 currency = self.currency
             )
-            overflows = discount > pending
-            amount = pending if overflows else discount
+
+            # determines the concrete amount of discount to be used by
+            # comparing it with the pending value (lowest wins)
+            amount = min(discount, pending)
+
+            # runs the concrete voucher usage operation taking into account
+            # the "target" discount amount and the currency and decrements
+            # the pending value by the amount one
             voucher.use_s(amount, currency = self.currency)
             pending -= commons.Decimal(amount)
+
+            # updates the discount used and the discount data value according
+            # to the new voucher usage operation that has just been executed
             self.discount_used += commons.Decimal(amount)
-            self.discount_data[voucher.id] = amount
+            self.discount_data[str(voucher.id)] = amount
+
+        # verifies that there's no more pending value to be discounted and
+        # then save the current order values
         appier.verify(pending == 0.0)
         self.save()
 
@@ -569,6 +591,7 @@ class Order(bundle.Bundle):
 
         if not self.discount_data: return
         for voucher_id, amount in appier.legacy.items(self.discount_data):
+            voucher_id = int(voucher_id)
             _voucher = voucher.Voucher.get(id = voucher_id)
             _voucher.disuse_s(amount, currency = self.currency)
 
