@@ -555,7 +555,9 @@ class Order(bundle.Bundle):
             if pending == 0.0: break
 
             # retrieves the "possible" discount value from the voucher
-            # according to the order's currency
+            # according to the order's currency (this value may be calculated
+            # as a percentage of the discountable value or a fixed value
+            # depending on the nature of the voucher, value vs percentage)
             discount = voucher.discount(
                 self.discountable,
                 currency = self.currency
