@@ -226,6 +226,6 @@ class Media(base.BudyBase):
     def view_url(self, absolute = False):
         return self.owner.url_for(
             "media_api.data",
-            absolute = absolute,
-            id = self.id
+            id = self.id,
+            absolute = absolute
         )
