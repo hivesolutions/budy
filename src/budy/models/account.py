@@ -240,7 +240,7 @@ class BudyAccount(appier_extras.admin.Account):
         )
 
     @appier.view(name = "Orders")
-    def orders(self, *args, **kwargs):
+    def orders_v(self, *args, **kwargs):
         kwargs["sort"] = kwargs.get("sort", [("created", -1)])
         return dict(
             model = order.Order,
