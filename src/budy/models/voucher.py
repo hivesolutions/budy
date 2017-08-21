@@ -355,10 +355,12 @@ class Voucher(base.BudyBase):
     def all_orders_v(self, *args, **kwargs):
         from . import order
         kwargs["sort"] = kwargs.get("sort", [("created", -1)])
-        return dict(
+        kwargs.update(vouchers = {"$in" : (self.id,)})
+        return appier.lazy_dict(
             model = order.Order,
-            entities = order.Order.find(vouchers = {"$in" : (self.id,)}, *args, **kwargs),
-            page = order.Order.paginate(vouchers = {"$in" : (self.id,)}, *args, **kwargs),
+            kwargs = kwargs,
+            entities = appier.lazy(lambda: order.Order.find(*args, **kwargs)),
+            page = appier.lazy(lambda: order.Order.paginate(*args, **kwargs)),
             names = ["reference", "created", "total", "currency", "status"]
         )
 
@@ -366,18 +368,15 @@ class Voucher(base.BudyBase):
     def paid_orders_v(self, *args, **kwargs):
         from . import order
         kwargs["sort"] = kwargs.get("sort", [("created", -1)])
-        return dict(
+        kwargs.update(
+            vouchers = {"$in" : (self.id,)},
+            paid = True,
+        )
+        return appier.lazy_dict(
             model = order.Order,
-            entities = order.Order.find(
-                vouchers = {"$in" : (self.id,)},
-                paid = True,
-                *args, **kwargs
-            ),
-            page = order.Order.paginate(
-                vouchers = {"$in" : (self.id,)},
-                paid = True,
-                *args, **kwargs
-            ),
+            kwargs = kwargs,
+            entities = appier.lazy(lambda: order.Order.find(*args, **kwargs)),
+            page = appier.lazy(lambda: order.Order.paginate(*args, **kwargs)),
             names = ["reference", "created", "total", "currency", "status"]
         )
 

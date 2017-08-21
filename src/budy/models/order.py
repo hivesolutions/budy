@@ -331,10 +331,12 @@ class Order(bundle.Bundle):
     @appier.view(name = "Paid")
     def paid_v(cls, *args, **kwargs):
         kwargs["sort"] = kwargs.get("sort", [("id", -1)])
-        return dict(
+        kwargs.update(paid = True)
+        return appier.lazy_dict(
             model = cls,
-            entities = cls.find(paid = True, *args, **kwargs),
-            page = cls.paginate(paid = True, *args, **kwargs)
+            kwargs = kwargs,
+            entities = appier.lazy(lambda: cls.find(*args, **kwargs)),
+            page = appier.lazy(lambda: cls.paginate(args, **kwargs))
         )
 
     @classmethod
@@ -346,10 +348,12 @@ class Order(bundle.Bundle):
     )
     def status_v(cls, status, *args, **kwargs):
         kwargs["sort"] = kwargs.get("sort", [("id", -1)])
-        return dict(
+        kwargs.update(status = status)
+        return appier.lazy_dict(
             model = cls,
-            entities = cls.find(status = status, *args, **kwargs),
-            page = cls.paginate(status = status, *args, **kwargs)
+            kwargs = kwargs,
+            entities = appier.lazy(lambda: cls.find(*args, **kwargs)),
+            page = appier.lazy(lambda: cls.paginate(*args, **kwargs))
         )
 
     @classmethod
@@ -895,10 +899,11 @@ class Order(bundle.Bundle):
 
     @appier.view(name = "Lines")
     def lines_v(self, *args, **kwargs):
-        return dict(
+        return appier.lazy_dict(
             model = self.lines._target,
-            entities = self.lines.find(*args, **kwargs),
-            page = self.lines.paginate(*args, **kwargs),
+            kwargs = kwargs,
+            entities = appier.lazy(lambda: self.lines.find(*args, **kwargs)),
+            page = appier.lazy(lambda: self.lines.paginate(*args, **kwargs)),
             names = ["id", "product", "quantity", "total", "currency"]
         )
 
@@ -909,10 +914,12 @@ class Order(bundle.Bundle):
         )
     )
     def lines_currency_v(self, currency, *args, **kwargs):
-        return dict(
+        kwargs.update(currency = currency)
+        return appier.lazy_dict(
             model = self.lines._target,
-            entities = self.lines.find(currency = currency, *args, **kwargs),
-            page = self.lines.paginate(currency = currency, *args, **kwargs),
+            kwargs = kwargs,
+            entities = appier.lazy(lambda: self.lines.find(*args, **kwargs)),
+            page = appier.lazy(lambda: self.lines.paginate(*args, **kwargs)),
             names = ["id", "product", "quantity", "total", "currency"]
         )
 

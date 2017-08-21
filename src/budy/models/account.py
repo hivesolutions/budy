@@ -242,19 +242,22 @@ class BudyAccount(appier_extras.admin.Account):
     @appier.view(name = "Orders")
     def orders_v(self, *args, **kwargs):
         kwargs["sort"] = kwargs.get("sort", [("created", -1)])
-        return dict(
+        kwargs.update(account = self.id)
+        return appier.lazy_dict(
             model = order.Order,
-            entities = order.Order.find(account = self.id, *args, **kwargs),
-            page = order.Order.paginate(account = self.id, *args, **kwargs),
+            kwargs = kwargs,
+            entities = appier.lazy(lambda: order.Order.find(*args, **kwargs)),
+            page = appier.lazy(lambda: order.Order.paginate(*args, **kwargs)),
             names = ["reference", "created", "total", "currency", "status"]
         )
 
     @appier.view(name = "Addresses")
     def addresses_v(self, *args, **kwargs):
-        return dict(
+        return appier.lazy_dict(
             model = self.addresses._target,
-            entities = self.addresses.find(*args, **kwargs),
-            page = self.addresses.paginate(*args, **kwargs),
+            kwargs = kwargs,
+            entities = appier.lazy(lambda: self.addresses.find(*args, **kwargs)),
+            page = appier.lazy(lambda: self.addresses.paginate(*args, **kwargs)),
             names = ["first_name", "last_name", "address", "country"]
         )
 
