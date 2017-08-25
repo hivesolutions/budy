@@ -64,20 +64,20 @@ class OmniBot(base.Bot):
         self.gc_products()
 
     def sync_products(self):
-        self.owner.logger.info("Starting Omni sync ...")
+        self.logger.info("Starting Omni sync ...")
         self.sync_products_store()
         self.sync_products_db()
         self.sync_measurements_db()
-        self.owner.logger.info("Ended Omni sync")
+        self.logger.info("Ended Omni sync")
 
     def fix_products(self):
-        self.owner.logger.info("Starting Omni fix ...")
+        self.logger.info("Starting Omni fix ...")
         self.fix_products_db()
         self.fix_measurements_db()
-        self.owner.logger.info("Ended Omni fix")
+        self.logger.info("Ended Omni fix")
 
     def gc_products(self):
-        self.owner.logger.info("Starting Omni gc ...")
+        self.logger.info("Starting Omni gc ...")
         self.gc_measurements_db()
 
     def sync_products_store(self):
@@ -124,7 +124,7 @@ class OmniBot(base.Bot):
         api = self.get_api()
         products = budy.Product.find()
 
-        self.owner.logger.info(
+        self.logger.info(
             "Syncing %d products in database ..." % len(products)
         )
 
@@ -143,7 +143,7 @@ class OmniBot(base.Bot):
         api = self.get_api()
         measurements = budy.Measurement.find()
 
-        self.owner.logger.info(
+        self.logger.info(
             "Syncing %d measurements in database ..." % len(measurements)
         )
 
@@ -161,7 +161,7 @@ class OmniBot(base.Bot):
     def fix_products_db(self):
         products = budy.Product.find()
 
-        self.owner.logger.info(
+        self.logger.info(
             "Fixing %d products in database ..." % len(products)
         )
 
@@ -170,7 +170,7 @@ class OmniBot(base.Bot):
     def fix_measurements_db(self):
         measurements = budy.Measurement.find()
 
-        self.owner.logger.info(
+        self.logger.info(
             "Fixing %d measurements in database ..." % len(measurements)
         )
 
@@ -179,7 +179,7 @@ class OmniBot(base.Bot):
     def gc_measurements_db(self):
         measurements = budy.Measurement.find()
 
-        self.owner.logger.info(
+        self.logger.info(
             "Running GC for %d measurements in database ..." % len(measurements)
         )
 
@@ -208,7 +208,7 @@ class OmniBot(base.Bot):
         try: self.sync_product(merchandise, *args, **kwargs)
         except BaseException as exception:
             object_id = merchandise["object_id"]
-            self.owner.logger.warn(
+            self.logger.warn(
                 "Problem syncing product %d - %s ..." % (object_id, exception)
             )
 
@@ -287,7 +287,7 @@ class OmniBot(base.Bot):
         try: self.sync_sub_product(merchandise, *args, **kwargs)
         except BaseException as exception:
             object_id = merchandise["object_id"]
-            self.owner.logger.warn(
+            self.logger.warn(
                 "Problem syncing sub product %d - %s ..." % (object_id, exception)
             )
 

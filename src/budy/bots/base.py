@@ -37,7 +37,14 @@ __copyright__ = "Copyright (c) 2008-2017 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import logging
+
 class Bot(object):
 
     def __init__(self, *args, **kwargs):
         self.owner = kwargs.get("owner", None)
+
+    @property
+    def logger(self):
+        if self.owner: return self.owner.logger
+        else: return logging.getLogger()
