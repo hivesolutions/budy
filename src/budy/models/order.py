@@ -537,8 +537,8 @@ class Order(bundle.Bundle):
         if (previous) vouchers have been discounted in the order they will
         be discarded as not relevant.
 
-        @type reset: bool
-        @param reset: If previous voucher discount values should be discarded
+        :type reset: bool
+        :param reset: If previous voucher discount values should be discarded
         before the use/redeem operation is performed.
         """
 
