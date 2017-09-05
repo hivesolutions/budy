@@ -43,7 +43,7 @@ import budy
 
 from . import root
 
-class ReferralApiController(root.RootApiController):
+class ReferralAPIController(root.RootAPIController):
 
     @appier.route("/api/referrals", "GET", json = True)
     def list(self):

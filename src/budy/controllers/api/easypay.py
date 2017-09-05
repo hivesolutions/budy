@@ -43,7 +43,7 @@ import budy
 
 from . import root
 
-class EasypayApiController(root.RootApiController):
+class EasypayAPIController(root.RootAPIController):
 
     @appier.route("/api/easypay/notification", "GET", json = True)
     def notification(self):

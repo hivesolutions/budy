@@ -39,7 +39,7 @@ __license__ = "Apache License, Version 2.0"
 
 import appier
 
-class RootApiController(appier.Controller):
+class RootAPIController(appier.Controller):
 
     @property
     def country(self):

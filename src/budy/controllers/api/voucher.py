@@ -43,7 +43,7 @@ import budy
 
 from . import root
 
-class VoucherApiController(root.RootApiController):
+class VoucherAPIController(root.RootAPIController):
 
     @appier.route("/api/vouchers", "GET", json = True)
     @appier.ensure(token = "admin")

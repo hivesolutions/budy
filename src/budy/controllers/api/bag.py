@@ -43,7 +43,7 @@ import budy
 
 from . import root
 
-class BagApiController(root.RootApiController):
+class BagAPIController(root.RootAPIController):
 
     @appier.route("/api/bags", "GET", json = True)
     @appier.ensure(token = "admin")

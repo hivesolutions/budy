@@ -43,7 +43,7 @@ import budy
 
 from . import root
 
-class ProductApiController(root.RootApiController):
+class ProductAPIController(root.RootAPIController):
 
     @appier.route("/api/products", "GET", json = True)
     def list(self):

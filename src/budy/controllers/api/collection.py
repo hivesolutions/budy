@@ -43,7 +43,7 @@ import budy
 
 from . import root
 
-class CollectionApiController(root.RootApiController):
+class CollectionAPIController(root.RootAPIController):
 
     @appier.route("/api/collections", "GET", json = True)
     def list(self):

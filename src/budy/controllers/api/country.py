@@ -43,7 +43,7 @@ import budy
 
 from . import root
 
-class CountryApiController(root.RootApiController):
+class CountryAPIController(root.RootAPIController):
 
     @appier.route("/api/countries", "GET", json = True)
     def list(self):

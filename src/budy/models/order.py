@@ -385,19 +385,19 @@ class Order(bundle.Bundle):
     def _get_api_stripe(cls):
         try: import stripe
         except: return None
-        return stripe.Api.singleton()
+        return stripe.API.singleton()
 
     @classmethod
     def _get_api_easypay(cls):
         try: import easypay
         except: return None
-        return easypay.ShelveApi.singleton(scallback = cls._on_api_easypay)
+        return easypay.ShelveAPI.singleton(scallback = cls._on_api_easypay)
 
     @classmethod
     def _get_api_paypal(cls):
         try: import paypal
         except: return None
-        return paypal.Api.singleton()
+        return paypal.API.singleton()
 
     @classmethod
     def _on_api_easypay(cls, api):

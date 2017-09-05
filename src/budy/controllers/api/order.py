@@ -43,7 +43,7 @@ import budy
 
 from . import root
 
-class OrderApiController(root.RootApiController):
+class OrderAPIController(root.RootAPIController):
 
     @appier.route("/api/orders", "GET", json = True)
     @appier.ensure(token = "admin")

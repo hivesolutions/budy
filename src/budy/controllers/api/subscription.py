@@ -43,7 +43,7 @@ import budy
 
 from . import root
 
-class SubscriptionApiController(root.RootApiController):
+class SubscriptionAPIController(root.RootAPIController):
 
     @appier.route("/api/subscriptions", "POST", json = True)
     def create(self):

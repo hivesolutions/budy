@@ -43,7 +43,7 @@ import budy
 
 from . import root
 
-class BaseApiController(root.RootApiController):
+class BaseAPIController(root.RootAPIController):
 
     @appier.route("/api/login", ("GET", "POST"), json = True)
     def login(self):

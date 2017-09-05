@@ -43,7 +43,7 @@ import budy
 
 from . import root
 
-class CurrencyApiController(root.RootApiController):
+class CurrencyAPIController(root.RootAPIController):
 
     @appier.route("/api/currencies", "GET", json = True)
     def list(self):

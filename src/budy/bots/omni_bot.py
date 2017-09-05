@@ -332,7 +332,7 @@ class OmniBot(base.Bot):
     def get_api(self):
         import omni
         if self.api: return self.api
-        self.api = omni.Api()
+        self.api = omni.API()
         return self.api
 
     def get_exception(self):
