@@ -183,6 +183,9 @@ class OmniBot(base.Bot):
             "Running GC for %d measurements in database ..." % len(measurements)
         )
 
+        # sorts the measurements (product dimensions) according to the
+        # modified data, from latest to oldest to be able to iterate
+        # over them to remove possible duplication from the database
         measurements.sort(
             key = lambda v: v.meta.get("modify_date", 0),
             reverse = True
