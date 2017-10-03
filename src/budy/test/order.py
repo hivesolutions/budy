@@ -210,6 +210,22 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.currency, "GBP")
         self.assertEqual(order.payment_currency, "GBP")
 
+        self.assertRaises(appier.AssertionError, order.verify_store)
+
+        address = budy.Address(
+            first_name = "first name",
+            last_name = "last name",
+            address = "address",
+            city = "city"
+        )
+        address.save()
+        store.address = address
+        store.save()
+
+        order = order.reload()
+
+        order.verify_store()
+
     def test_voucher(self):
         product = budy.Product(
             short_description = "product",

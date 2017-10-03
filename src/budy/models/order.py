@@ -767,6 +767,23 @@ class Order(bundle.Bundle):
         appier.verify(self.account.username == account.username)
         appier.verify(self.account.email == account.email)
 
+    def verify_store(self):
+        """
+        Verifies that the store associated with the order contains
+        all the required fields for proper handling.
+
+        The raised exception should contain proper english messages.
+        """
+
+        appier.verify(
+            not self.store == None,
+            message = "No store is set for order"
+        )
+        appier.verify(
+            not self.store.address == None,
+            message = "Address is not set for order's store"
+        )
+
     @appier.operation(name = "Notify")
     def notify_s(self, name = None, *args, **kwargs):
         name = name or "order.%s" % self.status

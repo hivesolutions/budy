@@ -287,6 +287,7 @@ class OrderAPIController(root.RootAPIController):
     @appier.ensure(token = "user")
     def set_store_shipping(self, key):
         order = budy.Order.get(key = key, rules = False)
+        order.verify_store()
         store = order.store
         address = store.address.clone()
         address.save()
@@ -299,6 +300,7 @@ class OrderAPIController(root.RootAPIController):
     @appier.ensure(token = "user")
     def set_store_billing(self, key):
         order = budy.Order.get(key = key, rules = False)
+        order.verify_store()
         store = order.store
         address = store.address.clone()
         address.save()
