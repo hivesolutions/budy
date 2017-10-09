@@ -210,7 +210,7 @@ class Voucher(base.BudyBase):
 
     @classmethod
     @appier.operation(
-        name = "Create Multiple Value",
+        name = "Create Value Multiple",
         parameters = (
             ("Key", "key", str),
             ("Amount", "amount", commons.Decimal),
@@ -219,7 +219,7 @@ class Voucher(base.BudyBase):
             ("Count", "count", int, 1)
         )
     )
-    def create_multiple_value_s(cls, key, amount, currency, unlimited, count):
+    def create_value_multiple_s(cls, key, amount, currency, unlimited, count):
         key = key or cls.secret_g()
         for index in appier.legacy.xrange(count):
             voucher = cls(
@@ -249,14 +249,14 @@ class Voucher(base.BudyBase):
 
     @classmethod
     @appier.operation(
-        name = "Create Multiple Percentage",
+        name = "Create Percentage Multiple",
         parameters = (
             ("Key", "key", str),
             ("Percentage", "percentage", commons.Decimal),
             ("Count", "count", int, 1)
         )
     )
-    def create_multiple_percentage_s(cls, key, percentage, count):
+    def create_percentage_multiple_s(cls, key, percentage, count):
         key = key or cls.secret_g()
         for index in appier.legacy.xrange(count):
             voucher = cls(
