@@ -1,6 +1,6 @@
 # [Budy](http://budy.hive.pt)
 
-Simple e-commerce infra-structure, able to provide a simple experience equivalent to that
+Simple E-commerce infra-structure, able to provide a simple experience equivalent to that
 of platforms like [Shopify](http://www.shopify.com).
 
 ## Design
