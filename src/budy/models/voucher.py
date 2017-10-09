@@ -216,15 +216,14 @@ class Voucher(base.BudyBase):
             ("Amount", "amount", commons.Decimal),
             ("Currency", "currency", str),
             ("Unlimited", "unlimited", bool, False),
-            ("Count", "count", int, 1),
+            ("Count", "count", int, 1)
         )
     )
     def create_multiple_value_s(cls, key, amount, currency, unlimited, count):
         key = key or cls.secret_g()
         for index in appier.legacy.xrange(count):
-            key = key + "-" + str(index)
             voucher = cls(
-                key = key,
+                key = key + "-" + str(index),
                 amount = amount,
                 currency = currency,
                 unlimited = unlimited
@@ -255,15 +254,13 @@ class Voucher(base.BudyBase):
             ("Key", "key", str),
             ("Percentage", "percentage", commons.Decimal),
             ("Count", "count", int, 1)
-        ),
-        factory = True
+        )
     )
     def create_multiple_percentage_s(cls, key, percentage, count):
         key = key or cls.secret_g()
         for index in appier.legacy.xrange(count):
-            key = key + "-" + str(index)
             voucher = cls(
-                key = key,
+                key = key + "-" + str(index),
                 percentage = percentage
             )
             voucher.save()
