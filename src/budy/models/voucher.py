@@ -220,7 +220,9 @@ class Voucher(base.BudyBase):
         )
     )
     def create_multiple_value_s(cls, key, amount, currency, unlimited, count):
-        for _index in appier.legacy.xrange(count):
+        key = key or cls.secret_g()
+        for index in appier.legacy.xrange(count):
+            key = key + "-" + str(index)
             voucher = cls(
                 key = key,
                 amount = amount,
@@ -257,7 +259,9 @@ class Voucher(base.BudyBase):
         factory = True
     )
     def create_multiple_percentage_s(cls, key, percentage, count):
-        for _index in appier.legacy.xrange(count):
+        key = key or cls.secret_g()
+        for index in appier.legacy.xrange(count):
+            key = key + "-" + str(index)
             voucher = cls(
                 key = key,
                 percentage = percentage
