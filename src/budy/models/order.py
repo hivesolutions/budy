@@ -196,7 +196,8 @@ class Order(bundle.Bundle):
         type = appier.reference(
             "Store",
             name = "id"
-        )
+        ),
+        eager = True
     )
 
     shipping_address = appier.field(
