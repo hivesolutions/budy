@@ -60,8 +60,7 @@ class MediaAPIController(root.RootAPIController):
         )
         file = media.file
         if not file: raise appier.NotFoundError(
-            message = "File not found for media '%d'" % id,
-            code = 404
+            message = "File not found for media '%d'" % id
         )
         return self.send_file(
             file.data,
