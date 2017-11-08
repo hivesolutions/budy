@@ -110,7 +110,7 @@ class Media(base.BudyBase):
         is_zip = mime_type in ("application/zip", "application/octet-stream")
         if not is_zip and strict:
             raise appier.OperationalError(
-                message = "Invalid mime type '%s'" % mime_type
+                message = "Invalid MIME type '%s'" % mime_type
             )
         buffer = appier.legacy.BytesIO(data)
         file = zipfile.ZipFile(buffer, "r")
