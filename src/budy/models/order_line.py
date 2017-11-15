@@ -61,5 +61,6 @@ class OrderLine(bundle_line.BundleLine):
 
     @appier.operation(name = "Garbage Collect")
     def collect_s(self):
-        if self.order: return
+        if self.order and not isinstance(self.order, appier.Reference): return
+        if self.order.is_resolvable(): return
         self.delete()

@@ -78,5 +78,6 @@ class BagLine(bundle_line.BundleLine):
 
     @appier.operation(name = "Garbage Collect")
     def collect_s(self):
-        if self.bag: return
+        if self.bag and not isinstance(self.bag, appier.Reference): return
+        if self.bag.is_resolvable(): return
         self.delete()
