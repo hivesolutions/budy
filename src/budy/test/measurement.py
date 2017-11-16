@@ -91,7 +91,8 @@ class MeasurementTest(unittest.TestCase):
             product = product,
             name = "measurement",
             value = 1,
-            value_s = "1"
+            value_s = "1",
+            price = 10.0
         )
         measurement.save()
 

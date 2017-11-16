@@ -71,11 +71,6 @@ class Measurement(base.BudyBase):
 
     price = appier.field(
         type = commons.Decimal,
-        index = True
-    )
-
-    price = appier.field(
-        type = commons.Decimal,
         index = True,
         initial = commons.Decimal(0.0),
         observations = """Main retail price to be used for
