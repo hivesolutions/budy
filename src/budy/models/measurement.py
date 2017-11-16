@@ -74,6 +74,22 @@ class Measurement(base.BudyBase):
         index = True
     )
 
+    price = appier.field(
+        type = commons.Decimal,
+        index = True,
+        initial = commons.Decimal(0.0),
+        observations = """Main retail price to be used for
+        a possible sale transaction of the measurement (includes taxes)"""
+    )
+
+    price_compare = appier.field(
+        type = commons.Decimal,
+        index = True,
+        initial = commons.Decimal(0.0),
+        observations = """The price that is going to be used
+        as the base for discount calculation purposes"""
+    )
+
     taxes = appier.field(
         type = commons.Decimal,
         index = True,
@@ -238,6 +254,21 @@ class Measurement(base.BudyBase):
     @property
     def quantity(self):
         return self.quantity_hand
+
+    @property
+    def discount(self):
+        if not self.price: return commons.Decimal(0.0)
+        if not self.price_compare: return commons.Decimal(0.0)
+        return self.price_compare - self.price
+
+    @property
+    def discount_percent(self):
+        if not self.discount: return commons.Decimal(0.0)
+        return self.discount / self.price_compare * commons.Decimal(100.0)
+
+    @property
+    def is_discounted(self):
+        return self.discount > 0.0
 
     @appier.operation(name = "Fix")
     def fix_s(self):

@@ -239,6 +239,8 @@ class ProductTest(unittest.TestCase):
         )
         product.save()
 
+        self.assertEqual(product.price, 10.0)
+        self.assertEqual(product.price_compare, 0.0)
         self.assertEqual(product.discount, 0.0)
         self.assertEqual(product.discount_percent, 0.0)
         self.assertEqual(product.is_discounted, False)
@@ -248,6 +250,8 @@ class ProductTest(unittest.TestCase):
 
         product = product.reload()
 
+        self.assertEqual(product.price, 10.0)
+        self.assertEqual(product.price_compare, 16.0)
         self.assertEqual(product.discount, 6.0)
         self.assertEqual(product.discount_percent, 37.5)
         self.assertEqual(product.is_discounted, True)
@@ -257,6 +261,8 @@ class ProductTest(unittest.TestCase):
 
         product = product.reload()
 
+        self.assertEqual(product.price, 10.0)
+        self.assertEqual(product.price_compare, 20.0)
         self.assertEqual(product.discount, 10.0)
         self.assertEqual(product.discount_percent, 50.0)
         self.assertEqual(product.is_discounted, True)

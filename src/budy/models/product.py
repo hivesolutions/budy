@@ -85,7 +85,9 @@ class Product(base.BudyBase):
     price = appier.field(
         type = commons.Decimal,
         index = True,
-        initial = commons.Decimal(0.0)
+        initial = commons.Decimal(0.0),
+        observations = """Main retail price to be used for
+        a possible sale transaction of the product (includes taxes)"""
     )
 
     price_compare = appier.field(

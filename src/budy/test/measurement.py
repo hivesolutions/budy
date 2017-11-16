@@ -78,6 +78,51 @@ class MeasurementTest(unittest.TestCase):
         self.assertEqual(measurement.value, 1)
         self.assertEqual(measurement.value_s, "1")
 
+    def test_discount(self):
+        product = budy.Product(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0,
+            quantity_hand = None
+        )
+        product.save()
+
+        measurement = budy.Measurement(
+            product = product,
+            name = "measurement",
+            value = 1,
+            value_s = "1"
+        )
+        measurement.save()
+
+        self.assertEqual(measurement.price, 10.0)
+        self.assertEqual(measurement.price_compare, 0.0)
+        self.assertEqual(measurement.discount, 0.0)
+        self.assertEqual(measurement.discount_percent, 0.0)
+        self.assertEqual(measurement.is_discounted, False)
+
+        measurement.price_compare = 16.0
+        measurement.save()
+
+        measurement = measurement.reload()
+
+        self.assertEqual(measurement.price, 10.0)
+        self.assertEqual(measurement.price_compare, 16.0)
+        self.assertEqual(measurement.discount, 6.0)
+        self.assertEqual(measurement.discount_percent, 37.5)
+        self.assertEqual(measurement.is_discounted, True)
+
+        measurement.price_compare = 20.0
+        measurement.save()
+
+        measurement = measurement.reload()
+
+        self.assertEqual(measurement.price, 10.0)
+        self.assertEqual(measurement.price_compare, 20.0)
+        self.assertEqual(measurement.discount, 10.0)
+        self.assertEqual(measurement.discount_percent, 50.0)
+        self.assertEqual(measurement.is_discounted, True)
+
     def test__fix_value_s(self):
         product = budy.Product(
             short_description = "product",
