@@ -88,6 +88,14 @@ class Product(base.BudyBase):
         initial = commons.Decimal(0.0)
     )
 
+    price_compare = appier.field(
+        type = commons.Decimal,
+        index = True,
+        initial = commons.Decimal(0.0),
+        observations = """The price that is going to be used
+        as the base for discount calculation purposes"""
+    )
+
     taxes = appier.field(
         type = commons.Decimal,
         index = True,
@@ -813,10 +821,25 @@ class Product(base.BudyBase):
         return self.quantity_hand
 
     @property
+    def discount(self):
+        if not self.price: return commons.Decimal(0.0)
+        if not self.price_compare: return commons.Decimal(0.0)
+        return self.price_compare - self.price
+
+    @property
+    def discount_percent(self):
+        if not self.discount: return commons.Decimal(0.0)
+        return self.discount / self.price_compare * commons.Decimal(100.0)
+
+    @property
     def is_parent(self):
         if not hasattr(self, "measurements"): return False
         if not self.measurements: return False
         return len(self.measurements) > 0
+
+    @property
+    def is_discounted(self):
+        return self.discount > 0.0
 
     def _reset_labels(self):
         self.labels = []

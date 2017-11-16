@@ -229,3 +229,34 @@ class ProductTest(unittest.TestCase):
         self.assertEqual(product.labels, ["new_in"])
         self.assertEqual(len(product.collections), 1)
         self.assertEqual(product.collections[0].id, collection.id)
+
+    def test_discount(self):
+        product = budy.Product(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0,
+            quantity_hand = None
+        )
+        product.save()
+
+        self.assertEqual(product.discount, 0.0)
+        self.assertEqual(product.discount_percent, 0.0)
+        self.assertEqual(product.is_discounted, False)
+
+        product.price_compare = 16.0
+        product.save()
+
+        product = product.reload()
+
+        self.assertEqual(product.discount, 6.0)
+        self.assertEqual(product.discount_percent, 37.5)
+        self.assertEqual(product.is_discounted, True)
+
+        product.price_compare = 20.0
+        product.save()
+
+        product = product.reload()
+
+        self.assertEqual(product.discount, 10.0)
+        self.assertEqual(product.discount_percent, 50.0)
+        self.assertEqual(product.is_discounted, True)
