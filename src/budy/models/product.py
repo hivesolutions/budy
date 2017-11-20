@@ -318,6 +318,7 @@ class Product(base.BudyBase):
         modify_date = merchandise["modify_date"]
         company_product_code = merchandise["company_product_code"]
         metadata = merchandise["metadata"] or dict()
+        price_compare = metadata.get("compare_price", None)
         _color = metadata.get("material") or []
         _category = metadata.get("category") or []
         _collection = metadata.get("collection") or []
@@ -344,6 +345,7 @@ class Product(base.BudyBase):
         product.short_description = merchandise["name"] or company_product_code
         product.description = merchandise["description"]
         product.gender = gender
+        product.price_compare = price_compare
         product.currency = currency
         product.order = order
         product.characteristics = metadata.get("characteristics", [])
