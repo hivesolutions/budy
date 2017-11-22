@@ -44,6 +44,8 @@ import budy
 from . import base
 
 RECORDS = 100
+""" The default value for the number of records that are
+going to be retrieved per HTTP request """
 
 class OmniBot(base.Bot):
 
