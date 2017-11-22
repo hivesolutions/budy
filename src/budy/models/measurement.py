@@ -265,6 +265,10 @@ class Measurement(base.BudyBase):
     def is_discounted(self):
         return self.discount > 0.0
 
+    @property
+    def is_price_provided(self):
+        return False
+
     @appier.operation(name = "Fix")
     def fix_s(self):
         if not self.exists(): return

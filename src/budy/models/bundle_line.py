@@ -195,20 +195,22 @@ class BundleLine(base.BudyBase):
         return fixed
 
     def try_valid_quantity(self):
-        if self.quantity < 0: self.quantity = 0
-        if self.merchandise.quantity_hand == None: return False
-        if self.quantity <= self.merchandise.quantity_hand: return False
-        self.quantity = self.merchandise.quantity_hand
-        return True
+        fixed = False
+        if self.quantity <= 0: self.quantity = 0; fixed |= True
+        if self.merchandise.quantity_hand == None: return fixed
+        if self.quantity <= self.merchandise.quantity_hand: return fixed
+        self.quantity = min(self.quantity, self.merchandise.quantity_hand)
+        return fixed
 
     def try_valid_price(self):
-        if self.merchandise.price == None: return False
-        if self.merchandise.price == self.price: return False
-        self.price = self.merchandise.price if\
-            self.merchandise.price else\
-            self.price
+        fixed = False
+        if self.merchandise.is_price_provided: return fixed
+        if self.merchandise.price == None: return fixed
+        if self.merchandise.price == self.price: return fixed
+        self.price = self.merchandise.price
         self.calculate(force = True)
-        return True
+        fixed |= True
+        return fixed
 
     def is_empty(self):
         return self.quantity == 0.0
@@ -237,7 +239,8 @@ class BundleLine(base.BudyBase):
     def is_valid_price(self, reload = True):
         merchandise = self.merchandise and self.merchandise.reload() if\
             reload else self.merchandise
-        if not merchandise.price == None and\
+        if not merchandise.is_price_provided and\
+            not merchandise.price == None and\
             not self.price == merchandise.price: return False
         return True
 

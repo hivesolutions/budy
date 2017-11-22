@@ -863,6 +863,10 @@ class Product(base.BudyBase):
     def is_discounted(self):
         return self.discount > 0.0
 
+    @property
+    def is_price_provided(self):
+        return True if self.price_provider else False
+
     def _reset_labels(self):
         self.labels = []
 
