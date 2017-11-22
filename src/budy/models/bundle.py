@@ -447,9 +447,25 @@ class Bundle(base.BudyBase):
         for line in empty: self.lines.remove(line)
 
     def try_valid(self):
-        for line in self.lines: line.try_valid()
+        # unsets the fixed flag meaning that by default no
+        # fixing operation has occurred
+        fixed = False
+
+        # iterates over the complete set of bundle lines
+        # to try to fixed them and make them valid in case
+        # none of them has to be fixed returns immediately
+        for line in self.lines: fixed |= line.try_valid_s()
+        if not fixed: return fixed
+
+        # otherwise we need to collect the possible empty
+        # lines and to re-calculate the total values as
+        # some of the line financials may have changed
         self.collect_empty()
         self.calculate()
+
+        # returns the final value of the fixed flag that should
+        # be true if the control flow has reached this place
+        return fixed
 
     def ensure_valid(self):
         appier.verify(self.is_valid())

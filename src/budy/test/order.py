@@ -741,6 +741,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order_line.is_valid_size(), False)
 
         order_line = budy.OrderLine(
+            price = 12.0,
             quantity = 2.0,
             size = 12,
             scale = 1

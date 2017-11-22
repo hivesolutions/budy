@@ -241,3 +241,39 @@ class BagTest(unittest.TestCase):
         duplicated.key = bag.key
 
         self.assertRaises(appier.ValidationError, duplicated.save)
+
+    def test_price_change(self):
+        product = budy.Product(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0
+        )
+        product.save()
+
+        bag = budy.Bag()
+        bag.save()
+
+        bag_line = budy.BagLine(
+            quantity = 2.0
+        )
+        bag_line.product = product
+        bag_line.save()
+        bag.add_line_s(bag_line)
+
+        self.assertEqual(bag_line.quantity, 2.0)
+        self.assertEqual(bag_line.total, 20.0)
+        self.assertEqual(bag.total, 20.0)
+        self.assertEqual(len(bag.lines), 1)
+
+        product.price = 20.0
+        product.save()
+
+        bag = bag.reload()
+        bag.save()
+
+        bag_line = bag_line.reload()
+
+        self.assertEqual(bag_line.quantity, 2.0)
+        self.assertEqual(bag_line.total, 40.0)
+        self.assertEqual(bag.total, 40.0)
+        self.assertEqual(len(bag.lines), 1)

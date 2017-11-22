@@ -183,24 +183,32 @@ class BundleLine(base.BudyBase):
         appier.verify(self.is_valid())
 
     def try_valid(self):
-        self.try_valid_quantity()
-        self.try_valid_price()
+        fixed = False
+        fixed |= self.try_valid_quantity()
+        fixed |= self.try_valid_price()
+        return fixed
+
+    def try_valid_s(self):
+        fixed = self.try_valid()
+        if not fixed: return fixed
+        self.save()
+        return fixed
 
     def try_valid_quantity(self):
         if self.quantity < 0: self.quantity = 0
-        if self.merchandise.quantity_hand == None: return
-        self.quantity = self.quantity if\
-            self.quantity <= self.merchandise.quantity_hand else\
-            self.merchandise.quantity_hand
+        if self.merchandise.quantity_hand == None: return False
+        if self.quantity <= self.merchandise.quantity_hand: return False
+        self.quantity = self.merchandise.quantity_hand
+        return True
 
     def try_valid_price(self):
-        if self.merchandise.quantity_hand == None: return
-        if self.merchandise.price == None: return
-        if self.merchandise.price == self.price: return
+        if self.merchandise.price == None: return False
+        if self.merchandise.price == self.price: return False
         self.price = self.merchandise.price if\
             self.merchandise.price else\
             self.price
         self.calculate(force = True)
+        return True
 
     def is_empty(self):
         return self.quantity == 0.0
@@ -229,8 +237,7 @@ class BundleLine(base.BudyBase):
     def is_valid_price(self, reload = True):
         merchandise = self.merchandise and self.merchandise.reload() if\
             reload else self.merchandise
-        if not merchandise.quantity_hand == None and\
-            not merchandise.price == None and\
+        if not merchandise.price == None and\
             not self.price == merchandise.price: return False
         return True
 
