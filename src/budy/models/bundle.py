@@ -449,6 +449,7 @@ class Bundle(base.BudyBase):
     def try_valid(self):
         for line in self.lines: line.try_valid()
         self.collect_empty()
+        self.calculate()
 
     def ensure_valid(self):
         appier.verify(self.is_valid())

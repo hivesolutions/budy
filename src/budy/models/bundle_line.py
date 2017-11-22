@@ -184,6 +184,7 @@ class BundleLine(base.BudyBase):
 
     def try_valid(self):
         self.try_valid_quantity()
+        self.try_valid_price()
 
     def try_valid_quantity(self):
         if self.quantity < 0: self.quantity = 0
@@ -191,6 +192,15 @@ class BundleLine(base.BudyBase):
         self.quantity = self.quantity if\
             self.quantity <= self.merchandise.quantity_hand else\
             self.merchandise.quantity_hand
+
+    def try_valid_price(self):
+        if self.merchandise.quantity_hand == None: return
+        if self.merchandise.price == None: return
+        if self.merchandise.price == self.price: return
+        self.price = self.merchandise.price if\
+            self.merchandise.price else\
+            self.price
+        self.calculate(force = True)
 
     def is_empty(self):
         return self.quantity == 0.0
