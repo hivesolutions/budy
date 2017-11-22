@@ -53,6 +53,8 @@ class Product(base.BudyBase):
         "Female" : "Female",
         "Both" : "Both"
     }
+    """ The dictionary that maps the multiple gender
+    enumeration values with their string representation """
 
     short_description = appier.field(
         index = "hashed",
@@ -493,10 +495,26 @@ class Product(base.BudyBase):
     @classmethod
     def _build(cls, model, map):
         super(Product, cls)._build(model, map)
+
+        # retrieves the multiple values from the product model that are
+        # going to be used in the calculated attributes construction
         price = model.get("price", None)
+        price_compare = model.get("price_compare", None)
         labels = model.get("labels", ())
+
+        # verifies if the current product is considered to be a discounted
+        # one, that happens when the price compare is greater than price
+        is_discounted = price and price_compare and price_compare > price
+
+        # calculates the shipping costs taking into account if the price
+        # is currently defined for the product defaulting to none otherwise
         if price == None: shipping_cost = None
         else: shipping_cost = bundle.Bundle.eval_shipping(price, 0.0, 1.0, None)
+
+        # sets the multiple attributes of the product that describe it through
+        # calculated attributes (as expected by model retriever)
+        model["is_discounted"] = is_discounted
+        model["is_discounted_s"] = "discounted" if is_discounted else "not-discounted"
         model["shipping_cost"] = shipping_cost
         for label in labels:
             model[label] = label
