@@ -54,6 +54,10 @@ class OrderLine(bundle_line.BundleLine):
     def list_names(cls):
         return ["id", "quantity", "total", "currency", "product", "order"]
 
+    @classmethod
+    def is_visible(cls):
+        return False
+
     def is_valid_quantity(self, reload = True):
         order = self.order and self.order.reload() if reload else self.order
         if hasattr(order, "paid") and order.paid: return True

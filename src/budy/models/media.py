@@ -98,6 +98,10 @@ class Media(base.BudyBase):
         return ["id", -1]
 
     @classmethod
+    def is_visible(cls):
+        return False
+
+    @classmethod
     @appier.operation(
         name = "Import Media",
         parameters = (

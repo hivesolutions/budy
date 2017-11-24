@@ -55,6 +55,10 @@ class BagLine(bundle_line.BundleLine):
     def list_names(cls):
         return ["id", "quantity", "total", "currency", "product", "bag"]
 
+    @classmethod
+    def is_visible(cls):
+        return False
+
     def pre_validate(self):
         bundle_line.BundleLine.pre_validate(self)
         self.try_valid()
