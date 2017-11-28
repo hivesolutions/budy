@@ -281,6 +281,7 @@ class BundleLine(base.BudyBase):
     @property
     def merchandise(self, name = "size", strict = False):
         if not self.size: return self.product
+        if not hasattr(self.product, "get_measurement"): return self.poduct
         measurement = self.product.get_measurement(self.size, name = name)
         if measurement or strict: return measurement
         return self.product
