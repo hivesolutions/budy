@@ -337,7 +337,7 @@ class Order(bundle.Bundle):
             model = cls,
             kwargs = kwargs,
             entities = appier.lazy(lambda: cls.find(*args, **kwargs)),
-            page = appier.lazy(lambda: cls.paginate(args, **kwargs))
+            page = appier.lazy(lambda: cls.paginate(*args, **kwargs))
         )
 
     @classmethod
