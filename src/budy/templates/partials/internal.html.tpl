@@ -9,7 +9,7 @@
 {% block footer %}
     <div class="footer-container">
         {% set copyright = owner.copyright|default(copyright, True)|default("Hive Solutions", True) %}
-        {% set copyright_year = owner.copyright_year|default(copyright_year, True)|default("2014-2017", True) %}
+        {% set copyright_year = owner.copyright_year|default(copyright_year, True)|default("2014-2018", True) %}
         {% set copyright_url = owner.copyright_url|default(copyright_url, True)|default("http://hive.pt", True) %}
         &copy; Copyright {{ copyright_year }} by
         {% if copyright_url %}
