@@ -1208,13 +1208,19 @@ class Order(bundle.Bundle):
 
     def _end_pay_stripe(self, payment_data):
         cls = self.__class__
+
+        # retrieves the rerefente to the stripe API client
+        # to be used for remote operations
         api = cls._get_api_stripe()
+
+        # retrieves the payment data values that are going to be
+        # used to complete the stripe payment work-flow
         secure = payment_data.get("secure", False)
         token_return = payment_data.get("token_return", None)
 
         # in case the current payment stream is not the (3D) secure
-        # one then returns a valid value immediately
-        if not secure: return True
+        # one then returns immediately
+        if not secure: return
 
         # tries to obtain the source associated with the return
         # so that the proper course of action may be taken
