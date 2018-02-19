@@ -1209,7 +1209,7 @@ class Order(bundle.Bundle):
     def _end_pay_stripe(self, payment_data):
         cls = self.__class__
 
-        # retrieves the rerefente to the stripe API client
+        # retrieves the reference to the stripe API client
         # to be used for remote operations
         api = cls._get_api_stripe()
 
