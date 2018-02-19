@@ -520,8 +520,13 @@ class Order(bundle.Bundle):
         # value in case nothing has been done
         result = self._end_pay(payment_data, strict = strict)
 
+        # marks the current order as completely paid and in case
+        # the notify flag is set notifies the event handlers
         self.mark_paid_s()
         if notify: self.notify_s()
+
+        # returns the result value from the end pay operation to
+        # the caller method (for post-processing)
         return result
 
     def cancel_s(
