@@ -508,6 +508,9 @@ class Order(bundle.Bundle):
         strict = False,
         notify = False
     ):
+        # joins the payment data passed as parameter and then
+        # one currently stored as part of the order, these
+        # values are going to be sent for the end pay operation
         payment_data = payment_data or dict()
         payment_data.update(self.payment_data)
 
