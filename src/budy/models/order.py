@@ -1229,11 +1229,19 @@ class Order(bundle.Bundle):
 
         # in case the current status of the source is failed then
         # the cancel operation is run instead to cancel the current
-        # order and a failed (end pay) value is returned
+        # order and a security exception is raised for the failure
         if status == "failed":
             self.cancel_s(notify = True)
             raise appier.SecurityError(
                 message = "Security verification failed"
+            )
+
+        # in case the status it not expected one then also reverts the
+        # current transaction, but raises a different exception
+        if not status == "chargeable":
+            self.cancel_s(notify = True)
+            raise appier.OperationalError(
+                message = "Unexpected status for source '%s'" % status
             )
 
         # (otherwise) runs the charging operation using the token
