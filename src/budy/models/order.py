@@ -1078,6 +1078,7 @@ class Order(bundle.Bundle):
                 exp_year = exp_year,
                 token = token_id,
                 redirect = redirect,
+                redirect_url = redirect_url,
                 secure = True
             )
 
