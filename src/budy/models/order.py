@@ -515,13 +515,10 @@ class Order(bundle.Bundle):
         payment_data.update(self.payment_data)
 
         # runs the concrete implementation of the end payment
-        # (finish payment) operation and in case the result
-        # is not valid (not able to complete transaction), the
-        # control flow is returned immediately to avoid any
-        # unwanted behaviour as the order must be kept under
-        # the current state (no state changed)
+        # (finish payment) operation return a valid value in case
+        # a concrete operation has been executed or an invalid
+        # value in case nothing has been done
         result = self._end_pay(payment_data, strict = strict)
-        if not result: return result
 
         self.mark_paid_s()
         if notify: self.notify_s()
@@ -1246,7 +1243,7 @@ class Order(bundle.Bundle):
         )
 
         # returns a valid value to the caller method indicating that
-        # the end pay operation has been completed with sucess
+        # the end pay operation has been completed with success
         return True
 
     def _end_pay_paypal(self, payment_data):
