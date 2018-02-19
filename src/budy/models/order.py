@@ -1236,14 +1236,6 @@ class Order(bundle.Bundle):
                 message = "Security verification failed"
             )
 
-        # in case the status it not expected one then also reverts the
-        # current transaction, but raises a different exception
-        if not status == "chargeable":
-            self.cancel_s(notify = True)
-            raise appier.OperationalError(
-                message = "Unexpected status for source '%s'" % status
-            )
-
         # (otherwise) runs the charging operation using the token
         # for the source as the source is considered to be valid
         api.create_charge_token(
