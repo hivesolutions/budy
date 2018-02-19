@@ -510,7 +510,16 @@ class Order(bundle.Bundle):
     ):
         payment_data = payment_data or dict()
         payment_data.update(self.payment_data)
+
+        # runs the concrete implementation of the end payment
+        # (finish payment) operation and in case the result
+        # is not valid (not able to complete transaction), the
+        # control flow is returned immediately to avoid any
+        # unwanted behaviour as the order must be kept under
+        # the current state (no state changed)
         result = self._end_pay(payment_data, strict = strict)
+        if not result: return result
+
         self.mark_paid_s()
         if notify: self.notify_s()
         return result
@@ -1197,7 +1206,27 @@ class Order(bundle.Bundle):
         api = cls._get_api_stripe()
         secure = payment_data.get("secure", False)
         token_return = payment_data.get("token_return", None)
-        if not secure: return
+
+        # in case the current payment stream is not the (3D) secure
+        # one then returns a valid value immediately
+        if not secure: return True
+
+        # tries to obtain the source associated with the return
+        # so that the proper course of action may be taken
+        source = api.get_source(token_return)
+        status = source.get("status", "success")
+
+        # in case the current status of the source is failed then
+        # the cancel operation is run instead to cancel the current
+        # order and a failed (end pay) value is returned
+        if status == "failed":
+            self.cancel_s(notify = True)
+            raise appier.SecurityError(
+                message = "Security verification failed"
+            )
+
+        # (otherwise) runs the charging operation using the token
+        # for the source as the source is considered to be valid
         api.create_charge_token(
             int(self.payable * 100),
             self.currency,
@@ -1212,6 +1241,9 @@ class Order(bundle.Bundle):
                 last_name = self.shipping_address.last_name
             )
         )
+
+        # returns a valid value to the caller method indicating that
+        # the end pay operation has been completed with sucess
         return True
 
     def _end_pay_paypal(self, payment_data):
