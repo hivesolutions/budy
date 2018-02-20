@@ -1069,7 +1069,9 @@ class Order(bundle.Bundle):
                     card = source["id"]
                 )
                 redirect = source.get("redirect", {})
-                redirect = redirect.get("url", None)
+                redirect_u = redirect.get("url", None)
+                redirect_s = redirect.get("status", "pending")
+                redirect = None if redirect_s == "failed" else redirect_u
 
             redirect_valid = True if redirect else False
             use_secure &= redirect_valid
