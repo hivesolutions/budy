@@ -63,6 +63,11 @@ class OrderLine(bundle_line.BundleLine):
         if hasattr(order, "paid") and order.paid: return True
         return bundle_line.BundleLine.is_valid_quantity(self, reload = reload)
 
+    def is_valid_price(self, reload = True):
+        order = self.order and self.order.reload() if reload else self.order
+        if hasattr(order, "paid") and order.paid: return True
+        return bundle_line.BundleLine.is_valid_price(self, reload = reload)
+
     @appier.operation(name = "Garbage Collect")
     def collect_s(self):
         if self.order and not isinstance(self.order, appier.Reference): return
