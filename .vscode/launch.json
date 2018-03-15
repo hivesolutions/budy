@@ -7,8 +7,6 @@
         "pythonPath": "python",
         "program": "${workspaceRoot}/src/budy/main.py",
         "debugOptions": [
-            "WaitOnAbnormalExit",
-            "WaitOnNormalExit",
             "RedirectOutput"
         ],
         "env": {
@@ -22,8 +20,6 @@
         "pythonPath": "python3",
         "program": "${workspaceRoot}/src/budy/main.py",
         "debugOptions": [
-            "WaitOnAbnormalExit",
-            "WaitOnNormalExit",
             "RedirectOutput"
         ],
         "env": {
