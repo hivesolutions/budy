@@ -59,6 +59,7 @@ class Bag(bundle.Bundle):
             "BudyAccount",
             name = "id"
         ),
+        index = "hashed",
         eager = True
     )
 
