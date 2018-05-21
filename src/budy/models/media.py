@@ -117,7 +117,7 @@ class Media(base.BudyBase):
                 message = "Invalid MIME type '%s'" % mime_type
             )
         buffer = appier.legacy.BytesIO(data)
-        file = zipfile.ZipFile(buffer, "r")
+        file = zipfile.ZipFile(buffer, mode = "r")
         target = tempfile.mkdtemp()
         try: file.extractall(target)
         finally: file.close()
