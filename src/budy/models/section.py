@@ -1,0 +1,98 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+# Hive Budy
+# Copyright (c) 2008-2018 Hive Solutions Lda.
+#
+# This file is part of Hive Budy.
+#
+# Hive Budy is free software: you can redistribute it and/or modify
+# it under the terms of the Apache License as published by the Apache
+# Foundation, either version 2.0 of the License, or (at your option) any
+# later version.
+#
+# Hive Budy is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# Apache License for more details.
+#
+# You should have received a copy of the Apache License along with
+# Hive Budy. If not, see <http://www.apache.org/licenses/>.
+
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
+__version__ = "1.0.0"
+""" The version of the module """
+
+__revision__ = "$LastChangedRevision$"
+""" The revision number of the module """
+
+__date__ = "$LastChangedDate$"
+""" The last change date of the module """
+
+__copyright__ = "Copyright (c) 2008-2018 Hive Solutions Lda."
+""" The copyright for the module """
+
+__license__ = "Apache License, Version 2.0"
+""" The license for the module """
+
+import appier
+
+from . import group
+
+class Section(group.Group):
+    """
+    The section entity that represents an aggregation of groups
+    that together define a proper unit of e-commerce (eg: watches
+    vs jewelry on an e-commerce that sells both).
+
+    Can be used for the creation of filtered "views" of the products
+    so that partially disjoint groups are created.
+    """
+
+    collections = appier.field(
+        type = appier.references(
+            "Collection",
+            name = "id"
+        )
+    )
+
+    categories = appier.field(
+        type = appier.references(
+            "Category",
+            name = "id"
+        )
+    )
+
+    colors = appier.field(
+        type = appier.references(
+            "Color",
+            name = "id"
+        )
+    )
+
+    brands = appier.field(
+        type = appier.references(
+            "Brand",
+            name = "id"
+        )
+    )
+
+    seasons = appier.field(
+        type = appier.references(
+            "Season",
+            name = "id"
+        )
+    )
+
+    @classmethod
+    def validate(cls):
+        return super(Section, cls).validate() + [
+            appier.not_null("name"),
+            appier.not_empty("name")
+        ]
+
+    @classmethod
+    def list_names(cls):
+        return ["id", "name"]
