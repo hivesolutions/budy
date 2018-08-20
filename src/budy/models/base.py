@@ -110,8 +110,8 @@ class BudyBase(appier_extras.admin.Base):
         title_name = cls.title_name()
         title_value = self[title_name]
         self.slug = self.owner.slugify(title_value) if title_value else title_value
-        if hasattr(self, "id"): self.slug_id = self.slug + "-" + str(self.id) if\
-            self.slug else str(self.id)
+        if hasattr(self, "id") and not self.id == None:
+            self.slug_id = self.slug + "-" + str(self.id) if self.slug else str(self.id)
 
     def _update_tokens(self):
         cls = self.__class__
