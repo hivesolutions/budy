@@ -50,6 +50,7 @@ from . import order
 from . import product
 from . import referral
 from . import root
+from . import section
 from . import subscription
 from . import voucher
 
@@ -69,5 +70,6 @@ from .order import OrderAPIController
 from .product import ProductAPIController
 from .referral import ReferralAPIController
 from .root import RootAPIController
+from .section import SectionAPIController
 from .subscription import SubscriptionAPIController
 from .voucher import VoucherAPIController
