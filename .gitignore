@@ -2,6 +2,7 @@
 *.mmdb
 
 session.shelve*
+easypay.shelve*
 
 /dist
 /build
