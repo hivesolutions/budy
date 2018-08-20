@@ -106,8 +106,8 @@ class BudyBase(appier_extras.admin.Base):
         self.save()
 
     def _update_slug_s(self):
-        slug = self.slug
-        slug_id = self.slug_id
+        slug = self.slug if hasattr(self, "slug") else None
+        slug_id = self.slug_id if hasattr(self, "slug_id") else None
         self._update_slug()
         has_changed = not slug == self.slug or not slug_id == self.slug_id
         if not has_changed: return
