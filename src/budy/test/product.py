@@ -153,6 +153,7 @@ class ProductTest(unittest.TestCase):
         product.save()
 
         self.assertEqual(product.quantity_hand, 2.0)
+        self.assertEqual(len(product.measurements), 1)
 
         result = product.get_measurement(12, name = "size")
 
