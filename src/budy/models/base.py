@@ -90,6 +90,10 @@ class BudyBase(appier_extras.admin.Base):
         appier_extras.admin.Base.pre_save(self)
         self._update_slug()
         self._update_tokens()
+        
+    def post_save(self):
+        appier_extras.admin.Base.post_save(self)
+        if not self.slug or not self.slug_id: self.update_slug_s()
 
     @appier.operation(name = "Update Slug")
     def update_slug_s(self):
@@ -105,9 +109,9 @@ class BudyBase(appier_extras.admin.Base):
         cls = self.__class__
         title_name = cls.title_name()
         title_value = self[title_name]
-        id_s = str(self.id) if hasattr(self, "id") else ""
         self.slug = self.owner.slugify(title_value) if title_value else title_value
-        self.slug_id = self.slug + "-" + id_s if self.slug else id_s
+        if hasattr(self, "id"): self.slug_id = self.slug + "-" + str(self.id) if\
+            self.slug else str(self.id)
 
     def _update_tokens(self):
         cls = self.__class__
