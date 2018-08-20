@@ -93,7 +93,7 @@ class BudyBase(appier_extras.admin.Base):
 
     def post_save(self):
         appier_extras.admin.Base.post_save(self)
-        if not self.slug_id: self.update_slug_s()
+        self._update_slug_s()
 
     @appier.operation(name = "Update Slug")
     def update_slug_s(self):
@@ -103,6 +103,14 @@ class BudyBase(appier_extras.admin.Base):
     @appier.operation(name = "Update Tokens")
     def update_tokens_s(self):
         self._update_tokens()
+        self.save()
+
+    def _update_slug_s(self):
+        slug = self.slug
+        slug_id = self.slug_id
+        self._update_slug()
+        has_changed = not slug == self.slug or not slug_id == self.slug_id
+        if not has_changed: return
         self.save()
 
     def _update_slug(self):
