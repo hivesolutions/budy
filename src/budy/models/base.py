@@ -90,10 +90,10 @@ class BudyBase(appier_extras.admin.Base):
         appier_extras.admin.Base.pre_save(self)
         self._update_slug()
         self._update_tokens()
-        
+
     def post_save(self):
         appier_extras.admin.Base.post_save(self)
-        if not self.slug or not self.slug_id: self.update_slug_s()
+        if not self.slug_id: self.update_slug_s()
 
     @appier.operation(name = "Update Slug")
     def update_slug_s(self):
