@@ -146,7 +146,7 @@ class ProductTest(unittest.TestCase):
             product = product
         )
         measurement.save()
-        
+
         self.assertEqual(product.quantity_hand, None)
         self.assertEqual(measurement.product.id, 1)
         self.assertEqual(measurement.product.id, product.id)
@@ -156,7 +156,12 @@ class ProductTest(unittest.TestCase):
 
         self.assertEqual(product.quantity_hand, 2.0)
         self.assertEqual(len(product.measurements), 1)
-        self.assertEqual(product.id, measurement.product.id)
+
+        measurement = measurement.reload()
+
+        self.assertEqual(measurement.product.id, 1)
+        self.assertEqual(measurement.product.id, product.id)
+        self.assertEqual(len(measurement.product.measurements), 1)
 
         result = product.get_measurement(12, name = "size")
 
@@ -171,7 +176,7 @@ class ProductTest(unittest.TestCase):
         self.assertEqual(result.product.quantity_hand, 2.0)
         self.assertEqual(len(result.product.measurements), 1)
 
-        result.delete()
+        measurement.delete()
 
         product = product.reload()
 
