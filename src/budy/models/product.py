@@ -171,6 +171,10 @@ class Product(base.BudyBase):
         index = "hashed"
     )
 
+    season_s = appier.field(
+        index = "hashed"
+    )
+
     color_s = appier.field(
         index = "hashed"
     )
@@ -270,6 +274,8 @@ class Product(base.BudyBase):
 
             appier.not_empty("brand_s"),
 
+            appier.not_empty("season_s"),
+
             appier.not_empty("color_s"),
 
             appier.not_empty("category_s"),
@@ -314,17 +320,20 @@ class Product(base.BudyBase):
     ):
         from . import brand
         from . import color
+        from . import season
         from . import category
         from . import collection
         object_id = merchandise["object_id"]
         modify_date = merchandise["modify_date"]
         company_product_code = merchandise["company_product_code"]
         metadata = merchandise["metadata"] or dict()
-        price_compare = metadata.get("compare_price", None)
+        price_compare = metadata.get("compare_price") or None
         _color = metadata.get("material") or []
         _category = metadata.get("category") or []
         _collection = metadata.get("collection") or []
         _brand = metadata.get("brand")
+        _season = metadata.get("season")
+        gender = metadata.get("gender") or gender
         order = metadata.get("order")
 
         # verifies if an inventory line has been provided, if that's the case
@@ -341,6 +350,7 @@ class Product(base.BudyBase):
         categories = [category.Category.ensure_s(_category) for _category in categories]
         collections = [collection.Collection.ensure_s(_collection) for _collection in collections]
         if _brand: _brand = brand.Brand.ensure_s(_brand)
+        if _season: _season = season.Season.ensure_s(_season)
         product = cls.get(product_id = company_product_code, raise_e = False)
         if not product: product = cls()
         product.product_id = company_product_code
@@ -355,6 +365,7 @@ class Product(base.BudyBase):
         product.categories = categories
         product.collections = collections
         product.brand = _brand
+        product.season = _season
         product.meta = dict(
             object_id = object_id,
             modify_date = modify_date
@@ -548,6 +559,7 @@ class Product(base.BudyBase):
 
     def build_names(self):
         self.brand_s = self.brand.name if self.brand else None
+        self.season_s = self.season.name if self.season else None
         self.color_s = self.colors[0].name if self.colors else None
         self.category_s = self.categories[0].name if self.categories else None
         self.collection_s = self.collections[0].name if self.collections else None
