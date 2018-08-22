@@ -175,3 +175,16 @@ class Group(base.BudyBase):
         media.save()
         self.images.append(media)
         self.save()
+
+    @appier.view(name = "Products")
+    def orders_v(self, *args, **kwargs):
+        from . import product
+        plural = self.__class__._underscore(plural = True)
+        kwargs["sort"] = kwargs.get("sort", [("created", -1)])
+        kwargs.update({plural: {"$all" : [self.id]}})
+        return appier.lazy_dict(
+            model = product.Product,
+            kwargs = kwargs,
+            entities = appier.lazy(lambda: product.Product.find(*args, **kwargs)),
+            page = appier.lazy(lambda: product.Product.paginate(*args, **kwargs))
+        )
