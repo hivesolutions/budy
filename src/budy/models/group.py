@@ -179,7 +179,8 @@ class Group(base.BudyBase):
     @appier.view(name = "Products")
     def orders_v(self, *args, **kwargs):
         from . import product
-        plural = self.__class__._underscore(plural = True)
+        cls = self.__class__
+        plural = cls._underscore(plural = True)
         kwargs["sort"] = kwargs.get("sort", [("created", -1)])
         kwargs.update({plural: {"$all" : [self.id]}})
         return appier.lazy_dict(
