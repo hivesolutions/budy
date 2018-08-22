@@ -79,7 +79,7 @@ class Group(base.BudyBase):
 
     @classmethod
     def list_names(cls):
-        return ["id", "name"]
+        return ["id", "name", "enabled"]
 
     @classmethod
     def is_abstract(cls):
