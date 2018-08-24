@@ -96,3 +96,12 @@ class Section(group.Group):
     @classmethod
     def list_names(cls):
         return ["id", "name"]
+
+    @appier.operation(name = "Clear Groups", level = 2)
+    def clear_groups_s(self):
+        self.collections = []
+        self.categories = []
+        self.colors = []
+        self.brands = []
+        self.seasons = []
+        self.save()
