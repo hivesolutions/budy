@@ -43,20 +43,20 @@ import budy
 
 from . import root
 
-class BrandAPIController(root.RootAPIController):
+class SeasonAPIController(root.RootAPIController):
 
-    @appier.route("/api/brands", "GET", json = True)
+    @appier.route("/api/seasons", "GET", json = True)
     def list(self):
         object = appier.get_object(alias = True, find = True)
-        brands = budy.Brand.find(map = True, **object)
-        return brands
+        seasons = budy.Season.find(map = True, **object)
+        return seasons
 
-    @appier.route("/api/brands/<int:id>", "GET", json = True)
+    @appier.route("/api/seasons/<int:id>", "GET", json = True)
     def show(self, id):
-        brand = budy.Brand.get_e(id = id, map = True)
-        return brand
+        season = budy.Season.get_e(id = id, map = True)
+        return season
 
-    @appier.route("/api/brands/slug/<str:slug>", "GET", json = True)
+    @appier.route("/api/seasons/slug/<str:slug>", "GET", json = True)
     def slug(self, slug):
-        brand = budy.Brand.get_e(slug = slug, map = True)
-        return brand
+        season = budy.Season.get_e(slug = slug, map = True)
+        return season

@@ -70,6 +70,7 @@ from .order import OrderAPIController
 from .product import ProductAPIController
 from .referral import ReferralAPIController
 from .root import RootAPIController
+from .season import SeasonAPIController
 from .section import SectionAPIController
 from .subscription import SubscriptionAPIController
 from .voucher import VoucherAPIController
