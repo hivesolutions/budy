@@ -64,8 +64,27 @@ class Product(base.BudyBase):
     product_id = appier.field(
         index = "hashed",
         description = "Product ID",
-        observations = """The primary identifier
-        of a product, should be globally unique"""
+        observations = """The primary identifier of the
+        product, should be globally unique"""
+    )
+
+    supplier_code = appier.field(
+        index = "hashed",
+        observations = """The identifier used by the
+        (back) supplier of the product, should be considered
+        a more unique way of identifying a product"""
+    )
+
+    upc = appier.field(
+        index = "hashed",
+        observations = """The standard Universal Product Code
+        (UPC) value for this product"""
+    )
+
+    ean = appier.field(
+        index = "hashed",
+        observations = """The standard European Article Number
+        (EAN) value for this product"""
     )
 
     gender = appier.field(
