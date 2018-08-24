@@ -51,6 +51,10 @@ class Section(group.Group):
     so that partially disjoint groups are created.
     """
 
+    genders = appier.field(
+        type = list
+    )
+
     collections = appier.field(
         type = appier.references(
             "Collection",
