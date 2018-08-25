@@ -345,6 +345,7 @@ class Product(base.BudyBase):
         object_id = merchandise["object_id"]
         modify_date = merchandise["modify_date"]
         company_product_code = merchandise["company_product_code"]
+        upc = merchandise["upc"]
         metadata = merchandise["metadata"] or dict()
         price_compare = metadata.get("compare_price") or None
         _color = metadata.get("material") or []
@@ -373,6 +374,8 @@ class Product(base.BudyBase):
         product = cls.get(product_id = company_product_code, raise_e = False)
         if not product: product = cls()
         product.product_id = company_product_code
+        product.supplier_code = upc
+        product.upc = upc
         product.short_description = merchandise["name"] or company_product_code
         product.description = merchandise["description"]
         product.gender = gender
