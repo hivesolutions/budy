@@ -77,6 +77,7 @@ class Product(base.BudyBase):
 
     sku = appier.field(
         index = "hashed",
+        description = "SKU",
         observations = """The main identifier to be used for
         the keeping of the internal reference SKU (Stock Keeping
         Unit), should be considered the public way of representing
@@ -85,12 +86,14 @@ class Product(base.BudyBase):
 
     upc = appier.field(
         index = "hashed",
+        description = "UPC",
         observations = """The standard Universal Product Code
         (UPC) value for this product"""
     )
 
     ean = appier.field(
         index = "hashed",
+        description = "EAN",
         observations = """The standard European Article Number
         (EAN) value for this product"""
     )
