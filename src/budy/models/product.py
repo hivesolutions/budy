@@ -75,6 +75,14 @@ class Product(base.BudyBase):
         a more unique way of identifying a product"""
     )
 
+    sku = appier.field(
+        index = "hashed",
+        observations = """The main identifier to be used for
+        the keeping of the internal reference SKU (Stock Keeping
+        Unit), should be considered the public way of representing
+        the product"""
+    )
+
     upc = appier.field(
         index = "hashed",
         observations = """The standard Universal Product Code
@@ -375,6 +383,7 @@ class Product(base.BudyBase):
         if not product: product = cls()
         product.product_id = company_product_code
         product.supplier_code = upc
+        product.sku = upc or company_product_code
         product.upc = upc
         product.short_description = merchandise["name"] or company_product_code
         product.description = merchandise["description"]
