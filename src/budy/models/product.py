@@ -327,6 +327,10 @@ class Product(base.BudyBase):
         return super(Product, cls).token_names() + [
             ("short_description", True),
             ("product_id", False),
+            ("supplier_code", False),
+            ("sku", False),
+            ("upc", False),
+            ("ean", False),
             ("brand.name", True),
             ("season.name", True),
             ("characteristics", False),
