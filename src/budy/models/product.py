@@ -391,7 +391,7 @@ class Product(base.BudyBase):
         if not product: product = cls()
         product.product_id = company_product_code
         product.supplier_code = upc
-        product.sku = metadata.get(sku_field) or upc or company_product_code
+        product.sku = merchandise.get(sku_field) or upc or company_product_code
         product.upc = upc
         product.short_description = merchandise["name"] or company_product_code
         product.description = merchandise["description"]
