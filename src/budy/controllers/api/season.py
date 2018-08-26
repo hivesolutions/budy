@@ -48,7 +48,11 @@ class SeasonAPIController(root.RootAPIController):
     @appier.route("/api/seasons", "GET", json = True)
     def list(self):
         object = appier.get_object(alias = True, find = True)
-        seasons = budy.Season.find(map = True, **object)
+        seasons = budy.Season.find_e(
+            eager = ("images",),
+            map = True,
+            **object
+        )
         return seasons
 
     @appier.route("/api/seasons/<int:id>", "GET", json = True)

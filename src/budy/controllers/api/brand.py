@@ -48,7 +48,11 @@ class BrandAPIController(root.RootAPIController):
     @appier.route("/api/brands", "GET", json = True)
     def list(self):
         object = appier.get_object(alias = True, find = True)
-        brands = budy.Brand.find(map = True, **object)
+        brands = budy.Brand.find_e(
+            eager = ("images",),
+            map = True,
+            **object
+        )
         return brands
 
     @appier.route("/api/brands/<int:id>", "GET", json = True)
