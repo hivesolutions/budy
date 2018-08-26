@@ -370,6 +370,7 @@ class Product(base.BudyBase):
         _season = metadata.get("season")
         gender = metadata.get("gender") or gender
         order = metadata.get("order")
+        sku_field = metadata.get("sku_field")
 
         # verifies if an inventory line has been provided, if that's the case
         # it's possible to determine a proper modification date for the product
@@ -390,7 +391,7 @@ class Product(base.BudyBase):
         if not product: product = cls()
         product.product_id = company_product_code
         product.supplier_code = upc
-        product.sku = upc or company_product_code
+        product.sku = metadata.get(sku_field) or upc or company_product_code
         product.upc = upc
         product.short_description = merchandise["name"] or company_product_code
         product.description = merchandise["description"]
