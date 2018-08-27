@@ -616,8 +616,8 @@ class Product(base.BudyBase):
         if self.collections: kwargs["collections"] = {"$in" : [self.collections[0].id]}
         elif self.categories: kwargs["categories"] = {"$in" : [self.categories[0].id]}
         elif self.colors: kwargs["colors"] = {"$in" : [self.colors[0].id]}
-        elif self.brands: kwargs["brand"] = {"$in" : [self.brand.id]}
-        elif self.seasons: kwargs["season"] = {"$in" : [self.season.id]}
+        elif self.brand: kwargs["brand"] = {"$in" : [self.brand.id]}
+        elif self.season: kwargs["season"] = {"$in" : [self.season.id]}
         kwargs["id"] = {"$nin" : [self.id]}
         kwargs["sort"] = [("id", 1)]
         count = cls.count(**kwargs)
