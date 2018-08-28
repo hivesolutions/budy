@@ -51,6 +51,14 @@ class Section(group.Group):
     so that partially disjoint groups are created.
     """
 
+    context_fields = appier.field(
+        type = list,
+        observations = """The name of the fields that are
+        considered to define the context of the section and
+        that as such are going to be used in the filtering
+        process of the associated products"""
+    )
+
     genders = appier.field(
         type = list
     )
