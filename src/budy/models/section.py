@@ -58,6 +58,10 @@ class Section(group.Group):
         that as such are going to be used in the filtering
         process of the associated products"""
     )
+    """ Field that can be used to control the context filtering
+    for the section by listing the names of the fields that are
+    going to be used in the query, in case no value is defined
+    all of the non empty groups are going to be used in the "view" """
 
     genders = appier.field(
         type = list
