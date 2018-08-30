@@ -95,7 +95,7 @@ class MediaAPIController(root.RootAPIController):
                 etag = file.etag,
                 cache = True
             )
-        buffer = media.convert(
+        buffer = media.convert_image(
             format,
             background = background,
             **dict(quality = quality)

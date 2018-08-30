@@ -202,7 +202,7 @@ class Media(base.BudyBase):
     def get_url(self, format = None):
         return self.__class__._get_url(self.id, format = format)
 
-    def convert(self, format, background = None, **kwargs):
+    def convert_image(self, format, background = None, **kwargs):
         import PIL.Image
         kwargs = dict(kwargs)
         buffer = appier.legacy.BytesIO()
