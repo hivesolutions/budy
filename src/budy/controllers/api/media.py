@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008-2018 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import mimetypes
+
 import appier
 
 import budy
@@ -65,6 +67,47 @@ class MediaAPIController(root.RootAPIController):
         return self.send_file(
             file.data,
             content_type = file.mime,
+            etag = file.etag,
+            cache = True
+        )
+
+    @appier.route("/api/media/<int:id>/data.<str:format>", "GET", json = True)
+    def data_format(self, id, format):
+        import PIL.Image
+        background = self.field("background", None)
+        media = budy.Media.get(
+            id = id,
+            fields = ("file",),
+            rules = False
+        )
+        file = media.file
+        if not file: raise appier.NotFoundError(
+            message = "File not found for media '%d'" % id
+        )
+        extension = mimetypes.guess_extension(file.mime or "")
+        if extension and extension[1:] == format:
+            return self.send_file(
+                file.data,
+                content_type = file.mime,
+                etag = file.etag,
+                cache = True
+            )
+        buffer = appier.legacy.BytesIO()
+        image = PIL.Image.open(appier.legacy.BytesIO(media.file.data))
+        if format in ("jpeg",) and not background: background = "ffffff"
+        if background:
+            image_background = PIL.Image.new(
+                "RGB",
+                (image.width, image.height),
+                color = "#" + background
+            )
+            image_background.paste(image, mask = image)
+            image = image_background
+        image.save(buffer, format = format)
+        mime, _encoding = mimetypes.guess_type("data." + format)
+        return self.send_file(
+            buffer.getvalue(),
+            content_type = mime,
             etag = file.etag,
             cache = True
         )
