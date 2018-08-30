@@ -66,6 +66,7 @@ class MediaAPIController(root.RootAPIController):
         )
         return self.send_file(
             file.data,
+            name = "%d" % id,
             content_type = file.mime,
             etag = file.etag,
             cache = True
@@ -89,6 +90,7 @@ class MediaAPIController(root.RootAPIController):
         if extension and extension[1:] == format:
             return self.send_file(
                 file.data,
+                name = "%d.%s" % (id, format),
                 content_type = file.mime,
                 etag = file.etag,
                 cache = True
@@ -108,6 +110,7 @@ class MediaAPIController(root.RootAPIController):
         mime, _encoding = mimetypes.guess_type("data." + format)
         return self.send_file(
             buffer.getvalue(),
+            name = "%d.%s" % (id, format),
             content_type = mime,
             etag = file.etag,
             cache = True
