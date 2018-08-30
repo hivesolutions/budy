@@ -191,7 +191,7 @@ class Media(base.BudyBase):
                 id = id,
                 format = format,
                 absolute = absolute
-            ) 
+            )
         else:
             return app.url_for(
                 "media_api.data",

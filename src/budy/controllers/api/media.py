@@ -75,6 +75,7 @@ class MediaAPIController(root.RootAPIController):
     def data_format(self, id, format):
         import PIL.Image
         background = self.field("background", None)
+        quality = self.field("quality", 90, cast = int)
         media = budy.Media.get(
             id = id,
             fields = ("file",),
@@ -103,7 +104,7 @@ class MediaAPIController(root.RootAPIController):
             )
             image_background.paste(image, mask = image)
             image = image_background
-        image.save(buffer, format = format)
+        image.save(buffer, format = format, **dict(quality = quality))
         mime, _encoding = mimetypes.guess_type("data." + format)
         return self.send_file(
             buffer.getvalue(),
