@@ -214,7 +214,8 @@ class Media(base.BudyBase):
                 (image.width, image.height),
                 color = "#" + background
             )
-            image_background.paste(image, mask = image)
+            if image.mode == "RGBA": image_background.paste(image, mask = image)
+            else: image_background.paste(image)
             image = image_background
         image.save(buffer, format = format, **kwargs)
         return buffer
