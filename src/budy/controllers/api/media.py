@@ -74,7 +74,6 @@ class MediaAPIController(root.RootAPIController):
 
     @appier.route("/api/media/<int:id>/data.<str:format>", "GET", json = True)
     def data_format(self, id, format):
-        import PIL.Image
         background = self.field("background", None)
         quality = self.field("quality", 90, cast = int)
         media = budy.Media.get(
@@ -87,6 +86,7 @@ class MediaAPIController(root.RootAPIController):
             message = "File not found for media '%d'" % id
         )
         extension = mimetypes.guess_extension(file.mime or "")
+        mime, _encoding = mimetypes.guess_type("data." + format)
         if extension and extension[1:] == format:
             return self.send_file(
                 file.data,
@@ -95,19 +95,11 @@ class MediaAPIController(root.RootAPIController):
                 etag = file.etag,
                 cache = True
             )
-        buffer = appier.legacy.BytesIO()
-        image = PIL.Image.open(appier.legacy.BytesIO(media.file.data))
-        if format in ("jpeg",) and not background: background = "ffffff"
-        if background:
-            image_background = PIL.Image.new(
-                "RGB",
-                (image.width, image.height),
-                color = "#" + background
-            )
-            image_background.paste(image, mask = image)
-            image = image_background
-        image.save(buffer, format = format, **dict(quality = quality))
-        mime, _encoding = mimetypes.guess_type("data." + format)
+        buffer = media.convert(
+            format,
+            background = background,
+            **dict(quality = quality)
+        )
         return self.send_file(
             buffer.getvalue(),
             name = "%d.%s" % (id, format),

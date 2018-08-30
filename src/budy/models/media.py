@@ -202,6 +202,23 @@ class Media(base.BudyBase):
     def get_url(self, format = None):
         return self.__class__._get_url(self.id, format = format)
 
+    def convert(self, format, background = None, **kwargs):
+        import PIL.Image
+        kwargs = dict(kwargs)
+        buffer = appier.legacy.BytesIO()
+        image = PIL.Image.open(appier.legacy.BytesIO(self.file.data))
+        if format in ("jpeg",) and not background: background = "ffffff"
+        if background:
+            image_background = PIL.Image.new(
+                "RGB",
+                (image.width, image.height),
+                color = "#" + background
+            )
+            image_background.paste(image, mask = image)
+            image = image_background
+        image.save(buffer, format = format, **kwargs)
+        return buffer
+
     @appier.operation(
         name = "Generate Thumbnail",
         parameters = (
