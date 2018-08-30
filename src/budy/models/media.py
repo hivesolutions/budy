@@ -173,19 +173,34 @@ class Media(base.BudyBase):
     def _build(cls, model, map):
         super(Media, cls)._build(model, map)
         id = model.get("id", None)
-        if id: model["url"] = cls._get_url(id)
+        if id:
+            model["url"] = cls._get_url(id)
+            for format in ("png", "jpeg", "webp"):
+                model["url_" + format] = cls._get_url(id, format = format)
 
     @classmethod
     def _plural(cls):
         return "Media"
 
     @classmethod
-    def _get_url(cls, id, absolute = True):
+    def _get_url(cls, id, format = None, absolute = True):
         app = appier.get_app()
-        return app.url_for("media_api.data", id = id, absolute = absolute)
+        if format:
+            return app.url_for(
+                "media_api.data_format",
+                id = id,
+                format = format,
+                absolute = absolute
+            ) 
+        else:
+            return app.url_for(
+                "media_api.data",
+                id = id,
+                absolute = absolute
+            )
 
-    def get_url(self):
-        return self.__class__._get_url(self.id)
+    def get_url(self, format = None):
+        return self.__class__._get_url(self.id, format = format)
 
     @appier.operation(
         name = "Generate Thumbnail",
