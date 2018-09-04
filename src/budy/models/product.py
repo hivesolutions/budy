@@ -348,6 +348,7 @@ class Product(base.BudyBase):
         cls,
         merchandise,
         inventory_line = None,
+        inventory_lines = None,
         gender = "Both",
         currency = "EUR",
         force = False

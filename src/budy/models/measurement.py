@@ -131,6 +131,7 @@ class Measurement(base.BudyBase):
         merchandise,
         sub_product = None,
         inventory_line = None,
+        inventory_lines = None,
         name = "size",
         currency = "EUR",
         strip = True,

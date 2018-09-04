@@ -119,8 +119,18 @@ class OmniBot(base.Bot):
                     }
                 )
                 inventory_line = inventory_lines[0]
-                if is_product: self.sync_product_safe(merchandise, inventory_line = inventory_line)
-                else: self.sync_sub_product_safe(merchandise, inventory_line = inventory_line)
+                if is_product:
+                    self.sync_product_safe(
+                        merchandise,
+                        inventory_line = inventory_line,
+                        inventory_lines = inventory_lines
+                    )
+                else:
+                    self.sync_sub_product_safe(
+                        merchandise,
+                        inventory_line = inventory_line,
+                        inventory_lines = inventory_lines
+                    )
 
     def sync_products_db(self):
         api = self.get_api()
@@ -217,7 +227,13 @@ class OmniBot(base.Bot):
                 "Problem syncing product %d - %s ..." % (object_id, exception)
             )
 
-    def sync_product(self, merchandise, inventory_line = None, force = False):
+    def sync_product(
+        self,
+        merchandise,
+        inventory_line = None,
+        inventory_lines = None,
+        force = False
+    ):
         # retrieves the reference to the api object that is
         # going to be used for api based operations
         api = self.get_api()
@@ -232,6 +248,7 @@ class OmniBot(base.Bot):
         product = budy.Product.from_omni(
             merchandise,
             inventory_line = inventory_line,
+            inventory_lines = inventory_lines,
             force = force
         )
         product.save()
@@ -296,7 +313,13 @@ class OmniBot(base.Bot):
                 "Problem syncing sub product %d - %s ..." % (object_id, exception)
             )
 
-    def sync_sub_product(self, merchandise, inventory_line = None, force = False):
+    def sync_sub_product(
+        self,
+        merchandise,
+        inventory_line = None,
+        inventory_lines = None,
+        force = False
+    ):
         api = self.get_api()
 
         object_id = merchandise["object_id"]
@@ -312,6 +335,7 @@ class OmniBot(base.Bot):
             merchandise,
             sub_product = sub_product,
             inventory_line = inventory_line,
+            inventory_lines = inventory_lines,
             force = force
         )
         if not measurement:
@@ -321,6 +345,7 @@ class OmniBot(base.Bot):
                 merchandise,
                 sub_product = sub_product,
                 inventory_line = inventory_line,
+                inventory_lines = inventory_lines,
                 force = force
             )
 
