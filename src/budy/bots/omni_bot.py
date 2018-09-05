@@ -124,6 +124,7 @@ class OmniBot(base.Bot):
                     **{
                         "filter_string" : "",
                         "filters[]" : [
+                            "functional_unit:not_equals:%d" % self.store,
                             "merchandise:equals:%d" % merchandise["object_id"]
                         ]
                     }
