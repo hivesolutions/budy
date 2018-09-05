@@ -223,7 +223,7 @@ class Order(bundle.Bundle):
 
     @classmethod
     def list_names(cls):
-        return ["reference", "total", "currency", "email", "status"]
+        return ["reference", "total", "currency", "email", "created", "status"]
 
     @classmethod
     def line_cls(cls):
