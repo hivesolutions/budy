@@ -380,6 +380,27 @@ class Product(base.BudyBase):
             modify_date_line = inventory_line["modify_date"]
             if modify_date_line > modify_date: modify_date = modify_date_line
 
+        stocks = []
+
+        # iterates over the complete set of available inventory lines to build the
+        # associated stock dictionary with the information on the stock point, this
+        # is going to be added to the list of stocks to the product
+        for inventory_line in inventory_lines if inventory_lines else []:
+            stock_on_hand = inventory_line.get("stock_on_hand", 0)
+            retail_price = inventory_line.get("retail_price", {}).get("value", 0.0)
+            functional_unit = inventory_line.get("functional_unit", None)
+
+            is_valid = functional_unit and functional_unit.get("status") == 1
+            if not is_valid: continue
+
+            stock_m = dict(
+                object_id = functional_unit["object_id"],
+                name = functional_unit["name"],
+                stock_on_hand = stock_on_hand,
+                retail_price = retail_price
+            )
+            stocks.append(stock_m)
+
         colors = _color if isinstance(_color, list) else [_color]
         categories = _category if isinstance(_category, list) else [_category]
         collections = _collection if isinstance(_collection, list) else [_collection]
@@ -408,7 +429,8 @@ class Product(base.BudyBase):
         product.season = _season
         product.meta = dict(
             object_id = object_id,
-            modify_date = modify_date
+            modify_date = modify_date,
+            stocks = stocks
         )
         if "stock_on_hand" in merchandise or force:
             product.quantity_hand = merchandise.get("stock_on_hand", 0.0)

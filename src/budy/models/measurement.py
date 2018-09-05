@@ -161,6 +161,27 @@ class Measurement(base.BudyBase):
         )
         if not _product: return None
 
+        stocks = []
+
+        # iterates over the complete set of available inventory lines to build the
+        # associated stock dictionary with the information on the stock point, this
+        # is going to be added to the list of stocks to the measurement
+        for inventory_line in inventory_lines if inventory_lines else []:
+            stock_on_hand = inventory_line.get("stock_on_hand", 0)
+            retail_price = inventory_line.get("retail_price", {}).get("value", 0.0)
+            functional_unit = inventory_line.get("functional_unit", None)
+
+            is_valid = functional_unit and functional_unit.get("status") == 1
+            if not is_valid: continue
+
+            stock_m = dict(
+                object_id = functional_unit["object_id"],
+                name = functional_unit["name"],
+                stock_on_hand = stock_on_hand,
+                retail_price = retail_price
+            )
+            stocks.append(stock_m)
+
         # splits the provided company product code into its base part
         # and the sub code part (to be used as the measure value)
         value = company_product_code.split("-", 1)[1]
@@ -194,7 +215,8 @@ class Measurement(base.BudyBase):
         measurement.product = _product
         measurement.meta = dict(
             object_id = object_id,
-            modify_date = modify_date
+            modify_date = modify_date,
+            stocks = stocks
         )
         if "stock_on_hand" in merchandise or force:
             measurement.quantity_hand = merchandise.get("stock_on_hand", 0.0)
