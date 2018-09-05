@@ -387,6 +387,8 @@ class Product(base.BudyBase):
         # is going to be added to the list of stocks to the product
         for inventory_line in inventory_lines if inventory_lines else []:
             stock_on_hand = inventory_line.get("stock_on_hand", 0)
+            stock_reserved = inventory_line.get("stock_reserved", 0)
+            stock_in_transit = inventory_line.get("stock_in_transit", 0)
             retail_price = inventory_line.get("retail_price", {}).get("value", 0.0)
             functional_unit = inventory_line.get("functional_unit", None)
 
@@ -394,9 +396,11 @@ class Product(base.BudyBase):
             if not is_valid: continue
 
             stock_m = dict(
-                object_id = functional_unit["object_id"],
-                name = functional_unit["name"],
+                store_id = functional_unit["object_id"],
+                store_name = functional_unit["name"],
                 stock_on_hand = stock_on_hand,
+                stock_reserved = stock_reserved,
+                stock_in_transit = stock_in_transit,
                 retail_price = retail_price
             )
             stocks.append(stock_m)
