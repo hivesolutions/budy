@@ -936,7 +936,15 @@ class Order(bundle.Bundle):
             kwargs = kwargs,
             entities = appier.lazy(lambda: self.lines.find(*args, **kwargs)),
             page = appier.lazy(lambda: self.lines.paginate(*args, **kwargs)),
-            names = ["id", "product", "quantity", "total", "currency"]
+            names = [
+                "id",
+                "product.product_id",
+                "product",
+                "size_s",
+                "quantity",
+                "total",
+                "currency"
+            ]
         )
 
     @appier.view(
