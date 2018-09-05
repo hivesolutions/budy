@@ -161,7 +161,9 @@ class Measurement(base.BudyBase):
         )
         if not _product: return None
 
-        stocks = []
+        # creates the stocks list in case there are valid inventory lines being
+        # passed on the current measurement update/creation
+        stocks = None if inventory_lines == None else []
 
         # iterates over the complete set of available inventory lines to build the
         # associated stock dictionary with the information on the stock point, this
@@ -217,11 +219,12 @@ class Measurement(base.BudyBase):
         measurement.value_s = value_s
         measurement.currency = currency
         measurement.product = _product
-        measurement.meta = dict(
-            object_id = object_id,
-            modify_date = modify_date,
-            stocks = stocks
-        )
+
+        meta = dict(object_id = object_id, modify_date = modify_date)
+        if hasattr(measurement, "meta"): measurement.meta.update(meta)
+        else: measurement.meta = meta
+        if not stocks == None: measurement.meta["stocks"] = stocks
+
         if "stock_on_hand" in merchandise or force:
             measurement.quantity_hand = merchandise.get("stock_on_hand", 0.0)
         if "retail_price" in merchandise or force:

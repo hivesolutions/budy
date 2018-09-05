@@ -119,6 +119,15 @@ class OmniBot(base.Bot):
                     }
                 )
                 inventory_line = inventory_lines[0]
+                inventory_lines = api.list_inventory_lines(
+                    store_id = self.store,
+                    **{
+                        "filter_string" : "",
+                        "filters[]" : [
+                            "merchandise:equals:%d" % merchandise["object_id"]
+                        ]
+                    }
+                )
                 if is_product:
                     self.sync_product_safe(
                         merchandise,

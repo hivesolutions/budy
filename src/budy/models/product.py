@@ -380,7 +380,9 @@ class Product(base.BudyBase):
             modify_date_line = inventory_line["modify_date"]
             if modify_date_line > modify_date: modify_date = modify_date_line
 
-        stocks = []
+        # creates the stocks list in case there are valid inventory lines being
+        # passed on the current product update/creation
+        stocks = None if inventory_lines == None else []
 
         # iterates over the complete set of available inventory lines to build the
         # associated stock dictionary with the information on the stock point, this
@@ -431,11 +433,12 @@ class Product(base.BudyBase):
         product.collections = collections
         product.brand = _brand
         product.season = _season
-        product.meta = dict(
-            object_id = object_id,
-            modify_date = modify_date,
-            stocks = stocks
-        )
+
+        meta = dict(object_id = object_id, modify_date = modify_date)
+        if hasattr(product, "meta"): product.meta.update(meta)
+        else: product.meta = meta
+        if not stocks == None: product.meta["stocks"] = stocks
+
         if "stock_on_hand" in merchandise or force:
             product.quantity_hand = merchandise.get("stock_on_hand", 0.0)
         if "retail_price" in merchandise or force:
