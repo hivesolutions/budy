@@ -240,7 +240,7 @@ class Bundle(base.BudyBase):
 
     def pre_save(self):
         base.BudyBase.pre_save(self)
-        self.ensure_valid(operation = "save")
+        self.ensure_valid()
 
     def pre_create(self):
         base.BudyBase.pre_create(self)
@@ -467,8 +467,8 @@ class Bundle(base.BudyBase):
         # be true if the control flow has reached this place
         return fixed
 
-    def ensure_valid(self, operation = "create"):
-        appier.verify(self.is_valid(operation = operation))
+    def ensure_valid(self):
+        appier.verify(self.is_valid())
 
     def is_dirty(self, currency = None, country = None):
         dirty = False
@@ -479,7 +479,7 @@ class Bundle(base.BudyBase):
         )
         return dirty
 
-    def is_valid(self, operation = "create"):
+    def is_valid(self):
         is_valid = True
         for line in self.lines: is_valid &= line.is_valid()
         return is_valid

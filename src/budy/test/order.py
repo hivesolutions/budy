@@ -660,10 +660,8 @@ class OrderTest(unittest.TestCase):
         product.quantity_hand = 1.0
         product.save()
 
-        self.assertEqual(order.is_valid(), False)
+        self.assertEqual(order.is_valid(), True)
         self.assertEqual(order_line.is_valid_quantity(), False)
-        self.assertRaises(appier.AssertionError, order.save)
-        self.assertRaises(appier.AssertionError, order.mark_waiting_payment_s)
 
         product.quantity_hand = None
         product.save()
