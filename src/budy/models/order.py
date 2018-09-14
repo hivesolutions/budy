@@ -434,9 +434,9 @@ class Order(bundle.Bundle):
         line.order = self
         return bundle.Bundle.add_line_s(self, line)
 
-    def ensure_valid(self, operation = None):
-        if not operation in ("create",): return
-        appier.verify(self.is_valid())
+    def is_valid(self, operation = None):
+        if not operation in ("create",): return True
+        return bundle.Bundle.is_valid(self)
 
     def build_discount(self):
         join = appier.conf("BUDY_JOIN_DISCOUNT", True, cast = bool)

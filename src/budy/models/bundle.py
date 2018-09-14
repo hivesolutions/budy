@@ -468,7 +468,7 @@ class Bundle(base.BudyBase):
         return fixed
 
     def ensure_valid(self, operation = None):
-        appier.verify(self.is_valid())
+        appier.verify(self.is_valid(opertion = operation))
 
     def is_dirty(self, currency = None, country = None):
         dirty = False
@@ -479,7 +479,7 @@ class Bundle(base.BudyBase):
         )
         return dirty
 
-    def is_valid(self):
+    def is_valid(self, operation = None):
         is_valid = True
         for line in self.lines: is_valid &= line.is_valid()
         return is_valid
