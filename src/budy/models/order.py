@@ -420,9 +420,7 @@ class Order(bundle.Bundle):
 
     def pre_validate(self):
         bundle.Bundle.pre_validate(self)
-        if not hasattr(self, "status") or not self.status or\
-            self.status in ("created",):
-            self.try_valid()
+        if self.is_open(): self.try_valid()
 
     def pre_delete(self):
         bundle.Bundle.pre_delete(self)
@@ -440,9 +438,7 @@ class Order(bundle.Bundle):
         # in case the current status of the current order is the
         # first one (created) the order is considered to be open
         # and so the validation process must occur
-        if not hasattr(self, "status") or not self.status or\
-            self.status in ("created",):
-            return bundle.Bundle.is_valid()
+        if self.is_open(): return bundle.Bundle.is_valid(self)
 
         # returns the true value on all other cases as the order lines
         # are considered to be valid at all times and don't require
