@@ -433,9 +433,10 @@ class Order(bundle.Bundle):
         line.order = self
         return bundle.Bundle.add_line_s(self, line)
 
-    def is_valid(self):  
+    def is_valid(self):
         is_valid = True
-        if self.status in ("created",):
+        if not hasattr(self, "status") or not self.status or\
+            self.status in ("created",):
             for line in self.lines: is_valid &= line.is_valid()
         return is_valid
 
