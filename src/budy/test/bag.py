@@ -277,3 +277,48 @@ class BagTest(unittest.TestCase):
         self.assertEqual(bag_line.total, 40.0)
         self.assertEqual(bag.total, 40.0)
         self.assertEqual(len(bag.lines), 1)
+
+    def test_quantity_change(self):
+        product = budy.Product(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0,
+            quantity_hand = 2.0
+        )
+        product.save()
+
+        bag = budy.Bag()
+        bag.save()
+
+        bag_line = budy.BagLine(
+            quantity = 2.0
+        )
+        bag_line.product = product
+        bag_line.save()
+        bag.add_line_s(bag_line)
+
+        self.assertEqual(bag_line.quantity, 2.0)
+        self.assertEqual(bag_line.total, 20.0)
+        self.assertEqual(bag.total, 20.0)
+        self.assertEqual(len(bag.lines), 1)
+
+        product.quantity_hand = 1.0
+        product.save()
+
+        bag = bag.reload()
+        bag.save()
+
+        bag_line = bag_line.reload()
+
+        self.assertEqual(bag_line.quantity, 1.0)
+        self.assertEqual(bag_line.total, 10.0)
+        self.assertEqual(bag.total, 10.0)
+        self.assertEqual(len(bag.lines), 1)
+
+        product.quantity_hand = 0.0
+        product.save()
+
+        bag = bag.reload()
+        bag.save()
+
+        self.assertEqual(len(bag.lines), 0)
