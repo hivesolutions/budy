@@ -418,6 +418,12 @@ class Order(bundle.Bundle):
         order = cls.get(key = identifier, raise_e = False)
         order.cancel_s(notify = True)
 
+    def pre_validate(self):
+        bundle.Bundle.pre_validate(self)
+        if not hasattr(self, "status") or not self.status or\
+            self.status in ("created",):
+            self.try_valid()
+
     def pre_delete(self):
         bundle.Bundle.pre_delete(self)
         for line in self.lines: line.delete()
@@ -431,9 +437,16 @@ class Order(bundle.Bundle):
         return bundle.Bundle.add_line_s(self, line)
 
     def is_valid(self):
-        # returns the true value on all cases as the order lines
+        # in case the current status of the current order is the
+        # first one (created) the order is considered to be open
+        # and so the validation process must occur
+        if not hasattr(self, "status") or not self.status or\
+            self.status in ("created",):
+            return bundle.Bundle.is_valid()
+
+        # returns the true value on all other cases as the order lines
         # are considered to be valid at all times and don't require
-        # constant validation (inventory snapshot)
+        # constant validation (inventory snapshot frozen)
         return True
 
     def build_discount(self):
