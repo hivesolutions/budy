@@ -434,7 +434,7 @@ class Order(bundle.Bundle):
         line.order = self
         return bundle.Bundle.add_line_s(self, line)
 
-    def is_valid(self, operation = None):
+    def is_valid(self, operation = "create"):
         if not operation in ("create",): return True
         return bundle.Bundle.is_valid(self)
 

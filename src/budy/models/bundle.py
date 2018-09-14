@@ -467,7 +467,7 @@ class Bundle(base.BudyBase):
         # be true if the control flow has reached this place
         return fixed
 
-    def ensure_valid(self, operation = None):
+    def ensure_valid(self, operation = "create"):
         appier.verify(self.is_valid(operation = operation))
 
     def is_dirty(self, currency = None, country = None):
@@ -479,7 +479,7 @@ class Bundle(base.BudyBase):
         )
         return dirty
 
-    def is_valid(self, operation = None):
+    def is_valid(self, operation = "create"):
         is_valid = True
         for line in self.lines: is_valid &= line.is_valid()
         return is_valid

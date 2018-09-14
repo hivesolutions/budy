@@ -179,7 +179,7 @@ class BundleLine(base.BudyBase):
         if not hasattr(self.merchandise, "value_s"): return
         self.size_s = self.merchandise.value_s
 
-    def ensure_valid(self, operation = None):
+    def ensure_valid(self, operation = "create"):
         appier.verify(self.is_valid(operation = operation))
 
     def try_valid(self):
@@ -222,7 +222,7 @@ class BundleLine(base.BudyBase):
         is_dirty |= not hasattr(self, "taxes") or self.taxes == None
         return is_dirty
 
-    def is_valid(self, operation = None):
+    def is_valid(self, operation = "create"):
         is_valid = self.is_valid_quantity()
         is_valid &= self.is_valid_price()
         is_valid &= self.is_valid_size()
