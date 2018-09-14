@@ -418,8 +418,11 @@ class Order(bundle.Bundle):
         order = cls.get(key = identifier, raise_e = False)
         order.cancel_s(notify = True)
 
-    def pre_save(self):
-        bundle.Bundle.pre_save(self)
+    def pre_validate(self):
+        bundle.Bundle.pre_validate(self)
+        if not hasattr(self, "status") or not self.status or\
+            self.status in ("created",):
+            self.try_valid()
 
     def pre_delete(self):
         bundle.Bundle.pre_delete(self)
