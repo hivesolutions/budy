@@ -452,7 +452,7 @@ class Bundle(base.BudyBase):
         fixed = False
 
         # iterates over the complete set of bundle lines
-        # to try to fixed them and make them valid in case
+        # to try to fix them and make them valid in case
         # none of them has to be fixed returns immediately
         for line in self.lines: fixed |= line.try_valid_s()
         if not fixed: return fixed
