@@ -431,6 +431,9 @@ class Order(bundle.Bundle):
         return bundle.Bundle.add_line_s(self, line)
 
     def is_valid(self):
+        # returns the true value on all cases as the order lines
+        # are considered to be valid at all times and don't require
+        # constant validation (inventory snapshot)
         return True
 
     def build_discount(self):
