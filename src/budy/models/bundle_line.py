@@ -115,7 +115,7 @@ class BundleLine(base.BudyBase):
         base.BudyBase.pre_save(self)
         self.calculate()
         self.measure()
-        self.ensure_valid()
+        self.ensure_valid(operation = "save")
 
     def calculate(self, currency = None, country = None, force = False):
         if self.closed: return
@@ -179,7 +179,7 @@ class BundleLine(base.BudyBase):
         if not hasattr(self.merchandise, "value_s"): return
         self.size_s = self.merchandise.value_s
 
-    def ensure_valid(self):
+    def ensure_valid(self, operation = None):
         appier.verify(self.is_valid())
 
     def try_valid(self):

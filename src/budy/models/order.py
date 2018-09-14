@@ -418,6 +418,10 @@ class Order(bundle.Bundle):
         order = cls.get(key = identifier, raise_e = False)
         order.cancel_s(notify = True)
 
+    def pre_create(self):
+        bundle.Bundle.pre_delete(self)
+        self.ensure_valid(operation = "create")
+
     def pre_delete(self):
         bundle.Bundle.pre_delete(self)
         for line in self.lines: line.delete()
@@ -430,11 +434,9 @@ class Order(bundle.Bundle):
         line.order = self
         return bundle.Bundle.add_line_s(self, line)
 
-    def is_valid(self):
-        # returns the true value on all cases as the order lines
-        # are considered to be valid at all times and don't require
-        # constant validation (inventory snapshot)
-        return True
+    def ensure_valid(self, operation = None):
+        if not operation in ("create",): return
+        appier.verify(self.is_valid())
 
     def build_discount(self):
         join = appier.conf("BUDY_JOIN_DISCOUNT", True, cast = bool)
