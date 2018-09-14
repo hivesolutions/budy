@@ -419,7 +419,7 @@ class Order(bundle.Bundle):
         order.cancel_s(notify = True)
 
     def pre_create(self):
-        bundle.Bundle.pre_delete(self)
+        bundle.Bundle.pre_create(self)
         self.ensure_valid(operation = "create")
 
     def pre_delete(self):
