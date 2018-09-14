@@ -184,6 +184,7 @@ class BundleLine(base.BudyBase):
 
     def try_valid(self):
         fixed = False
+        fixed |= self.try_valid_merchandise()
         fixed |= self.try_valid_quantity()
         fixed |= self.try_valid_price()
         return fixed
@@ -194,9 +195,18 @@ class BundleLine(base.BudyBase):
         self.save()
         return fixed
 
+    def try_valid_merchandise(self):
+        fixed = False
+        if self.merchandise.is_resolvable(): return fixed
+        self.quantity = 0.0
+        self.calculate(force = True)
+        fixed |= True
+        return fixed
+
     def try_valid_quantity(self):
         fixed = False
-        if self.quantity <= 0: self.quantity = 0
+        if self.quantity <= 0.0: self.quantity = 0.0
+        if not self.merchandise.is_resolvable(): return fixed
         if self.merchandise.quantity_hand == None: return fixed
         if self.quantity <= self.merchandise.quantity_hand: return fixed
         self.quantity = min(self.quantity, self.merchandise.quantity_hand)
@@ -206,6 +216,7 @@ class BundleLine(base.BudyBase):
 
     def try_valid_price(self):
         fixed = False
+        if not self.merchandise.is_resolvable(): return fixed
         if self.merchandise.is_price_provided: return fixed
         if self.merchandise.price == None: return fixed
         if self.merchandise.price == self.price: return fixed
