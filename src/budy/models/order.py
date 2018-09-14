@@ -418,12 +418,6 @@ class Order(bundle.Bundle):
         order = cls.get(key = identifier, raise_e = False)
         order.cancel_s(notify = True)
 
-    def pre_validate(self):
-        bundle.Bundle.pre_validate(self)
-        if not hasattr(self, "status") or not self.status or\
-            self.status in ("created",):
-            self.try_valid()
-
     def pre_delete(self):
         bundle.Bundle.pre_delete(self)
         for line in self.lines: line.delete()
@@ -437,11 +431,7 @@ class Order(bundle.Bundle):
         return bundle.Bundle.add_line_s(self, line)
 
     def is_valid(self):
-        is_valid = True
-        if not hasattr(self, "status") or not self.status or\
-            self.status in ("created",):
-            for line in self.lines: is_valid &= line.is_valid()
-        return is_valid
+        return True
 
     def build_discount(self):
         join = appier.conf("BUDY_JOIN_DISCOUNT", True, cast = bool)
