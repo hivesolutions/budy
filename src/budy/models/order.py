@@ -931,8 +931,6 @@ class Order(bundle.Bundle):
 
     @appier.operation(name = "Fix Meta Order")
     def fix_meta_order_s(self):
-        if not hasattr(self.meta): return
-        if not self.meta: return
         for name in ("object_id", "modify_date", "stocks"):
             if name in self.payment_data: del self.payment_data[name]
             if name in self.cancel_data: del self.cancel_data[name]

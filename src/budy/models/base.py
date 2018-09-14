@@ -107,7 +107,7 @@ class BudyBase(appier_extras.admin.Base):
 
     @appier.operation(name = "Fix Meta")
     def fix_meta_s(self):
-        if not hasattr(self.meta): return
+        if not hasattr(self, "meta"): return
         if not self.meta: return
         for name in ("object_id", "modify_date", "stocks"):
             if not name in self.meta: continue
