@@ -435,7 +435,7 @@ class Product(base.BudyBase):
         product.season = _season
 
         meta = dict(object_id = object_id, modify_date = modify_date)
-        if hasattr(product, "meta"): product.meta.update(meta)
+        if hasattr(product, "meta") and product.meta: product.meta.update(meta)
         else: product.meta = meta
         if not stocks == None: product.meta["stocks"] = stocks
 

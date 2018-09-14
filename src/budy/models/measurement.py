@@ -221,7 +221,7 @@ class Measurement(base.BudyBase):
         measurement.product = _product
 
         meta = dict(object_id = object_id, modify_date = modify_date)
-        if hasattr(measurement, "meta"): measurement.meta.update(meta)
+        if hasattr(measurement, "meta") and measurement.meta: measurement.meta.update(meta)
         else: measurement.meta = meta
         if not stocks == None: measurement.meta["stocks"] = stocks
 
