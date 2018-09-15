@@ -779,6 +779,9 @@ class Product(base.BudyBase):
 
     def get_image(self, size = None, order = None):
         for image in self.images:
+            if not image: continue
+            if not hasattr(image, "size"): continue
+            if not hasattr(image, "order"): continue
             is_size = size == None or image.size == size
             if not is_size: continue
             is_order = order == None or image.order == order
