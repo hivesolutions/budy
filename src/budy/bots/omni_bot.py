@@ -37,6 +37,8 @@ __copyright__ = "Copyright (c) 2008-2018 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import traceback
+
 import appier
 
 import budy
@@ -236,6 +238,8 @@ class OmniBot(base.Bot):
             self.logger.warn(
                 "Problem syncing product %d - %s ..." % (object_id, exception)
             )
+            lines = traceback.format_exc().splitlines()
+            for line in lines: self.logger.info(line)
 
     def sync_product(
         self,
@@ -322,6 +326,8 @@ class OmniBot(base.Bot):
             self.logger.warn(
                 "Problem syncing sub product %d - %s ..." % (object_id, exception)
             )
+            lines = traceback.format_exc().splitlines()
+            for line in lines: self.logger.info(line)
 
     def sync_sub_product(
         self,
