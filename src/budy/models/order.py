@@ -944,14 +944,6 @@ class Order(bundle.Bundle):
         if not self.is_closed(): return
         self.close_lines_s()
 
-    @appier.operation(name = "Fix Meta Order")
-    def fix_meta_order_s(self):
-        for name in ("object_id", "modify_date", "stocks"):
-            if name in self.payment_data: del self.payment_data[name]
-            if name in self.cancel_data: del self.cancel_data[name]
-            if name in self.discount_data: del self.discount_data[name]
-        self.save()
-
     @appier.view(name = "Lines")
     def lines_v(self, *args, **kwargs):
         return appier.lazy_dict(

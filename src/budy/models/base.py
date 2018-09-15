@@ -105,15 +105,6 @@ class BudyBase(appier_extras.admin.Base):
         self._update_tokens()
         self.save()
 
-    @appier.operation(name = "Fix Meta")
-    def fix_meta_s(self):
-        if not hasattr(self, "meta"): return
-        if not self.meta: return
-        for name in ("object_id", "modify_date", "stocks"):
-            if not name in self.meta: continue
-            del self.meta[name]
-        self.save()
-
     def _update_slug_s(self):
         slug = self.slug if hasattr(self, "slug") else None
         slug_id = self.slug_id if hasattr(self, "slug_id") else None

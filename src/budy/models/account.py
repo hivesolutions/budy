@@ -239,15 +239,6 @@ class BudyAccount(appier_extras.admin.Account):
             )
         )
 
-    @appier.operation(name = "Fix Meta")
-    def fix_meta_s(self):
-        if not hasattr(self, "meta"): return
-        if not self.meta: return
-        for name in ("object_id", "modify_date", "stocks"):
-            if not name in self.meta: continue
-            del self.meta[name]
-        self.save()
-
     @appier.view(name = "Orders")
     def orders_v(self, *args, **kwargs):
         kwargs["sort"] = kwargs.get("sort", [("created", -1)])
