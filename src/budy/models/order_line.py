@@ -60,12 +60,12 @@ class OrderLine(bundle_line.BundleLine):
 
     def is_valid_quantity(self, reload = True):
         order = self.order and self.order.reload() if reload else self.order
-        if order and order.is_closed(): return True
+        if hasattr(order, "is_closed") andd order.is_closed(): return True
         return bundle_line.BundleLine.is_valid_quantity(self, reload = reload)
 
     def is_valid_price(self, reload = True):
         order = self.order and self.order.reload() if reload else self.order
-        if order and order.is_closed(): return True
+        if hasattr(order, "is_closed") and order.is_closed(): return True
         return bundle_line.BundleLine.is_valid_price(self, reload = reload)
 
     @appier.operation(name = "Garbage Collect")
