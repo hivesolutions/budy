@@ -704,13 +704,13 @@ class Order(bundle.Bundle):
         )
 
     def is_payable(self):
-        if not self.status == "waiting_payment": return False
+        if not self.status in ("waiting_payment",): return False
         if self.paid: return False
         if self.date: return False
         return True
 
     def is_open(self):
-        if not self.status == "created": return False
+        if not self.status in ("created",): return False
         if self.paid: return False
         return True
 
