@@ -64,6 +64,5 @@ class WishlistLine(bundle_line.BundleLine):
 
     @appier.operation(name = "Garbage Collect")
     def collect_s(self):
-        if self.wishlist and not isinstance(self.wishlist, appier.Reference): return
-        if self.wishlist.is_resolvable(): return
+        if appier.is_unset(self.bag): return
         self.delete()
