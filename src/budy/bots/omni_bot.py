@@ -112,7 +112,7 @@ class OmniBot(base.Bot):
                 if not is_valid: continue
                 inventory_lines = api.list_inventory_lines(
                     store_id = self.store,
-                    limit = 1,
+                    number_records = 1,
                     **{
                         "filter_string" : "",
                         "filters[]" : [
@@ -124,7 +124,7 @@ class OmniBot(base.Bot):
                 inventory_line = inventory_lines[0]
                 inventory_lines = api.list_inventory_lines(
                     store_id = self.store,
-                    limit = -1,
+                    number_records = -1,
                     **{
                         "filter_string" : "",
                         "filters[]" : [
