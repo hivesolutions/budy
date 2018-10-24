@@ -63,6 +63,16 @@ class Section(group.Group):
     going to be used in the query, in case no value is defined
     all of the non empty groups are going to be used in the "view" """
 
+    invisible_fields = appier.field(
+        type = list,
+        observations = """The name of the fields (groups) that
+        although being used as part of the context selection for
+        the section should not be displayed in the "normal" listing
+        UI for the section"""
+    )
+    """ Field that controls the groups that are going to be hidden
+    from the UI although being used for the context filtering"""
+
     genders = appier.field(
         type = list
     )
