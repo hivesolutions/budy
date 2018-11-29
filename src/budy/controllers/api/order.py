@@ -151,6 +151,7 @@ class OrderAPIController(root.RootAPIController):
         end = self.field("end", cast = int)
         paid = self.field("paid", True, cast = bool)
         sms = self.field("sms", False, cast = bool)
+        quantity = self.field("quantity", 1, cast = int)
         object = appier.get_object(
             alias = True,
             find = True,
@@ -172,7 +173,7 @@ class OrderAPIController(root.RootAPIController):
             weight = weight.replace(".", ",")
             line = dict(
                 reference = order.reference,
-                quantity = int(order.quantity),
+                quantity = int(order.quantity) if quantity == None else quantity,
                 weight = weight,
                 price = "0ue",
                 destiny = shipping_address.full_name[:60],
@@ -241,7 +242,17 @@ class OrderAPIController(root.RootAPIController):
                 line["at_code"]
             )
             orders_s.append(order_s)
-        result = appier.serialize_csv(orders_s, delimiter = "+")
+        result = appier.serialize_csv(
+            orders_s,
+            encoding = "Cp1252",
+            errors = "ignore",
+            delimiter = "+"
+        )
+        result = appier.legacy.bytes(
+            result,
+            encoding = "Cp1252",
+            errors = "ignore"
+        )
         self.content_type("text/csv")
         return result
 
