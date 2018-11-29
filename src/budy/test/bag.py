@@ -145,6 +145,50 @@ class BagTest(unittest.TestCase):
 
         self.assertEqual(len(bag.lines), 0)
 
+    def test_empty_line(self):
+        product = budy.Product(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0
+        )
+        product.save()
+
+        bag = budy.Bag()
+        bag.save()
+
+        bag_line = budy.BagLine(
+            quantity = 2.0
+        )
+        bag_line.product = product
+        bag_line.save()
+        bag.add_line_s(bag_line)
+
+        self.assertEqual(bag_line.quantity, 2.0)
+        self.assertEqual(bag_line.total, 20.0)
+        self.assertEqual(bag.total, 20.0)
+        self.assertEqual(len(bag.lines), 1)
+
+        bag_line.quantity = 0.0
+        bag_line.save()
+
+        bag = bag.reload()
+        bag.collect_empty()
+
+        self.assertEqual(len(bag.lines), 0)
+
+        bag = bag.reload()
+
+        self.assertEqual(len(bag.lines), 1)
+
+        bag = bag.reload()
+        bag.save()
+
+        self.assertEqual(len(bag.lines), 0)
+
+        bag = bag.reload()
+
+        self.assertEqual(len(bag.lines), 0)
+
     def test_merge(self):
         product = budy.Product(
             short_description = "product",
