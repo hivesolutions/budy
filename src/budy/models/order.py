@@ -238,7 +238,7 @@ class Order(bundle.Bundle):
         name = "Export Complex",
         parameters = (
             ("Start ID", "start", int),
-            ("End ID", "end", int),
+            ("End ID", "end", int)
         )
     )
     def complex_csv_url(cls, start = None, end = None, absolute = False):
@@ -254,7 +254,7 @@ class Order(bundle.Bundle):
         name = "Export CTT",
         parameters = (
             ("Start ID", "start", int),
-            ("End ID", "end", int),
+            ("End ID", "end", int)
         )
     )
     def ctt_csv_url(cls, start = None, end = None, absolute = False):
@@ -262,6 +262,16 @@ class Order(bundle.Bundle):
             "order_api.ctt_csv",
             start = start,
             end = end,
+            absolute = absolute
+        )
+
+    @classmethod
+    @appier.link(name = "Export CTT Context", context = True)
+    def ctt_csv_context_url(cls, view = None, context = None, absolute = False):
+        return appier.get_app().url_for(
+            "order_api.ctt_csv",
+            view = view,
+            context = context,
             absolute = absolute
         )
 

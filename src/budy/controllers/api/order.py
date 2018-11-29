@@ -162,7 +162,7 @@ class OrderAPIController(root.RootAPIController):
         if end: id["$lte"] = end
         if start or end: object["id"] = id
         if paid: object["paid"] = True
-        orders = budy.Order.find(**object)
+        orders = self.admin_part._find_view(budy.Order, **object)
         orders_s = []
         for order in orders:
             shipping_address = order.shipping_address
