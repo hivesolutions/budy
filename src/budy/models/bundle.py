@@ -237,6 +237,7 @@ class Bundle(base.BudyBase):
     def pre_validate(self):
         base.BudyBase.pre_validate(self)
         self.calculate()
+        self.collect_empty()
 
     def pre_save(self):
         base.BudyBase.pre_save(self)
