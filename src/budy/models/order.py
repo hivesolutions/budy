@@ -582,15 +582,21 @@ class Order(bundle.Bundle):
         before the use/redeem operation is performed.
         """
 
+        # in case the reset flag is set then resets both the discount
+        # used count and the discount data (meta-information)
         if reset:
             self.discount_used = commons.Decimal(0.0)
             self.discount_data = dict()
 
+        # calculates the total amount of order value pending to be passive
+        # of being discount and in case the value is already lower or equal
+        # to zero there's no need to redeem any voucher, as the order total
+        # value is already zero
         discount = self.calculate_discount()
         pending = discount - self.discount_base - self.discount_used
         if pending <= 0.0: return
 
-        # iterates over the complete set of voucher currently associated
+        # iterates over the complete set of vouchers currently associated
         # with the order (both value and percentage) to try to retrieve
         # the possible discount value for each of them
         for voucher in self.vouchers:
