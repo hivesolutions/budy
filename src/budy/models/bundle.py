@@ -71,7 +71,10 @@ class Bundle(base.BudyBase):
         type = commons.Decimal,
         index = True,
         initial = commons.Decimal(0.0),
-        safe = True
+        safe = True,
+        observations = """The total amount for the bundle resulting
+        from the sum of the line values, this value should not include
+        the discount and the shipping costs """
     )
 
     discount = appier.field(
@@ -136,7 +139,8 @@ class Bundle(base.BudyBase):
         initial = False,
         safe = True,
         observations = """If the bundle should be fully discountable,
-        meaning that the shipping costs may also be discounted"""
+        meaning that the shipping costs may also be affected by discount,
+        in effect be considered as discountable"""
     )
 
     ip_address = appier.field(
