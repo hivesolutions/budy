@@ -114,6 +114,8 @@ class Bag(bundle.Bundle):
             currency = self.currency,
             country = self.country,
             sub_total = self.sub_total,
+            discounted_sub_total = self.discounted_sub_total,
+            undiscounted_sub_total = self.undiscounted_sub_total,
             discount = self.discount,
             shipping_cost = self.shipping_cost,
             taxes = self.taxes,

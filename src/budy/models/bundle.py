@@ -82,7 +82,7 @@ class Bundle(base.BudyBase):
         index = True,
         initial = commons.Decimal(0.0),
         safe = True,
-        observations = """The total amount resolved from the bundle lines
+        observations = """The sub total amount resolved from the bundle lines
         for which a line discount has been applied (lines that are discounted)"""
     )
 
@@ -91,7 +91,7 @@ class Bundle(base.BudyBase):
         index = True,
         initial = commons.Decimal(0.0),
         safe = True,
-        observations = """The total amount resolved from the bundle lines for
+        observations = """The sub total amount resolved from the bundle lines for
         which no line discount has been applied (lines that are not discounted)"""
     )
 
