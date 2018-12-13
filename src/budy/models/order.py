@@ -158,14 +158,19 @@ class Order(bundle.Bundle):
         type = commons.Decimal,
         index = "hashed",
         initial = commons.Decimal(0.0),
-        safe = True
+        safe = True,
+        observations = """The discount value that is related with
+        the vouchers to be redeemed (or already redeemed) for the
+        current order"""
     )
 
     discount_used = appier.field(
         type = commons.Decimal,
         index = "hashed",
         initial = commons.Decimal(0.0),
-        safe = True
+        safe = True,
+        observations = """The total value already used via the
+        redeeming of the vouchers associated with the current order"""
     )
 
     lines = appier.field(
