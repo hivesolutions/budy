@@ -158,7 +158,7 @@ class Bundle(base.BudyBase):
         safe = True,
         observations = """If the bundle should be fully discountable,
         meaning that the shipping costs may also be affected by discount,
-        in effect be considered as discountable"""
+        in effect making them considered as discountable"""
     )
 
     ip_address = appier.field(
