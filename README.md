@@ -32,9 +32,10 @@ discount value for a bundle (bag or order) the arguments provided are the discou
 value should be a valid float value for the discount (defaults to `None`)
 * `BUDY_JOIN_DISCOUNT` (`bool`) - If both the voucher and the base discount values should be applied at the same time for
 an order and/or bag or if instead only the largest of both should be used (defaults to `True`)
-* `BUDY_FULL_DISCOUNTABLE` (`bool`) - If the discountable value (value eligible to be discounted) should include both the
-sub total and the shipping costs, meaning that a end customer may not pay the shipping costs at all (if the discount covers that
-value) or if otherwise only the sub total is eligible for discount (defaults to `False`)
+* `BUDY_FULL_DISCOUNTABLE` (`bool`) - If the discountable value (value eligible to be discounted) should use the sub total
+amount including lines with line level discount together with the shipping costs, meaning that an end customer may not pay the shipping costs
+at all (if the discount covers that value) and also benefit from double discount (line and global level) or if otherwise only the
+sub total with no line level discount (and without shipping costs) is eligible for discount (defaults to `False`)
 * `BUDY_SHIPPING` (`str`) - String with the definition of the lambda function to be called for calculus of the
 shipping costs for a bundle (bag or order) the arguments provided are the sub total, taxes, quantity and bundle and the return
 value should be a valid float value for the shipping costs (defaults to `None`)

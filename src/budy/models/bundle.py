@@ -159,8 +159,10 @@ class Bundle(base.BudyBase):
         initial = False,
         safe = True,
         observations = """If the bundle should be fully discountable,
-        meaning that the shipping costs may also be affected by discount,
-        in effect making them considered as discountable"""
+        meaning that the sub total value to be used as the discountable
+        base is going to include lines with line level discount and that
+        the shipping costs may also be affected by discount, in effect
+        making them considered as discountable"""
     )
 
     ip_address = appier.field(
@@ -538,7 +540,7 @@ class Bundle(base.BudyBase):
 
     @property
     def discountable(self):
-        return self.undiscounted_sub_total + self.shipping_cost if\
+        return self.sub_total + self.shipping_cost if\
             self.discountable_full else self.undiscounted_sub_total
 
     @property
