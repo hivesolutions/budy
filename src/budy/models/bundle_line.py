@@ -83,10 +83,22 @@ class BundleLine(base.BudyBase):
         type = int
     )
 
+    discounted = appier.field(
+        type = bool,
+        initial = False,
+        index = True,
+        observations = """If the product associated with the
+        current line is a discounted one, meaning that the product
+        price is affected by some discount"""
+    )
+
     closed = appier.field(
         type = bool,
         initial = False,
-        index = True
+        index = True,
+        observations = """Simple flag that control if the line is
+        closed meaning that calculated values (eg: totals) can no
+        longer be re-calculated as the line is now frozen"""
     )
 
     attributes = appier.field()
@@ -131,6 +143,7 @@ class BundleLine(base.BudyBase):
             country = country,
             force = force
         )
+        self.discounted = self.merchandise.is_discounted
 
     def measure(self, currency = None, country = None, force = False):
         if self.closed: return
