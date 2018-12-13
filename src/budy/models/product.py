@@ -584,7 +584,7 @@ class Product(base.BudyBase):
 
         # verifies if the current product is considered to be a discounted
         # one, that happens when the price compare is greater than price
-        is_discounted = price and price_compare and price_compare > price
+        is_discounted = bool(price and price_compare and price_compare > price)
 
         # calculates the shipping costs taking into account if the price
         # is currently defined for the product defaulting to none otherwise

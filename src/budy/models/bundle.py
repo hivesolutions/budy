@@ -77,6 +77,24 @@ class Bundle(base.BudyBase):
         the discount and the shipping costs """
     )
 
+    discounted_sub_total = appier.field(
+        type = commons.Decimal,
+        index = True,
+        initial = commons.Decimal(0.0),
+        safe = True,
+        observations = """The total amount resolved from the bundle lines
+        for which a line discount has been applied (lines that are discounted)"""
+    )
+
+    undiscounted_sub_total = appier.field(
+        type = commons.Decimal,
+        index = True,
+        initial = commons.Decimal(0.0),
+        safe = True,
+        observations = """The total amount resolved from the bundle lines for
+        which no line discount has been applied (lines that are not discounted)"""
+    )
+
     discount = appier.field(
         type = commons.Decimal,
         index = True,
@@ -185,6 +203,12 @@ class Bundle(base.BudyBase):
 
             appier.not_null("sub_total"),
             appier.gte("sub_total", 0.0),
+
+            appier.not_null("discounted_sub_total"),
+            appier.gte("discounted_sub_total", 0.0),
+
+            appier.not_null("undiscounted_sub_total"),
+            appier.gte("undiscounted_sub_total", 0.0),
 
             appier.not_null("discount"),
             appier.gte("discount", 0.0),
@@ -379,6 +403,8 @@ class Bundle(base.BudyBase):
         lines = self.lines if hasattr(self, "lines") else []
         self.quantity = sum(line.quantity for line in lines)
         self.sub_total = sum(line.total for line in lines)
+        self.discounted_sub_total = sum(line.total for line in lines if line.discounted)
+        self.undiscounted_sub_total = sum(line.total for line in lines if not line.discounted)
         self.taxes = self.calculate_taxes()
         self.shipping_cost = self.calculate_shipping()
         self.discount = self.calculate_discount()
@@ -499,6 +525,8 @@ class Bundle(base.BudyBase):
     def fix_sub_total_s(self):
         if self.sub_total: return
         self.sub_total = self.total
+        self.discounted_sub_total = 0.0
+        self.undiscounted_sub_total = self.sub_total
         self.save()
 
     @appier.operation(name = "Calculate")
@@ -508,8 +536,8 @@ class Bundle(base.BudyBase):
 
     @property
     def discountable(self):
-        return self.sub_total + self.shipping_cost if\
-            self.discountable_full else self.sub_total
+        return self.undiscounted_sub_total + self.shipping_cost if\
+            self.discountable_full else self.undiscounted_sub_total
 
     @property
     def discount_base(self):
