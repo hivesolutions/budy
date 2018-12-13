@@ -99,7 +99,9 @@ class Bundle(base.BudyBase):
         type = commons.Decimal,
         index = True,
         initial = commons.Decimal(0.0),
-        safe = True
+        safe = True,
+        observations = """The total amount for the global discount applied to the
+        current bundle, does not include the line discount values"""
     )
 
     discount_fixed = appier.field(
