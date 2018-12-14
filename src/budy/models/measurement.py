@@ -147,6 +147,7 @@ class Measurement(base.BudyBase):
         object_id = sub_product["object_id"]
         modify_date = merchandise["modify_date"]
         company_product_code = merchandise["company_product_code"]
+        price_compare = merchandise.get("compare_price") or None
 
         # verifies if an inventory line has been provided, if that's the case
         # it's possible to determine a proper modification date for the sub product
@@ -217,6 +218,7 @@ class Measurement(base.BudyBase):
         measurement.name = name
         measurement.value = value
         measurement.value_s = value_s
+        measurement.price_compare = price_compare
         measurement.currency = currency
         measurement.product = _product
 
