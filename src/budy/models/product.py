@@ -924,6 +924,16 @@ class Product(base.BudyBase):
     def share(self, *args, **kwargs):
         self.notify("product.share", *args, **kwargs)
 
+    @appier.view(name = "Measurements")
+    def measurements_v(self, *args, **kwargs):
+        kwargs["sort"] = kwargs.get("sort", [("id", 1)])
+        return appier.lazy_dict(
+            model = self.measurements._target,
+            kwargs = kwargs,
+            entities = appier.lazy(lambda: self.measurements.find(*args, **kwargs)),
+            page = appier.lazy(lambda: self.measurements.paginate(*args, **kwargs))
+        )
+
     @property
     def quantity(self):
         return self.quantity_hand
