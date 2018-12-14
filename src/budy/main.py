@@ -61,6 +61,13 @@ class BudyApp(appier.WebApp):
     def start(self):
         appier.WebApp.start(self)
         self.scheduler.start()
+        self.admin_part.add_operation(
+            "force_scheduler", "admin.force_scheduler",
+            description = "Force scheduler",
+            message = "Are you really sure you want to force scheduler?",
+            note = "Forcing scheduler may consume computer resources",
+            level = 3
+        )
 
 if __name__ == "__main__":
     app = BudyApp()

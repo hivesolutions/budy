@@ -19,6 +19,9 @@
 # You should have received a copy of the Apache License along with
 # Hive Budy. If not, see <http://www.apache.org/licenses/>.
 
+__author__ = "João Magalhães <joamag@hive.pt>"
+""" The author(s) of the module """
+
 __version__ = "1.0.0"
 """ The version of the module """
 
@@ -34,12 +37,16 @@ __copyright__ = "Copyright (c) 2008-2018 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
-from . import _stripe
-from . import admin
-from . import base
-from . import order
+import appier
 
-from ._stripe import StripeController
-from .admin import AdminController
-from .base import BaseController
-from .order import OrderController
+class AdminController(appier.Controller):
+
+    @appier.route("/admin/force_scheduler", "GET")
+    def force_scheduler(self):
+        self.scheduler.awake()
+        return self.redirect(
+            self.url_for(
+                "admin.operations",
+                message = "Forced scheduler to run"
+            )
+        )
