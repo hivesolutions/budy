@@ -157,6 +157,9 @@ class Measurement(base.BudyBase):
             modify_date_line = inventory_line["modify_date"]
             if modify_date_line > modify_date: modify_date = modify_date_line
 
+        # tries to retrieve the parent product for this measurement using the
+        # associated company product code as reference if there's no such parent
+        # product then it's not possible to continue with the import operation
         _product = product.Product.get(
             product_id = parent["company_product_code"],
             raise_e = False
