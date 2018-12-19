@@ -282,6 +282,39 @@ class Order(bundle.Bundle):
 
     @classmethod
     @appier.operation(
+        name = "Import CTT",
+        parameters = (
+            ("CSV File", "file", "file"),
+            ("Base URL", "base_url", str, "http://www.ctt.pt/feapl_2/app/open/cttexpresso/objectSearch/objectSearch.jspx?objects=%s")
+        )
+    )
+    def import_ctt_csv_s(cls, file, base_url):
+
+        def callback(line):
+            _date,\
+            _ctt_ref,\
+            _ctt_id,\
+            reference,\
+            tracking_number,\
+            _quantity,\
+            _customer,\
+            _price_1,\
+            _price_2 = line
+
+            order = cls.get(reference = reference, raise_e = False)
+            if not order: return
+            if order.tracking_number: return
+            if order.tracking_url: return
+
+            order.set_tracking_s(
+                tracking_number,
+                base_url % tracking_number
+            )
+
+        cls._csv_import(file, callback, delimiter = "+", encoding = "Cp1252")
+
+    @classmethod
+    @appier.operation(
         name = "Generate Dummy",
         parameters = (
             ("Product Description", "short_description", str, "product"),
@@ -952,6 +985,11 @@ class Order(bundle.Bundle):
         self.store = self.account.store
         self.save()
 
+    @appier.operation(name = "Fix Closed Lines")
+    def fix_closed_s(self):
+        if not self.is_closed(): return
+        self.close_lines_s()
+
     @appier.link(name = "Export Lines CSV")
     def lines_csv_url(self, absolute = False):
         return appier.get_app().url_for(
@@ -959,11 +997,6 @@ class Order(bundle.Bundle):
             key = self.key,
             absolute = absolute
         )
-
-    @appier.operation(name = "Fix Closed Lines")
-    def fix_closed_s(self):
-        if not self.is_closed(): return
-        self.close_lines_s()
 
     @appier.view(name = "Lines")
     def lines_v(self, *args, **kwargs):
