@@ -298,8 +298,8 @@ class Order(bundle.Bundle):
             tracking_number,\
             _quantity,\
             _customer,\
-            _price_1,\
-            _price_2 = line
+            _weight,\
+            _price = line
 
             order = cls.get(reference = reference, raise_e = False)
             if not order: return
