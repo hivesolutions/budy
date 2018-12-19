@@ -221,6 +221,15 @@ class BudyAccount(appier_extras.admin.Account):
         self.store = store
         self.save()
 
+    @appier.operation(
+        name = "Set Metadata",
+        parameters = (("Metadata","meta", "longmap"),)
+    )
+    def set_meta_s(self, meta):
+        if not meta: return
+        self.meta = meta
+        self.save()
+
     @appier.operation(name = "Notify")
     def notify(self, name = None, *args, **kwargs):
         name = name or "account.new"
