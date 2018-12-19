@@ -285,10 +285,11 @@ class Order(bundle.Bundle):
         name = "Import CTT",
         parameters = (
             ("CSV File", "file", "file"),
-            ("Base URL", "base_url", str, "http://www.ctt.pt/feapl_2/app/open/cttexpresso/objectSearch/objectSearch.jspx?objects=%s")
+            ("Base URL", "base_url", str, "http://www.ctt.pt/feapl_2/app/open/cttexpresso/objectSearch/objectSearch.jspx?objects=%s"),
+            ("Force", "force", bool, False)
         )
     )
-    def import_ctt_csv_s(cls, file, base_url):
+    def import_ctt_csv_s(cls, file, base_url, force):
 
         def callback(line):
             _date,\
@@ -303,8 +304,8 @@ class Order(bundle.Bundle):
 
             order = cls.get(reference = reference, raise_e = False)
             if not order: return
-            if order.tracking_number: return
-            if order.tracking_url: return
+            if not force and order.tracking_number: return
+            if not force and order.tracking_url: return
 
             order.set_tracking_s(
                 tracking_number,
