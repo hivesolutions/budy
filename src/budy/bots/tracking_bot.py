@@ -78,3 +78,4 @@ class TrackingBot(base.Bot):
                 self.logger.warn(
                     "Problem syncing order %s - %s ..." % (order.reference, exception)
                 )
+            self.logger.info("Marked order %s as received ..." % order.reference)
