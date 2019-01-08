@@ -56,11 +56,16 @@ this method (defaults to `False`)
 * `BUDY_3D_ENSURE` (`bool`) - If the [3-D Secure](https://en.wikipedia.org/wiki/3-D_Secure) mode is enabled, forces all the credit
 card operations to be performed using the 3-D Secure approach (defaults to `False`)
 
-### Bots
+### Omni Bot
 
 * `OMNI_BOT_ENABLED` (`bool`) - If the Omni bot should be enabled at startup
 * `OMNI_BOT_STORE` (`int`) - Object ID of the store that is going to be used for the sync operation
 * `OMNI_BOT_RECORDS` (`int`) - The number of records to be retrieved per each remote API call
+
+### Tracking Bot
+
+* `TRACKING_BOT_ENABLED` (`bool`) - If the Tracking bot should be enabled at startup
+* `TRACKING_BOT_WINDOW` (`int`) - The window (in seconds) to look back in terms of orders (older orders tolerance)
 
 ## License
 

@@ -37,7 +37,9 @@ __license__ = "Apache License, Version 2.0"
 from . import base
 from . import omni_bot
 from . import scheduler
+from . import tracking_bot
 
 from .base import Bot
 from .omni_bot import OmniBot
 from .scheduler import Scheduler
+from .tracking_bot import TrackingBot

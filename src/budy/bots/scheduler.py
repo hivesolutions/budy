@@ -40,6 +40,7 @@ __license__ = "Apache License, Version 2.0"
 import appier
 
 from . import omni_bot
+from . import tracking_bot
 
 LOOP_TIMEOUT = 30.0
 """ The time value to be used to sleep the main sequence
@@ -61,7 +62,12 @@ class Scheduler(appier.Scheduler):
             owner = owner,
             **kwargs
         )
+        self.tracking_bot = tracking_bot.TrackingBot(
+            owner = owner,
+            **kwargs
+        )
 
     def tick(self):
         appier.Scheduler.tick(self)
         self.omni_bot.tick()
+        self.tracking_bot.tick()
