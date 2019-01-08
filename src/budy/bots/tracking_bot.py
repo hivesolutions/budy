@@ -62,8 +62,7 @@ class TrackingBot(base.Bot):
     def sync_sent(self):
         orders = budy.Order.find_e(
             status = "sent",
-            created = {"$gt" : time.time() - self.window},
-            limit = -1
+            created = {"$gt" : time.time() - self.window}
         )
         for order in orders:
             if not order.tracking_number: continue
