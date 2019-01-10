@@ -312,7 +312,13 @@ class Order(bundle.Bundle):
                 base_url % tracking_number
             )
 
-        cls._csv_import(file, callback, delimiter = "+", encoding = "Cp1252")
+        cls._csv_import(
+            file,
+            callback,
+            header = False,
+            delimiter = "+",
+            encoding = "Cp1252"
+        )
 
     @classmethod
     @appier.operation(
