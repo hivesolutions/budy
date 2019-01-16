@@ -69,6 +69,12 @@ class BudyApp(appier.WebApp):
             level = 3
         )
 
+    def stop(self):
+        try: import easypay
+        except: return None
+        if easypay: easypay.ShelveAPI.cleanup()
+        appier.WebApp.stop(self)
+
 if __name__ == "__main__":
     app = BudyApp()
     app.serve()
