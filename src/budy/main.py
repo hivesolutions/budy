@@ -71,7 +71,7 @@ class BudyApp(appier.WebApp):
 
     def stop(self):
         try: import easypay
-        except: return None
+        except: easypay = None
         if easypay: easypay.ShelveAPI.cleanup()
         appier.WebApp.stop(self)
 
