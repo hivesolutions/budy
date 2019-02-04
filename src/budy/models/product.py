@@ -378,6 +378,7 @@ class Product(base.BudyBase):
         _season = metadata.get("season")
         gender = metadata.get("gender") or gender
         order = metadata.get("order")
+        discountable = metadata.get("discountable", True)
         sku_field = metadata.get("sku_field")
 
         # verifies if an inventory line has been provided, if that's the case
@@ -434,6 +435,7 @@ class Product(base.BudyBase):
         product.price_compare = price_compare
         product.currency = currency
         product.order = order
+        product.discountable = discountable
         product.characteristics = metadata.get("characteristics", [])
         product.colors = colors
         product.categories = categories
