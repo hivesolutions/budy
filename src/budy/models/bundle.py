@@ -95,6 +95,15 @@ class Bundle(base.BudyBase):
         which no line discount has been applied (lines that are not discounted)"""
     )
 
+    discountable_sub_total = appier.field(
+        type = commons.Decimal,
+        index = True,
+        initial = commons.Decimal(0.0),
+        safe = True,
+        observations = """The total amount of the sub total that is still discountable
+        under the global discount approach"""
+    )
+
     discount = appier.field(
         type = commons.Decimal,
         index = True,
@@ -213,6 +222,9 @@ class Bundle(base.BudyBase):
 
             appier.not_null("undiscounted_sub_total"),
             appier.gte("undiscounted_sub_total", 0.0),
+
+            appier.not_null("discountable_sub_total"),
+            appier.gte("discountable_sub_total", 0.0),
 
             appier.not_null("discount"),
             appier.gte("discount", 0.0),
@@ -409,6 +421,7 @@ class Bundle(base.BudyBase):
         self.sub_total = sum(line.total for line in lines)
         self.discounted_sub_total = sum(line.total for line in lines if line.discounted)
         self.undiscounted_sub_total = sum(line.total for line in lines if not line.discounted)
+        self.discountable_sub_total = sum(line.total for line in lines if line.is_discountable(strict = not self.discountable_full))
         self.taxes = self.calculate_taxes()
         self.shipping_cost = self.calculate_shipping()
         self.discount = self.calculate_discount()
@@ -541,7 +554,7 @@ class Bundle(base.BudyBase):
     @property
     def discountable(self):
         return self.sub_total + self.shipping_cost if\
-            self.discountable_full else self.undiscounted_sub_total
+            self.discountable_full else self.discountable_sub_total
 
     @property
     def discount_base(self):

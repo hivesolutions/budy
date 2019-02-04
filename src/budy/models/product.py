@@ -153,6 +153,13 @@ class Product(base.BudyBase):
         index = True
     )
 
+    discountable = appier.field(
+        type = bool,
+        initial = True,
+        observations = """Flag that indicates if the product is
+        eligible for any kind of global discount"""
+    )
+
     price_url = appier.field(
         index = "hashed",
         meta = "url",
@@ -958,6 +965,10 @@ class Product(base.BudyBase):
     @property
     def is_discounted(self):
         return self.discount > 0.0
+
+    @property
+    def is_discountable(self):
+        return self.discountable
 
     @property
     def is_price_provided(self):

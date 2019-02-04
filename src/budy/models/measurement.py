@@ -302,6 +302,10 @@ class Measurement(base.BudyBase):
         return self.discount > 0.0
 
     @property
+    def is_discountable(self):
+        return self.product.is_discountable
+
+    @property
     def is_price_provided(self):
         return False
 

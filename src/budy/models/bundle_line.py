@@ -144,6 +144,7 @@ class BundleLine(base.BudyBase):
             force = force
         )
         self.discounted = self.merchandise.is_discounted
+        self.discountable = self.merchandise.is_discountable
 
     def measure(self, currency = None, country = None, force = False):
         if self.closed: return
@@ -226,6 +227,11 @@ class BundleLine(base.BudyBase):
         self.calculate(force = True)
         fixed |= True
         return fixed
+
+    def is_discountable(self, strict = False):
+        if not self.merchandise.is_discountable: return False
+        if strict and self.discounted: return False
+        return True
 
     def is_empty(self):
         return self.quantity == 0.0
