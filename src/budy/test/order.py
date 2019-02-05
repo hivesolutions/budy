@@ -663,6 +663,42 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.shipping_cost, 10.0)
         self.assertEqual(order.discountable, 0.0)
 
+    def test_non_discountable(self):
+        product = budy.Product(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0,
+            discountable = False
+        )
+        product.save()
+
+        order = budy.Order(
+            shipping_fixed = 10.0
+        )
+        order.save()
+
+        order_line = budy.OrderLine(quantity = 2.0)
+        order_line.product = product
+        order_line.save()
+        order.add_line_s(order_line)
+
+        self.assertEqual(order.sub_total, 20.0)
+        self.assertEqual(order.discount, 0.0)
+        self.assertEqual(order.total, 30.0)
+        self.assertEqual(order.payable, 30.0)
+        self.assertEqual(order.shipping_cost, 10.0)
+        self.assertEqual(order.discountable, 0.0)
+
+        order.discount_fixed = 20.0
+        order.save()
+
+        self.assertEqual(order.sub_total, 20.0)
+        self.assertEqual(order.discount, 0.0)
+        self.assertEqual(order.total, 30.0)
+        self.assertEqual(order.payable, 30.0)
+        self.assertEqual(order.shipping_cost, 10.0)
+        self.assertEqual(order.discountable, 0.0)
+
     def test_taxes(self):
         product = budy.Product(
             short_description = "product",

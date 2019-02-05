@@ -405,3 +405,34 @@ class BagTest(unittest.TestCase):
         self.assertEqual(bag.total, 20.0)
         self.assertEqual(bag.discountable, 0.0)
         self.assertEqual(len(bag.lines), 1)
+
+    def test_product_non_discountable(self):
+        product = budy.Product(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0,
+            quantity_hand = 2.0,
+            discountable = False
+        )
+        product.save()
+
+        bag = budy.Bag()
+        bag.save()
+
+        bag_line = budy.BagLine(
+            quantity = 2.0
+        )
+        bag_line.product = product
+        bag_line.save()
+        bag.add_line_s(bag_line)
+
+        self.assertEqual(bag_line.quantity, 2.0)
+        self.assertEqual(bag_line.total, 20.0)
+        self.assertEqual(bag_line.discounted, False)
+        self.assertEqual(bag.sub_total, 20.0)
+        self.assertEqual(bag.discounted_sub_total, 0.0)
+        self.assertEqual(bag.undiscounted_sub_total, 20.0)
+        self.assertEqual(bag.discountable_sub_total, 0.0)
+        self.assertEqual(bag.total, 20.0)
+        self.assertEqual(bag.discountable, 0.0)
+        self.assertEqual(len(bag.lines), 1)
