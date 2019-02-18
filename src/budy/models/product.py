@@ -51,6 +51,7 @@ class Product(base.BudyBase):
     GENDER_S = {
         "Male" : "Male",
         "Female" : "Female",
+        "Kids" : "Kids",
         "Both" : "Both"
     }
     """ The dictionary that maps the multiple gender
@@ -58,7 +59,9 @@ class Product(base.BudyBase):
 
     short_description = appier.field(
         index = "hashed",
-        default = True
+        default = True,
+        observations = """A short description on the product
+        that should be used as the title for the product"""
     )
 
     product_id = appier.field(
