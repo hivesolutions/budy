@@ -51,7 +51,7 @@ class Product(base.BudyBase):
     GENDER_S = {
         "Male" : "Male",
         "Female" : "Female",
-        "Kids" : "Kids",
+        "Child" : "Child",
         "Both" : "Both"
     }
     """ The dictionary that maps the multiple gender
