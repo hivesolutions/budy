@@ -24,7 +24,7 @@ Code coverage of at least 75% of the code base should be considered a priority.
 ### General
 
 * `BUDY_CURRENCY` (`str`) - The currency to be "forced" for financial operations, this value is not
-set by default an an automatic algorithm is used instead, to determine the best possible match for the
+set by default an automatic algorithm is used instead, to determine the best possible match for the
 currency to be used, use this value only for situations where binding a currency value is required (defaults to `None`)
 * `BUDY_ORDER_REF` (`str`) - Defines the template to be used for order reference number generation (defaults to `BD-%06d`)
 * `BUDY_DISCOUNT` (`str`) - String with the definition of the lambda function to be called for calculus of the
