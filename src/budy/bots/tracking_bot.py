@@ -73,7 +73,7 @@ class TrackingBot(base.Bot):
                 )
                 if not result["status"] == "Entregue": continue
                 order.mark_received_s()
-            except BaseException as exception:
+            except Exception as exception:
                 self.logger.warn(
                     "Problem syncing order %s - %s ..." % (order.reference, exception)
                 )

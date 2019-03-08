@@ -235,7 +235,7 @@ class OmniBot(base.Bot):
 
     def sync_product_safe(self, merchandise, *args, **kwargs):
         try: self.sync_product(merchandise, *args, **kwargs)
-        except BaseException as exception:
+        except Exception as exception:
             object_id = merchandise["object_id"]
             self.logger.warn(
                 "Problem syncing product %d - %s ..." % (object_id, exception)
@@ -323,7 +323,7 @@ class OmniBot(base.Bot):
 
     def sync_sub_product_safe(self, merchandise, *args, **kwargs):
         try: self.sync_sub_product(merchandise, *args, **kwargs)
-        except BaseException as exception:
+        except Exception as exception:
             object_id = merchandise["object_id"]
             self.logger.warn(
                 "Problem syncing sub product %d - %s ..." % (object_id, exception)
