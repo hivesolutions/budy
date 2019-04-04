@@ -56,21 +56,21 @@ class EasypayAPIController(root.RootAPIController):
         return result
 
     @appier.route("/api/easypay/cancel", ("GET", "POST"))
-    @appier.ensure("admin")
+    @appier.ensure(token = "admin")
     def cancel(self):
         identifier = self.field("identifier", mandatory = True)
         api = budy.Order._get_api_easypay()
         return api.cancel_mb(identifier)
 
     @appier.route("/api/easypay/delete", ("GET", "POST"))
-    @appier.ensure("admin")
+    @appier.ensure(token = "admin")
     def delete(self):
         identifier = self.field("identifier", mandatory = True)
         api = budy.Order._get_api_easypay()
         return api.del_reference(identifier)
 
     @appier.route("/api/easypay/diagnostics", "GET")
-    @appier.ensure("admin")
+    @appier.ensure(token = "admin")
     def diagnostics(self):
         api = budy.Order._get_api_easypay()
         return api.diagnostics()
