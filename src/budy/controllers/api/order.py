@@ -152,6 +152,7 @@ class OrderAPIController(root.RootAPIController):
         paid = self.field("paid", True, cast = bool)
         sms = self.field("sms", False, cast = bool)
         quantity = self.field("quantity", 1, cast = int)
+        weight = self.field("weight", 100, cast = int)
         object = appier.get_object(
             alias = True,
             find = True,
@@ -169,7 +170,7 @@ class OrderAPIController(root.RootAPIController):
             shipping_address = order.shipping_address
             postal_code = shipping_address.postal_code or ""
             if not "-" in postal_code: postal_code += "-"
-            weight = "%.2f" % (order.quantity * 100)
+            weight = "%.2f" % (order.quantity * weight)
             weight = weight.replace(".", ",")
             line = dict(
                 reference = order.reference,
