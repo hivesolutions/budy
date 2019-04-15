@@ -79,7 +79,7 @@ class BaseController(appier.Controller):
                 error = error.message
             )
 
-        account._set_session()
+        account._set_account()
 
         return self.redirect(
             next or self.url_for(self.login_redirect)

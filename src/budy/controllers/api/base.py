@@ -50,7 +50,7 @@ class BaseAPIController(root.RootAPIController):
         username = self.field("username")
         password = self.field("password")
         account = budy.BudyAccount.login(username, password)
-        account._set_session()
+        account._set_account()
         sid = self.session.sid
         return dict(
             sid = sid,
