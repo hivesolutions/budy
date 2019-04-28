@@ -81,8 +81,9 @@ class OmniBot(base.Bot):
         self.logger.info("Ended Omni fix")
 
     def gc_products(self):
-        self.logger.info("Starting Omni gc ...")
+        self.logger.info("Starting Omni GC ...")
         self.gc_measurements_db()
+        self.logger.info("Ended Omni GC")
 
     def sync_products_store(self):
         api = self.get_api()
