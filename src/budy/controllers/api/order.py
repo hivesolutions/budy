@@ -170,12 +170,12 @@ class OrderAPIController(root.RootAPIController):
             shipping_address = order.shipping_address
             postal_code = shipping_address.postal_code or ""
             if not "-" in postal_code: postal_code += "-"
-            weight = "%.2f" % (order.quantity * weight)
-            weight = weight.replace(".", ",")
+            weight_s = "%.2f" % (order.quantity * weight)
+            weight_s = weight_s.replace(".", ",")
             line = dict(
                 reference = order.reference,
                 quantity = int(order.quantity) if quantity == None else quantity,
-                weight = weight,
+                weight = weight_s,
                 price = "0ue",
                 destiny = shipping_address.full_name[:60],
                 title = order.account.title[:20],
