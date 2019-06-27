@@ -41,7 +41,7 @@ import appier
 
 class AdminController(appier.Controller):
 
-    @appier.route("/admin/force_scheduler", "GET")
+    @appier.route("/admin/force_scheduler", ("GET", "POST"))
     def force_scheduler(self):
         self.scheduler.awake()
         return self.redirect(
