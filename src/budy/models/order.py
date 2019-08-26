@@ -838,6 +838,10 @@ class Order(bundle.Bundle):
         self.verify_base()
         appier.verify(not self.status in ("created", "canceled", "received"))
 
+    def verify_closed(self):
+        self.verify_base()
+        appier.verify(not self.status in ("sent", "received"))
+
     def verify_vouchers(self):
         discount = self.calculate_discount()
         pending = discount - self.discount_base - self.discount_used
@@ -936,6 +940,12 @@ class Order(bundle.Bundle):
     def mark_canceled_s(self):
         self.verify_canceled()
         self.status = "canceled"
+        self.save()
+
+    @appier.operation(name = "Mark Closed")
+    def mark_closed_s(self):
+        self.verify_closed()
+        self.status = "closed"
         self.save()
 
     @appier.operation(name = "Garbage Collect")
