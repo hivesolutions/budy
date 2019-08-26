@@ -836,7 +836,7 @@ class Order(bundle.Bundle):
 
     def verify_canceled(self):
         self.verify_base()
-        appier.verify(not self.status in ("created", "canceled", "received"))
+        appier.verify(not self.status in ("created", "canceled", "received", "completed"))
 
     def verify_completed(self):
         self.verify_base()
