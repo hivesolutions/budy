@@ -60,7 +60,8 @@ class Order(bundle.Bundle):
         sent = "sent",
         received = "received",
         returned = "returned",
-        canceled = "canceled"
+        canceled = "canceled",
+        closed = "closed"
     )
 
     STATUS_C = dict(
@@ -70,7 +71,8 @@ class Order(bundle.Bundle):
         sent = "blue",
         received = "green",
         returned = "red",
-        canceled = "red"
+        canceled = "red",
+        closed = "green"
     )
 
     status = appier.field(
