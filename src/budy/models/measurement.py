@@ -303,7 +303,6 @@ class Measurement(base.BudyBase):
 
     @property
     def is_discountable(self):
-        if not self.product: return False
         return self.product.is_discountable
 
     @property
