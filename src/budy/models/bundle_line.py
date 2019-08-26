@@ -244,7 +244,6 @@ class BundleLine(base.BudyBase):
         return is_valid
 
     def is_discountable(self, strict = False):
-        if not self.merchandise: return False
         if not self.merchandise.is_discountable: return False
         if strict and self.discounted: return False
         return True
