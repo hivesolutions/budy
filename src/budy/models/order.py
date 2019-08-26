@@ -61,7 +61,7 @@ class Order(bundle.Bundle):
         received = "received",
         returned = "returned",
         canceled = "canceled",
-        closed = "closed"
+        completed = "completed"
     )
 
     STATUS_C = dict(
@@ -72,7 +72,7 @@ class Order(bundle.Bundle):
         received = "green",
         returned = "red",
         canceled = "red",
-        closed = "green"
+        completed = "green"
     )
 
     status = appier.field(
@@ -838,9 +838,9 @@ class Order(bundle.Bundle):
         self.verify_base()
         appier.verify(not self.status in ("created", "canceled", "received"))
 
-    def verify_closed(self):
+    def verify_completed(self):
         self.verify_base()
-        appier.verify(not self.status in ("sent", "received"))
+        appier.verify(self.status in ("paid", "sent", "canceled"))
 
     def verify_vouchers(self):
         discount = self.calculate_discount()
@@ -942,10 +942,10 @@ class Order(bundle.Bundle):
         self.status = "canceled"
         self.save()
 
-    @appier.operation(name = "Mark Closed")
-    def mark_closed_s(self):
-        self.verify_closed()
-        self.status = "closed"
+    @appier.operation(name = "Mark Completed")
+    def mark_completed_s(self):
+        self.verify_completed()
+        self.status = "completed"
         self.save()
 
     @appier.operation(name = "Garbage Collect")
