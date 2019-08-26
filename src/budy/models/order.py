@@ -840,7 +840,7 @@ class Order(bundle.Bundle):
 
     def verify_completed(self):
         self.verify_base()
-        appier.verify(self.status in ("paid", "sent", "canceled"))
+        appier.verify(self.status in ("paid", "sent", "received"))
 
     def verify_vouchers(self):
         discount = self.calculate_discount()
