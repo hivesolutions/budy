@@ -25,7 +25,7 @@ Code coverage of at least 75% of the code base should be considered a priority.
 
 | Name | Type | Description |
 | ----- | ----- | ----- |
-| **BUDY_CURRENCY** | `str` | The currency to be "forced" for financial operations, this value is not set by default an an automatic algorithm is used instead, to determine the best possible match for the currency to be used, use this value only for situations where binding a currency value is required (defaults to `None`). |
+| **BUDY_CURRENCY** | `str` | The currency to be "forced" for financial operations, this value is not set by default an automatic algorithm is used instead, to determine the best possible match for the currency to be used, use this value only for situations where binding a currency value is required (defaults to `None`). |
 | **BUDY_ORDER_REF** | `str` | Defines the template to be used for order reference number generation (defaults to `BD-%06d`). |
 | **BUDY_DISCOUNT** | `str` | String with the definition of the lambda function to be called for calculus of the discount value for a bundle (bag or order) the arguments provided are the discountable, taxes, quantity and bundle and the return value should be a valid float value for the discount (defaults to `None`). |
 | **BUDY_JOIN_DISCOUNT** | `bool` | If both the voucher and the base discount values should be applied at the same time for an order and/or bag or if instead only the largest of both should be used (defaults to `True`). |
