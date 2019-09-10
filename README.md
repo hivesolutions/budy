@@ -39,7 +39,7 @@ Code coverage of at least 75% of the code base should be considered a priority.
 
 | Name | Type | Description |
 | ----- | ----- | ----- |
-| **BUDY_STRIPE_LEGACY** | `bool` | If the legacy mode (old Stripe API) should be used (defaults to `False`). |
+| **BUDY_STRIPE_LEGACY** | `bool` | If the legacy mode (old Stripe API no credit card sources) should be used (defaults to `False`). |
 | **BUDY_3D_SECURE** | `bool` | If the [3-D Secure](https://en.wikipedia.org/wiki/3-D_Secure) mode should be enabled for cards that require or support that mode of execution, note that "normal" card execution mode will be applied for cards that do not support this method (defaults to `False`). |
 | **BUDY_3D_ENSURE** | `bool` | If the [3-D Secure](https://en.wikipedia.org/wiki/3-D_Secure) mode is enabled, forces all the credit card operations to be performed using the 3-D Secure approach (defaults to `False`). |
 
