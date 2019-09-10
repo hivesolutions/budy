@@ -41,6 +41,10 @@ import appier
 
 class StripeController(appier.Controller):
 
+    @appier.route("/stripe/payment", "GET")
+    def payment(self):
+        return self.template("stripe/payment.html.tpl")
+
     @appier.route("/stripe/redirect", "GET")
     def redirect(self):
         redirect_url = self.field("redirect_url", mandatory = True)
