@@ -1396,21 +1396,42 @@ class Order(bundle.Bundle):
     def _end_pay_stripe_sca(self, payment_data):
         cls = self.__class__
         api = cls._get_api_stripe()
-        token = payment_data["token"]
-        api.create_charge_token(
-            int(self.payable * 100),
-            self.currency,
-            token,
-            description = self.reference,
-            metadata = dict(
-                order = self.reference,
-                email = self.email,
-                ip_address = self.ip_address,
-                ip_country = self.ip_country,
-                first_name = self.shipping_address.first_name,
-                last_name = self.shipping_address.last_name
+        identifier = payment_data["identifier"]
+        token = payment_data.get("token", None)
+        if token:
+            api.create_charge_token(
+                int(self.payable * 100),
+                self.currency,
+                token,
+                description = self.reference,
+                metadata = dict(
+                    order = self.reference,
+                    email = self.email,
+                    ip_address = self.ip_address,
+                    ip_country = self.ip_country,
+                    first_name = self.shipping_address.first_name,
+                    last_name = self.shipping_address.last_name
+                )
             )
-        )
+        else:
+            charges = api.list_charges(
+                payment_intent = identifier,
+                limit = 1
+            )
+            items = charges.get("data", [])
+            appier.verify(
+                items,
+                message = "No valid charge found"
+            )
+            charge = items[0]
+            appier.verify(
+                charge.get("status", "succeeded"),
+                message = "Charge was not successful"
+            )
+            appier.verify(
+                charge.get("captured", False),
+                message = "Charge was not captured"
+            )
         return True
 
     def _cancel(self, cancel_data, strict = False):
