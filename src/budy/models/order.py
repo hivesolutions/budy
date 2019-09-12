@@ -1297,7 +1297,19 @@ class Order(bundle.Bundle):
         pay_url = payment_data.get("stripe_sca_pay_url", pay_url)
         return_url = payment_data.get("return_url", None)
         return_url = payment_data.get("stripe_sca_return_url", return_url)
-        intent = api.create_intent(int(self.payable * 100), self.currency)
+        intent = api.create_intent(
+            int(self.payable * 100),
+            self.currency,
+            description = self.reference,
+            metadata = dict(
+                order = self.reference,
+                email = self.email,
+                ip_address = self.ip_address,
+                ip_country = self.ip_country,
+                first_name = self.shipping_address.first_name,
+                last_name = self.shipping_address.last_name
+            )
+        )
         identifier = intent["id"]
         secret = intent["client_secret"]
         query = "secret=%s&return_url=%s" % (
