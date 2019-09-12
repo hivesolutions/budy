@@ -14,4 +14,3 @@ jobs:
       - run: pip install -r requirements.txt
       - run: pip install -r extra.txt
       - run: ADAPTER=tiny python setup.py test
- 
