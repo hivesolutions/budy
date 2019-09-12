@@ -417,7 +417,7 @@ class Order(bundle.Bundle):
     @classmethod
     def _pmethods(cls):
         methods = dict()
-        for engine in ("stripe", "easypay", "paypal"):
+        for engine in ("stripe", "easypay", "paypal", "stripe_sca"):
             function = getattr(cls, "_pmethods_" + engine)
             engine_m = [(value, engine) for value in function()]
             methods.update(engine_m)
@@ -438,6 +438,10 @@ class Order(bundle.Bundle):
     @classmethod
     def _pmethods_paypal(cls):
         return ("paypal",)
+
+    @classmethod
+    def _pmethods_stripe_sca(cls):
+        return ("stripe_sca",)
 
     @classmethod
     def _get_api_stripe(cls):
@@ -1286,6 +1290,32 @@ class Order(bundle.Bundle):
         )
         return approval_url
 
+    def _pay_stripe_sca(self, payment_data):
+        cls = self.__class__
+        api = cls._get_api_stripe()
+        pay_url = payment_data.get("pay_url", None)
+        pay_url = payment_data.get("stripe_sca_pay_url", pay_url)
+        return_url = payment_data.get("return_url", None)
+        return_url = payment_data.get("stripe_sca_return_url", return_url)
+        intent = api.create_intent(int(self.payable * 100), self.currency)
+        identifier = intent["id"]
+        secret = intent["client_secret"]
+        query = "secret=%s&return_url=%s" % (
+            appier.quote(secret),
+            appier.quote(return_url)
+        )
+        pay_secret_url = pay_url + ("&" if "?" in pay_url else "?") + query
+        self.payment_data = dict(
+            engine = "stripe_sca",
+            type = "stripe_sca",
+            identifier = identifier,
+            secret = secret,
+            pay_url = pay_url,
+            return_url = return_url,
+            pay_secret_url = pay_secret_url
+        )
+        return pay_secret_url
+
     def _end_pay(self, payment_data, strict = False):
         cls = self.__class__
         if self.payable == 0.0: return
@@ -1361,6 +1391,26 @@ class Order(bundle.Bundle):
         payment_id = payment_data["payment_id"]
         payer_id = payment_data["payer_id"]
         api.execute_payment(payment_id, payer_id)
+        return True
+
+    def _end_pay_stripe_sca(self, payment_data):
+        cls = self.__class__
+        api = cls._get_api_stripe()
+        token = payment_data["token"]
+        api.create_charge_token(
+            int(self.payable * 100),
+            self.currency,
+            token,
+            description = self.reference,
+            metadata = dict(
+                order = self.reference,
+                email = self.email,
+                ip_address = self.ip_address,
+                ip_country = self.ip_country,
+                first_name = self.shipping_address.first_name,
+                last_name = self.shipping_address.last_name
+            )
+        )
         return True
 
     def _cancel(self, cancel_data, strict = False):
