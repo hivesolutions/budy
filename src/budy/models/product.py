@@ -452,6 +452,7 @@ class Product(base.BudyBase):
         if hasattr(product, "meta") and product.meta: product.meta.update(meta)
         else: product.meta = meta
         if not stocks == None: product.meta["stocks"] = stocks
+        if not discount == None: product.meta["discount"] = discount
 
         if "stock_on_hand" in merchandise or force:
             product.quantity_hand = merchandise.get("stock_on_hand", 0.0)

@@ -232,6 +232,7 @@ class Measurement(base.BudyBase):
         if hasattr(measurement, "meta") and measurement.meta: measurement.meta.update(meta)
         else: measurement.meta = meta
         if not stocks == None: measurement.meta["stocks"] = stocks
+        if not discount == None: measurement.meta["discount"] = discount
 
         if "stock_on_hand" in merchandise or force:
             measurement.quantity_hand = merchandise.get("stock_on_hand", 0.0)
