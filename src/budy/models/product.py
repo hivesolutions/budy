@@ -661,11 +661,15 @@ class Product(base.BudyBase):
         prices = [measurement.price or 0.0 for measurement in\
             self.measurements if hasattr(measurement, "price") and\
             not measurement.price == None]
+        taxes = [measurement.taxes or 0.0 for measurement in\
+            self.measurements if hasattr(measurement, "taxes") and\
+            not measurement.taxes == None]
         prices_compare = [measurement.price_compare or 0.0 for measurement in\
             self.measurements if hasattr(measurement, "price_compare") and\
             not measurement.price_compare == None]
         self.quantity_hand = sum(quantities_hand) if quantities_hand else None
         self.price = max(prices) if prices else 0.0
+        self.taxes = max(taxes) if taxes else 0.0
         self.price_compare = max(prices_compare) if prices_compare else None
 
     def build_images(self):
