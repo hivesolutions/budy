@@ -168,6 +168,10 @@ class Measurement(base.BudyBase):
         )
         if not _product: return None
 
+        # in case the discount at a merchandise level is not defined
+        # then tries to use the one coming from the (parent) product
+        if discount == None: discount = _product.meta.get("discount", None)
+
         # creates the stocks list in case there are valid inventory lines being
         # passed on the current measurement update/creation
         stocks = None if inventory_lines == None else []
@@ -228,11 +232,14 @@ class Measurement(base.BudyBase):
         measurement.currency = currency
         measurement.product = _product
 
-        meta = dict(object_id = object_id, modify_date = modify_date)
+        meta = dict(
+            object_id = object_id,
+            modify_date = modify_date,
+            discount = discount
+        )
         if hasattr(measurement, "meta") and measurement.meta: measurement.meta.update(meta)
         else: measurement.meta = meta
         if not stocks == None: measurement.meta["stocks"] = stocks
-        if not discount == None: measurement.meta["discount"] = discount
 
         if "stock_on_hand" in merchandise or force:
             measurement.quantity_hand = merchandise.get("stock_on_hand", 0.0)
