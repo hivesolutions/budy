@@ -45,6 +45,7 @@ import appier_extras
 
 from . import base
 from . import bundle
+from . import currency as _currency
 
 class Product(base.BudyBase):
 
@@ -374,6 +375,7 @@ class Product(base.BudyBase):
         upc = merchandise["upc"]
         metadata = merchandise["metadata"] or dict()
         price_compare = metadata.get("compare_price") or None
+        discount = metadata.get("discount") or None
         _color = metadata.get("material") or []
         _category = metadata.get("category") or []
         _collection = metadata.get("collection") or []
@@ -454,11 +456,34 @@ class Product(base.BudyBase):
         if "stock_on_hand" in merchandise or force:
             product.quantity_hand = merchandise.get("stock_on_hand", 0.0)
         if "retail_price" in merchandise or force:
-            product.price = merchandise.get("retail_price", 0.0)
+            # "grabs" the retail price from the original merchandise entity
+            # from omni to be used as the base calculus
+            retail_price = merchandise.get("retail_price", 0.0)
+
+            # in case the discount is defined and there's no explicit price compare
+            # defined in the product then the "original" retail price is set as the
+            # price compare (proper UI will be applied using this heuristic)
+            if discount: product.price_compare = product.price_compare or retail_price
+
+            # in case there's a discount defined for the product, the retail price
+            # from omni is discounted by that same discount (from metadata)
+            retail_price = _currency.Currency.round(
+                retail_price - retail_price * discount,
+                currency
+            ) if discount else retail_price
+
+            # sets the "calculated" retail price in as the price to be used
+            # by the product under the budy context
+            product.price = retail_price
         if "price" in merchandise or force:
-            base_price = product.price if hasattr(product, "price") else 0.0
-            base_price = base_price or 0.0
-            product.taxes = base_price - merchandise.get("price", 0.0)
+            retail_price = product.price if hasattr(product, "price") else 0.0
+            retail_price = retail_price or 0.0
+            untaxed_price = merchandise.get("price", 0.0)
+            untaxed_price = _currency.Currency.round(
+                untaxed_price - untaxed_price * discount,
+                currency
+            ) if discount else untaxed_price
+            product.taxes = retail_price - untaxed_price
         return product
 
     @classmethod

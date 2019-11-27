@@ -42,6 +42,7 @@ import commons
 import appier
 
 from . import base
+from . import currency as _currency
 
 class Measurement(base.BudyBase):
 
@@ -149,6 +150,7 @@ class Measurement(base.BudyBase):
         company_product_code = merchandise["company_product_code"]
         metadata = merchandise["metadata"] or dict()
         price_compare = metadata.get("compare_price") or None
+        discount = metadata.get("discount") or None
 
         # verifies if an inventory line has been provided, if that's the case
         # it's possible to determine a proper modification date for the sub product
@@ -234,11 +236,34 @@ class Measurement(base.BudyBase):
         if "stock_on_hand" in merchandise or force:
             measurement.quantity_hand = merchandise.get("stock_on_hand", 0.0)
         if "retail_price" in merchandise or force:
-            measurement.price = merchandise.get("retail_price", 0.0)
+            # "grabs" the retail price from the original merchandise entity
+            # from omni to be used as the base calculus
+            retail_price = merchandise.get("retail_price", 0.0)
+
+            # in case the discount is defined and there's no explicit price compare
+            # defined in the measurement then the "original" retail price is set as the
+            # price compare (proper UI will be applied using this heuristic)
+            if discount: measurement.price_compare = measurement.price_compare or retail_price
+
+            # in case there's a discount defined for the measurement, the retail price
+            # from omni is discounted by that same discount (from metadata)
+            retail_price = _currency.Currency.round(
+                retail_price - retail_price * discount,
+                currency
+            ) if discount else retail_price
+
+            # sets the "calculated" retail price in as the price to be used
+            # by the measurement under the budy context
+            measurement.price = retail_price
         if "price" in merchandise or force:
-            base_price = measurement.price if hasattr(measurement, "price") else 0.0
-            base_price = base_price or 0.0
-            measurement.taxes = base_price - merchandise.get("price", 0.0)
+            retail_price = measurement.price if hasattr(measurement, "price") else 0.0
+            retail_price = retail_price or 0.0
+            untaxed_price = merchandise.get("price", 0.0)
+            untaxed_price = _currency.Currency.round(
+                untaxed_price - untaxed_price * discount,
+                currency
+            ) if discount else untaxed_price
+            measurement.taxes = retail_price - untaxed_price
         return measurement
 
     @classmethod
