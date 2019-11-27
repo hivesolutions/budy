@@ -460,10 +460,9 @@ class Product(base.BudyBase):
             # from omni to be used as the base calculus
             retail_price = merchandise.get("retail_price", 0.0)
 
-            # in case the discount is defined and there's no explicit price compare
-            # defined in the product then the "original" retail price is set as the
-            # price compare (proper UI will be applied using this heuristic)
-            if discount: product.price_compare = product.price_compare or retail_price
+            # stores the "original" retail price in the product's metadata
+            # storage may be needed latter for update operations
+            product.meta["retail_price"] = retail_price
 
             # in case there's a discount defined for the product, the retail price
             # from omni is discounted by that same discount (from metadata)
@@ -484,6 +483,15 @@ class Product(base.BudyBase):
                 currency
             ) if discount else untaxed_price
             product.taxes = retail_price - untaxed_price
+
+        # in case the discount is defined and there's no explicit price compare
+        # defined in the product then the "original" retail price is set as the
+        # price compare (proper UI will be applied using this heuristic)
+        if discount and "retail_price" in product.meta:
+            product.price_compare = product.price_compare or product.meta["retail_price"]
+
+        # returns the "final" product instance to the caller so that it's possible
+        # to properly save the newly generated product instance according to omni
         return product
 
     @classmethod

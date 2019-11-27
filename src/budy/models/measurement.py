@@ -240,10 +240,9 @@ class Measurement(base.BudyBase):
             # from omni to be used as the base calculus
             retail_price = merchandise.get("retail_price", 0.0)
 
-            # in case the discount is defined and there's no explicit price compare
-            # defined in the measurement then the "original" retail price is set as the
-            # price compare (proper UI will be applied using this heuristic)
-            if discount: measurement.price_compare = measurement.price_compare or retail_price
+            # stores the "original" retail price in the measurement's metadata
+            # storage may be needed latter for update operations
+            measurement.meta["retail_price"] = retail_price
 
             # in case there's a discount defined for the measurement, the retail price
             # from omni is discounted by that same discount (from metadata)
@@ -264,6 +263,15 @@ class Measurement(base.BudyBase):
                 currency
             ) if discount else untaxed_price
             measurement.taxes = retail_price - untaxed_price
+
+        # in case the discount is defined and there's no explicit price compare
+        # defined in the measurement then the "original" retail price is set as the
+        # price compare (proper UI will be applied using this heuristic)
+        if discount and "retail_price" in measurement.meta:
+            measurement.price_compare = measurement.price_compare or measurement.meta["retail_price"]
+
+        # returns the "final" measurement instance to the caller so that it's possible
+        # to properly save the newly generated measurement instance according to omni
         return measurement
 
     @classmethod
