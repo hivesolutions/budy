@@ -248,7 +248,7 @@ class Measurement(base.BudyBase):
             # in case there's a discount defined for the measurement, the retail price
             # from omni is discounted by that same discount (from metadata)
             retail_price = _currency.Currency.round(
-                retail_price - retail_price * discount,
+                retail_price - retail_price * (discount / 100.0),
                 currency
             ) if discount else retail_price
 
@@ -260,7 +260,7 @@ class Measurement(base.BudyBase):
             retail_price = retail_price or 0.0
             untaxed_price = merchandise.get("price", 0.0)
             untaxed_price = _currency.Currency.round(
-                untaxed_price - untaxed_price * discount,
+                untaxed_price - untaxed_price * (discount / 100.0),
                 currency
             ) if discount else untaxed_price
             measurement.taxes = retail_price - untaxed_price
