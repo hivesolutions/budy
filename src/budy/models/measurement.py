@@ -252,37 +252,29 @@ class Measurement(base.BudyBase):
             # storage may be needed latter for update operations
             measurement.meta["retail_price"] = retail_price
 
-            # sets the "calculated" retail price in as the price to be used
-            # by the measurement under the budy context
-            measurement.price = retail_price
         if "price" in merchandise or force:
-            # tries to obtain the best possible values for both the retail price
-            # and the untaxed price from both the measurement and the merchandise
-            retail_price = measurement.price if hasattr(measurement, "price") else 0.0
-            retail_price = retail_price or 0.0
+            # "grabs" the (untaxed) price from the original merchandise entity
+            # from omni to be used as the base calculus
             untaxed_price = merchandise.get("price", 0.0)
 
             # stores the "original" untaxed price in the measurement's metadata
             # storage may be needed latter for update operations
             measurement.meta["untaxed_price"] = untaxed_price
 
-            # run the original tax calculation by deducting the untaxed price from
-            # the "visible" retail price (as expected)
-            measurement.taxes = retail_price - untaxed_price
-
-        # in case the discount is defined and all of the required "original" data
+        # in case all of the required "original" financial information (prices)
         # is available then the price, taxes and price compare are calculated
-        if discount and "retail_price" in measurement.meta and "untaxed_price" in measurement.meta:
+        if "retail_price" in measurement.meta and "untaxed_price" in measurement.meta:
             untaxed_price = _currency.Currency.round(
                 measurement.meta["untaxed_price"] * ((100.0 - discount) / 100.0),
                 currency
-            )
+            ) if discount else measurement.meta["untaxed_price"]
             measurement.price = _currency.Currency.round(
                 measurement.meta["retail_price"] * ((100.0 - discount) / 100.0),
                 currency
-            )
+            ) if discount else measurement.meta["retail_price"]
             measurement.taxes = measurement.price - untaxed_price
-            measurement.price_compare = measurement.price_compare or measurement.meta["retail_price"]
+            if not measurement.price_compare and discount:
+                measurement.price_compare = measurement.meta["retail_price"]
 
         # returns the "final" measurement instance to the caller so that it's possible
         # to properly save the newly generated measurement instance according to omni

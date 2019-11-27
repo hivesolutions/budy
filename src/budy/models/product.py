@@ -467,38 +467,29 @@ class Product(base.BudyBase):
             # stores the "original" retail price in the product's metadata
             # storage may be needed latter for update operations
             product.meta["retail_price"] = retail_price
-
-            # sets the "calculated" retail price in as the price to be used
-            # by the product under the budy context
-            product.price = retail_price
         if "price" in merchandise or force:
-            # tries to obtain the best possible values for both the retail price
-            # and the untaxed price from both the product and the merchandise
-            retail_price = product.price if hasattr(product, "price") else 0.0
-            retail_price = retail_price or 0.0
+            # "grabs" the (untaxed) price from the original merchandise entity
+            # from omni to be used as the base calculus
             untaxed_price = merchandise.get("price", 0.0)
 
             # stores the "original" untaxed price in the product's metadata
             # storage may be needed latter for update operations
             product.meta["untaxed_price"] = untaxed_price
 
-            # run the original tax calculation by deducting the untaxed price from
-            # the "visible" retail price (as expected)
-            product.taxes = retail_price - untaxed_price
-
-        # in case the discount is defined and all of the required "original" data
+        # in case all of the required "original" financial information (prices)
         # is available then the price, taxes and price compare are calculated
-        if discount and "retail_price" in product.meta and "untaxed_price" in product.meta:
+        if "retail_price" in product.meta and "untaxed_price" in product.meta:
             untaxed_price = _currency.Currency.round(
                 product.meta["untaxed_price"] * ((100.0 - discount) / 100.0),
                 currency
-            )
+            ) if discount else product.meta["untaxed_price"]
             product.price = _currency.Currency.round(
                 product.meta["retail_price"] * ((100.0 - discount) / 100.0),
                 currency
-            )
+            ) if discount else product.meta["retail_price"]
             product.taxes = product.price - untaxed_price
-            product.price_compare = product.price_compare or product.meta["retail_price"]
+            if not product.price_compare and discount:
+                product.price_compare = product.meta["retail_price"]
 
         # returns the "final" product instance to the caller so that it's possible
         # to properly save the newly generated product instance according to omni
