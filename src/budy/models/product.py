@@ -468,30 +468,36 @@ class Product(base.BudyBase):
             # storage may be needed latter for update operations
             product.meta["retail_price"] = retail_price
 
-            # in case there's a discount defined for the product, the retail price
-            # from omni is discounted by that same discount (from metadata)
-            retail_price = _currency.Currency.round(
-                retail_price - retail_price * (discount / 100.0),
-                currency
-            ) if discount else retail_price
-
             # sets the "calculated" retail price in as the price to be used
             # by the product under the budy context
             product.price = retail_price
         if "price" in merchandise or force:
+            # tries to obtain the best possible values for both the retail price
+            # and the untaxed price from both the product and the merchandise
             retail_price = product.price if hasattr(product, "price") else 0.0
             retail_price = retail_price or 0.0
             untaxed_price = merchandise.get("price", 0.0)
-            untaxed_price = _currency.Currency.round(
-                untaxed_price - untaxed_price * (discount / 100.0),
-                currency
-            ) if discount else untaxed_price
+
+            # stores the "original" untaxed price in the product's metadata
+            # storage may be needed latter for update operations
+            product.meta["untaxed_price"] = untaxed_price
+
+            # run the original tax calculation by deducting the untaxed price from
+            # the "visible" retail price (as expected)
             product.taxes = retail_price - untaxed_price
 
-        # in case the discount is defined and there's no explicit price compare
-        # defined in the product then the "original" retail price is set as the
-        # price compare (proper UI will be applied using this heuristic)
-        if discount and "retail_price" in product.meta:
+        # in case the discount is defined and all of the required "original" data
+        # is available then the price, taxes and price compare are calculated
+        if discount and "retail_price" in product.meta and "untaxed_price" in product.meta:
+            untaxed_price = _currency.Currency.round(
+                product.meta["untaxed_price"] * ((100.0 - discount) / 100.0),
+                currency
+            )
+            product.price = _currency.Currency.round(
+                product.meta["retail_price"] * ((100.0 - discount) / 100.0),
+                currency
+            )
+            product.taxes = product.price - untaxed_price
             product.price_compare = product.price_compare or product.meta["retail_price"]
 
         # returns the "final" product instance to the caller so that it's possible

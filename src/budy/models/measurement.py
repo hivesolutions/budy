@@ -252,30 +252,36 @@ class Measurement(base.BudyBase):
             # storage may be needed latter for update operations
             measurement.meta["retail_price"] = retail_price
 
-            # in case there's a discount defined for the measurement, the retail price
-            # from omni is discounted by that same discount (from metadata)
-            retail_price = _currency.Currency.round(
-                retail_price - retail_price * (discount / 100.0),
-                currency
-            ) if discount else retail_price
-
             # sets the "calculated" retail price in as the price to be used
             # by the measurement under the budy context
             measurement.price = retail_price
         if "price" in merchandise or force:
+            # tries to obtain the best possible values for both the retail price
+            # and the untaxed price from both the measurement and the merchandise
             retail_price = measurement.price if hasattr(measurement, "price") else 0.0
             retail_price = retail_price or 0.0
             untaxed_price = merchandise.get("price", 0.0)
-            untaxed_price = _currency.Currency.round(
-                untaxed_price - untaxed_price * (discount / 100.0),
-                currency
-            ) if discount else untaxed_price
+
+            # stores the "original" untaxed price in the measurement's metadata
+            # storage may be needed latter for update operations
+            measurement.meta["untaxed_price"] = untaxed_price
+
+            # run the original tax calculation by deducting the untaxed price from
+            # the "visible" retail price (as expected)
             measurement.taxes = retail_price - untaxed_price
 
-        # in case the discount is defined and there's no explicit price compare
-        # defined in the measurement then the "original" retail price is set as the
-        # price compare (proper UI will be applied using this heuristic)
-        if discount and "retail_price" in measurement.meta:
+        # in case the discount is defined and all of the required "original" data
+        # is available then the price, taxes and price compare are calculated
+        if discount and "retail_price" in measurement.meta and "untaxed_price" in measurement.meta:
+            untaxed_price = _currency.Currency.round(
+                measurement.meta["untaxed_price"] * ((100.0 - discount) / 100.0),
+                currency
+            )
+            measurement.price = _currency.Currency.round(
+                measurement.meta["retail_price"] * ((100.0 - discount) / 100.0),
+                currency
+            )
+            measurement.taxes = measurement.price - untaxed_price
             measurement.price_compare = measurement.price_compare or measurement.meta["retail_price"]
 
         # returns the "final" measurement instance to the caller so that it's possible
