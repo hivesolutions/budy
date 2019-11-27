@@ -669,7 +669,7 @@ class Product(base.BudyBase):
             not measurement.price_compare == None]
         self.quantity_hand = sum(quantities_hand) if quantities_hand else None
         self.price = max(prices) if prices else 0.0
-        self.prices_compare = max(prices_compare) if prices_compare else None
+        self.price_compare = max(prices_compare) if prices_compare else None
 
     def build_images(self):
         thumbnail = self.get_image(size = "thumbnail", order = 1)
