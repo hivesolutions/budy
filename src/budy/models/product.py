@@ -689,6 +689,8 @@ class Product(base.BudyBase):
 
     def build_labels(self):
         self._reset_labels()
+        self._build_labels(self.brand)
+        self._build_labels(self.season)
         self._build_labels(self.colors)
         self._build_labels(self.categories)
         self._build_labels(self.collections)
@@ -1025,6 +1027,8 @@ class Product(base.BudyBase):
         self.labels = []
 
     def _build_labels(self, groups):
+        if not isinstance(groups, (list, tuple)):
+            groups = (groups,)
         for group in groups:
             for label in group.labels:
                 if label in self.labels: continue
