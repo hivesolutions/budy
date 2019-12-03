@@ -63,6 +63,10 @@ class Group(base.BudyBase):
         description = "Image URL"
     )
 
+    new_in = appier.field(
+        type = bool
+    )
+
     images = appier.field(
         type = appier.references(
             "Media",
@@ -96,6 +100,10 @@ class Group(base.BudyBase):
     def pre_validate(self):
         base.BudyBase.pre_validate(self)
         self.build_images()
+
+    def pre_save(self):
+        base.BudyBase.pre_validate(self)
+        self.update_label(self.new_in, "new_in")
 
     def build_images(self):
         thumbnail = self.get_image(size = "thumbnail", order = 1)
