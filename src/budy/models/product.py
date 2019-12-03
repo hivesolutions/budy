@@ -1028,7 +1028,7 @@ class Product(base.BudyBase):
 
     def _build_labels(self, groups):
         if not isinstance(groups, (list, tuple)):
-            groups = (groups,)
+            groups = (groups,) if groups else []
         for group in groups:
             for label in group.labels:
                 if label in self.labels: continue
