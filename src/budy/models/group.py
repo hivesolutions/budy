@@ -67,6 +67,10 @@ class Group(base.BudyBase):
         type = bool
     )
 
+    exclusive = appier.field(
+        type = bool
+    )
+
     images = appier.field(
         type = appier.references(
             "Media",
@@ -104,6 +108,7 @@ class Group(base.BudyBase):
     def pre_save(self):
         base.BudyBase.pre_validate(self)
         self.update_label(self.new_in, "new_in")
+        self.update_label(self.exclusive, "exclusive")
 
     def build_images(self):
         thumbnail = self.get_image(size = "thumbnail", order = 1)
