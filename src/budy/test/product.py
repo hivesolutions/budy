@@ -240,6 +240,23 @@ class ProductTest(unittest.TestCase):
         self.assertEqual(len(product.collections), 1)
         self.assertEqual(product.collections[0].id, collection.id)
 
+        collection.exclusive = True
+        collection.save()
+
+        self.assertEqual(product.labels, ["new_in"])
+        self.assertEqual(len(product.collections), 1)
+        self.assertEqual(product.collections[0].id, collection.id)
+        self.assertEqual(collection.new_in, True)
+        self.assertEqual(collection.exclusive, True)
+        self.assertEqual(collection.labels, ["new_in", "exclusive"])
+
+        product = product.reload()
+        product.save()
+
+        self.assertEqual(product.labels, ["new_in", "exclusive"])
+        self.assertEqual(len(product.collections), 1)
+        self.assertEqual(product.collections[0].id, collection.id)
+
     def test_discount(self):
         product = budy.Product(
             short_description = "product",
