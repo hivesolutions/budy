@@ -1349,12 +1349,12 @@ class Order(bundle.Bundle):
     def _end_pay_stripe(self, payment_data):
         cls = self.__class__
 
-        # retrieves the reference to the stripe API client
+        # retrieves the reference to the Stripe API client
         # to be used for remote operations
         api = cls._get_api_stripe()
 
         # retrieves the payment data values that are going to be
-        # used to complete the stripe payment work-flow
+        # used to complete the Stripe payment work-flow
         secure = payment_data.get("secure", False)
         token_return = payment_data.get("token_return", None)
 
