@@ -251,8 +251,8 @@ class OmniBot(base.Bot):
         inventory_lines = None,
         force = False
     ):
-        # retrieves the reference to the api object that is
-        # going to be used for api based operations
+        # retrieves the reference to the API object that is
+        # going to be used for API based operations
         api = self.get_api()
 
         # retrieves some of the most general attributes of the
