@@ -245,7 +245,7 @@ class Measurement(base.BudyBase):
             measurement.quantity_hand = merchandise.get("stock_on_hand", 0.0)
         if "retail_price" in merchandise or force:
             # "grabs" the retail price from the original merchandise entity
-            # from omni to be used as the base calculus
+            # from Omni to be used as the base calculus
             retail_price = merchandise.get("retail_price", 0.0)
 
             # stores the "original" retail price in the measurement's metadata
@@ -254,7 +254,7 @@ class Measurement(base.BudyBase):
 
         if "price" in merchandise or force:
             # "grabs" the (untaxed) price from the original merchandise entity
-            # from omni to be used as the base calculus
+            # from Omni to be used as the base calculus
             untaxed_price = merchandise.get("price", 0.0)
 
             # stores the "original" untaxed price in the measurement's metadata
