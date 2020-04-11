@@ -373,6 +373,7 @@ class Product(base.BudyBase):
         modify_date = merchandise["modify_date"]
         company_product_code = merchandise["company_product_code"]
         upc = merchandise["upc"]
+        ean = merchandise["ean"]
         metadata = merchandise["metadata"] or dict()
         price_compare = metadata.get("compare_price") or None
         discount = metadata.get("discount") or None
@@ -434,6 +435,7 @@ class Product(base.BudyBase):
         product.supplier_code = upc
         product.sku = merchandise.get(sku_field) or upc or company_product_code
         product.upc = upc
+        product.ean = ean
         product.short_description = merchandise["name"] or company_product_code
         product.description = merchandise["description"]
         product.gender = gender
