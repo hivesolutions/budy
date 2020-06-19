@@ -108,6 +108,13 @@ class Product(base.BudyBase):
         enum = GENDER_S
     )
 
+    weight = appier.field(
+        type = commons.Decimal,
+        index = True,
+        observations = """The weight of the current product in
+        a unit defined by convention (defined before-hand)"""
+    )
+
     quantity_hand = appier.field(
         type = commons.Decimal,
         index = True
@@ -374,6 +381,7 @@ class Product(base.BudyBase):
         company_product_code = merchandise["company_product_code"]
         upc = merchandise["upc"]
         ean = merchandise["ean"]
+        weight = merchandise["weight"]
         metadata = merchandise["metadata"] or dict()
         price_compare = metadata.get("compare_price") or None
         discount = metadata.get("discount") or None
@@ -436,6 +444,7 @@ class Product(base.BudyBase):
         product.sku = merchandise.get(sku_field) or upc or company_product_code
         product.upc = upc
         product.ean = ean
+        product.weight = weight
         product.short_description = merchandise["name"] or company_product_code
         product.description = merchandise["description"]
         product.gender = gender

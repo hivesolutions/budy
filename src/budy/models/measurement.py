@@ -60,6 +60,13 @@ class Measurement(base.BudyBase):
         index = True
     )
 
+    weight = appier.field(
+        type = commons.Decimal,
+        index = True,
+        observations = """The weight of the current measurement in
+        a unit defined by convention (defined before-hand)"""
+    )
+
     quantity_hand = appier.field(
         type = commons.Decimal,
         index = True
@@ -146,6 +153,7 @@ class Measurement(base.BudyBase):
         sub_product = sub_product or merchandise
         parent = sub_product["product"]
         object_id = sub_product["object_id"]
+        weight = sub_product["weight"]
         modify_date = merchandise["modify_date"]
         company_product_code = merchandise["company_product_code"]
         metadata = merchandise["metadata"] or dict()
@@ -228,6 +236,7 @@ class Measurement(base.BudyBase):
         measurement.name = name
         measurement.value = value
         measurement.value_s = value_s
+        measurement.weight = weight
         measurement.price_compare = price_compare
         measurement.currency = currency
         measurement.product = _product
