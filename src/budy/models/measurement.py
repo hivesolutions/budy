@@ -143,6 +143,7 @@ class Measurement(base.BudyBase):
         name = "size",
         currency = "EUR",
         strip = True,
+        path = True,
         force = False
     ):
         from . import product
