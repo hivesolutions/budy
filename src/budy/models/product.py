@@ -444,8 +444,10 @@ class Product(base.BudyBase):
         # in case the weight contains the special 1.0 value then
         # it must be set to invalid as this is considered to be
         # a dummy (and invalid value), this is only performed in
-        # case there's a valid season value set and the patch mode
-        # is set (to enable automatic data correction)
+        # case there's a valid season value (eg: watches) set and
+        # the patch mode is set (to enable automatic data correction)
+        # this is considered a hack to reverse the invalid data source
+        # values and should be used with proper care
         if patch and weight == 1.0 and _season: weight = None
 
         product.product_id = company_product_code
