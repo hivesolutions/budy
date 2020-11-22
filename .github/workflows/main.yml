@@ -5,7 +5,7 @@ jobs:
     name: Build
     strategy:
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, rc]
+        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9, rc]
     runs-on: ubuntu-latest
     container: python:${{ matrix.python-version }}
     steps:
@@ -14,3 +14,16 @@ jobs:
       - run: pip install -r requirements.txt
       - run: pip install -r extra.txt
       - run: ADAPTER=tiny python setup.py test
+  build-pypy:
+    name: Build PyPy
+    strategy:
+      matrix:
+        python-version: [2.7, 3.6]
+    runs-on: ubuntu-latest
+    container: pypy:${{ matrix.python-version }}
+    steps:
+      - uses: actions/checkout@v1
+      - run: pypy --version
+      - run: pip install -r requirements.txt
+      - run: pip install -r extra.txt
+      - run: ADAPTER=tiny pypy setup.py test
