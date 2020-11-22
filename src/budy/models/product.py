@@ -377,6 +377,9 @@ class Product(base.BudyBase):
         from . import season
         from . import category
         from . import collection
+
+        # gathers the complete set of element from the Omni
+        # related merchandise element (product or sub-product)
         object_id = merchandise["object_id"]
         modify_date = merchandise["modify_date"]
         company_product_code = merchandise["company_product_code"]
