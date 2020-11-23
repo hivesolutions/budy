@@ -23,19 +23,9 @@ before_install:
 install:
   - if [[ $TRAVIS_PYTHON_VERSION == pypy* ]]; then pip install "tinydb<4"; fi
   - pip install -r requirements.txt
-  - pip install coveralls
+  - if [[ $TRAVIS_PYTHON_VERSION != pypy* ]]; then pip install coveralls; fi
 env:
   - ADAPTER=mongo
   - ADAPTER=tiny
-script: coverage run --source=budy setup.py test
-after_success: coveralls
-deploy:
-  provider: pypi
-  user: joamag
-  password:
-    secure: jHJepEDrJtLlbY9NdMCsCcVCYZvvpa2OoU7qCqIrVVtmhzJXroN6/rp23WkWqQ3xr0mawslX6JXP3s+hvrRwVQhYdXDc0skrGLiAb/uB+fiLpCisWDfrTeAO3pvN+pChJplANHtz10htD9LFPNy+h/QwH5nv86r6cikPdU94dy8=
-  distributions: sdist bdist_wheel
-  on:
-    tags: true
-    python: "2.7"
-    condition: $ADAPTER = mongo
+script: if [[ $TRAVIS_PYTHON_VERSION != pypy* ]]; then coverage run --source=budy setup.py test; else python setup.py test; fi
+after_success: if [[ $TRAVIS_PYTHON_VERSION != pypy* ]]; then coveralls; fi
