@@ -4,6 +4,8 @@
 session.shelve*
 easypay.shelve*
 
+.DS_Store
+
 /dist
 /build
 /src/budy.egg-info
