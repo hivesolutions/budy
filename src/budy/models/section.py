@@ -123,6 +123,36 @@ class Section(group.Group):
     def list_names(cls):
         return ["id", "name"]
 
+    @appier.operation(
+        name = "Add Collection",
+        parameters = (
+            (
+                "Collection",
+                "collection",
+                appier.reference("Collection", name = "id")
+            ),
+        )
+    )
+    def add_collection_s(self, collection):
+        if not collection: return
+        self.collections.append(collection)
+        self.save()
+
+    @appier.operation(
+        name = "Remove Collection",
+        parameters = (
+            (
+                "Collection",
+                "collection",
+                appier.reference("Collection", name = "id")
+            ),
+        )
+    )
+    def remove_collection_s(self, collection):
+        if not collection: return
+        self.collections.remove(collection)
+        self.save()
+
     @appier.operation(name = "Clear Groups", level = 2)
     def clear_groups_s(self):
         self.collections = []
