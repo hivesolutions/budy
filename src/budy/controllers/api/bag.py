@@ -67,12 +67,11 @@ class BagAPIController(root.RootAPIController):
     @appier.route("/api/bags/<str:key>", "GET", json = True)
     def show(self, key):
         ensure = self.field("ensure", True, cast = bool)
+        try_valid = self.field("try_valid", True, cast = bool)
         bag = budy.Bag.get(key = key, raise_e = not ensure)
         if not bag: bag = budy.Bag.ensure_s(key = key)
-        bag.refresh_s(
-            currency = self.currency,
-            country = self.country
-        )
+        bag.refresh_s(currency = self.currency, country = self.country)
+        if try_valid: bag.try_valid()
         bag = bag.reload(
             eager = (
                 "lines.product.images",
