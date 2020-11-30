@@ -109,7 +109,7 @@ class Bag(bundle.Bundle):
 
     def to_order_s(self, verify = True, try_valid = True):
         self.refresh_s()
-        if try_valid: self.try_valid()
+        if try_valid: self.try_valid_s()
         if verify: self.verify_order()
         _order = order.Order(
             currency = self.currency,

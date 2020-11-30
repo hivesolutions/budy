@@ -71,7 +71,7 @@ class BagAPIController(root.RootAPIController):
         bag = budy.Bag.get(key = key, raise_e = not ensure)
         if not bag: bag = budy.Bag.ensure_s(key = key)
         bag.refresh_s(currency = self.currency, country = self.country)
-        if try_valid: bag.try_valid()
+        if try_valid: bag.try_valid_s()
         bag = bag.reload(
             eager = (
                 "lines.product.images",

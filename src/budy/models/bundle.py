@@ -515,6 +515,12 @@ class Bundle(base.BudyBase):
         # be true if the control flow has reached this place
         return fixed
 
+    def try_valid_s(self):
+        fixed = self.try_valid()
+        if not fixed: return fixed
+        self.save()
+        return fixed
+
     def ensure_valid(self):
         appier.verify(self.is_valid())
 
