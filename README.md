@@ -58,7 +58,7 @@ Code coverage of at least 75% of the code base should be considered a priority.
 | **TRACKING_BOT_ENABLED** | `bool` | If the Tracking bot should be enabled at startup. |
 | **TRACKING_BOT_WINDOW** | `int` | The window (in seconds) to look back in terms of orders (older orders tolerance). |
 
-## License 
+## License
 
 Budy is currently licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/).
 
