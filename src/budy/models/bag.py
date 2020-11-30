@@ -139,6 +139,8 @@ class Bag(bundle.Bundle):
         """
 
         appier.verify(len(self.lines) > 0)
+        for line in self.lines:
+            appier.verify(line.is_valid())
 
     @appier.operation(name = "Garbage Collect")
     def collect_s(self):
