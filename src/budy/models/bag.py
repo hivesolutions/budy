@@ -107,8 +107,9 @@ class Bag(bundle.Bundle):
         line.bag = self
         return bundle.Bundle.add_line_s(self, line)
 
-    def to_order_s(self, verify = True):
+    def to_order_s(self, verify = True, try_valid = True):
         self.refresh_s()
+        if try_valid: self.try_valid()
         if verify: self.verify_order()
         _order = order.Order(
             currency = self.currency,
