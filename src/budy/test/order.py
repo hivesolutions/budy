@@ -343,6 +343,62 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(voucher.open_amount, 0.0)
         self.assertEqual(voucher.usage_count, 1)
 
+    def test_duplicate_pay(self):
+        product = budy.Product(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0
+        )
+        product.save()
+
+        order = budy.Order()
+        order.save()
+
+        order_line = budy.OrderLine(quantity = 2.0)
+        order_line.product = product
+        order_line.save()
+        order.add_line_s(order_line)
+
+        self.assertEqual(order_line.quantity, 2.0)
+        self.assertEqual(order_line.total, 20.0)
+        self.assertEqual(order.total, 20.0)
+        self.assertEqual(len(order.lines), 1)
+
+        address = budy.Address(
+            first_name = "first name",
+            last_name = "last name",
+            address = "address",
+            city = "city"
+        )
+        address.save()
+
+        order.shipping_address = address
+        order.billing_address = address
+        order.email = "username@email.com"
+        order.save()
+
+        def _pay_dummy(payment_data):
+            order.payment_data = dict(method = "dummy")
+            return False
+
+        order.pay_s(
+            payment_data = dict(type = "simple"),
+            payment_function = _pay_dummy
+        )
+
+        self.assertEqual(order.is_valid(), True)
+        self.assertEqual(order_line.is_valid_quantity(), True)
+        self.assertEqual(order.paid, False)
+        self.assertEqual(order.status, "waiting_payment")
+
+        self.assertRaises(
+            appier.SecurityError,
+            lambda: order.pay_s(
+                payment_data = dict(type = "simple"),
+                payment_function = _pay_dummy
+            )
+        )
+
     def test_voucher_use(self):
         product = budy.Product(
             short_description = "product",

@@ -562,6 +562,7 @@ class Order(bundle.Bundle):
     def pay_s(
         self,
         payment_data = None,
+        payment_function = None,
         vouchers = True,
         strict = True,
         notify = False,
@@ -570,7 +571,11 @@ class Order(bundle.Bundle):
         payment_data = payment_data or dict()
         if ensure_waiting: self.ensure_waiting_s()
         self.verify_paid()
-        result = self._pay(payment_data, strict = strict)
+        result = self._pay(
+            payment_data,
+            payment_function = payment_function,
+            strict = strict
+        )
         confirmed = result == True
         self.save()
         if vouchers: self.use_vouchers_s()
@@ -581,6 +586,7 @@ class Order(bundle.Bundle):
     def end_pay_s(
         self,
         payment_data = None,
+        payment_function = None,
         strict = False,
         notify = False
     ):
@@ -594,7 +600,11 @@ class Order(bundle.Bundle):
         # (finish payment) operation return a valid value in case
         # a concrete operation has been executed or an invalid
         # value in case nothing has been done
-        result = self._end_pay(payment_data, strict = strict)
+        result = self._end_pay(
+            payment_data,
+            payment_function = payment_function,
+            strict = strict
+        )
 
         # marks the current order as completely paid and in case
         # the notify flag is set notifies the event handlers
@@ -608,13 +618,18 @@ class Order(bundle.Bundle):
     def cancel_s(
         self,
         cancel_data = None,
+        cancel_function = None,
         vouchers = True,
         strict = False,
         notify = False
     ):
         cancel_data = cancel_data or dict()
         cancel_data.update(self.cancel_data)
-        result = self._cancel(cancel_data, strict = strict)
+        result = self._cancel(
+            cancel_data,
+            cancel_function = cancel_function,
+            strict = strict
+        )
         self.mark_canceled_s()
         if vouchers: self.disuse_vouchers_s()
         if notify: self.notify_s()
@@ -1082,7 +1097,7 @@ class Order(bundle.Bundle):
         if has_store_currency: return self.store.currency_code
         return self.shipping_currency
 
-    def _pay(self, payment_data, strict = True):
+    def _pay(self, payment_data, payment_function = None, strict = True):
         cls = self.__class__
         if self.payable == 0.0: return True
         methods = cls._pmethods()
@@ -1091,12 +1106,15 @@ class Order(bundle.Bundle):
         if not method: raise appier.SecurityError(
             message = "No payment method defined"
         )
-        has_function = hasattr(self, "_pay_" + method)
+        has_function = bool(payment_function) or hasattr(self, "_pay_" + method)
         if not has_function and not strict: return
         if not has_function: raise appier.SecurityError(
             message = "Invalid payment method"
         )
-        function = getattr(self, "_pay_" + method)
+        if self.payment_data and strict: raise appier.SecurityError(
+            message = "Payment data has already been issued"
+        )
+        function = payment_function or getattr(self, "_pay_" + method)
         return function(payment_data)
 
     def _pay_stripe(self, payment_data):
@@ -1328,7 +1346,7 @@ class Order(bundle.Bundle):
         )
         return pay_secret_url
 
-    def _end_pay(self, payment_data, strict = False):
+    def _end_pay(self, payment_data, payment_function = None, strict = False):
         cls = self.__class__
         if self.payable == 0.0: return
         methods = cls._pmethods()
@@ -1338,12 +1356,12 @@ class Order(bundle.Bundle):
         if not method: raise appier.SecurityError(
             message = "No payment method defined"
         )
-        has_function = hasattr(self, "_end_pay_" + method)
+        has_function = payment_function or hasattr(self, "_end_pay_" + method)
         if not has_function and not strict: return
         if not has_function: raise appier.SecurityError(
             message = "Invalid payment method"
         )
-        function = getattr(self, "_end_pay_" + method)
+        function = payment_function or getattr(self, "_end_pay_" + method)
         return function(payment_data)
 
     def _end_pay_stripe(self, payment_data):
@@ -1446,7 +1464,7 @@ class Order(bundle.Bundle):
             )
         return True
 
-    def _cancel(self, cancel_data, strict = False):
+    def _cancel(self, cancel_data, cancel_function = None, strict = False):
         cls = self.__class__
         if self.payable == 0.0: return
         methods = cls._pmethods()
@@ -1454,7 +1472,7 @@ class Order(bundle.Bundle):
         type = cancel_data.get("type", type)
         method = methods.get(type, type)
         if not method: return
-        has_function = hasattr(self, "_cancel_" + method)
+        has_function = cancel_function or hasattr(self, "_cancel_" + method)
         if not has_function and not strict: return
-        function = getattr(self, "_cancel_" + method)
+        function = cancel_function or getattr(self, "_cancel_" + method)
         return function(cancel_data)
