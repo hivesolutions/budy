@@ -8,9 +8,9 @@ of platforms like [Shopify](http://www.shopify.com).
 The main goal of the project is to provide a simple platform for e-commerce that does not
 take care of all the transactional details like:
 
-*  [ACID](http://en.wikipedia.org/wiki/ACID) compliant transactions/operations
-*  Financial secure transactions
-*  Secure customer data
+* [ACID](http://en.wikipedia.org/wiki/ACID) compliant transactions/operations
+* Financial secure transactions
+* Secure customer data
 
 ## Unit Testing
 
@@ -33,7 +33,7 @@ Code coverage of at least 75% of the code base should be considered a priority.
 | **BUDY_SHIPPING**          | `str`  | String with the definition of the lambda function to be called for calculus of the shipping costs for a bundle (bag or order) the arguments provided are the sub total, taxes, quantity and bundle and the return value should be a valid float value for the shipping costs (defaults to `None`).                                                                                                                                                                                      |
 | **BUDY_JOIN_SHIPPING**     | `bool` | If both the order and/or bag static shipping value and the order and/or bag dynamic shipping value should be summed to calculate the total shipping cost or if instead only the largest of both should be used (defaults to `True`).                                                                                                                                                                                                                                                    |
 | **BUDY_TAXES**             | `str`  | String with the definition of the lambda function to be called for calculus of the taxes for a bundle (bag or order) the arguments provided are the sub total, taxes, quantity and bundle and the return value should be a valid float value for the total taxes (defaults to `None`).                                                                                                                                                                                                  |
-| **BUDY_JOIN_TAXES**        | `bool` | If both the order and/or bag line taxes (static) and the dynamic order and/or bag taxes shouldbe summed to calculate the total taxes or if instead only the largest of both should be used (defaults to `True`).                                                                                                                                                                                                                                                                        |
+| **BUDY_JOIN_TAXES**        | `bool` | If both the order and/or bag line taxes (static) and the dynamic order and/or bag taxes should be summed to calculate the total taxes or if instead only the largest of both should be used (defaults to `True`).                                                                                                                                                                                                                                                                       |
 
 ### Payments
 
