@@ -118,13 +118,19 @@ class Product(base.BudyBase):
     quantity_hand = appier.field(
         type = commons.Decimal,
         index = True,
-        initial = commons.Decimal(0.0)
+        observations = """The total quantity that is currently
+        available (on hand) for the current product, if not
+        set the product is considered to have unlimited quantity
+        (inventory is not controller)"""
     )
 
     quantity_reserved = appier.field(
         type = commons.Decimal,
         index = True,
-        initial = commons.Decimal(0.0)
+        observations = """The total quantity that is currently
+        reserved (not available) for the current product, if not
+        set the product is considered to not have reservation
+        control enabled"""
     )
 
     price = appier.field(
