@@ -1027,6 +1027,61 @@ class Order(bundle.Bundle):
     def fix_closed_s(self):
         if not self.is_closed(): return
         self.close_lines_s()
+        
+    @appier.operation(name = "Import Omni", level = 2)
+    def import_omni_s(self):
+        api = self.owner.get_omni_api()
+        appier.verify(
+            self.paid,
+            message = "Order is not yet paid"
+        )
+        store_id = appier.conf("OMNI_BOT_STORE", None)
+
+        # constructs the complete set of sale lines for the 
+        # Omni sale taking into consideration to object ID
+        # of the stored product (assumes Omni imported product)
+        sale_lines = []
+        for line in self.lines:
+            appier.verify(
+                "object_id" in line.product.meta,
+                message = "Product was not imported from Omni, no object ID"
+            )
+            sale_line = dict(
+                merchandise = dict(object_id = line.product.meta["object_id"]),
+                quantity = line.quantity
+            )
+            sale_lines.append(sale_line)
+
+        primary_payment = dict(
+            payment_lines = [
+                dict(
+                    payment_method = dict(_class = "CashPayment"),
+                    amount = dict(value = self.payable)
+                )
+            ]
+        )
+        transaction = dict(
+            sale_lines = sale_lines,
+            primary_payment = primary_payment
+        )
+        if store_id: transaction["owner"] = dict(object_id = store_id)
+        if self.discount: transaction["discount_vat"] = self.discount
+        customer = dict(
+            object_id = None,
+            _parameters = dict(
+                type = "anonymous"
+            )
+        )
+        payload = dict(
+            transaction = transaction,
+            customer = customer
+        )
+
+        try:
+            api.create_sale(payload)
+        except Exception as exception:
+            if hasattr(exception, "error"): print(exception.error._data)
+            raise
 
     @appier.link(name = "Export Lines CSV")
     def lines_csv_url(self, absolute = False):
