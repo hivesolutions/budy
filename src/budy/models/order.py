@@ -1030,14 +1030,35 @@ class Order(bundle.Bundle):
         if not self.is_closed(): return
         self.close_lines_s()
 
-    @appier.operation(name = "Import Omni", level = 2)
-    def import_omni_s(self):
+    @appier.operation(
+        name = "Import Omni",
+        parameters = (
+            ("Strict", "strict", bool, True),
+        ),
+        level = 2
+    )
+    def import_omni_s(self, strict = True):
         api = self.owner.get_omni_api()
         appier.verify(
             self.paid,
             message = "Order is not yet paid"
         )
         store_id = appier.conf("OMNI_BOT_STORE", None)
+
+        # builds the "unique" description of the order from which
+        # a duplicates are going to be avoided by explicit checking
+        description = "budy:order:%s" % self.reference
+        orders = api.list_sales(
+            number_records = 1,
+            **{
+                "filters[]" : [
+                    "description:equals:%s" % description
+                ]
+            }
+        )
+        if strict and orders: raise appier.OperationalError(
+            message = "Duplicated order '%s' in Omni" % description
+        )
 
         # tries to obtain at least one of the customers that match
         # the email associated with the order in Omni's data source
@@ -1109,6 +1130,7 @@ class Order(bundle.Bundle):
             ]
         )
         transaction = dict(
+            description = description,
             sale_lines = sale_lines,
             primary_payment = primary_payment
         )
