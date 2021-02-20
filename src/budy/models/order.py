@@ -1029,7 +1029,7 @@ class Order(bundle.Bundle):
     def fix_closed_s(self):
         if not self.is_closed(): return
         self.close_lines_s()
-        
+
     @appier.operation(name = "Import Omni", level = 2)
     def import_omni_s(self):
         api = self.owner.get_omni_api()
@@ -1038,7 +1038,7 @@ class Order(bundle.Bundle):
             message = "Order is not yet paid"
         )
         store_id = appier.conf("OMNI_BOT_STORE", None)
-        
+
         # tries to obtain at least one of the customers that match
         # the email associated with the order in Omni's data source
         # in case a match then this customer is going to be used as
@@ -1085,7 +1085,7 @@ class Order(bundle.Bundle):
                 )
             )
 
-        # constructs the complete set of sale lines for the 
+        # constructs the complete set of sale lines for the
         # Omni sale taking into consideration to object ID
         # of the stored product (assumes Omni imported product)
         sale_lines = []
