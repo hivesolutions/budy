@@ -51,6 +51,13 @@ from . import voucher
 from . import currency
 from . import order_line
 
+COUTRIES_MAP = dict(
+    ES = "Spain",
+    PT = "Portugal"
+)
+""" Map that associated ISO alpha-2 country codes with
+their corresponding full text version to be used in Omni """
+
 class Order(bundle.Bundle):
 
     STATUS_S = dict(
@@ -1091,7 +1098,8 @@ class Order(bundle.Bundle):
                 primary_address = dict(
                     street_name = self.billing_address.address,
                     zip_code = self.billing_address.postal_code,
-                    country = self.billing_address.country
+                    zip_code_name = self.billing_address.city,
+                    country = COUTRIES_MAP.get(self.billing_address.country, None)
                 ),
                 tax_number = self.billing_address.vat_number,
                 observations = "created by Budy",
