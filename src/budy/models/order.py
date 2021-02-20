@@ -118,7 +118,9 @@ class Order(bundle.Bundle):
 
     email = appier.field(
         index = "hashed",
-        safe = True
+        safe = True,
+        observations = """The email of the entity owner of the current
+        order, typically a personal email address of the buyer"""
     )
 
     gift_wrap = appier.field(
@@ -717,7 +719,7 @@ class Order(bundle.Bundle):
         if self.paid and not force: return
 
         # in case the discount data is not valid there's no voucher
-        # value to be reverted/disused, should return immediately
+        # value to be reverted/discounted, should return immediately
         if not self.discount_data: return
 
         # iterates over the complete set of vouchers and associated amount
@@ -1027,6 +1029,125 @@ class Order(bundle.Bundle):
     def fix_closed_s(self):
         if not self.is_closed(): return
         self.close_lines_s()
+
+    @appier.operation(
+        name = "Import Omni",
+        parameters = (
+            ("Strict", "strict", bool, True),
+        ),
+        level = 2
+    )
+    def import_omni_s(self, strict = True):
+        api = self.owner.get_omni_api()
+        appier.verify(
+            self.paid,
+            message = "Order is not yet paid"
+        )
+        store_id = appier.conf("OMNI_BOT_STORE", None)
+
+        # builds the "unique" description of the order from which
+        # a duplicates are going to be avoided by explicit checking
+        description = "budy:order:%s" % self.reference
+        orders = api.list_sales(
+            number_records = 1,
+            **{
+                "filters[]" : [
+                    "description:equals:%s" % description
+                ]
+            }
+        )
+        if strict and orders: raise appier.OperationalError(
+            message = "Duplicated order '%s' in Omni" % description
+        )
+
+        # tries to obtain at least one of the customers that match
+        # the email associated with the order in Omni's data source
+        # in case a match then this customer is going to be used as
+        # the owner of the sale otherwise a fallback must be performed
+        customers = api.list_customers(
+            number_records = 1,
+            **{
+                "filters[]" : [
+                    "primary_contact_information.email:equals:%s" % self.email
+                ]
+            }
+        ) if self.email else []
+
+        if customers:
+            customer = dict(
+                object_id = customers[0]["object_id"],
+                _parameters = dict(
+                    type = "existing"
+                )
+            )
+        elif self.account and self.billing_address and self.email:
+            customer = dict(
+                name = self.account.first_name,
+                surname = self.account.last_name,
+                primary_contact_information = dict(
+                    phone_number = self.billing_address.phone_number,
+                    email = self.email
+                ),
+                primary_address = dict(
+                    street_name = self.billing_address.address,
+                    zip_code = self.billing_address.postal_code,
+                    country = self.billing_address.country
+                ),
+                tax_number = self.billing_address.vat_number,
+                observations = "created by Budy",
+                _parameters = dict(
+                    type = "new"
+                )
+            )
+        else:
+            customer = dict(
+                _parameters = dict(
+                    type = "anonymous"
+                )
+            )
+
+        # constructs the complete set of sale lines for the
+        # Omni sale taking into consideration to object ID
+        # of the stored product (assumes Omni imported product)
+        sale_lines = []
+        for line in self.lines:
+            appier.verify(
+                "object_id" in line.product.meta,
+                message = "Product was not imported from Omni, no object ID"
+            )
+            sale_line = dict(
+                merchandise = dict(object_id = line.product.meta["object_id"]),
+                quantity = line.quantity
+            )
+            sale_lines.append(sale_line)
+
+        primary_payment = dict(
+            payment_lines = [
+                dict(
+                    payment_method = dict(_class = "CashPayment"),
+                    amount = dict(value = self.payable)
+                )
+            ]
+        )
+        transaction = dict(
+            description = description,
+            sale_lines = sale_lines,
+            primary_payment = primary_payment
+        )
+        if store_id: transaction["owner"] = dict(object_id = store_id)
+        if self.discount: transaction["discount_vat"] = self.discount
+
+        payload = dict(
+            transaction = transaction,
+            customer = customer
+        )
+
+        try:
+            api.create_sale(payload)
+        except Exception as exception:
+            if hasattr(exception, "error"):
+                self.logger.warn(str(exception.error._data))
+            raise
 
     @appier.link(name = "Export Lines CSV")
     def lines_csv_url(self, absolute = False):

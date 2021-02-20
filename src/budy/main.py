@@ -57,6 +57,7 @@ class BudyApp(appier.WebApp):
         self.login_redirect = "base.index_store"
         self.logout_redirect = "base.signin"
         self.scheduler = bots.Scheduler(self)
+        self.omni_api = None
 
     def start(self):
         appier.WebApp.start(self)
@@ -74,6 +75,12 @@ class BudyApp(appier.WebApp):
         except ImportError: easypay = None
         if easypay: easypay.ShelveAPI.cleanup()
         appier.WebApp.stop(self)
+
+    def get_omni_api(self):
+        import omni
+        if self.omni_api: return self.omni_api
+        self.omni_api = omni.API()
+        return self.omni_api
 
 if __name__ == "__main__":
     app = BudyApp()
