@@ -1123,7 +1123,8 @@ class Order(bundle.Bundle):
         try:
             api.create_sale(payload)
         except Exception as exception:
-            if hasattr(exception, "error"): print(exception.error._data)
+            if hasattr(exception, "error"):
+                self.logger.warn(str(exception.error._data))
             raise
 
     @appier.link(name = "Export Lines CSV")
