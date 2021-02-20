@@ -118,7 +118,9 @@ class Order(bundle.Bundle):
 
     email = appier.field(
         index = "hashed",
-        safe = True
+        safe = True,
+        observations = """The email of the entity owner of the current
+        order, typically a personal email address of the buyer"""
     )
 
     gift_wrap = appier.field(
@@ -717,7 +719,7 @@ class Order(bundle.Bundle):
         if self.paid and not force: return
 
         # in case the discount data is not valid there's no voucher
-        # value to be reverted/disused, should return immediately
+        # value to be reverted/discounted, should return immediately
         if not self.discount_data: return
 
         # iterates over the complete set of vouchers and associated amount
@@ -1036,6 +1038,52 @@ class Order(bundle.Bundle):
             message = "Order is not yet paid"
         )
         store_id = appier.conf("OMNI_BOT_STORE", None)
+        
+        # tries to obtain at least one of the customers that match
+        # the email associated with the order in Omni's data source
+        # in case a match then this customer is going to be used as
+        # the owner of the sale otherwise a fallback must be performed
+        customers = api.list_customers(
+            number_records = 1,
+            **{
+                "filters[]" : [
+                    "primary_contact_information.email:equals:%s" % self.email
+                ]
+            }
+        ) if self.email else []
+
+        if customers:
+            customer = dict(
+                object_id = customers[0]["object_id"],
+                _parameters = dict(
+                    type = "existing"
+                )
+            )
+        elif self.account and self.billing_address and self.email:
+            customer = dict(
+                name = self.account.first_name,
+                surname = self.account.last_name,
+                primary_contact_information = dict(
+                    phone_number = self.billing_address.phone_number,
+                    email = self.email
+                ),
+                primary_address = dict(
+                    street_name = self.billing_address.address,
+                    zip_code = self.billing_address.postal_code,
+                    country = self.billing_address.country
+                ),
+                tax_number = self.billing_address.vat_number,
+                observations = "created by Budy",
+                _parameters = dict(
+                    type = "new"
+                )
+            )
+        else:
+            customer = dict(
+                _parameters = dict(
+                    type = "anonymous"
+                )
+            )
 
         # constructs the complete set of sale lines for the 
         # Omni sale taking into consideration to object ID
@@ -1066,12 +1114,7 @@ class Order(bundle.Bundle):
         )
         if store_id: transaction["owner"] = dict(object_id = store_id)
         if self.discount: transaction["discount_vat"] = self.discount
-        customer = dict(
-            object_id = None,
-            _parameters = dict(
-                type = "anonymous"
-            )
-        )
+
         payload = dict(
             transaction = transaction,
             customer = customer
