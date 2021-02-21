@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Support for gender and birth date integration in Omni orders
 * Omni sale identified stored in order's metadata
+* Support for notes metadata append, referencing budy order in Omni's money sale slip
 
 ### Changed
 

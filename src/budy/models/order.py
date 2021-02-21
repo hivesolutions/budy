@@ -1221,7 +1221,10 @@ class Order(bundle.Bundle):
         # in case an invoice was requested then a proper money sale
         # slip must be generated for the target sale
         if invoice:
-            api.issue_money_sale_slip_sale(sale["object_id"])
+            api.issue_money_sale_slip_sale(
+                sale["object_id"],
+                metadata = dict(notes = "Budy order - %s" % self.reference)
+            )
 
         # updates the complete set of metadata related with the Omni
         # import operation so that the order is properly "marked" and
