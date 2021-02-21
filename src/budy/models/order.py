@@ -1229,6 +1229,7 @@ class Order(bundle.Bundle):
         self.meta.update(
             omni_timestamp = time.time(),
             omni_sale = sale["object_id"],
+            omni_sale_identifier = sale["identifier"],
             omni_url = api.base_url + "omni_sam/sales/%s" % sale["object_id"]
         )
         self.save()
