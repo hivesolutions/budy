@@ -1040,16 +1040,28 @@ class Order(bundle.Bundle):
     @appier.operation(
         name = "Import Omni",
         parameters = (
-            ("Strict", "strict", bool, True),
+            ("Invoice", "invoice", bool, False),
+            ("Strict", "strict", bool, True)
         ),
         level = 2
     )
-    def import_omni_s(self, strict = True):
+    def import_omni_s(self, invoice = False, strict = True):
         api = self.owner.get_omni_api()
         appier.verify(
             self.paid,
             message = "Order is not yet paid"
         )
+        
+        # verifies if the current order is already "marked" with the
+        # Omni import timestamp, if that's the case and the strict mode
+        # is enabled then an operation error is raised
+        omni_timestamp = self.meta.get("omni_timestamp", None)
+        if strict and omni_timestamp: raise appier.OperationalError(
+            message = "Order already imported in Omni"
+        )
+
+        # retrieves via configuration the store from which the
+        # sale is going to be performed (affects inventory)
         store_id = appier.conf("OMNI_BOT_STORE", None)
 
         # builds the "unique" description of the order from which
@@ -1172,11 +1184,26 @@ class Order(bundle.Bundle):
         )
 
         try:
-            api.create_sale(payload)
+            sale = api.create_sale(payload)
         except Exception as exception:
             if hasattr(exception, "error"):
                 self.logger.warn(str(exception.error._data))
             raise
+
+        # in case an invoice was requested then a proper money sale
+        # slip must be generated for the target sale
+        if invoice:
+            api.issue_money_sale_slip_sale(sale["object_id"])
+
+        # updates the complete set of metadata related with the Omni
+        # import operation so that the order is properly "marked" and
+        # the linking can be properly "explorer"
+        self.meta.update(
+            omni_timestamp = time.time(),
+            omni_sale = sale["object_id"],
+            omni_url = api.base_url + "omni_sam/sales/%s" % sale["object_id"]
+        )
+        self.save()
 
     @appier.link(name = "Export Lines CSV")
     def lines_csv_url(self, absolute = False):

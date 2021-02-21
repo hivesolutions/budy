@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * More description to the status page
 * Automatic VAT number update for customer upon Omni import
+* Support for invoice issue in Omni import
+* "Marking" of `Order` entity with metadata related to the Omni import 
 
 ### Changed
 
