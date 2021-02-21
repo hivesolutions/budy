@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Support for gift wrap and shipping in import operation
+*
 
 ### Changed
 
@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 *
+
+## [0.3.1] - 2021-02-21
+
+### Added
+
+* Support for gift wrap and shipping in import operation
 
 ## [0.3.0] - 2021-02-21
 
