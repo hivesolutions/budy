@@ -55,8 +55,15 @@ COUNTRIES_MAP = dict(
     ES = "Spain",
     PT = "Portugal"
 )
-""" Map that associated ISO alpha-2 country codes with
+""" Map that associates ISO alpha-2 country codes with
 their corresponding full text version to be used in Omni """
+
+GENDERS_MAP = dict(
+    Male = 1,
+    Female = 2
+)
+""" Map that associates the internal string based gender
+enumeration with the Omni's numeric one """
 
 class Order(bundle.Bundle):
 
@@ -1129,6 +1136,8 @@ class Order(bundle.Bundle):
             customer = dict(
                 name = self.account.first_name,
                 surname = self.account.last_name,
+                gender = GENDERS_MAP.get(self.account.gender, None),
+                birth_date = self.account.birth_date,
                 primary_contact_information = dict(
                     phone_number = self.billing_address.phone_number,
                     email = self.email
