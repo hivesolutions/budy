@@ -51,7 +51,7 @@ from . import voucher
 from . import currency
 from . import order_line
 
-COUTRIES_MAP = dict(
+COUNTRIES_MAP = dict(
     ES = "Spain",
     PT = "Portugal"
 )
@@ -1132,7 +1132,7 @@ class Order(bundle.Bundle):
                     street_name = self.billing_address.address,
                     zip_code = self.billing_address.postal_code,
                     zip_code_name = self.billing_address.city,
-                    country = COUTRIES_MAP.get(self.billing_address.country, None)
+                    country = COUNTRIES_MAP.get(self.billing_address.country, None)
                 ),
                 tax_number = self.billing_address.vat_number,
                 observations = "created by Budy",
