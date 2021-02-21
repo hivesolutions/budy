@@ -82,6 +82,9 @@ class BudyApp(appier.WebApp):
         self.omni_api = omni.API()
         return self.omni_api
 
+    def _version(self):
+        return "0.2.1"
+
 if __name__ == "__main__":
     app = BudyApp()
     app.serve()
