@@ -85,6 +85,12 @@ class BudyApp(appier.WebApp):
     def _version(self):
         return "0.2.1"
 
+    def _description(self):
+        return "Budy"
+
+    def _observations(self):
+        return "Simple and easy to use E-commerce engine"
+
 if __name__ == "__main__":
     app = BudyApp()
     app.serve()

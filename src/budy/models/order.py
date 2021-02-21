@@ -1081,8 +1081,29 @@ class Order(bundle.Bundle):
         ) if self.email else []
 
         if customers:
+            # "gathers" the first customer of the sequence as the
+            # existing customer so that it's contents can be explored
+            existing = customers[0]
+
+            # must edit the existing customer information to update
+            # its VAT number with the new one, this way a possible
+            # invoice for the new sale will be "printed" with the
+            # expected new VAT number
+            if self.billing_address.vat_number and\
+                not existing["tax_number"] == self.billing_address.vat_number:
+                api.update_person(
+                    existing["object_id"],
+                    dict(
+                        customer_person = dict(
+                            tax_number = self.billing_address.vat_number
+                        )
+                    )
+                )
+
+            # sets the customer as an existing one by referencing its
+            # object ID and marking parameters as existing
             customer = dict(
-                object_id = customers[0]["object_id"],
+                object_id = existing["object_id"],
                 _parameters = dict(
                     type = "existing"
                 )
