@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+*
+
+### Changed
+
+*
+
+### Fixed
+
+*
+
+## [0.3.2] - 2021-02-21
+
+### Added
+
 * Support for gender and birth date integration in Omni orders
 * Omni sale identified stored in order's metadata
 * Support for notes metadata append, referencing budy order in Omni's money sale slip
@@ -16,10 +30,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * Default payment method on Omni import to `CardPayment`
-
-### Fixed
-
-*
 
 ## [0.3.1] - 2021-02-21
 
