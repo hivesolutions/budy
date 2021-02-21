@@ -1184,7 +1184,7 @@ class Order(bundle.Bundle):
         primary_payment = dict(
             payment_lines = [
                 dict(
-                    payment_method = dict(_class = "CashPayment"),
+                    payment_method = dict(_class = "CardPayment"),
                     amount = dict(value = self.payable)
                 )
             ]
