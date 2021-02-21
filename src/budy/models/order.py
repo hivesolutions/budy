@@ -1062,7 +1062,12 @@ class Order(bundle.Bundle):
 
         # retrieves via configuration the store from which the
         # sale is going to be performed (affects inventory)
-        store_id = appier.conf("OMNI_BOT_STORE", None)
+        store_id = appier.conf("OMNI_BOT_STORE", None, cast = int)
+
+        # gather using configuration the object ID of the services
+        # that represents the presence of the shipping and gift wrap
+        shipping_id = appier.conf("OMNI_BOT_SHIPPING", None, cast = int)
+        gift_wrap_id = appier.conf("OMNI_BOT_GIFT_WRAP", None, cast = int)
 
         # builds the "unique" description of the order from which
         # a duplicates are going to be avoided by explicit checking
@@ -1159,6 +1164,20 @@ class Order(bundle.Bundle):
             sale_line = dict(
                 merchandise = dict(object_id = line.product.meta["object_id"]),
                 quantity = line.quantity
+            )
+            sale_lines.append(sale_line)
+
+        if self.shipping_cost > 0.0 and shipping_id:
+            sale_line = dict(
+                merchandise = dict(object_id = shipping_id),
+                quantity = 1
+            )
+            sale_lines.append(sale_line)
+
+        if self.gift_wrap and gift_wrap_id:
+            sale_line = dict(
+                merchandise = dict(object_id = gift_wrap_id),
+                quantity = 1
             )
             sale_lines.append(sale_line)
 
