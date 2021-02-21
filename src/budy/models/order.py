@@ -1051,7 +1051,7 @@ class Order(bundle.Bundle):
             self.paid,
             message = "Order is not yet paid"
         )
-        
+
         # verifies if the current order is already "marked" with the
         # Omni import timestamp, if that's the case and the strict mode
         # is enabled then an operation error is raised

@@ -6,9 +6,6 @@
         "request": "launch",
         "python": "python",
         "program": "${workspaceRoot}/src/budy/main.py",
-        "debugOptions": [
-            "RedirectOutput"
-        ],
         "env": {
             "PYTHONPATH": "${workspaceRoot}/src:{env.PYTHONPATH}",
             "OMNI_BOT_ENABLED": "0"
@@ -19,9 +16,6 @@
         "request": "launch",
         "python": "python3",
         "program": "${workspaceRoot}/src/budy/main.py",
-        "debugOptions": [
-            "RedirectOutput"
-        ],
         "env": {
             "PYTHONPATH": "${workspaceRoot}/src:{env.PYTHONPATH}",
             "OMNI_BOT_ENABLED": "0"
