@@ -1133,9 +1133,24 @@ class Order(bundle.Bundle):
                 )
             )
         elif self.account and self.billing_address and self.email:
+            # determines if the account name was auto generated, probably
+            # due to a social login driven account creation workflow and
+            # for those situations the naming comming from the billing address
+            # is going to be used instead of the typical name in the account
+            auto_generated = self.account.first_name == self.email
+            if auto_generated:
+                name = self.billing_address.first_name
+                surname = self.billing_address.last_name
+            else:
+                name = self.account.first_name
+                surname = self.account.last_name
+
+            # creates the customer structure, populating most of the fields
+            # from the appropriate data sources related with the order and
+            # the associated account information
             customer = dict(
-                name = self.account.first_name,
-                surname = self.account.last_name,
+                name = name,
+                surname = surname,
                 gender = GENDERS_MAP.get(self.account.gender, None),
                 birth_date = self.account.birth_date,
                 primary_contact_information = dict(
