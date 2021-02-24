@@ -1167,11 +1167,11 @@ class Order(bundle.Bundle):
         sale_lines = []
         for line in self.lines:
             appier.verify(
-                "object_id" in line.product.meta,
+                "object_id" in line.merchandise.meta,
                 message = "Product was not imported from Omni, no object ID"
             )
             sale_line = dict(
-                merchandise = dict(object_id = line.product.meta["object_id"]),
+                merchandise = dict(object_id = line.merchandise.meta["object_id"]),
                 quantity = line.quantity
             )
             sale_lines.append(sale_line)
