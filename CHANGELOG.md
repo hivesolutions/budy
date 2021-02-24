@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Support for heuristic to determine the best name for account creation in Omni import
+*
 
 ### Changed
 
@@ -19,11 +19,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 *
 
+## [0.3.4] - 2021-02-24
+
+### Added
+
+* Support for heuristic to determine the best name for account creation in Omni import
+
 ## [0.3.3] - 2021-02-24
 
 ### Fixed
 
-* Issue related with bad import of Omni regarding `mechandise`
+* Issue related with bad import of Omni regarding `merchandise`
 
 ## [0.3.2] - 2021-02-21
 
