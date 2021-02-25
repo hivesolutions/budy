@@ -45,7 +45,15 @@ class Group(base.BudyBase):
 
     name = appier.field(
         index = True,
-        default = True
+        default = True,
+        observations = """The primary identifier of the group, can
+        be used as the textual representation of it"""
+    )
+
+    title = appier.field(
+        index = True,
+        observations = """Text value to be used in the representation
+        of the group, replaces the name visually"""
     )
 
     order = appier.field(
