@@ -71,6 +71,7 @@ class Order(bundle.Bundle):
         created = "created",
         waiting_payment = "waiting_payment",
         paid = "paid",
+        invoiced = "invoiced",
         sent = "sent",
         received = "received",
         returned = "returned",
@@ -82,6 +83,7 @@ class Order(bundle.Bundle):
         created = "grey",
         waiting_payment = "orange",
         paid = "purple",
+        invoiced = "orange",
         sent = "blue",
         received = "green",
         returned = "red",
@@ -855,10 +857,17 @@ class Order(bundle.Bundle):
         appier.verify(self.date == None)
         self.verify_vouchers()
 
-    def verify_sent(self):
+    def verify_invoiced(self):
         self.verify_base()
         self.verify_shippable()
         appier.verify(self.status == "paid")
+        appier.verify(self.paid == True)
+        appier.verify(not self.date == None)
+
+    def verify_sent(self):
+        self.verify_base()
+        self.verify_shippable()
+        appier.verify(self.status in ("paid", "invoiced"))
         appier.verify(self.paid == True)
         appier.verify(not self.date == None)
 
@@ -875,7 +884,7 @@ class Order(bundle.Bundle):
 
     def verify_completed(self):
         self.verify_base()
-        appier.verify(self.status in ("paid", "sent", "received"))
+        appier.verify(self.status in ("paid", "invoiced", "sent", "received"))
 
     def verify_vouchers(self):
         discount = self.calculate_discount()
@@ -957,6 +966,12 @@ class Order(bundle.Bundle):
     def unmark_paid_s(self):
         self.status = "waiting_payment"
         self.paid = False
+        self.save()
+
+    @appier.operation(name = "Mark Invoiced")
+    def mark_invoiced_s(self):
+        self.verify_invoiced()
+        self.status = "invoiced"
         self.save()
 
     @appier.operation(name = "Mark Sent")
@@ -1047,7 +1062,7 @@ class Order(bundle.Bundle):
     @appier.operation(
         name = "Import Omni",
         parameters = (
-            ("Invoice", "invoice", bool, False),
+            ("Invoice", "invoice", bool, True),
             ("Strict", "strict", bool, True)
         ),
         level = 2
@@ -1236,10 +1251,20 @@ class Order(bundle.Bundle):
         # in case an invoice was requested then a proper money sale
         # slip must be generated for the target sale
         if invoice:
+            # verifies that the current order is "invoiceable" so that
+            # no inconsistent information is going to be "created"
+            self.verify_invoiced()
+
+            # issues the money sale slip in the Omni system, this is
+            # an expensive server-to-server operation
             api.issue_money_sale_slip_sale(
                 sale["object_id"],
                 metadata = dict(notes = "Budy order - %s" % self.reference)
             )
+
+            # "marks" the current order as invoiced, properly avoiding
+            # any duplicated invoicing operations
+            self.status = "invoiced"
 
         # updates the complete set of metadata related with the Omni
         # import operation so that the order is properly "marked" and
