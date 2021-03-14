@@ -1063,11 +1063,12 @@ class Order(bundle.Bundle):
         name = "Import Omni",
         parameters = (
             ("Invoice", "invoice", bool, True),
-            ("Strict", "strict", bool, True)
+            ("Strict", "strict", bool, True),
+            ("Sync Prices", "sync_prices", bool, False)
         ),
         level = 2
     )
-    def import_omni_s(self, invoice = False, strict = True):
+    def import_omni_s(self, invoice = False, strict = True, sync_prices = False):
         api = self.owner.get_omni_api()
         appier.verify(
             self.paid,
@@ -1206,6 +1207,33 @@ class Order(bundle.Bundle):
             )
             sale_lines.append(sale_line)
 
+            # in case the sync prices flag is set then the price
+            # value of the line must be checked in Omni to see if
+            # it's properly synced
+            if sync_prices:
+                store_merchandise = api.list_store_merchandise(
+                    store_id,
+                    **{
+                        "filters[]" : [
+                            "object_id:equals:%d" % line.merchandise.meta["object_id"]
+                        ]
+                    }
+                )
+                appier.verify(
+                    len(store_merchandise) > 0,
+                    message = "Inventory line not found in Omni"
+                )
+                store_merchandise = store_merchandise[0]
+                is_different = not store_merchandise["retail_price"] == line.price
+                if is_different:
+                    api.prices_merchandise([
+                        dict(
+                            object_id = line.merchandise.meta["object_id"],
+                            retail_price = line.price,
+                            functional_units = [store_id]
+                        )
+                    ])
+
         if self.shipping_cost > 0.0 and shipping_id:
             sale_line = dict(
                 merchandise = dict(object_id = shipping_id),
@@ -1253,7 +1281,7 @@ class Order(bundle.Bundle):
         if invoice:
             # verifies that the current order is "invoiceable" so that
             # no inconsistent information is going to be "created"
-            self.verify_invoiced()
+            if strict: self.verify_invoiced()
 
             # issues the money sale slip in the Omni system, this is
             # an expensive server-to-server operation

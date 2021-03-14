@@ -47,11 +47,16 @@ from . import base
 class BundleLine(base.BudyBase):
 
     price = appier.field(
-        type = commons.Decimal
+        type = commons.Decimal,
+        observations = """The unit price for the item described by the
+        current line, the total should be calculated using this value"""
     )
 
     taxes = appier.field(
-        type = commons.Decimal
+        type = commons.Decimal,
+        observations = """The amount of taxes paid per each item in the
+        current line, this value is already included in the price value
+        of the line"""
     )
 
     currency = appier.field()

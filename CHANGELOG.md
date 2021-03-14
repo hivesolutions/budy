@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Support for the `invoiced` state at the `Order` model
 * Storage of `company_product_code` inside `Product` and `Measurement` on import data
+* Support for price fixing on Omni import
 
 ### Changed
 
