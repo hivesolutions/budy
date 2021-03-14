@@ -1208,8 +1208,11 @@ class Order(bundle.Bundle):
             sale_lines.append(sale_line)
 
             # in case the sync prices flag is set then the price
-            # value of the line must be checked in Omni to see if
-            # it's properly synced
+            # value of the sale line must be cross-checked against
+            # the Omni price to see if it's properly synced, in case
+            # it's not then a price update operation must be performed
+            # in Omni to update it accordingly allowing a proper sale
+            # to be performed latter at Omni
             if sync_prices:
                 store_merchandise = api.list_store_merchandise(
                     store_id,
