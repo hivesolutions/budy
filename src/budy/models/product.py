@@ -483,6 +483,7 @@ class Product(base.BudyBase):
 
         meta = dict(
             object_id = object_id,
+            company_product_code = company_product_code,
             modify_date = modify_date,
             discount = discount
         )
