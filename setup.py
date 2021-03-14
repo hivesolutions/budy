@@ -42,7 +42,7 @@ import setuptools
 
 setuptools.setup(
     name = "budy",
-    version = "0.4.2",
+    version = "0.5.0",
     author = "Hive Solutions Lda.",
     author_email = "development@hive.pt",
     description = "Budy E-commerce System",
