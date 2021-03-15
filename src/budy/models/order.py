@@ -1228,7 +1228,7 @@ class Order(bundle.Bundle):
                         ]
                     }
                 )
-                
+
                 appier.verify(
                     len(store_merchandise) > 0,
                     message = "Inventory line not found in Omni"
@@ -1240,17 +1240,27 @@ class Order(bundle.Bundle):
                     message = "Trying to sell item at higher value"
                 )
 
+                # verifies if the price for which we're trying to sell the
+                # product is different than the one store in Omni, and if
+                # that's the case takes measures to make it compatible
                 is_different = not store_merchandise["retail_price"] == line.price
-                if is_different and use_discount:
-                    sale_line["unit_discount_vat"] = store_merchandise["retail_price"] - line.price
-                elif is_different:
-                    api.prices_merchandise([
-                        dict(
-                            object_id = line.merchandise.meta["object_id"],
-                            retail_price = line.price,
-                            functional_units = [store_id]
-                        )
-                    ])
+                if is_different:
+                    # in case the discount based approach is used then the sale
+                    # line is changed to reflect the delta between the price stored
+                    # in Omni and the price for which we're trying to sell the product
+                    if use_discount:
+                        sale_line["unit_discount_vat"] = store_merchandise["retail_price"] - line.price
+
+                    # otherwise other strategy is used where the price of the product
+                    # is effectively changed for the store in question (e-commerce store)
+                    else:
+                        api.prices_merchandise([
+                            dict(
+                                object_id = line.merchandise.meta["object_id"],
+                                retail_price = line.price,
+                                functional_units = [store_id]
+                            )
+                        ])
 
         if self.shipping_cost > 0.0 and shipping_id:
             sale_line = dict(
