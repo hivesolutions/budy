@@ -1068,7 +1068,13 @@ class Order(bundle.Bundle):
         ),
         level = 2
     )
-    def import_omni_s(self, invoice = False, strict = True, sync_prices = False):
+    def import_omni_s(
+        self,
+        invoice = False,
+        strict = True,
+        sync_prices = False,
+        use_discount = True
+    ):
         api = self.owner.get_omni_api()
         appier.verify(
             self.paid,
@@ -1222,13 +1228,22 @@ class Order(bundle.Bundle):
                         ]
                     }
                 )
+                
                 appier.verify(
                     len(store_merchandise) > 0,
                     message = "Inventory line not found in Omni"
                 )
                 store_merchandise = store_merchandise[0]
+
+                appier.verify(
+                    line.price <= store_merchandise["retail_price"],
+                    message = "Trying to sell item at higher value"
+                )
+
                 is_different = not store_merchandise["retail_price"] == line.price
-                if is_different:
+                if is_different and use_discount:
+                    sale_line["unit_discount_vat"] = store_merchandise["retail_price"] - line.price
+                elif is_different:
                     api.prices_merchandise([
                         dict(
                             object_id = line.merchandise.meta["object_id"],
