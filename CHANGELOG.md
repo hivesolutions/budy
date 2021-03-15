@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Usage of discount operation for price setting in Omni `Order` import
+*
 
 ### Changed
 
@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 *
+
+## [0.5.1] - 2021-03-15
+
+### Added
+
+* Usage of discount operation for price setting in Omni `Order` import
 
 ## [0.5.0] - 2021-03-14
 
