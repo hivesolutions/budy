@@ -3,4 +3,4 @@ appier_extras
 commons_py
 jinja2
 pymongo
-tinydb
+tinydb<4
