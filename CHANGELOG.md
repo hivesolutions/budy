@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-*
+* Changed default value of `sync_prices` to `True` in `Order.import_omni_s`
 
 ### Fixed
 

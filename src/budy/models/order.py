@@ -1064,7 +1064,7 @@ class Order(bundle.Bundle):
         parameters = (
             ("Invoice", "invoice", bool, True),
             ("Strict", "strict", bool, True),
-            ("Sync Prices", "sync_prices", bool, False)
+            ("Sync Prices", "sync_prices", bool, True)
         ),
         level = 2
     )
@@ -1072,7 +1072,7 @@ class Order(bundle.Bundle):
         self,
         invoice = False,
         strict = True,
-        sync_prices = False,
+        sync_prices = True,
         use_discount = True
     ):
         api = self.owner.get_omni_api()
