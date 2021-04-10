@@ -110,7 +110,11 @@ class BundleLine(base.BudyBase):
         longer be re-calculated as the line is now frozen"""
     )
 
-    attributes = appier.field()
+    attributes = appier.field(
+        observations = """Additional metadata that define the given
+        (bundle) line, this is typically used to store a JSON serialized
+        string with extra fields"""
+    )
 
     product = appier.field(
         type = appier.reference(
