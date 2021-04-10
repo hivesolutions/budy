@@ -59,7 +59,11 @@ class BundleLine(base.BudyBase):
         of the line"""
     )
 
-    currency = appier.field()
+    currency = appier.field(
+        observations = """The currency in use for the line all the price
+        related values for the line are considered to be represented
+        under this given currency"""
+    )
 
     country = appier.field()
 
