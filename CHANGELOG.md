@@ -9,15 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+*
+
+### Changed
+
+*
+
+### Fixed
+
+*
+
+## [0.6.0] - 2021-07-05
+
+### Added
+
 * Support for `features` in the `Product` model
 
 ### Changed
 
 * Changed default value of `sync_prices` to `True` in `Order.import_omni_s`
-
-### Fixed
-
-*
 
 ## [0.5.1] - 2021-03-15
 
