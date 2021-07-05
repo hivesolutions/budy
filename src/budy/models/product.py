@@ -212,15 +212,30 @@ class Product(base.BudyBase):
     thumbnail_url = appier.field(
         index = "hashed",
         meta = "image_url",
-        description = "Thumbnail URL"
+        description = "Thumbnail URL",
+        observations = """The URL to the thumbnail image (low resolution)
+        to be used in listing contexts"""
     )
 
     characteristics = appier.field(
-        type = list
+        type = list,
+        observations = """The sequence of characteristics that
+        define the product under unstructured language"""
+    )
+
+    features = appier.field(
+        type = dict,
+        observations = """Dictionary that maps a set of optional
+        features with their corresponding configuration, for example
+        the `initials` feature can be associated with the rules
+        that control those same initials"""
     )
 
     labels = appier.field(
-        type = list
+        type = list,
+        observations = """Set of simple tag labels that define the
+        product behavior, this value is a calculated one based on
+        the labels provided by the complete set of collections"""
     )
 
     brand_s = appier.field(
@@ -363,6 +378,7 @@ class Product(base.BudyBase):
             ("brand.name", True),
             ("season.name", True),
             ("characteristics", False),
+            ("features", False),
             ("colors.name", True),
             ("categories.name", True),
             ("collections.name", True),
@@ -475,6 +491,7 @@ class Product(base.BudyBase):
         product.order = order
         product.discountable = discountable
         product.characteristics = metadata.get("characteristics", [])
+        product.features = metadata.get("features", {})
         product.colors = colors
         product.categories = categories
         product.collections = collections
