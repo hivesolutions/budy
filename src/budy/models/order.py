@@ -1217,6 +1217,7 @@ class Order(bundle.Bundle):
                 merchandise = dict(object_id = line.merchandise.meta["object_id"]),
                 quantity = line.quantity
             )
+            if line.attributes: sale_line["meta"] = line.attributes
             sale_lines.append(sale_line)
 
             # in case the sync prices flag is set then the price
