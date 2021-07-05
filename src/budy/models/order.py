@@ -1203,10 +1203,16 @@ class Order(bundle.Bundle):
         # of the stored product (assumes Omni imported product)
         sale_lines = []
         for line in self.lines:
+            # makes sure that the object ID is present in the merchandise
+            # if there's no ID then that's a sign of an Omni import related
+            # issue and an exception should be raised
             appier.verify(
                 "object_id" in line.merchandise.meta,
                 message = "Product was not imported from Omni, no object ID"
             )
+
+            # creates the standard sale line structure for the sale line using
+            # merchandise object ID (from Omni) and the associated quantity
             sale_line = dict(
                 merchandise = dict(object_id = line.merchandise.meta["object_id"]),
                 quantity = line.quantity
