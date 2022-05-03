@@ -1807,7 +1807,7 @@ class Order(bundle.Bundle):
             attributes_l.sort()
             for key, value in attributes_l:
                 notes_l.append(
-                    "Product %s - %s %s %s" % (
+                    "Order line - %s / %s %s %s" % (
                         line.product.product_id or line.product.short_description,
                         key,
                         separator,
