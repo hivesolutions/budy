@@ -1790,7 +1790,7 @@ class Order(bundle.Bundle):
         function = cancel_function or getattr(self, "_cancel_" + method)
         return function(cancel_data)
 
-    def _build_notes(self):
+    def _build_notes(self, separator = "="):
         # creates the list of notes that are going to be representing
         # the current order in a text fashion, this should include the product
         # attributes for every single order line
@@ -1805,9 +1805,10 @@ class Order(bundle.Bundle):
             attributes_l.sort()
             for key, value in attributes_l:
                 notes_l.append(
-                    "Product %s - %s => %s" % (
+                    "Product %s - %s %s %s" % (
                         line.product.product_id or line.product.short_description,
                         key,
+                        separator,
                         str(value)
                     )
                 )
