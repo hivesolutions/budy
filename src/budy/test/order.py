@@ -1132,7 +1132,7 @@ class OrderTest(unittest.TestCase):
         order = order.reload()
         notes = order._build_notes()
 
-        self.assertEqual(notes, "Budy order - BD-000001\nProduct product - initials = IN")
+        self.assertEqual(notes, "Budy order - BD-000001\nOrder line - product | initials = IN")
 
         order_line.attributes = json.dumps(dict(initials = "IN", engraving = "gold"))
         order_line.save()
@@ -1140,7 +1140,7 @@ class OrderTest(unittest.TestCase):
         order = order.reload()
         notes = order._build_notes()
 
-        self.assertEqual(notes, "Budy order - BD-000001\nProduct product - engraving = gold\nProduct product - initials = IN")
+        self.assertEqual(notes, "Budy order - BD-000001\nOrder line - product | engraving = gold\nOrder line - product | initials = IN")
 
         order_line.attributes = "INVALID STRING"
         order_line.save()
