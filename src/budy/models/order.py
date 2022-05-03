@@ -1322,7 +1322,7 @@ class Order(bundle.Bundle):
             # an expensive server-to-server operation
             api.issue_money_sale_slip_sale(
                 sale["object_id"],
-                metadata = dict(notes = "Budy order - %s" % self.reference)
+                metadata = dict(notes = self._build_notes())
             )
 
             # "marks" the current order as invoiced, properly avoiding
@@ -1788,3 +1788,24 @@ class Order(bundle.Bundle):
         if not has_function and not strict: return
         function = cancel_function or getattr(self, "_cancel_" + method)
         return function(cancel_data)
+
+    def _build_notes(self):
+        # creates the list of notes that are going to be representing
+        # the current order in a text fashion, this should include the product
+        # attributes for every single order line
+        notes_l = []
+        notes_l.append("Budy order - %s" % self.reference)
+        for line in self.lines:
+            if not line.product: continue
+            if not line.product.product_id: continue
+            if not line.attributes: continue
+            attributes_l = appier.legacy.items(line.attributes)
+            attributes_l.sort()
+            for key, value in attributes_l:
+                notes_l.append("Product %s - %s => %s" % (
+                    line.product.product_id),
+                    key,
+                    str(value)
+                )
+        notes = "\n".join(notes_l)
+        return notes
