@@ -1802,6 +1802,7 @@ class Order(bundle.Bundle):
             try: attributes = json.loads(line.attributes)
             except ValueError: continue
             except TypeError: continue
+            if not isinstance(attributes, dict): continue
             attributes_l = appier.legacy.items(attributes)
             attributes_l.sort()
             for key, value in attributes_l:

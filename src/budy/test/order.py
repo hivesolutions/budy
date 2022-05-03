@@ -1157,3 +1157,11 @@ class OrderTest(unittest.TestCase):
         notes = order._build_notes()
 
         self.assertEqual(notes, "Budy order - BD-000001")
+
+        order_line.attributes = 12345
+        order_line.save()
+
+        order = order.reload()
+        notes = order._build_notes()
+
+        self.assertEqual(notes, "Budy order - BD-000001")
