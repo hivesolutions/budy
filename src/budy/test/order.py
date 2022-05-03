@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import json
 import commons
 import logging
 import unittest
@@ -1099,3 +1100,60 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order_line.is_valid_quantity(), True)
         self.assertEqual(order.paid, True)
         self.assertEqual(order.status, "paid")
+
+    def test__build_notes(self):
+        product = budy.Product(
+            short_description = "product",
+            gender = "Male",
+            price = 10.0
+        )
+        product.save()
+
+        order = budy.Order()
+        order.save()
+
+        order_line = budy.OrderLine(quantity = 2.0)
+        order_line.product = product
+        order_line.save()
+        order.add_line_s(order_line)
+
+        self.assertEqual(order_line.quantity, 2.0)
+        self.assertEqual(order_line.total, 20.0)
+        self.assertEqual(order.total, 20.0)
+        self.assertEqual(len(order.lines), 1)
+
+        notes = order._build_notes()
+
+        self.assertEqual(notes, "Budy order - BD-000001")
+
+        order_line.attributes = json.dumps(dict(initials = "IN"))
+        order_line.save()
+
+        order = order.reload()
+        notes = order._build_notes()
+
+        self.assertEqual(notes, "Budy order - BD-000001\nProduct product - initials => IN")
+
+        order_line.attributes = json.dumps(dict(initials = "IN", engraving = "gold"))
+        order_line.save()
+
+        order = order.reload()
+        notes = order._build_notes()
+
+        self.assertEqual(notes, "Budy order - BD-000001\nProduct product - engraving => gold\nProduct product - initials => IN")
+
+        order_line.attributes = "INVALID STRING"
+        order_line.save()
+
+        order = order.reload()
+        notes = order._build_notes()
+
+        self.assertEqual(notes, "Budy order - BD-000001")
+
+        order_line.attributes = None
+        order_line.save()
+
+        order = order.reload()
+        notes = order._build_notes()
+
+        self.assertEqual(notes, "Budy order - BD-000001")

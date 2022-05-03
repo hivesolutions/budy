@@ -37,6 +37,7 @@ __copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import json
 import time
 import uuid
 import commons
@@ -1797,15 +1798,18 @@ class Order(bundle.Bundle):
         notes_l.append("Budy order - %s" % self.reference)
         for line in self.lines:
             if not line.product: continue
-            if not line.product.product_id: continue
             if not line.attributes: continue
-            attributes_l = appier.legacy.items(line.attributes)
+            try: attributes = json.loads(line.attributes)
+            except ValueError, TypeError: continue
+            attributes_l = appier.legacy.items(attributes)
             attributes_l.sort()
             for key, value in attributes_l:
-                notes_l.append("Product %s - %s => %s" % (
-                    line.product.product_id),
-                    key,
-                    str(value)
+                notes_l.append(
+                    "Product %s - %s => %s" % (
+                        line.product.product_id or line.product.short_description,
+                        key,
+                        str(value)
+                    )
                 )
         notes = "\n".join(notes_l)
         return notes
