@@ -1800,7 +1800,8 @@ class Order(bundle.Bundle):
             if not line.product: continue
             if not line.attributes: continue
             try: attributes = json.loads(line.attributes)
-            except ValueError, TypeError: continue
+            except ValueError: continue
+            except TypeError: continue
             attributes_l = appier.legacy.items(attributes)
             attributes_l.sort()
             for key, value in attributes_l:
