@@ -83,7 +83,7 @@ class BudyApp(appier.WebApp):
         return self.omni_api
 
     def _version(self):
-        return "0.6.2"
+        return "0.6.3"
 
     def _description(self):
         return "Budy"
