@@ -184,7 +184,7 @@ class Product(base.BudyBase):
 
     orderable = appier.field(
         type = bool,
-        observations = """Flag that control if the product is only
+        observations = """Flag that controls if the product is only
         meant to be used for pre-ordering and not direct sales"""
     )
 
@@ -430,6 +430,7 @@ class Product(base.BudyBase):
         gender = metadata.get("gender") or gender
         order = metadata.get("order")
         discountable = metadata.get("discountable", True)
+        orderable = metadata.get("orderable", False)
         sku_field = metadata.get("sku_field")
 
         # verifies if an inventory line has been provided, if that's the case
@@ -499,6 +500,7 @@ class Product(base.BudyBase):
         product.currency = currency
         product.order = order
         product.discountable = discountable
+        product.orderable = orderable
         product.characteristics = metadata.get("characteristics", [])
         product.features = metadata.get("features", {})
         product.colors = colors
