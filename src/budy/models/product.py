@@ -152,7 +152,10 @@ class Product(base.BudyBase):
     taxes = appier.field(
         type = commons.Decimal,
         index = True,
-        initial = commons.Decimal(0.0)
+        initial = commons.Decimal(0.0),
+        observations = """The amount of taxes that are associated
+        with the product this value can include the VAT value but
+        it's not limited to it and more tax values can be included"""
     )
 
     currency = appier.field(
@@ -177,6 +180,12 @@ class Product(base.BudyBase):
         initial = True,
         observations = """Flag that indicates if the product is
         eligible for any kind of global discount"""
+    )
+
+    orderable = appier.field(
+        type = bool,
+        observations = """Flag that control if the product is only
+        meant to be used for pre-ordering and not direct sales"""
     )
 
     price_url = appier.field(
