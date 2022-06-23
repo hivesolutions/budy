@@ -1042,6 +1042,17 @@ class Product(base.BudyBase):
     def share(self, *args, **kwargs):
         self.notify("product.share", *args, **kwargs)
 
+    @appier.operation(
+        name = "Quote",
+        parameters = (
+            ("Name", "name", str),
+            ("Email", "email", appier.legacy.UNICODE),
+            ("Phone", "phone", appier.legacy.UNICODE),
+        )
+    )
+    def share(self, *args, **kwargs):
+        self.notify("product.quote", *args, **kwargs)
+
     @appier.view(name = "Measurements")
     def measurements_v(self, *args, **kwargs):
         kwargs["sort"] = kwargs.get("sort", [("id", 1)])
