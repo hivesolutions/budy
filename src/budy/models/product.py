@@ -1050,7 +1050,7 @@ class Product(base.BudyBase):
             ("Phone", "phone", appier.legacy.UNICODE),
         )
     )
-    def share(self, *args, **kwargs):
+    def quote(self, *args, **kwargs):
         self.notify("product.quote", *args, **kwargs)
 
     @appier.view(name = "Measurements")
