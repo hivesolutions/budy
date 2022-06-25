@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-*
+* Usage of the `prefix` param in `url_for` avoiding possible race conditions
 
 ### Fixed
 
