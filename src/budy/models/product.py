@@ -1056,7 +1056,7 @@ class Product(base.BudyBase):
         # configuration as it must be a admin user of the
         # store by default and not the end-user
         kwargs_quote = dict(kwargs)
-        kwargs_quote["_email"] = kwargs.pop("email", None)
+        kwargs_quote["_email"] = kwargs_quote.pop("email", None)
 
         self.notify(name = "product.quote", *args, **kwargs_quote)
         self.notify(name = "product.quote.confirmation", *args, **kwargs)
