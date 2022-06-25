@@ -1051,7 +1051,15 @@ class Product(base.BudyBase):
         )
     )
     def quote(self, *args, **kwargs):
-        self.notify("product.quote", *args, **kwargs)
+        # patches the email attribute for the quote call so
+        # that the receiver value can be "manipulated" by
+        # configuration as it must be a admin user of the
+        # store by default and not the end-user
+        kwargs_quote = dict(kwargs)
+        kwargs_quote["_email"] = kwargs.pop("email", None)
+
+        self.notify("product.quote", *args, **kwargs_quote)
+        self.notify("product.quote.confirmation", *args, **kwargs)
 
     @appier.view(name = "Measurements")
     def measurements_v(self, *args, **kwargs):
