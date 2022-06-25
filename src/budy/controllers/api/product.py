@@ -91,19 +91,19 @@ class ProductAPIController(root.RootAPIController):
 
     @appier.route("/api/products/<int:id>/share", "GET", json = True)
     def share(self, id):
-        email = self.field("email", mandatory = True, not_empty = True)
         sender = self.field("sender", mandatory = True, not_empty = True)
+        email = self.field("email", mandatory = True, not_empty = True)
         product = budy.Product.get_e(id = id)
-        share = product.share(email = email, sender = sender)
+        share = product.share(sender = sender, email = email)
         return share
 
     @appier.route("/api/products/<int:id>/quote", "GET", json = True)
     def quote(self, id):
-        name = self.field("name", mandatory = True, not_empty = True)
+        requester = self.field("requester", mandatory = True, not_empty = True)
         email = self.field("email", mandatory = True, not_empty = True)
         phone = self.field("phone", mandatory = True, not_empty = True)
         product = budy.Product.get_e(id = id)
-        quote = product.quote(name = name, email = email, phone = phone)
+        quote = product.quote(requester = requester, email = email, phone = phone)
         return quote
 
     @appier.route("/api/products/simple.csv", "GET")

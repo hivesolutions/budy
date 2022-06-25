@@ -1035,8 +1035,8 @@ class Product(base.BudyBase):
     @appier.operation(
         name = "Share",
         parameters = (
-            ("Email", "email", str),
-            ("Sender", "sender", appier.legacy.UNICODE)
+            ("Sender", "sender", appier.legacy.UNICODE),
+            ("Email", "email", str)
         )
     )
     def share(self, *args, **kwargs):
@@ -1045,9 +1045,9 @@ class Product(base.BudyBase):
     @appier.operation(
         name = "Quote",
         parameters = (
-            ("Name", "name", str),
-            ("Email", "email", appier.legacy.UNICODE),
-            ("Phone", "phone", appier.legacy.UNICODE),
+            ("Requester", "requester", appier.legacy.UNICODE),
+            ("Email", "email", str),
+            ("Phone", "phone", str)
         )
     )
     def quote(self, *args, **kwargs):
