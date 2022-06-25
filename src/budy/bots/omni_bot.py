@@ -47,7 +47,7 @@ from . import base
 
 RECORDS = 100
 """ The default value for the number of records that are
-going to be retrieved per HTTP request """
+going to be retrieved per each HTTP request """
 
 class OmniBot(base.Bot):
 
@@ -86,6 +86,8 @@ class OmniBot(base.Bot):
         self.logger.info("Ended Omni GC")
 
     def sync_products_store(self):
+        self.logger.info("Starting syncing of products from store ...")
+
         api = self.get_api()
         offset = 0
 
@@ -147,7 +149,11 @@ class OmniBot(base.Bot):
                         inventory_lines = inventory_lines
                     )
 
+        self.logger.info("Ended syncing of products from store")
+
     def sync_products_db(self):
+        self.logger.info("Starting syncing of products in database ...")
+
         api = self.get_api()
         products = budy.Product.find()
 
@@ -166,7 +172,11 @@ class OmniBot(base.Bot):
             merchandise.pop("price", None)
             self.sync_product_safe(merchandise)
 
+        self.logger.info("Ended syncing of products in database")
+
     def sync_measurements_db(self):
+        self.logger.info("Starting syncing of measurements in database ...")
+
         api = self.get_api()
         measurements = budy.Measurement.find()
 
@@ -184,6 +194,8 @@ class OmniBot(base.Bot):
             merchandise.pop("retail_price", None)
             merchandise.pop("price", None)
             self.sync_sub_product_safe(merchandise)
+
+        self.logger.info("Ended syncing of measurements in database")
 
     def fix_products_db(self):
         products = budy.Product.find()
