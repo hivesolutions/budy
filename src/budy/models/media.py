@@ -190,12 +190,14 @@ class Media(base.BudyBase):
                 "media_api.data_format",
                 id = id,
                 format = format,
+                prefix = "/",
                 absolute = absolute
             )
         else:
             return app.url_for(
                 "media_api.data",
                 id = id,
+                prefix = "/",
                 absolute = absolute
             )
 
@@ -264,5 +266,6 @@ class Media(base.BudyBase):
         return self.owner.url_for(
             "media_api.data",
             id = self.id,
+            prefix = "/",
             absolute = absolute
         )
