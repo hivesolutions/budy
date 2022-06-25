@@ -137,4 +137,4 @@ class Wishlist(bundle.Bundle):
 
     @appier.operation(name = "Remind")
     def remind(self):
-        self.notify("wishlist.remind")
+        self.notify(name = "wishlist.remind")

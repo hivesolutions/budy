@@ -1040,7 +1040,7 @@ class Product(base.BudyBase):
         )
     )
     def share(self, *args, **kwargs):
-        self.notify("product.share", *args, **kwargs)
+        self.notify(name = "product.share", *args, **kwargs)
 
     @appier.operation(
         name = "Quote",
@@ -1058,8 +1058,8 @@ class Product(base.BudyBase):
         kwargs_quote = dict(kwargs)
         kwargs_quote["_email"] = kwargs.pop("email", None)
 
-        self.notify("product.quote", *args, **kwargs_quote)
-        self.notify("product.quote.confirmation", *args, **kwargs)
+        self.notify(name = "product.quote", *args, **kwargs_quote)
+        self.notify(name = "product.quote.confirmation", *args, **kwargs)
 
     @appier.view(name = "Measurements")
     def measurements_v(self, *args, **kwargs):

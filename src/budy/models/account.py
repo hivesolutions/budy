@@ -177,7 +177,7 @@ class BudyAccount(appier_extras.admin.Account):
             self,
             send_email = send_email
         )
-        self.notify("account.recover")
+        self.notify(name = "account.recover")
         return result
 
     def ensure_bag_s(self, key = None):

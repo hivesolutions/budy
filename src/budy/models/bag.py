@@ -175,7 +175,7 @@ class Bag(bundle.Bundle):
 
     @appier.operation(name = "Remind")
     def remind(self, *args, **kwargs):
-        self.notify("bag.remind", *args, **kwargs)
+        self.notify(name = "bag.remind", *args, **kwargs)
 
     @appier.view(name = "Lines")
     def lines_v(self, *args, **kwargs):

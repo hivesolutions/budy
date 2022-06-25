@@ -389,7 +389,7 @@ class Voucher(base.BudyBase):
         parameters = (("Email", "email", str),)
     )
     def remind(self, *args, **kwargs):
-        self.notify("voucher.remind", *args, **kwargs)
+        self.notify(name = "voucher.remind", *args, **kwargs)
 
     @appier.view(name = "All Orders")
     def all_orders_v(self, *args, **kwargs):
