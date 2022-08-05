@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-*
+* Added "hack" to force `quantity_hand` greater than zero in orderable scenarios
 
 ## [0.7.1] - 2022-06-25
 

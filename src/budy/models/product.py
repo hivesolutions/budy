@@ -553,6 +553,13 @@ class Product(base.BudyBase):
             if not product.price_compare and discount:
                 product.price_compare = product.meta["retail_price"]
 
+        # in case the product is orderable then the quantity on hand must
+        # be forced to be greater than zero so that the product can be
+        # listed as available (otherwise it would not be listed), this is
+        # considered to be a "hack"
+        if orderable and product.quantity_hand <= 0:
+            product.quantity_hand = 1
+
         # returns the "final" product instance to the caller so that it's possible
         # to properly save the newly generated product instance according to omni
         return product
