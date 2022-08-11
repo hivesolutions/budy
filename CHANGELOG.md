@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+*
+
+## [0.7.3] - 2022-08-11
+
+### Fixed
+
 * Orderable quantity fix
 
 ## [0.7.2] - 2022-08-05
