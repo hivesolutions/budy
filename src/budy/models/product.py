@@ -1065,6 +1065,8 @@ class Product(base.BudyBase):
         kwargs_quote = dict(kwargs)
         kwargs_quote["_email"] = kwargs_quote.pop("email", None)
 
+        # runs the notification process for the product quote making
+        # sure that all of the notification names are used
         self.notify(name = "product.quote", *args, **kwargs_quote)
         self.notify(name = "product.quote.confirmation", *args, **kwargs)
 

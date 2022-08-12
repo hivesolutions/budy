@@ -101,7 +101,7 @@ class ProductAPIController(root.RootAPIController):
     def quote(self, id):
         requester = self.field("requester", mandatory = True, not_empty = True)
         email = self.field("email", mandatory = True, not_empty = True)
-        phone = self.field("phone", mandatory = True, not_empty = True)
+        phone = self.field("phone")
         product = budy.Product.get_e(id = id)
         quote = product.quote(requester = requester, email = email, phone = phone)
         return quote
