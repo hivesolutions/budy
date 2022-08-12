@@ -13,11 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* Removed `phone` from mandatory fields in product quote
+*
 
 ### Fixed
 
 *
+
+## [0.7.4] - 2022-08-12
+
+### Changed
+
+* Removed `phone` from mandatory fields in product quote
 
 ## [0.7.3] - 2022-08-11
 
