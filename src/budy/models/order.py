@@ -1199,10 +1199,16 @@ class Order(bundle.Bundle):
                 )
             )
 
+        # allocates space for both the list that will contain the
+        # complete set of sales lines and to the map that will associate
+        # the object ID of the merchandise and the associated line,
+        # using this map it's possible to merge multiple lines
+        sale_lines = []
+        sale_lines_m = dict()
+
         # constructs the complete set of sale lines for the
         # Omni sale taking into consideration to object ID
         # of the stored product (assumes Omni imported product)
-        sale_lines = []
         for line in self.lines:
             # makes sure that the object ID is present in the merchandise
             # if there's no ID then that's a sign of an Omni import related
@@ -1212,14 +1218,51 @@ class Order(bundle.Bundle):
                 message = "Product was not imported from Omni, no object ID"
             )
 
-            # creates the standard sale line structure for the sale line using
-            # merchandise object ID (from Omni) and the associated quantity
-            sale_line = dict(
-                merchandise = dict(object_id = line.merchandise.meta["object_id"]),
-                quantity = line.quantity
-            )
-            if line.attributes: sale_line["meta"] = line.attributes
-            sale_lines.append(sale_line)
+            # obtains the object ID of the product that identifies
+            # the current line, it's important to keep in mind that
+            # Omni does not allow multiple sale lines for the same
+            # merchandise object ID
+            line_object_id = line.merchandise.meta["object_id"]
+
+            # checks if a sale line for the same merchandise has already
+            # been created and if that's the case takes action (merge)
+            if line_object_id in sale_lines_m:
+                # re-uses the already existing sale line updating its
+                # quantity and merging the meta attributes
+                sale_line = sale_lines_m[line_object_id]
+                sale_line["quantity"] += line.quantity
+                if line.attributes:
+                    metadata = sale_line.get("metadata", {})
+                    try: attributes = json.loads(line.attributes)
+                    except ValueError: attributes = dict()
+                    except TypeError: attributes = dict()
+
+                    def merger(first, second, separator = " | "):
+                        if appier.legacy.is_string(first) and\
+                            appier.legacy.is_string(second):
+                            return "%s%s%s" % (first, separator, second)
+                        return second
+
+                    sale_line["metadata"] = appier.dict_merge(
+                        metadata,
+                        attributes,
+                        recursive = True,
+                        callback = merger
+                    )
+            else:
+                # creates the standard sale line structure for the sale line using
+                # merchandise object ID (from Omni) and the associated quantity
+                sale_line = dict(
+                    merchandise = dict(object_id = line_object_id),
+                    quantity = line.quantity
+                )
+                if line.attributes:
+                    try: attributes = json.loads(line.attributes)
+                    except ValueError: attributes = dict()
+                    except TypeError: attributes = dict()
+                    sale_line["metadata"] = attributes
+                sale_lines.append(sale_line)
+                sale_lines_m[line_object_id] = sale_line
 
             # in case the sync prices flag is set then the price
             # value of the sale line must be cross-checked against
