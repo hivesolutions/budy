@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 *
 
+## [0.7.5] - 2022-08-17
+
+### Added
+
+* Support for merging of sale lines for same merchandise object ID in `import_omni()`
+
 ## [0.7.4] - 2022-08-12
 
 ### Changed
