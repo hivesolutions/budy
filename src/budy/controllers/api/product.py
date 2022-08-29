@@ -102,8 +102,14 @@ class ProductAPIController(root.RootAPIController):
         requester = self.field("requester", mandatory = True, not_empty = True)
         email = self.field("email", mandatory = True, not_empty = True)
         phone = self.field("phone")
+        observations = self.field("observations")
         product = budy.Product.get_e(id = id)
-        quote = product.quote(requester = requester, email = email, phone = phone)
+        quote = product.quote(
+            requester = requester,
+            email = email,
+            phone = phone,
+            observations = observations
+        )
         return quote
 
     @appier.route("/api/products/simple.csv", "GET")

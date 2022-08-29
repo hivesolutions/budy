@@ -1054,7 +1054,8 @@ class Product(base.BudyBase):
         parameters = (
             ("Requester", "requester", appier.legacy.UNICODE),
             ("Email", "email", str),
-            ("Phone", "phone", str)
+            ("Phone", "phone", str),
+            ("Observations", "observations", str)
         )
     )
     def quote(self, *args, **kwargs):
