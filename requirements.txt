@@ -1,6 +1,6 @@
 appier
-appier_extras
-commons_py
+appier-extras
+commons-py
 jinja2
 pymongo
 tinydb<4.5
