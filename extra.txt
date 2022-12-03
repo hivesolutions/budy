@@ -1,6 +1,6 @@
 redis
-omni_api
-stripe_api
-easypay_api
-paypal_api
+omni-api
+stripe-api
+easypay-api
+paypal-api
 pillow
