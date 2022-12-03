@@ -4,8 +4,8 @@
 	<comment></comment>
 	<projects>
 		<project>appier</project>
-		<project>appier_extras</project>
-		<project>commons_py</project>
+		<project>appier-extras</project>
+		<project>commons-py</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
