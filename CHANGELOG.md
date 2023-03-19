@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
+* Support for Seeplus Order import operation
+* Support for Webhook like update call from Sseeplus at POST `/api/seeplus/update`
 
 ### Changed
 

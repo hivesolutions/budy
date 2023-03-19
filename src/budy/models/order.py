@@ -1466,6 +1466,7 @@ class Order(bundle.Bundle):
         # the linking can be properly "explorer"
         self.meta.update(
             seeplus_timestamp = time.time(),
+            seeplus_update = time.time(),
             seeplus_id = order["id"],
             seeplus_status = order["status"]
         )
