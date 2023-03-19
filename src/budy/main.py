@@ -58,6 +58,7 @@ class BudyApp(appier.WebApp):
         self.logout_redirect = "base.signin"
         self.scheduler = bots.Scheduler(self)
         self.omni_api = None
+        self.seeplus_api = None
 
     def start(self):
         appier.WebApp.start(self)
@@ -81,6 +82,12 @@ class BudyApp(appier.WebApp):
         if self.omni_api: return self.omni_api
         self.omni_api = omni.API()
         return self.omni_api
+
+    def get_seeplus_api(self):
+        import seeplus
+        if self.seeplus_api: return self.seeplus_api
+        self.seeplus_api = seeplus.API()
+        return self.seeplus_api
 
     def _version(self):
         return "0.7.6"

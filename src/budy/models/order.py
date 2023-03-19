@@ -41,6 +41,7 @@ import json
 import time
 import uuid
 import commons
+import datetime
 
 import appier
 import appier_extras
@@ -1381,6 +1382,92 @@ class Order(bundle.Bundle):
             omni_sale = sale["object_id"],
             omni_sale_identifier = sale["identifier"],
             omni_url = api.base_url + "omni_sam/sales/%s" % sale["object_id"]
+        )
+        self.save()
+
+    @appier.operation(
+        name = "Import Seeplus",
+        parameters = (
+            ("fulfilment", "fulfilment", str, "HQ"),
+            ("delivery", "delivery", str, "HQ"),
+            ("Strict", "strict", bool, True)
+        ),
+        level = 2
+    )
+    def import_seeplus_s(
+        self,
+        fulfilment = "HQ",
+        delivery = "HQ",
+        strict = True
+    ):
+        # obtains the reference to the Seeplus API instance and
+        # validates that the order is ready to be imported
+        api = self.owner.get_seeplus_api()
+        appier.verify(
+            self.paid,
+            message = "Order is not yet paid"
+        )
+
+        # verifies if the current order is already "marked" with the
+        # Seeplus import timestamp, if that's the case and the strict mode
+        # is enabled then an operation error is raised
+        seeplus_timestamp = self.meta.get("seeplus_timestamp", None)
+        if strict and seeplus_timestamp: raise appier.OperationalError(
+            message = "Order already imported in Seeplus"
+        )
+
+        customer = dict()
+        if self.account:
+            customer = dict(
+                code = str(self.account.id),
+                name = self.account.full_name,
+                email = self.account.email,
+                mobile = self.account.phone_number
+            )
+
+        products = []
+
+        # iterates over the complete set of order lines to set their
+        # values in the product sequence structure for Seeplus
+        for line in self.lines:
+            products.append(
+                dict(
+                    product = line.product.product_id,
+                    qty = int(line.quantity),
+                    comment = line.description
+                )
+            )
+
+        order_payload = dict(
+            origin = "budy",
+            code = self.reference,
+            orderDate = datetime.datetime.utcfromtimestamp(self.created).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            customer = customer,
+            products = products,
+            fulfilment = dict(
+                location = fulfilment,
+                expectedAt = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
+            ),
+            deliveryPickup = dict(
+                location = delivery,
+                scheduledAt = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+            ),
+            comment = self.description
+        )
+
+        # @TODO perform the remote call here
+        #order = api.create_order(order_payload)
+
+        import pprint
+        pprint.pprint(order_payload)
+
+        # updates the complete set of metadata related with the Seeplus
+        # import operation so that the order is properly "marked" and
+        # the linking can be properly "explorer"
+        self.meta.update(
+            seeplus_timestamp = time.time(),
+            seeplus_id = order["id"],
+            seeplus_status = order["status"]
         )
         self.save()
 
