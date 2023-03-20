@@ -17,7 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* Value typo
+*
+
+## [0.7.8] - 2023-03-20
+
+### Fixed
+
+* Variable naming typo
 
 ## [0.7.7] - 2023-03-20
 
