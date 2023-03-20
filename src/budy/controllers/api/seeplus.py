@@ -51,7 +51,7 @@ class SeeplusAPIController(root.RootAPIController):
     def update(self):
         key = self.request.get_header("X-Seeplus-Key", None)
         _key = appier.conf("SEEPLUS_KEY", None)
-        if _key and _key == key:
+        if _key and not _key == key:
             raise appier.SecurityError(
                 message = "Mismatch in Seeplus key",
                 code = 401 
@@ -69,6 +69,10 @@ class SeeplusAPIController(root.RootAPIController):
         reference = data["code"]
         status = data["status"]
         order = budy.Order.get(reference = reference)
+        seeplus_timestamp = order.meta.get("seeplus_timestamp", None)
+        if not seeplus_timestamp: raise appier.OperationalError(
+            message = "Order not imported in Seeplus"
+        )
         order.meta.update(
             seeplus_status = status,
             seeplus_update = time.time()
