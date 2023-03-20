@@ -60,6 +60,13 @@ Code coverage of at least 75% of the code base should be considered a priority.
 | **TRACKING_BOT_ENABLED** | `bool` | If the Tracking bot should be enabled at startup.                                 |
 | **TRACKING_BOT_WINDOW**  | `int`  | The window (in seconds) to look back in terms of orders (older orders tolerance). |
 
+### Seeplus
+
+| Name               | Type  | Description                                                                                   |
+| ------------------ | ----- | --------------------------------------------------------------------------------------------- |
+| **SEEPLUS_ORIGIN** | `str` | The origin token to be used in Seeplus integration (defaults to: `63971c5c62bd0a62b956b4f3`). |
+| **SEEPLUS_KEY**    | `str` | If provided offer a way to ensure shared key authentication to Webhooks.                      |
+
 ## License
 
 Budy is currently licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/).

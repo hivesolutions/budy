@@ -51,6 +51,7 @@ from . import product
 from . import referral
 from . import root
 from . import section
+from . import seeplus
 from . import subscription
 from . import voucher
 
@@ -72,5 +73,6 @@ from .referral import ReferralAPIController
 from .root import RootAPIController
 from .season import SeasonAPIController
 from .section import SectionAPIController
+from .seeplus import SeeplusAPIController
 from .subscription import SubscriptionAPIController
 from .voucher import VoucherAPIController

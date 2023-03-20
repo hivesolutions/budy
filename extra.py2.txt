@@ -3,4 +3,5 @@ omni-api
 stripe-api
 easypay-api
 paypal-api
+seeplus-api
 pillow<7
