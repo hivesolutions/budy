@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+*
+
+## [0.7.9] - 2023-03-20
+
+### Fixed
+
 * Validation of Seeplus integration
 
 ## [0.7.8] - 2023-03-20
