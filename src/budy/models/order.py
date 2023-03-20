@@ -1388,8 +1388,9 @@ class Order(bundle.Bundle):
     @appier.operation(
         name = "Import Seeplus",
         parameters = (
-            ("fulfilment", "fulfilment", str, "HQ"),
-            ("delivery", "delivery", str, "HQ"),
+            ("Fulfilment", "fulfilment", str, "HQ"),
+            ("Delivery", "delivery", str, "HQ"),
+            ("Origin", "origin", str),
             ("Strict", "strict", bool, True)
         ),
         level = 2
@@ -1398,8 +1399,13 @@ class Order(bundle.Bundle):
         self,
         fulfilment = "HQ",
         delivery = "HQ",
+        origin = None,
         strict = True
     ):
+        # defaults the origin value to the one present in the global
+        # configuration, expected default behaviour
+        origin = origin or appier.conf("SEEPLUS_ORIGIN", "63971c5c62bd0a62b956b4f3")
+
         # obtains the reference to the Seeplus API instance and
         # validates that the order is ready to be imported
         api = self.owner.get_seeplus_api()
@@ -1439,7 +1445,7 @@ class Order(bundle.Bundle):
             )
 
         order_payload = dict(
-            origin = "budy",
+            origin = origin,
             code = self.reference,
             orderDate = datetime.datetime.utcfromtimestamp(self.created).strftime("%Y-%m-%dT%H:%M:%SZ"),
             customer = customer,
