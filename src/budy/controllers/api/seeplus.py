@@ -49,7 +49,7 @@ class SeeplusAPIController(root.RootAPIController):
 
     @appier.route("/api/seeplus/update", "POST", json = True)
     def update(self):
-        key = self.request.get_header("X-Seeplus-Key", key)
+        key = self.request.get_header("X-Seeplus-Key", None)
         _key = appier.conf("SEEPLUS_KEY", None)
         if _key and _key == key:
             raise appier.SecurityError(
