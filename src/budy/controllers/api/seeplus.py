@@ -49,6 +49,13 @@ class SeeplusAPIController(root.RootAPIController):
 
     @appier.route("/api/seeplus/update", "POST", json = True)
     def update(self):
+        key = self.request.get_header("X-Seeplus-Key", key)
+        _key = appier.conf("SEEPLUS_KEY", None)
+        if _key and _key == key:
+            raise appier.SecurityError(
+                message = "Mismatch in Seeplus key",
+                code = 401 
+            )
         object = appier.get_object()
         event = object.get("event", "OrderManagement.StatusChanged")
         data = object.get("data", {})
