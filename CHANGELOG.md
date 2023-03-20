@@ -9,9 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Support for Seeplus Order import operation
-* Support for Webhook like update call from Seeplus at POST `/api/seeplus/update`
-* Support for the `X-Seeplus-Key` authentication model
+*
 
 ### Changed
 
@@ -20,6 +18,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 *
+
+## [0.7.7] - 2023-03-20
+
+### Added
+
+* Support for Seeplus Order import operation
+* Support for Webhook like update call from Seeplus at POST `/api/seeplus/update`
+* Support for the `X-Seeplus-Key` authentication model
 
 ## [0.7.6] - 2022-08-29
 
