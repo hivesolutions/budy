@@ -1440,7 +1440,7 @@ class Order(bundle.Bundle):
                 dict(
                     product = line.product.product_id,
                     qty = int(line.quantity),
-                    comment = line.description
+                    comment = line.description or "-"
                 )
             )
 
@@ -1458,14 +1458,16 @@ class Order(bundle.Bundle):
                 location = delivery,
                 scheduledAt = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
             ),
-            comment = self.description
+            comment = self.description or "-"
         )
 
-        # @TODO perform the remote call here
-        #order = api.create_order(order_payload)
-
+        # @TODO remove this diag tool
         import pprint
         pprint.pprint(order_payload)
+
+        # imports the order into the Seeplus infrastructure and obtains
+        # the Seeplus version of the order for reference
+        order = api.create_order(order_payload)
 
         # updates the complete set of metadata related with the Seeplus
         # import operation so that the order is properly "marked" and
