@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Support for the `key` and `token` field for the secret key values
+*
 
 ### Changed
 
@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 *
+
+## [0.7.10] - 2023-03-20
+
+### Added
+
+* Support for the `key` and `token` field for the secret key values
 
 ## [0.7.9] - 2023-03-20
 
