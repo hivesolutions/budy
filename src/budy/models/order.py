@@ -1426,10 +1426,12 @@ class Order(bundle.Bundle):
         if self.account:
             customer = dict(
                 code = str(self.account.id),
-                name = self.account.full_name,
-                email = self.account.email,
-                mobile = self.account.phone_number
+                name = self.account.full_name
             )
+            if self.account.email:
+                customer["email"] = self.account.email
+            if self.account.phone_number:
+                customer["mobile"] = self.account.phone_number
 
         products = []
 

@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-*
+* Made part of the customer options optional in `Order`
 
 ## [0.7.10] - 2023-03-20
 
