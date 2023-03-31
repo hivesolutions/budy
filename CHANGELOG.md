@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Support for log of states in Seeplus update operation
+*
 
 ### Changed
 
@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 *
+
+## [0.7.12] - 2023-03-31
+
+### Added
+
+* Support for log of states in Seeplus update operation
 
 ## [0.7.11] - 2023-03-21
 
