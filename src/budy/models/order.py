@@ -1463,22 +1463,32 @@ class Order(bundle.Bundle):
             comment = self.description or "-"
         )
 
-        # @TODO remove this diag tool
-        import pprint
-        pprint.pprint(order_payload)
-
         # imports the order into the Seeplus infrastructure and obtains
         # the Seeplus version of the order for reference
         order = api.create_order(order_payload)
+
+        # captures the timestamp value that is going to be used in the update
+        # operation of the Seeplus system
+        status_timestamp = time.time()
+
+        # sets the initial Seeplus updates sequence with the initial
+        # status update operation, this will be used as a log
+        seeplus_updates = [
+            dict(
+                status = order["status"],
+                timestamp = status_timestamp
+            )
+        ]
 
         # updates the complete set of metadata related with the Seeplus
         # import operation so that the order is properly "marked" and
         # the linking can be properly "explorer"
         self.meta.update(
-            seeplus_timestamp = time.time(),
-            seeplus_update = time.time(),
             seeplus_id = order["id"],
-            seeplus_status = order["status"]
+            seeplus_status = order["status"],
+            seeplus_timestamp = status_timestamp,
+            seeplus_update = status_timestamp,
+            seeplus_updates = seeplus_updates
         )
         self.save()
 

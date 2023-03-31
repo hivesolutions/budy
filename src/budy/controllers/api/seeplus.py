@@ -56,7 +56,7 @@ class SeeplusAPIController(root.RootAPIController):
         if _key and not _key == key:
             raise appier.SecurityError(
                 message = "Mismatch in Seeplus key",
-                code = 401 
+                code = 401
             )
         object = appier.get_object()
         event = object.get("event", "OrderManagement.StatusChanged")
@@ -71,12 +71,25 @@ class SeeplusAPIController(root.RootAPIController):
         reference = data["code"]
         status = data["status"]
         order = budy.Order.get(reference = reference)
+        seeplus_status = order.meta.get("seeplus_status", None)
         seeplus_timestamp = order.meta.get("seeplus_timestamp", None)
+        seeplus_updates = order.meta.get("seeplus_updates", [])
         if not seeplus_timestamp: raise appier.OperationalError(
             message = "Order not imported in Seeplus"
         )
+        if status == seeplus_status: raise appier.OperationalError(
+            message = "Order already in status '%s'" % status
+        )
+        status_timestamp = time.time()
+        seeplus_updates.append(
+            dict(
+                status = status,
+                timestamp = status_timestamp
+            )
+        )
         order.meta.update(
             seeplus_status = status,
-            seeplus_update = time.time()
+            seeplus_update = status_timestamp,
+            seeplus_updates = seeplus_updates
         )
         order.save()
