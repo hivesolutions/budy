@@ -195,6 +195,12 @@ class Order(bundle.Bundle):
         redeeming of the vouchers associated with the current order"""
     )
 
+    inventory_decremented = appier.field(
+        type = bool,
+        observations = """Controls if the inventory stock levels
+        have been decrement according to current order's lines"""
+    )
+
     lines = appier.field(
         type = appier.references(
             "OrderLine",
@@ -962,6 +968,7 @@ class Order(bundle.Bundle):
         self.paid = True
         self.date = time.time()
         self.set_reference_f_s()
+        self.decrement_inventory_s()
         self.save()
 
     @appier.operation(name = "Unmark Paid")
@@ -1060,6 +1067,22 @@ class Order(bundle.Bundle):
     def fix_closed_s(self):
         if not self.is_closed(): return
         self.close_lines_s()
+
+    @appier.operation(
+        name = "Decrement Inventory",
+        description = """Decrements the inventory stock levels
+        according to order lines""",
+        parameters = (("Force", "force", bool, False),),
+        level = 2
+    )
+    def decrement_inventory_s(self, force = False):
+        if self.inventory_decremented and not force: return
+        for line in self.lines:
+            line.merchandise.quantity_hand =\
+                max(line.merchandise.quantity_hand - line.quantity, 0)
+            line.merchandise.save()
+        self.inventory_decremented = True
+        self.save()
 
     @appier.operation(
         name = "Import Omni",
