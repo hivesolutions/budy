@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Support for auto-decrement of stock on payment of `Order` using the `inventory_decremented` flag
+*
 
 ### Changed
 
@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 *
+
+## [0.7.13] - 2023-04-21
+
+### Added
+
+* Support for auto-decrement of stock on payment of `Order` using the `inventory_decremented` flag
 
 ## [0.7.12] - 2023-03-31
 
