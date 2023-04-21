@@ -60,7 +60,8 @@ class OrderTest(unittest.TestCase):
         product = budy.Product(
             short_description = "product",
             gender = "Male",
-            price = 10.0
+            price = 10.0,
+            quantity_hand = 5.0
         )
         product.save()
 
@@ -79,6 +80,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.currency, None)
         self.assertEqual(order.total >= 0.0, True)
         self.assertEqual(order.paid, False)
+        self.assertEqual(order.inventory_decremented, False)
         self.assertEqual(order.date, None)
         self.assertEqual(order.notifications, [])
 
@@ -137,11 +139,17 @@ class OrderTest(unittest.TestCase):
 
         self.assertEqual(order.status, "waiting_payment")
         self.assertEqual(order.paid, False)
+        self.assertEqual(order.inventory_decremented, False)
 
         order.mark_paid_s()
 
         self.assertEqual(order.status, "paid")
         self.assertEqual(order.paid, True)
+        self.assertEqual(order.inventory_decremented, True)
+
+        product = product.reload()
+
+        self.assertEqual(product.quantity_hand, 3)
 
         self.assertRaises(appier.AssertionError, order.mark_paid_s)
 
@@ -390,6 +398,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.is_valid(), True)
         self.assertEqual(order_line.is_valid_quantity(), True)
         self.assertEqual(order.paid, False)
+        self.assertEqual(order.inventory_decremented, False)
         self.assertEqual(order.status, "waiting_payment")
 
         self.assertRaises(
@@ -404,7 +413,8 @@ class OrderTest(unittest.TestCase):
         product = budy.Product(
             short_description = "product",
             gender = "Male",
-            price = 10.0
+            price = 10.0,
+            quantity_hand = 5.0
         )
         product.save()
 
@@ -453,6 +463,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.is_valid(), True)
         self.assertEqual(order_line.is_valid_quantity(), True)
         self.assertEqual(order.paid, False)
+        self.assertEqual(order.inventory_decremented, False)
         self.assertEqual(order.status, "waiting_payment")
 
         order.end_pay_s(
@@ -470,6 +481,11 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order_line.is_valid_quantity(), True)
         self.assertEqual(order.paid, True)
         self.assertEqual(order.status, "paid")
+        self.assertEqual(order.inventory_decremented, True)
+
+        product = product.reload()
+
+        self.assertEqual(product.quantity_hand, 3.0)
 
         order.date = None
         order.status = "created"
@@ -494,6 +510,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.is_valid(), True)
         self.assertEqual(order_line.is_valid_quantity(), True)
         self.assertEqual(order.paid, False)
+        self.assertEqual(order.inventory_decremented, False)
         self.assertEqual(order.status, "waiting_payment")
 
         order.cancel_s()
@@ -509,6 +526,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.is_valid(), True)
         self.assertEqual(order_line.is_valid_quantity(), True)
         self.assertEqual(order.paid, False)
+        self.assertEqual(order.inventory_decremented, False)
         self.assertEqual(order.status, "canceled")
 
         order.date = None
@@ -539,7 +557,12 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.is_valid(), True)
         self.assertEqual(order_line.is_valid_quantity(), True)
         self.assertEqual(order.paid, True)
+        self.assertEqual(order.inventory_decremented, True)
         self.assertEqual(order.status, "paid")
+
+        product = product.reload()
+
+        self.assertEqual(product.quantity_hand, 3.0)
 
         order.cancel_s()
 
@@ -554,6 +577,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.is_valid(), True)
         self.assertEqual(order_line.is_valid_quantity(), True)
         self.assertEqual(order.paid, True)
+        self.assertEqual(order.inventory_decremented, True)
         self.assertEqual(order.status, "canceled")
 
     def test_discount(self):
@@ -931,7 +955,8 @@ class OrderTest(unittest.TestCase):
         product = budy.Product(
             short_description = "product",
             gender = "Male",
-            price = 10.0
+            price = 10.0,
+            quantity_hand = 5.0
         )
         product.save()
 
@@ -972,6 +997,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.payable, 0.0)
         self.assertEqual(order.discountable, 20.0)
         self.assertEqual(order.paid, False)
+        self.assertEqual(order.inventory_decremented, False)
         self.assertEqual(isinstance(order.sub_total, commons.Decimal), True)
         self.assertEqual(isinstance(order.discount, commons.Decimal), True)
         self.assertEqual(isinstance(order.total, commons.Decimal), True)
@@ -986,12 +1012,17 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.payable, 0.0)
         self.assertEqual(order.discountable, 20.0)
         self.assertEqual(order.paid, True)
+        self.assertEqual(order.inventory_decremented, True)
         self.assertEqual(order.payment_data, {})
         self.assertEqual(isinstance(order.sub_total, commons.Decimal), True)
         self.assertEqual(isinstance(order.discount, commons.Decimal), True)
         self.assertEqual(isinstance(order.total, commons.Decimal), True)
         self.assertEqual(isinstance(order.payable, commons.Decimal), True)
         self.assertEqual(isinstance(order.discountable, commons.Decimal), True)
+
+        product = product.reload()
+
+        self.assertEqual(product.quantity_hand, 3.0)
 
     def test_closed(self):
         order = budy.Order()
@@ -1034,7 +1065,8 @@ class OrderTest(unittest.TestCase):
         product = budy.Product(
             short_description = "product",
             gender = "Male",
-            price = 10.0
+            price = 10.0,
+            quantity_hand = 5.0
         )
         product.save()
 
@@ -1067,6 +1099,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.is_valid(), True)
         self.assertEqual(order_line.is_valid_quantity(), True)
         self.assertEqual(order.paid, False)
+        self.assertEqual(order.inventory_decremented, False)
         self.assertEqual(order.status, "created")
 
         self.assertRaises(
@@ -1082,6 +1115,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.is_valid(), True)
         self.assertEqual(order_line.is_valid_quantity(), True)
         self.assertEqual(order.paid, False)
+        self.assertEqual(order.inventory_decremented, False)
         self.assertEqual(order.status, "waiting_payment")
 
         self.assertRaises(
@@ -1099,7 +1133,12 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.is_valid(), True)
         self.assertEqual(order_line.is_valid_quantity(), True)
         self.assertEqual(order.paid, True)
+        self.assertEqual(order.inventory_decremented, True)
         self.assertEqual(order.status, "paid")
+
+        product = product.reload()
+
+        self.assertEqual(product.quantity_hand, 3.0)
 
     def test__build_notes(self):
         product = budy.Product(

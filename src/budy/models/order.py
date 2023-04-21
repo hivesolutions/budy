@@ -975,6 +975,7 @@ class Order(bundle.Bundle):
     def unmark_paid_s(self):
         self.status = "waiting_payment"
         self.paid = False
+        self.increment_inventory_s()
         self.save()
 
     @appier.operation(name = "Mark Invoiced")
@@ -1082,6 +1083,22 @@ class Order(bundle.Bundle):
                 max(line.merchandise.quantity_hand - line.quantity, 0)
             line.merchandise.save()
         self.inventory_decremented = True
+        self.save()
+
+    @appier.operation(
+        name = "Increment Inventory",
+        description = """Increments the inventory stock levels
+        according to order lines (reverses the decrement stock
+        operation, restoring the stock back)""",
+        parameters = (("Force", "force", bool, False),),
+        level = 2
+    )
+    def increment_inventory_s(self, force = False):
+        if not self.inventory_decremented and not force: return
+        for line in self.lines:
+            line.merchandise.quantity_hand += line.quantity
+            line.merchandise.save()
+        self.inventory_decremented = False
         self.save()
 
     @appier.operation(
