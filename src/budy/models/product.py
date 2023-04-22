@@ -120,8 +120,8 @@ class Product(base.BudyBase):
         index = True,
         observations = """The total quantity that is currently
         available (on hand) for the current product, if not
-        set the product is considered to have unlimited quantity
-        (inventory is not controller)"""
+        set (none) the product is considered to have unlimited quantity
+        (inventory is not controlled)"""
     )
 
     quantity_reserved = appier.field(
@@ -129,8 +129,8 @@ class Product(base.BudyBase):
         index = True,
         observations = """The total quantity that is currently
         reserved (not available) for the current product, if not
-        set the product is considered to not have reservation
-        control enabled"""
+        set (none) the product is considered to not have reservation
+        control disabled (no reservations are possible)"""
     )
 
     price = appier.field(
