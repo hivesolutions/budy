@@ -1079,6 +1079,7 @@ class Order(bundle.Bundle):
     def decrement_inventory_s(self, force = False):
         if self.inventory_decremented and not force: return
         for line in self.lines:
+            if line.merchandise.quantity_hand == None: continue
             line.merchandise.quantity_hand =\
                 max(line.merchandise.quantity_hand - line.quantity, 0)
             line.merchandise.save()
@@ -1096,6 +1097,7 @@ class Order(bundle.Bundle):
     def increment_inventory_s(self, force = False):
         if not self.inventory_decremented and not force: return
         for line in self.lines:
+            if line.merchandise.quantity_hand == None: continue
             line.merchandise.quantity_hand += line.quantity
             line.merchandise.save()
         self.inventory_decremented = False
