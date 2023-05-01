@@ -230,7 +230,10 @@ class Order(bundle.Bundle):
             "Store",
             name = "id"
         ),
-        eager = True
+        eager = True,
+        observations = """If set defines the store in which
+        the order should be delivered, in principle the shipping
+        address should be set to the address of the store"""
     )
 
     shipping_address = appier.field(
