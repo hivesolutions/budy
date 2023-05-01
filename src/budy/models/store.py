@@ -42,6 +42,11 @@ import appier
 from . import base
 
 class Store(base.BudyBase):
+    """
+    Represents a physical store entity that can be used
+    for the operations like instore pick-up, affecting
+    the checkout process.
+    """
 
     name = appier.field(
         index = True,
