@@ -273,6 +273,18 @@ class OrderAPIController(root.RootAPIController):
         )
         return order
 
+    @appier.route("/api/orders/<str:key>/store", "PUT", json = True)
+    @appier.ensure(token = "user")
+    def set_store(self, key):
+        data = appier.request_json()
+        store_id = data["store_id"]
+        store = budy.Store.get(id = store_id)
+        order = budy.Order.get(key = key, rules = False)
+        order.store = store
+        order.save()
+        order = order.reload(map = True)
+        return order
+
     @appier.route("/api/orders/<str:key>/shipping_address", "PUT", json = True)
     @appier.ensure(token = "user")
     def set_shipping_address(self, key):

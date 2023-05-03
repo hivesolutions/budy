@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * Support for `None` values in `Order` decrement inventory
 * Support for the `store` API endpoints
+* Support for the `set_store()` method in `Order`
 
 ### Changed
 
