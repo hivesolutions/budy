@@ -288,10 +288,13 @@ class OrderAPIController(root.RootAPIController):
     @appier.route("/api/orders/<str:key>/shipping_address", "PUT", json = True)
     @appier.ensure(token = "user")
     def set_shipping_address(self, key):
+        data = appier.request_json()
+        unset_store = data.get("unset_store", True)
         address = budy.Address.new()
         address.save()
         order = budy.Order.get(key = key, rules = False)
         order.shipping_address = address
+        if unset_store: order.store = None
         order.save()
         order = order.reload(map = True)
         return order
@@ -299,10 +302,13 @@ class OrderAPIController(root.RootAPIController):
     @appier.route("/api/orders/<str:key>/billing_address", "PUT", json = True)
     @appier.ensure(token = "user")
     def set_billing_address(self, key):
+        data = appier.request_json()
+        unset_store = data.get("unset_store", False)
         address = budy.Address.new()
         address.save()
         order = budy.Order.get(key = key, rules = False)
         order.billing_address = address
+        if unset_store: order.store = None
         order.save()
         order = order.reload(map = True)
         return order
