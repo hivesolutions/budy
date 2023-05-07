@@ -13,11 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* Unset of store by default when doing new shipping address
+*
 
 ### Fixed
 
 *
+
+## [0.8.1] - 2023-05-07
+
+### Changed
+
+* Unset of store by default when doing new shipping address
 
 ## [0.8.0] - 2023-05-03
 
