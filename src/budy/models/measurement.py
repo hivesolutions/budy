@@ -393,8 +393,8 @@ class Measurement(base.BudyBase):
 
     @property
     def _product_id_meta(self):
-        if not self.metadata: return None
-        return self.metadata.get("company_product_code", None)
+        if not self.meta: return None
+        return self.meta.get("company_product_code", None)
 
     def _fix_value_s(self):
         cls = self.__class__
