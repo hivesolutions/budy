@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Support for `Mechandise` level import in Seeplus
+*
 
 ### Changed
 
@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 *
+
+## [0.8.4] - 2023-06-01
+
+### Added
+
+* Support for `Mechandise` level import in Seeplus
 
 ## [0.8.3] - 2023-05-31
 
