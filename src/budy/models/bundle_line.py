@@ -121,7 +121,10 @@ class BundleLine(base.BudyBase):
             "Product",
             name = "id"
         ),
-        eager = True
+        eager = True,
+        observations = """The product that this bundle line is
+        associated with, this is the product that is going to
+        be used for the calculation of the price"""
     )
 
     @classmethod

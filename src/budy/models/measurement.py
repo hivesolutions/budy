@@ -333,6 +333,15 @@ class Measurement(base.BudyBase):
         return None, None
 
     @property
+    def product_id(self):
+        if self._product_id_meta: return self._product_id_meta
+        return None
+
+    @property
+    def short_description(self):
+        return self.product.short_description
+
+    @property
     def quantity(self):
         return self.quantity_hand
 
@@ -381,6 +390,11 @@ class Measurement(base.BudyBase):
         self.product.measurements.append(measurement)
         self.product.save()
         return measurement
+
+    @property
+    def _product_id_meta(self):
+        if not self.metadata: return None
+        return self.metadata.get("company_product_code", None)
 
     def _fix_value_s(self):
         cls = self.__class__
