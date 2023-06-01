@@ -1993,7 +1993,7 @@ class Order(bundle.Bundle):
         notes_l = []
         notes_l.append("Budy order - %s" % self.reference)
         for line in self.lines:
-            if not line.merchandise: continue
+            if not line.product: continue
             if not line.attributes: continue
             try: attributes = json.loads(line.attributes)
             except ValueError: continue
@@ -2004,7 +2004,7 @@ class Order(bundle.Bundle):
             for key, value in attributes_l:
                 notes_l.append(
                     "Order line - %s %s %s %s %s" % (
-                        line.merchandise.product_id or line.merchandise.short_description,
+                        line.product.product_id or line.product.short_description,
                         split,
                         key,
                         separator,
