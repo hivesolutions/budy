@@ -93,7 +93,7 @@ class BudyApp(appier.WebApp):
         return "0.8.4"
 
     def _description(self):
-        return "Budy" 
+        return "Budy"
 
     def _observations(self):
         return "Simple and easy to use E-commerce engine"
