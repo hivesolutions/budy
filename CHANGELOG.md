@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 *
 
+## [0.8.5] - 2023-06-29
+
+### Fixed
+
+* Bumped `appier` version
+
 ## [0.8.4] - 2023-06-01
 
 ### Added
