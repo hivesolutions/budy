@@ -1433,17 +1433,17 @@ class Order(bundle.Bundle):
     @appier.operation(
         name = "Import Seeplus",
         parameters = (
-            ("Fulfilment", "fulfilment", str, "HQ"),
-            ("Delivery", "delivery", str, "HQ"),
-            ("Origin", "origin", str),
+            ("Fulfilment", "fulfilment", str, None),
+            ("Delivery", "delivery", str, None),
+            ("Origin", "origin", str, None),
             ("Strict", "strict", bool, True)
         ),
         level = 2
     )
     def import_seeplus_s(
         self,
-        fulfilment = "HQ",
-        delivery = "HQ",
+        fulfilment = None,
+        delivery = None,
         origin = None,
         strict = True
     ):
