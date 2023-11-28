@@ -65,7 +65,7 @@ Code coverage of at least 75% of the code base should be considered a priority.
 | Name               | Type  | Description                                                                                   |
 | ------------------ | ----- | --------------------------------------------------------------------------------------------- |
 | **SEEPLUS_ORIGIN** | `str` | The origin token to be used in Seeplus integration (defaults to: `63971c5c62bd0a62b956b4f3`). |
-| **SEEPLUS_KEY**    | `str` | If provided offer a way to ensure shared key authentication to Webhooks.                      |
+| **SEEPLUS_KEY**    | `str` | If provided offers a way to ensure shared key authentication in Seeplus Webhook update calls. |
 
 ## License
 
