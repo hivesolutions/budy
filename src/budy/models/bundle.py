@@ -544,6 +544,17 @@ class Bundle(base.BudyBase):
         self.lines = []
         self.save()
 
+    @appier.operation(name = "Fix Lines")
+    def fix_lines_s(self):
+        lines = self.lines
+        lines_f = []
+        for line in lines:
+            if not line.is_resolvable(): continue
+            line.resolve()
+            lines_f.append(line)
+        self.lines = lines_f
+        self.save()
+
     @appier.operation(name = "Fix Sub Total")
     def fix_sub_total_s(self):
         if self.sub_total: return
