@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* New views for "To Store" and "To Store Paid" handling
+*
 
 ### Changed
 
@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 *
+
+## [0.8.8] - 2023-12-23
+
+### Added
+
+* New views for "To Store" and "To Store Paid" handling
 
 ## [0.8.7] - 2023-12-23
 
