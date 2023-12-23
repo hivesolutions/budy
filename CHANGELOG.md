@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Support for automatic fill of Seeplus fulfillment and delivery data
+*
 
 ### Changed
 
@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 *
+
+## [0.8.7] - 2023-12-23
+
+### Added
+
+* Support for automatic fill of Seeplus fulfillment and delivery data
 
 ## [0.8.6] - 2023-12-13
 
