@@ -13,11 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* Added the `store` field to the "To Store" views
+*
 
 ### Fixed
 
 *
+
+## [0.8.9] - 2023-12-23
+
+### Changed
+
+* Added the `store` field to the "To Store" views
 
 ## [0.8.8] - 2023-12-23
 
