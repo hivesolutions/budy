@@ -6,6 +6,8 @@ easypay.shelve*
 
 .DS_Store
 
+/.vscode/settings.json
+
 /dist
 /build
 /src/budy.egg-info

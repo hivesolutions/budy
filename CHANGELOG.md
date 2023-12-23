@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 *
 
+## [0.8.6] - 2023-12-13
+
+### Added
+
+* Support for `fix_lines_s()` in `Bundle`
+
 ## [0.8.5] - 2023-06-29
 
 ### Fixed
