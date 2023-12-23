@@ -445,6 +445,30 @@ class Order(bundle.Bundle):
         )
 
     @classmethod
+    @appier.view(name = "To Store")
+    def to_store_v(cls, *args, **kwargs):
+        kwargs["sort"] = kwargs.get("sort", [("id", -1)])
+        kwargs.update(store = {"$ne" : None})
+        return appier.lazy_dict(
+            model = cls,
+            kwargs = kwargs,
+            entities = appier.lazy(lambda: cls.find(*args, **kwargs)),
+            page = appier.lazy(lambda: cls.paginate(*args, **kwargs))
+        )
+
+    @classmethod
+    @appier.view(name = "To Store Paid")
+    def to_store_paid_v(cls, *args, **kwargs):
+        kwargs["sort"] = kwargs.get("sort", [("id", -1)])
+        kwargs.update(store = {"$ne" : None}, paid = True)
+        return appier.lazy_dict(
+            model = cls,
+            kwargs = kwargs,
+            entities = appier.lazy(lambda: cls.find(*args, **kwargs)),
+            page = appier.lazy(lambda: cls.paginate(*args, **kwargs))
+        )
+
+    @classmethod
     def _pmethods(cls):
         methods = dict()
         for engine in ("stripe", "easypay", "paypal", "stripe_sca"):
