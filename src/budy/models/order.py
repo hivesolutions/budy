@@ -46,6 +46,7 @@ import datetime
 import appier
 import appier_extras
 
+from . import store
 from . import bundle
 from . import product
 from . import country
@@ -1433,9 +1434,9 @@ class Order(bundle.Bundle):
     @appier.operation(
         name = "Import Seeplus",
         parameters = (
-            ("Fulfilment", "fulfilment", str, None),
-            ("Delivery", "delivery", str, None),
-            ("Origin", "origin", str, None),
+            ("Fulfilment", "fulfilment", str),
+            ("Delivery", "delivery", str),
+            ("Origin", "origin", str),
             ("Strict", "strict", bool, True)
         ),
         level = 2
@@ -1450,6 +1451,42 @@ class Order(bundle.Bundle):
         # defaults the origin value to the one present in the global
         # configuration, expected default behaviour
         origin = origin or appier.conf("SEEPLUS_ORIGIN", "63971c5c62bd0a62b956b4f3")
+
+        # in case there's no fulfilment defined then the default
+        # store is used to retrieve the fulfilment identifier
+        if not fulfilment:
+            fulfilment_id = appier.conf("SEEPLUS_FULFILMENT_ID", None, cast = int)
+            appier.verify(
+                not fulfilment_id == None,
+                message = "No default fulfilment is defined"
+            )
+            fulfilment_store = store.Store.get(id = fulfilment_id)
+            fulfilment = fulfilment_store.meta.get("seeplus_id", None)
+
+        # if no explicit delivery is defined then the store for the
+        # delivery is used to obtain the Seeplus identifier
+        if not delivery:
+            appier.verify(
+                self.store,
+                message = "No store defined for order"
+            )
+            delivery = self.store.meta.get("seeplus_id", None)
+
+        # ensures that the complete set of required parameters for the
+        # Seeplus import are defined and valid, otherwise an exception
+        # is raised indicating the problem
+        appier.verify(
+            fulfilment,
+            message = "No fulfilment is set for order"
+        )
+        appier.verify(
+            delivery,
+            message = "No delivery is set for order"
+        )
+        appier.verify(
+            origin,
+            message = "No origin is set for order"
+        )
 
         # obtains the reference to the Seeplus API instance and
         # validates that the order is ready to be imported
