@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -30,12 +30,9 @@ __license__ = "Apache License, Version 2.0"
 
 import appier
 
-class StripeController(appier.Controller):
 
+class StripeController(appier.Controller):
     @appier.route("/stripe/redirect", "GET")
     def redirect(self):
-        redirect_url = self.field("redirect_url", mandatory = True)
-        return self.template(
-            "stripe/redirect.html.tpl",
-            redirect_url = redirect_url
-        )
+        redirect_url = self.field("redirect_url", mandatory=True)
+        return self.template("stripe/redirect.html.tpl", redirect_url=redirect_url)

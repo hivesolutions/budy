@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -35,10 +35,10 @@ import appier
 
 import budy
 
-class ProductTest(unittest.TestCase):
 
+class ProductTest(unittest.TestCase):
     def setUp(self):
-        self.app = budy.BudyApp(level = logging.ERROR)
+        self.app = budy.BudyApp(level=logging.ERROR)
 
     def tearDown(self):
         self.app.unload()
@@ -46,35 +46,19 @@ class ProductTest(unittest.TestCase):
         adapter.drop_db()
 
     def test_add_remove_images(self):
-        file = appier.typesf.ImageFile(
-            dict(
-                name = "name",
-                data = "data",
-                mime = "mime"
-            )
-        )
+        file = appier.typesf.ImageFile(dict(name="name", data="data", mime="mime"))
 
         media_1 = budy.Media(
-            description = "description",
-            label = "label",
-            order = 1,
-            file = file
+            description="description", label="label", order=1, file=file
         )
         media_1.save()
 
         media_2 = budy.Media(
-            description = "description",
-            label = "label",
-            order = 1,
-            file = file
+            description="description", label="label", order=1, file=file
         )
         media_2.save()
 
-        product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0
-        )
+        product = budy.Product(short_description="product", gender="Male", price=10.0)
         product.save()
 
         self.assertEqual(len(product.images), 0)
@@ -121,20 +105,17 @@ class ProductTest(unittest.TestCase):
 
     def test_measurements(self):
         product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0,
-            quantity_hand = None
+            short_description="product", gender="Male", price=10.0, quantity_hand=None
         )
         product.save()
 
         measurement = budy.Measurement(
-            name = "size",
-            value = 12,
-            value_s = "12",
-            price = None,
-            quantity_hand = 2.0,
-            product = product
+            name="size",
+            value=12,
+            value_s="12",
+            price=None,
+            quantity_hand=2.0,
+            product=product,
         )
         measurement.save()
 
@@ -154,7 +135,7 @@ class ProductTest(unittest.TestCase):
         self.assertEqual(measurement.product.id, product.id)
         self.assertEqual(len(measurement.product.measurements), 1)
 
-        result = product.get_measurement(12, name = "size")
+        result = product.get_measurement(12, name="size")
 
         self.assertEqual(result.id, 1)
         self.assertEqual(result.name, "size")
@@ -175,17 +156,11 @@ class ProductTest(unittest.TestCase):
 
     def test_labels(self):
         product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0,
-            quantity_hand = None
+            short_description="product", gender="Male", price=10.0, quantity_hand=None
         )
         product.save()
 
-        collection = budy.Collection(
-            name = "collection",
-            new_in = True
-        )
+        collection = budy.Collection(name="collection", new_in=True)
         collection.save()
 
         self.assertEqual(product.labels, [])
@@ -250,10 +225,7 @@ class ProductTest(unittest.TestCase):
 
     def test_discount(self):
         product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0,
-            quantity_hand = None
+            short_description="product", gender="Male", price=10.0, quantity_hand=None
         )
         product.save()
 

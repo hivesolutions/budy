@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -32,25 +32,15 @@ import appier
 
 from . import base
 
+
 class Address(base.BudyBase):
+    key = appier.field(index=True, safe=True, immutable=True)
 
-    key = appier.field(
-        index = True,
-        safe = True,
-        immutable = True
-    )
+    first_name = appier.field(index=True)
 
-    first_name = appier.field(
-        index = True
-    )
+    last_name = appier.field(index=True)
 
-    last_name = appier.field(
-        index = True
-    )
-
-    tax_number = appier.field(
-        index = True
-    )
+    tax_number = appier.field(index=True)
 
     address = appier.field()
 
@@ -62,15 +52,11 @@ class Address(base.BudyBase):
 
     state = appier.field()
 
-    country = appier.field(
-        meta = "country"
-    )
+    country = appier.field(meta="country")
 
     phone_number = appier.field()
 
-    vat_number = appier.field(
-        description = "VAT Number"
-    )
+    vat_number = appier.field(description="VAT Number")
 
     neighborhood = appier.field()
 
@@ -79,17 +65,13 @@ class Address(base.BudyBase):
         return super(Address, cls).validate() + [
             appier.not_null("first_name"),
             appier.not_empty("first_name"),
-
             appier.not_null("last_name"),
             appier.not_empty("last_name"),
-
             appier.not_null("address"),
             appier.not_empty("address"),
-
             appier.not_null("city"),
             appier.not_empty("city"),
-
-            appier.string_eq("country", 2)
+            appier.string_eq("country", 2),
         ]
 
     @classmethod
@@ -116,5 +98,6 @@ class Address(base.BudyBase):
 
     @property
     def full_name(self):
-        if not self.last_name: return self.first_name
+        if not self.last_name:
+            return self.first_name
         return self.first_name + " " + self.last_name

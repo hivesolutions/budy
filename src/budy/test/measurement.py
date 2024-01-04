@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -35,10 +35,10 @@ import appier
 
 import budy
 
-class MeasurementTest(unittest.TestCase):
 
+class MeasurementTest(unittest.TestCase):
     def setUp(self):
-        self.app = budy.BudyApp(level = logging.ERROR)
+        self.app = budy.BudyApp(level=logging.ERROR)
 
     def tearDown(self):
         self.app.unload()
@@ -47,18 +47,12 @@ class MeasurementTest(unittest.TestCase):
 
     def test_basic(self):
         product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0,
-            quantity_hand = None
+            short_description="product", gender="Male", price=10.0, quantity_hand=None
         )
         product.save()
 
         measurement = budy.Measurement(
-            product = product,
-            name = "measurement",
-            value = 1,
-            value_s = "1"
+            product=product, name="measurement", value=1, value_s="1"
         )
         measurement.save()
 
@@ -71,19 +65,12 @@ class MeasurementTest(unittest.TestCase):
 
     def test_discount(self):
         product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0,
-            quantity_hand = None
+            short_description="product", gender="Male", price=10.0, quantity_hand=None
         )
         product.save()
 
         measurement = budy.Measurement(
-            product = product,
-            name = "measurement",
-            value = 1,
-            value_s = "1",
-            price = 10.0
+            product=product, name="measurement", value=1, value_s="1", price=10.0
         )
         measurement.save()
 
@@ -117,18 +104,12 @@ class MeasurementTest(unittest.TestCase):
 
     def test__fix_value_s(self):
         product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0,
-            quantity_hand = None
+            short_description="product", gender="Male", price=10.0, quantity_hand=None
         )
         product.save()
 
         measurement = budy.Measurement(
-            product = product,
-            name = "measurement",
-            value = 2,
-            value_s = "2"
+            product=product, name="measurement", value=2, value_s="2"
         )
         measurement.save()
 

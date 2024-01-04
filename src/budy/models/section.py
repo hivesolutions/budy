@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -31,6 +31,7 @@ __license__ = "Apache License, Version 2.0"
 import appier
 
 from . import group
+
 
 class Section(group.Group):
     """
@@ -43,11 +44,11 @@ class Section(group.Group):
     """
 
     context_fields = appier.field(
-        type = list,
-        observations = """The name of the fields that are
+        type=list,
+        observations="""The name of the fields that are
         considered to define the context of the section and
         that as such are going to be used in the filtering
-        process of the associated products"""
+        process of the associated products""",
     )
     """ Field that can be used to control the context filtering
     for the section by listing the names of the fields that are
@@ -55,59 +56,32 @@ class Section(group.Group):
     all of the non empty groups are going to be used in the "view" """
 
     invisible_fields = appier.field(
-        type = list,
-        observations = """The name of the fields (groups) that
+        type=list,
+        observations="""The name of the fields (groups) that
         although being used as part of the context selection for
         the section should not be displayed in the "normal" listing
-        UI for the section"""
+        UI for the section""",
     )
     """ Field that controls the groups that are going to be hidden
     from the UI although being used for the context filtering"""
 
-    genders = appier.field(
-        type = list
-    )
+    genders = appier.field(type=list)
 
-    collections = appier.field(
-        type = appier.references(
-            "Collection",
-            name = "id"
-        )
-    )
+    collections = appier.field(type=appier.references("Collection", name="id"))
 
-    categories = appier.field(
-        type = appier.references(
-            "Category",
-            name = "id"
-        )
-    )
+    categories = appier.field(type=appier.references("Category", name="id"))
 
-    colors = appier.field(
-        type = appier.references(
-            "Color",
-            name = "id"
-        )
-    )
+    colors = appier.field(type=appier.references("Color", name="id"))
 
-    brands = appier.field(
-        type = appier.references(
-            "Brand",
-            name = "id"
-        )
-    )
+    brands = appier.field(type=appier.references("Brand", name="id"))
 
-    seasons = appier.field(
-        type = appier.references(
-            "Season",
-            name = "id"
-        )
-    )
+    seasons = appier.field(type=appier.references("Season", name="id"))
 
     @classmethod
     def validate(cls):
         return super(Section, cls).validate() + [
             appier.not_null("name"),
-            appier.not_empty("name")
+            appier.not_empty("name"),
         ]
 
     @classmethod
@@ -115,36 +89,30 @@ class Section(group.Group):
         return ["id", "name"]
 
     @appier.operation(
-        name = "Add Collection",
-        parameters = (
-            (
-                "Collection",
-                "collection",
-                appier.reference("Collection", name = "id")
-            ),
-        )
+        name="Add Collection",
+        parameters=(
+            ("Collection", "collection", appier.reference("Collection", name="id")),
+        ),
     )
     def add_collection_s(self, collection):
-        if not collection: return
+        if not collection:
+            return
         self.collections.append(collection)
         self.save()
 
     @appier.operation(
-        name = "Remove Collection",
-        parameters = (
-            (
-                "Collection",
-                "collection",
-                appier.reference("Collection", name = "id")
-            ),
-        )
+        name="Remove Collection",
+        parameters=(
+            ("Collection", "collection", appier.reference("Collection", name="id")),
+        ),
     )
     def remove_collection_s(self, collection):
-        if not collection: return
+        if not collection:
+            return
         self.collections.remove(collection)
         self.save()
 
-    @appier.operation(name = "Clear Groups", level = 2)
+    @appier.operation(name="Clear Groups", level=2)
     def clear_groups_s(self):
         self.collections = []
         self.categories = []

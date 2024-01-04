@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -32,39 +32,27 @@ import appier
 
 from . import base
 
+
 class Country(base.BudyBase):
+    name = appier.field(index=True, default=True)
 
-    name = appier.field(
-        index = True,
-        default = True
-    )
+    country_code = appier.field(index=True)
 
-    country_code = appier.field(
-        index = True
-    )
+    currency_code = appier.field(index=True)
 
-    currency_code = appier.field(
-        index = True
-    )
-
-    locale = appier.field(
-        index = True
-    )
+    locale = appier.field(index=True)
 
     @classmethod
     def validate(cls):
         return super(Country, cls).validate() + [
             appier.not_null("name"),
             appier.not_empty("name"),
-
             appier.not_null("country_code"),
             appier.not_empty("country_code"),
             appier.string_eq("country_code", 2),
-
             appier.not_null("currency_code"),
             appier.not_empty("currency_code"),
             appier.string_eq("currency_code", 3),
-
             appier.not_null("locale"),
             appier.not_empty("locale"),
             appier.string_eq("locale", 5),
@@ -76,18 +64,17 @@ class Country(base.BudyBase):
 
     @classmethod
     def get_by_code(cls, country_code, *args, **kwargs):
-        return cls.get(country_code = country_code, *args, **kwargs)
+        return cls.get(country_code=country_code, *args, **kwargs)
 
     @classmethod
     @appier.operation(
-        name = "Import CSV",
-        parameters = (
+        name="Import CSV",
+        parameters=(
             ("CSV File", "file", "file"),
-            ("Empty source", "empty", bool, False)
-        )
+            ("Empty source", "empty", bool, False),
+        ),
     )
     def import_csv_s(cls, file, empty):
-
         def callback(line):
             name, country_code, currency_code, locale = line
             name = name or None
@@ -95,23 +82,21 @@ class Country(base.BudyBase):
             currency_code = currency_code or None
             locale = locale or None
             country = cls(
-                name = name,
-                country_code = country_code,
-                currency_code = currency_code,
-                locale = locale
+                name=name,
+                country_code=country_code,
+                currency_code=currency_code,
+                locale=locale,
             )
             country.save()
 
-        if empty: cls.delete_c()
+        if empty:
+            cls.delete_c()
         cls._csv_import(file, callback)
 
     @classmethod
-    @appier.link(name = "Export Simple")
-    def simple_csv_url(cls, absolute = False):
-        return appier.get_app().url_for(
-            "country_api.simple_csv",
-            absolute = absolute
-        )
+    @appier.link(name="Export Simple")
+    def simple_csv_url(cls, absolute=False):
+        return appier.get_app().url_for("country_api.simple_csv", absolute=absolute)
 
     @classmethod
     def _plural(cls):

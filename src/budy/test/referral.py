@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -35,10 +35,10 @@ import appier
 
 import budy
 
-class ReferralTest(unittest.TestCase):
 
+class ReferralTest(unittest.TestCase):
     def setUp(self):
-        self.app = budy.BudyApp(level = logging.ERROR)
+        self.app = budy.BudyApp(level=logging.ERROR)
 
     def tearDown(self):
         self.app.unload()
@@ -46,10 +46,10 @@ class ReferralTest(unittest.TestCase):
         adapter.drop_db()
 
     def test_basic(self):
-        referral = budy.Referral(name = "name")
+        referral = budy.Referral(name="name")
         referral.save()
 
-        referral = budy.Referral.get(name = "name")
+        referral = budy.Referral.get(name="name")
 
         self.assertNotEqual(referral, None)
         self.assertEqual(referral.name, "name")

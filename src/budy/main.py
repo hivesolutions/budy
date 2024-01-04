@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -33,16 +33,11 @@ import appier_extras
 
 from budy import bots
 
-class BudyApp(appier.WebApp):
 
+class BudyApp(appier.WebApp):
     def __init__(self, *args, **kwargs):
         appier.WebApp.__init__(
-            self,
-            name = "budy",
-            parts = (
-                appier_extras.AdminPart,
-            ),
-            *args, **kwargs
+            self, name="budy", parts=(appier_extras.AdminPart,), *args, **kwargs
         )
         self.login_route = "base.signin"
         self.login_redirect = "base.index_store"
@@ -55,28 +50,36 @@ class BudyApp(appier.WebApp):
         appier.WebApp.start(self)
         self.scheduler.start()
         self.admin_part.add_operation(
-            "force_scheduler", "admin.force_scheduler",
-            description = "Force scheduler",
-            message = "Are you really sure you want to force scheduler?",
-            note = "Forcing scheduler may consume computer resources",
-            level = 3
+            "force_scheduler",
+            "admin.force_scheduler",
+            description="Force scheduler",
+            message="Are you really sure you want to force scheduler?",
+            note="Forcing scheduler may consume computer resources",
+            level=3,
         )
 
     def stop(self):
-        try: import easypay
-        except ImportError: easypay = None
-        if easypay: easypay.ShelveAPI.cleanup()
+        try:
+            import easypay
+        except ImportError:
+            easypay = None
+        if easypay:
+            easypay.ShelveAPI.cleanup()
         appier.WebApp.stop(self)
 
     def get_omni_api(self):
         import omni
-        if self.omni_api: return self.omni_api
+
+        if self.omni_api:
+            return self.omni_api
         self.omni_api = omni.API()
         return self.omni_api
 
     def get_seeplus_api(self):
         import seeplus
-        if self.seeplus_api: return self.seeplus_api
+
+        if self.seeplus_api:
+            return self.seeplus_api
         self.seeplus_api = seeplus.API()
         return self.seeplus_api
 
@@ -88,6 +91,7 @@ class BudyApp(appier.WebApp):
 
     def _observations(self):
         return "Simple and easy to use E-commerce engine"
+
 
 if __name__ == "__main__":
     app = BudyApp()

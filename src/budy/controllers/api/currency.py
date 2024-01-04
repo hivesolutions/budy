@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -34,27 +34,18 @@ import budy
 
 from . import root
 
-class CurrencyAPIController(root.RootAPIController):
 
-    @appier.route("/api/currencies", "GET", json = True)
+class CurrencyAPIController(root.RootAPIController):
+    @appier.route("/api/currencies", "GET", json=True)
     def list(self):
-        object = appier.get_object(alias = True, find = True)
-        currencies = budy.Currency.find(
-            find_i = True,
-            find_t = "right",
-            map = True,
-            **object
-        )
+        object = appier.get_object(alias=True, find=True)
+        currencies = budy.Currency.find(find_i=True, find_t="right", map=True, **object)
         return currencies
 
     @appier.route("/api/currencies/simple.csv", "GET")
-    @appier.ensure(token = "admin")
+    @appier.ensure(token="admin")
     def simple_csv(self):
-        object = appier.get_object(
-            alias = True,
-            find = True,
-            limit = 0
-        )
+        object = appier.get_object(alias=True, find=True, limit=0)
         currencies = budy.Currency.find(**object)
 
         currencies_s = [("iso", "decimal_places")]
@@ -62,6 +53,6 @@ class CurrencyAPIController(root.RootAPIController):
             currency_s = (currency.iso, currency.decimal_places)
             currencies_s.append(currency_s)
 
-        result = appier.serialize_csv(currencies_s, delimiter = ",")
+        result = appier.serialize_csv(currencies_s, delimiter=",")
         self.content_type("text/csv")
         return result

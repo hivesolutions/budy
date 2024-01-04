@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -36,10 +36,10 @@ import appier
 
 import budy
 
-class BagTest(unittest.TestCase):
 
+class BagTest(unittest.TestCase):
     def setUp(self):
-        self.app = budy.BudyApp(level = logging.ERROR)
+        self.app = budy.BudyApp(level=logging.ERROR)
 
     def tearDown(self):
         self.app.unload()
@@ -47,11 +47,7 @@ class BagTest(unittest.TestCase):
         adapter.drop_db()
 
     def test_basic(self):
-        product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0
-        )
+        product = budy.Product(short_description="product", gender="Male", price=10.0)
         product.save()
 
         self.assertEqual(product.short_description, "product")
@@ -67,9 +63,7 @@ class BagTest(unittest.TestCase):
         self.assertEqual(bag.currency, None)
         self.assertEqual(bag.total >= 0.0, True)
 
-        bag_line = budy.BagLine(
-            quantity = 2.0
-        )
+        bag_line = budy.BagLine(quantity=2.0)
         bag_line.product = product
         bag_line.save()
         bag.add_line_s(bag_line)
@@ -85,9 +79,7 @@ class BagTest(unittest.TestCase):
         self.assertEqual(len(bag.lines), 1)
 
         product_expensive = budy.Product(
-            short_description = "product_expensive",
-            gender = "Female",
-            price = 100.0
+            short_description="product_expensive", gender="Female", price=100.0
         )
         product_expensive.save()
 
@@ -106,19 +98,13 @@ class BagTest(unittest.TestCase):
         self.assertEqual(len(bag.lines), 0)
 
     def test_remove_line(self):
-        product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0
-        )
+        product = budy.Product(short_description="product", gender="Male", price=10.0)
         product.save()
 
         bag = budy.Bag()
         bag.save()
 
-        bag_line = budy.BagLine(
-            quantity = 2.0
-        )
+        bag_line = budy.BagLine(quantity=2.0)
         bag_line.product = product
         bag_line.save()
         bag.add_line_s(bag_line)
@@ -137,19 +123,13 @@ class BagTest(unittest.TestCase):
         self.assertEqual(len(bag.lines), 0)
 
     def test_empty_line(self):
-        product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0
-        )
+        product = budy.Product(short_description="product", gender="Male", price=10.0)
         product.save()
 
         bag = budy.Bag()
         bag.save()
 
-        bag_line = budy.BagLine(
-            quantity = 2.0
-        )
+        bag_line = budy.BagLine(quantity=2.0)
         bag_line.product = product
         bag_line.save()
         bag.add_line_s(bag_line)
@@ -181,19 +161,13 @@ class BagTest(unittest.TestCase):
         self.assertEqual(len(bag.lines), 0)
 
     def test_merge(self):
-        product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0
-        )
+        product = budy.Product(short_description="product", gender="Male", price=10.0)
         product.save()
 
         bag = budy.Bag()
         bag.save()
 
-        bag_line = budy.BagLine(
-            quantity = 2.0
-        )
+        bag_line = budy.BagLine(quantity=2.0)
         bag_line.product = product
         bag_line.save()
         bag.add_line_s(bag_line)
@@ -223,25 +197,19 @@ class BagTest(unittest.TestCase):
         self.assertEqual(extra.total, 20.0)
         self.assertEqual(len(extra.lines), 1)
 
-        extra.merge_s(bag.id, increment = True)
+        extra.merge_s(bag.id, increment=True)
 
         self.assertEqual(extra.total, 40.0)
         self.assertEqual(len(extra.lines), 1)
 
     def test_order(self):
-        product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0
-        )
+        product = budy.Product(short_description="product", gender="Male", price=10.0)
         product.save()
 
         bag = budy.Bag()
         bag.save()
 
-        bag_line = budy.BagLine(
-            quantity = 2.0
-        )
+        bag_line = budy.BagLine(quantity=2.0)
         bag_line.product = product
         bag_line.save()
         bag.add_line_s(bag_line)
@@ -287,19 +255,13 @@ class BagTest(unittest.TestCase):
         self.assertRaises(appier.ValidationError, duplicated.save)
 
     def test_price_change(self):
-        product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0
-        )
+        product = budy.Product(short_description="product", gender="Male", price=10.0)
         product.save()
 
         bag = budy.Bag()
         bag.save()
 
-        bag_line = budy.BagLine(
-            quantity = 2.0
-        )
+        bag_line = budy.BagLine(quantity=2.0)
         bag_line.product = product
         bag_line.save()
         bag.add_line_s(bag_line)
@@ -324,19 +286,14 @@ class BagTest(unittest.TestCase):
 
     def test_quantity_change(self):
         product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0,
-            quantity_hand = 2.0
+            short_description="product", gender="Male", price=10.0, quantity_hand=2.0
         )
         product.save()
 
         bag = budy.Bag()
         bag.save()
 
-        bag_line = budy.BagLine(
-            quantity = 2.0
-        )
+        bag_line = budy.BagLine(quantity=2.0)
         bag_line.product = product
         bag_line.save()
         bag.add_line_s(bag_line)
@@ -369,20 +326,18 @@ class BagTest(unittest.TestCase):
 
     def test_product_discounted(self):
         product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0,
-            price_compare = 12.0,
-            quantity_hand = 2.0
+            short_description="product",
+            gender="Male",
+            price=10.0,
+            price_compare=12.0,
+            quantity_hand=2.0,
         )
         product.save()
 
         bag = budy.Bag()
         bag.save()
 
-        bag_line = budy.BagLine(
-            quantity = 2.0
-        )
+        bag_line = budy.BagLine(quantity=2.0)
         bag_line.product = product
         bag_line.save()
         bag.add_line_s(bag_line)
@@ -399,20 +354,18 @@ class BagTest(unittest.TestCase):
 
     def test_product_non_discountable(self):
         product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0,
-            quantity_hand = 2.0,
-            discountable = False
+            short_description="product",
+            gender="Male",
+            price=10.0,
+            quantity_hand=2.0,
+            discountable=False,
         )
         product.save()
 
         bag = budy.Bag()
         bag.save()
 
-        bag_line = budy.BagLine(
-            quantity = 2.0
-        )
+        bag_line = budy.BagLine(quantity=2.0)
         bag_line.product = product
         bag_line.save()
         bag.add_line_s(bag_line)

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -34,36 +34,25 @@ import appier
 
 from . import base
 
+
 class ExchangeRate(base.BudyBase):
+    name = appier.field(default=True)
 
-    name = appier.field(
-        default = True
-    )
+    base = appier.field(index=True)
 
-    base = appier.field(
-        index = True
-    )
+    target = appier.field(index=True)
 
-    target = appier.field(
-        index = True
-    )
-
-    rate = appier.field(
-        type = commons.Decimal,
-        index = True
-    )
+    rate = appier.field(type=commons.Decimal, index=True)
 
     @classmethod
     def validate(cls):
         return super(ExchangeRate, cls).validate() + [
             appier.not_null("base"),
             appier.not_empty("base"),
-
             appier.not_null("target"),
             appier.not_empty("target"),
-
             appier.not_null("rate"),
-            appier.gte("rate", 0.0)
+            appier.gte("rate", 0.0),
         ]
 
     @classmethod
@@ -72,11 +61,7 @@ class ExchangeRate(base.BudyBase):
 
     @classmethod
     def create_s(cls, base, target, rate):
-        exchange_rate = cls(
-            base = base,
-            target = target,
-            rate = rate
-        )
+        exchange_rate = cls(base=base, target=target, rate=rate)
         exchange_rate.save()
 
     @classmethod
@@ -86,50 +71,47 @@ class ExchangeRate(base.BudyBase):
         cls.create_s(target, base, rate_r)
 
     @classmethod
-    def convert(cls, value, base, target, reversed = False, rounder = round):
+    def convert(cls, value, base, target, reversed=False, rounder=round):
         from . import currency
-        if reversed: return cls.reverse(value, base, target, rounder = rounder)
-        exchange_rate = cls.get(base = base, target = target)
+
+        if reversed:
+            return cls.reverse(value, base, target, rounder=rounder)
+        exchange_rate = cls.get(base=base, target=target)
         result = commons.Decimal(value) * exchange_rate.rate
-        return currency.Currency.round(result, target, rounder = rounder)
+        return currency.Currency.round(result, target, rounder=rounder)
 
     @classmethod
-    def reverse(cls, value, base, target, rounder = round):
+    def reverse(cls, value, base, target, rounder=round):
         from . import currency
-        exchange_rate = cls.get(base = target, target = base)
+
+        exchange_rate = cls.get(base=target, target=base)
         result = commons.Decimal(value) * (commons.Decimal(1.0) / exchange_rate.rate)
-        return currency.Currency.round(result, target, rounder = rounder)
+        return currency.Currency.round(result, target, rounder=rounder)
 
     @classmethod
     def has_rate(cls, base, target):
-        exchange_rate = cls.get(
-            base = base,
-            target = target,
-            raise_e = False
-        )
-        if not exchange_rate: return False
-        if not exchange_rate.rate: return False
+        exchange_rate = cls.get(base=base, target=target, raise_e=False)
+        if not exchange_rate:
+            return False
+        if not exchange_rate.rate:
+            return False
         return True
 
     @classmethod
     @appier.operation(
-        name = "Import CSV",
-        parameters = (
+        name="Import CSV",
+        parameters=(
             ("CSV File", "file", "file"),
-            ("Empty source", "empty", bool, False)
-        )
+            ("Empty source", "empty", bool, False),
+        ),
     )
     def import_csv_s(cls, file, empty):
-
         def callback(line):
             base, target, rate = line
             rate = float(rate)
-            exchange_rate = cls(
-                base = base,
-                target = target,
-                rate = rate
-            )
+            exchange_rate = cls(base=base, target=target, rate=rate)
             exchange_rate.save()
 
-        if empty: cls.delete_c()
+        if empty:
+            cls.delete_c()
         cls._csv_import(file, callback)

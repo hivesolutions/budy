@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -40,12 +40,12 @@ RECORDS = 100
 """ The default value for the number of records that are
 going to be retrieved per each HTTP request """
 
-class OmniBot(base.Bot):
 
+class OmniBot(base.Bot):
     def __init__(self, *args, **kwargs):
         base.Bot.__init__(self, *args, **kwargs)
-        self.enabled = appier.conf("OMNI_BOT_ENABLED", False, cast = bool)
-        self.store = appier.conf("OMNI_BOT_STORE", None, cast = int)
+        self.enabled = appier.conf("OMNI_BOT_ENABLED", False, cast=bool)
+        self.store = appier.conf("OMNI_BOT_STORE", None, cast=int)
         self.records = appier.conf("OMNI_BOT_RECORDS", RECORDS)
         self.enabled = kwargs.get("enabled", self.enabled)
         self.store = kwargs.get("store", self.store)
@@ -53,7 +53,8 @@ class OmniBot(base.Bot):
         self.api = None
 
     def tick(self):
-        if not self.enabled: return
+        if not self.enabled:
+            return
         self.sync_products()
         self.fix_products()
         self.gc_products()
@@ -84,18 +85,14 @@ class OmniBot(base.Bot):
 
         while True:
             kwargs = {
-                "filter_string" : "",
-                "start_record" : offset,
-                "number_records" : self.records,
-                "filters[]" : [
-                    "sellable:equals:2"
-                ]
+                "filter_string": "",
+                "start_record": offset,
+                "number_records": self.records,
+                "filters[]": ["sellable:equals:2"],
             }
-            merchandise = api.list_store_merchandise(
-                store_id = self.store,
-                **kwargs
-            )
-            if not merchandise: break
+            merchandise = api.list_store_merchandise(store_id=self.store, **kwargs)
+            if not merchandise:
+                break
             offset += len(merchandise)
 
             for merchandise in merchandise:
@@ -103,41 +100,42 @@ class OmniBot(base.Bot):
                 is_product = _class in ("Product",)
                 is_sub_product = _class in ("SubProduct",)
                 is_valid = is_product or is_sub_product
-                if not is_valid: continue
+                if not is_valid:
+                    continue
                 inventory_lines = api.list_inventory_lines(
-                    store_id = self.store,
-                    number_records = 1,
+                    store_id=self.store,
+                    number_records=1,
                     **{
-                        "filter_string" : "",
-                        "filters[]" : [
+                        "filter_string": "",
+                        "filters[]": [
                             "functional_unit:equals:%d" % self.store,
-                            "merchandise:equals:%d" % merchandise["object_id"]
-                        ]
+                            "merchandise:equals:%d" % merchandise["object_id"],
+                        ],
                     }
                 )
                 inventory_line = inventory_lines[0]
                 inventory_lines = api.list_inventory_lines(
-                    store_id = self.store,
-                    number_records = -1,
+                    store_id=self.store,
+                    number_records=-1,
                     **{
-                        "filter_string" : "",
-                        "filters[]" : [
+                        "filter_string": "",
+                        "filters[]": [
                             "functional_unit:not_equals:%d" % self.store,
-                            "merchandise:equals:%d" % merchandise["object_id"]
-                        ]
+                            "merchandise:equals:%d" % merchandise["object_id"],
+                        ],
                     }
                 )
                 if is_product:
                     self.sync_product_safe(
                         merchandise,
-                        inventory_line = inventory_line,
-                        inventory_lines = inventory_lines
+                        inventory_line=inventory_line,
+                        inventory_lines=inventory_lines,
                     )
                 else:
                     self.sync_sub_product_safe(
                         merchandise,
-                        inventory_line = inventory_line,
-                        inventory_lines = inventory_lines
+                        inventory_line=inventory_line,
+                        inventory_lines=inventory_lines,
                     )
 
         self.logger.info("Ended syncing of products from store")
@@ -148,16 +146,18 @@ class OmniBot(base.Bot):
         api = self.get_api()
         products = budy.Product.find()
 
-        self.logger.info(
-            "Syncing %d products in database ..." % len(products)
-        )
+        self.logger.info("Syncing %d products in database ..." % len(products))
 
         for product in products:
             object_id = product.meta.get("object_id", None)
-            if not object_id: continue
-            try: merchandise = api.get_product(object_id)
-            except self.get_exception(): continue
-            if not merchandise: continue
+            if not object_id:
+                continue
+            try:
+                merchandise = api.get_product(object_id)
+            except self.get_exception():
+                continue
+            if not merchandise:
+                continue
             merchandise.pop("stock_on_hand", None)
             merchandise.pop("retail_price", None)
             merchandise.pop("price", None)
@@ -171,16 +171,18 @@ class OmniBot(base.Bot):
         api = self.get_api()
         measurements = budy.Measurement.find()
 
-        self.logger.info(
-            "Syncing %d measurements in database ..." % len(measurements)
-        )
+        self.logger.info("Syncing %d measurements in database ..." % len(measurements))
 
         for measurement in measurements:
             object_id = measurement.meta.get("object_id", None)
-            if not object_id: continue
-            try: merchandise = api.get_sub_product(object_id)
-            except self.get_exception(): continue
-            if not merchandise: continue
+            if not object_id:
+                continue
+            try:
+                merchandise = api.get_sub_product(object_id)
+            except self.get_exception():
+                continue
+            if not merchandise:
+                continue
             merchandise.pop("stock_on_hand", None)
             merchandise.pop("retail_price", None)
             merchandise.pop("price", None)
@@ -191,20 +193,18 @@ class OmniBot(base.Bot):
     def fix_products_db(self):
         products = budy.Product.find()
 
-        self.logger.info(
-            "Fixing %d products in database ..." % len(products)
-        )
+        self.logger.info("Fixing %d products in database ..." % len(products))
 
-        for product in products: product.fix_s()
+        for product in products:
+            product.fix_s()
 
     def fix_measurements_db(self):
         measurements = budy.Measurement.find()
 
-        self.logger.info(
-            "Fixing %d measurements in database ..." % len(measurements)
-        )
+        self.logger.info("Fixing %d measurements in database ..." % len(measurements))
 
-        for measurement in measurements: measurement.fix_s()
+        for measurement in measurements:
+            measurement.fix_s()
 
     def gc_measurements_db(self):
         measurements = budy.Measurement.find()
@@ -216,10 +216,7 @@ class OmniBot(base.Bot):
         # sorts the measurements (product dimensions) according to the
         # modified data, from latest to oldest to be able to iterate
         # over them to remove possible duplication from the database
-        measurements.sort(
-            key = lambda v: v.meta.get("modify_date", 0),
-            reverse = True
-        )
+        measurements.sort(key=lambda v: v.meta.get("modify_date", 0), reverse=True)
 
         # creates the list that is going to be used to detect possible
         # duplicated sub product object ids
@@ -238,21 +235,19 @@ class OmniBot(base.Bot):
                 object_ids.append(object_id)
 
     def sync_product_safe(self, merchandise, *args, **kwargs):
-        try: self.sync_product(merchandise, *args, **kwargs)
+        try:
+            self.sync_product(merchandise, *args, **kwargs)
         except Exception as exception:
             object_id = merchandise["object_id"]
             self.logger.warn(
                 "Problem syncing product %d - %s ..." % (object_id, exception)
             )
             lines = traceback.format_exc().splitlines()
-            for line in lines: self.logger.info(line)
+            for line in lines:
+                self.logger.info(line)
 
     def sync_product(
-        self,
-        merchandise,
-        inventory_line = None,
-        inventory_lines = None,
-        force = False
+        self, merchandise, inventory_line=None, inventory_lines=None, force=False
     ):
         # retrieves the reference to the API object that is
         # going to be used for API based operations
@@ -267,9 +262,9 @@ class OmniBot(base.Bot):
         # information that has just been retrieved
         product = budy.Product.from_omni(
             merchandise,
-            inventory_line = inventory_line,
-            inventory_lines = inventory_lines,
-            force = force
+            inventory_line=inventory_line,
+            inventory_lines=inventory_lines,
+            force=force,
         )
         product.save()
         product.images = []
@@ -277,9 +272,7 @@ class OmniBot(base.Bot):
         # retrieves the media information associated with the
         # current merchandise to be able to sync it by either
         # creating new local medias or re-using existing ones
-        media = api.info_media_entity(
-            object_id, dimensions = "original"
-        )
+        media = api.info_media_entity(object_id, dimensions="original")
 
         # iterates over the complete set of media associated with
         # the current product to try to create/update its media
@@ -289,7 +282,7 @@ class OmniBot(base.Bot):
             # value tries to retrieve a possible already existing
             # and equivalent media (avoids duplication)
             unique = "%d-%d" % (item["object_id"], item["modify_date"])
-            _media = budy.Media.get(unique = unique, raise_e = False)
+            _media = budy.Media.get(unique=unique, raise_e=False)
 
             # in case the media does not exist, tries to retrieve the
             # new remote data from the source and create a new media
@@ -297,12 +290,12 @@ class OmniBot(base.Bot):
                 media_url = api.get_media_url(item["secret"])
                 data = appier.get(media_url)
                 _media = budy.Media(
-                    description = item["dimensions"],
-                    label = item["label"],
-                    order = item["position"] or 1,
-                    size = item["dimensions"],
-                    unique = unique,
-                    file = appier.File((item["label"], None, data))
+                    description=item["dimensions"],
+                    label=item["label"],
+                    order=item["position"] or 1,
+                    size=item["dimensions"],
+                    unique=unique,
+                    file=appier.File((item["label"], None, data)),
                 )
                 _media.save()
 
@@ -313,12 +306,12 @@ class OmniBot(base.Bot):
                 ("thumbnail", 260),
                 ("thumbnail_2x", 540),
                 ("large", 540),
-                ("large_2x", 1080)
+                ("large_2x", 1080),
             ):
                 resized_unique = "%s-%s" % (unique, suffix)
-                resized = budy.Media.get(unique = resized_unique, raise_e = False)
+                resized = budy.Media.get(unique=resized_unique, raise_e=False)
                 if not resized:
-                    resized = _media.thumbnail_s(width = size, suffix = suffix)
+                    resized = _media.thumbnail_s(width=size, suffix=suffix)
                     resized.save()
                 product.images.append(resized)
 
@@ -326,21 +319,19 @@ class OmniBot(base.Bot):
             product.save()
 
     def sync_sub_product_safe(self, merchandise, *args, **kwargs):
-        try: self.sync_sub_product(merchandise, *args, **kwargs)
+        try:
+            self.sync_sub_product(merchandise, *args, **kwargs)
         except Exception as exception:
             object_id = merchandise["object_id"]
             self.logger.warn(
                 "Problem syncing sub product %d - %s ..." % (object_id, exception)
             )
             lines = traceback.format_exc().splitlines()
-            for line in lines: self.logger.info(line)
+            for line in lines:
+                self.logger.info(line)
 
     def sync_sub_product(
-        self,
-        merchandise,
-        inventory_line = None,
-        inventory_lines = None,
-        force = False
+        self, merchandise, inventory_line=None, inventory_lines=None, force=False
     ):
         api = self.get_api()
 
@@ -355,23 +346,24 @@ class OmniBot(base.Bot):
         # the proper associated (parent) product is created
         measurement = budy.Measurement.from_omni(
             merchandise,
-            sub_product = sub_product,
-            inventory_line = inventory_line,
-            inventory_lines = inventory_lines,
-            force = force
+            sub_product=sub_product,
+            inventory_line=inventory_line,
+            inventory_lines=inventory_lines,
+            force=force,
         )
         if not measurement:
             product = api.get_product(product["object_id"])
-            self.sync_product(product, force = True)
+            self.sync_product(product, force=True)
             measurement = budy.Measurement.from_omni(
                 merchandise,
-                sub_product = sub_product,
-                inventory_line = inventory_line,
-                inventory_lines = inventory_lines,
-                force = force
+                sub_product=sub_product,
+                inventory_line=inventory_line,
+                inventory_lines=inventory_lines,
+                force=force,
             )
 
-        if not measurement: return
+        if not measurement:
+            return
 
         measurement.save()
 
@@ -383,10 +375,13 @@ class OmniBot(base.Bot):
 
     def get_api(self):
         import omni
-        if self.api: return self.api
+
+        if self.api:
+            return self.api
         self.api = omni.API()
         return self.api
 
     def get_exception(self):
         import omni
+
         return omni.OmniError

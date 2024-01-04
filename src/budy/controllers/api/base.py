@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -34,18 +34,13 @@ import budy
 
 from . import root
 
-class BaseAPIController(root.RootAPIController):
 
-    @appier.route("/api/login", ("GET", "POST"), json = True)
+class BaseAPIController(root.RootAPIController):
+    @appier.route("/api/login", ("GET", "POST"), json=True)
     def login(self):
         username = self.field("username")
         password = self.field("password")
         account = budy.BudyAccount.login(username, password)
         account._set_account()
         sid = self.session.sid
-        return dict(
-            sid = sid,
-            session_id = sid,
-            username = username,
-            tokens = account.tokens()
-        )
+        return dict(sid=sid, session_id=sid, username=username, tokens=account.tokens())

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -34,19 +34,15 @@ import budy
 
 from . import root
 
-class StoreAPIController(root.RootAPIController):
 
-    @appier.route("/api/stores", "GET", json = True)
+class StoreAPIController(root.RootAPIController):
+    @appier.route("/api/stores", "GET", json=True)
     def list(self):
-        object = appier.get_object(alias = True, find = True)
-        stores = budy.Store.find_e(
-            eager = ("address",),
-            map = True,
-            **object
-        )
+        object = appier.get_object(alias=True, find=True)
+        stores = budy.Store.find_e(eager=("address",), map=True, **object)
         return stores
 
-    @appier.route("/api/colors/<int:id>", "GET", json = True)
+    @appier.route("/api/colors/<int:id>", "GET", json=True)
     def show(self, id):
-        store = budy.Color.get_e(id = id, map = True)
+        store = budy.Color.get_e(id=id, map=True)
         return store

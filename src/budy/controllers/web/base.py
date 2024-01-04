@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -32,54 +32,40 @@ import appier
 
 import budy
 
-class BaseController(appier.Controller):
 
+class BaseController(appier.Controller):
     @appier.route("/", "GET")
     def index(self):
-        return self.redirect(
-            self.url_for("admin.index")
-        )
+        return self.redirect(self.url_for("admin.index"))
 
     @appier.route("/index_store", "GET")
     def index_store(self):
-        return self.redirect(
-            self.url_for("order.me")
-        )
+        return self.redirect(self.url_for("order.me"))
 
     @appier.route("/signin", "GET")
     def signin(self):
         next = self.field("next")
         error = self.field("error")
-        return self.template(
-            "signin.html.tpl",
-            next = next,
-            error = error
-        )
+        return self.template("signin.html.tpl", next=next, error=error)
 
     @appier.route("/signin", "POST")
     def login(self):
         username = self.field("username")
         password = self.field("password")
         next = self.field("next")
-        try: account = budy.BudyAccount.login(username, password)
+        try:
+            account = budy.BudyAccount.login(username, password)
         except appier.AppierException as error:
             return self.template(
-                "signin.html.tpl",
-                next = next,
-                username = username,
-                error = error.message
+                "signin.html.tpl", next=next, username=username, error=error.message
             )
 
         account._set_account()
 
-        return self.redirect(
-            next or self.url_for(self.login_redirect)
-        )
+        return self.redirect(next or self.url_for(self.login_redirect))
 
     @appier.route("/signout", "GET")
     def signout(self):
         next = self.field("next")
         budy.BudyAccount._unset_account()
-        return self.redirect(
-            next or self.url_for(self.logout_redirect)
-        )
+        return self.redirect(next or self.url_for(self.logout_redirect))

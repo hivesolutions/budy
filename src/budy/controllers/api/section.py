@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -34,24 +34,20 @@ import budy
 
 from . import root
 
-class SectionAPIController(root.RootAPIController):
 
-    @appier.route("/api/sections", "GET", json = True)
+class SectionAPIController(root.RootAPIController):
+    @appier.route("/api/sections", "GET", json=True)
     def list(self):
-        object = appier.get_object(alias = True, find = True)
-        sections = budy.Section.find_e(
-            eager = ("images",),
-            map = True,
-            **object
-        )
+        object = appier.get_object(alias=True, find=True)
+        sections = budy.Section.find_e(eager=("images",), map=True, **object)
         return sections
 
-    @appier.route("/api/sections/<int:id>", "GET", json = True)
+    @appier.route("/api/sections/<int:id>", "GET", json=True)
     def show(self, id):
-        section = budy.Section.get_e(id = id, map = True)
+        section = budy.Section.get_e(id=id, map=True)
         return section
 
-    @appier.route("/api/sections/slug/<str:slug>", "GET", json = True)
+    @appier.route("/api/sections/slug/<str:slug>", "GET", json=True)
     def slug(self, slug):
-        section = budy.Section.get_e(slug = slug, map = True)
+        section = budy.Section.get_e(slug=slug, map=True)
         return section

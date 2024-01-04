@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -34,23 +34,11 @@ import appier_extras
 from . import bundle
 from . import wishlist_line
 
+
 class Wishlist(bundle.Bundle):
+    lines = appier.field(type=appier.references("WishlistLine", name="id"), eager=True)
 
-    lines = appier.field(
-        type = appier.references(
-            "WishlistLine",
-            name = "id"
-        ),
-        eager = True
-    )
-
-    account = appier.field(
-        type = appier.reference(
-            "BudyAccount",
-            name = "id"
-        ),
-        eager = True
-    )
+    account = appier.field(type=appier.reference("BudyAccount", name="id"), eager=True)
 
     @classmethod
     def list_names(cls):
@@ -61,26 +49,32 @@ class Wishlist(bundle.Bundle):
         return wishlist_line.WishlistLine
 
     @classmethod
-    def from_session(cls, ensure = True, raise_e = False):
+    def from_session(cls, ensure=True, raise_e=False):
         from . import BudyAccount
-        account = BudyAccount.from_session(raise_e = raise_e)
-        if account: return account.ensure_wishlist_s()
+
+        account = BudyAccount.from_session(raise_e=raise_e)
+        if account:
+            return account.ensure_wishlist_s()
         session = appier.get_session()
         key = session.get("wishlist", None)
-        wishlist = cls.get(key = key, raise_e = raise_e) if key else None
-        if wishlist: return wishlist
-        if not ensure: return None
+        wishlist = cls.get(key=key, raise_e=raise_e) if key else None
+        if wishlist:
+            return wishlist
+        if not ensure:
+            return None
         wishlist = cls()
         wishlist.save()
         session["wishlist"] = wishlist.key
         return wishlist
 
     @classmethod
-    def ensure_s(cls, key = None):
+    def ensure_s(cls, key=None):
         from . import BudyAccount
-        account = BudyAccount.from_session(raise_e = False)
-        if account: return account.ensure_wishlist_s(key = key)
-        wishlist = cls(key = key)
+
+        account = BudyAccount.from_session(raise_e=False)
+        if account:
+            return account.ensure_wishlist_s(key=key)
+        wishlist = cls(key=key)
         wishlist.save()
         return wishlist
 
@@ -90,42 +84,40 @@ class Wishlist(bundle.Bundle):
 
     def pre_delete(self):
         bundle.Bundle.pre_delete(self)
-        for line in self.lines: line.delete()
+        for line in self.lines:
+            line.delete()
 
     def add_line_s(self, line):
         line.wishlist = self
         return bundle.Bundle.add_line_s(self, line)
 
-    @appier.operation(name = "Garbage Collect")
+    @appier.operation(name="Garbage Collect")
     def collect_s(self):
         self.delete()
 
-    @appier.operation(name = "Fix Orphans")
+    @appier.operation(name="Fix Orphans")
     def fix_orphans_s(self):
         for line in self.lines:
             line.wishlist = self
             line.save()
 
-    @appier.operation(name = "Notify")
-    def notify(self, name = None, *args, **kwargs):
+    @appier.operation(name="Notify")
+    def notify(self, name=None, *args, **kwargs):
         name = name or "wishlist.new"
-        wishlist = self.reload(map = True)
+        wishlist = self.reload(map=True)
         account = wishlist.get("account", {})
         account = kwargs.get("account", account)
         receiver = account.get("email", None)
         receiver = kwargs.get("email", receiver)
         appier_extras.admin.Event.notify_g(
             name,
-            arguments = dict(
-                params = dict(
-                    payload = wishlist,
-                    wishlist = wishlist,
-                    receiver = receiver,
-                    extra = kwargs
+            arguments=dict(
+                params=dict(
+                    payload=wishlist, wishlist=wishlist, receiver=receiver, extra=kwargs
                 )
-            )
+            ),
         )
 
-    @appier.operation(name = "Remind")
+    @appier.operation(name="Remind")
     def remind(self):
-        self.notify(name = "wishlist.remind")
+        self.notify(name="wishlist.remind")

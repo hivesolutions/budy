@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -39,24 +39,12 @@ loop between ticks, this value should not be too small
 to spend many resources or to high to create a long set
 of time between external interactions """
 
-class Scheduler(appier.Scheduler):
 
+class Scheduler(appier.Scheduler):
     def __init__(self, owner, *args, **kwargs):
-        appier.Scheduler.__init__(
-            self,
-            owner,
-            timeout = LOOP_TIMEOUT,
-            *args,
-            **kwargs
-        )
-        self.omni_bot = omni_bot.OmniBot(
-            owner = owner,
-            **kwargs
-        )
-        self.tracking_bot = tracking_bot.TrackingBot(
-            owner = owner,
-            **kwargs
-        )
+        appier.Scheduler.__init__(self, owner, timeout=LOOP_TIMEOUT, *args, **kwargs)
+        self.omni_bot = omni_bot.OmniBot(owner=owner, **kwargs)
+        self.tracking_bot = tracking_bot.TrackingBot(owner=owner, **kwargs)
 
     def tick(self):
         appier.Scheduler.tick(self)

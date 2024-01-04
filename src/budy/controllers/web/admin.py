@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -30,14 +30,11 @@ __license__ = "Apache License, Version 2.0"
 
 import appier
 
-class AdminController(appier.Controller):
 
+class AdminController(appier.Controller):
     @appier.route("/admin/force_scheduler", ("GET", "POST"))
     def force_scheduler(self):
         self.scheduler.awake()
         return self.redirect(
-            self.url_for(
-                "admin.operations",
-                message = "Forced scheduler to run"
-            )
+            self.url_for("admin.operations", message="Forced scheduler to run")
         )

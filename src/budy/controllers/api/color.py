@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -34,24 +34,20 @@ import budy
 
 from . import root
 
-class ColorAPIController(root.RootAPIController):
 
-    @appier.route("/api/colors", "GET", json = True)
+class ColorAPIController(root.RootAPIController):
+    @appier.route("/api/colors", "GET", json=True)
     def list(self):
-        object = appier.get_object(alias = True, find = True)
-        colors = budy.Color.find_e(
-            eager = ("images",),
-            map = True,
-            **object
-        )
+        object = appier.get_object(alias=True, find=True)
+        colors = budy.Color.find_e(eager=("images",), map=True, **object)
         return colors
 
-    @appier.route("/api/colors/<int:id>", "GET", json = True)
+    @appier.route("/api/colors/<int:id>", "GET", json=True)
     def show(self, id):
-        color = budy.Color.get_e(id = id, map = True)
+        color = budy.Color.get_e(id=id, map=True)
         return color
 
-    @appier.route("/api/colors/slug/<str:slug>", "GET", json = True)
+    @appier.route("/api/colors/slug/<str:slug>", "GET", json=True)
     def slug(self, slug):
-        color = budy.Color.get_e(slug = slug, map = True)
+        color = budy.Color.get_e(slug=slug, map=True)
         return color

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -36,33 +36,35 @@ import budy
 
 from . import base
 
-class TrackingBot(base.Bot):
 
+class TrackingBot(base.Bot):
     def __init__(self, *args, **kwargs):
         base.Bot.__init__(self, *args, **kwargs)
-        self.enabled = appier.conf("TRACKING_BOT_ENABLED", False, cast = bool)
-        self.window = appier.conf("TRACKING_BOT_WINDOW", 14 * 86400, cast = int)
+        self.enabled = appier.conf("TRACKING_BOT_ENABLED", False, cast=bool)
+        self.window = appier.conf("TRACKING_BOT_WINDOW", 14 * 86400, cast=int)
         self.enabled = kwargs.get("enabled", self.enabled)
         self.window = kwargs.get("window", self.window)
         self.api = None
 
     def tick(self):
-        if not self.enabled: return
+        if not self.enabled:
+            return
         self.sync_sent()
 
     def sync_sent(self):
         orders = budy.Order.find_e(
-            status = "sent",
-            created = {"$gt" : time.time() - self.window}
+            status="sent", created={"$gt": time.time() - self.window}
         )
         for order in orders:
-            if not order.tracking_number: continue
+            if not order.tracking_number:
+                continue
             try:
                 result = appier.get(
                     "https://cttpie.stage.hive.pt",
-                    params = dict(tracking = order.tracking_number)
+                    params=dict(tracking=order.tracking_number),
                 )
-                if not result["status"] == "Entregue": continue
+                if not result["status"] == "Entregue":
+                    continue
                 order.mark_received_s()
             except Exception as exception:
                 self.logger.warn(

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -37,10 +37,10 @@ import appier
 
 import budy
 
-class OrderTest(unittest.TestCase):
 
+class OrderTest(unittest.TestCase):
     def setUp(self):
-        self.app = budy.BudyApp(level = logging.ERROR)
+        self.app = budy.BudyApp(level=logging.ERROR)
 
     def tearDown(self):
         self.app.unload()
@@ -49,10 +49,7 @@ class OrderTest(unittest.TestCase):
 
     def test_basic(self):
         product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0,
-            quantity_hand = 5.0
+            short_description="product", gender="Male", price=10.0, quantity_hand=5.0
         )
         product.save()
 
@@ -99,7 +96,7 @@ class OrderTest(unittest.TestCase):
         self.assertRaises(appier.AssertionError, order.verify_shippable)
         self.assertRaises(appier.AssertionError, order.mark_paid_s)
 
-        order_line = budy.OrderLine(quantity = 2.0)
+        order_line = budy.OrderLine(quantity=2.0)
         order_line.product = product
         order_line.save()
         order.add_line_s(order_line)
@@ -114,10 +111,10 @@ class OrderTest(unittest.TestCase):
         self.assertRaises(appier.AssertionError, order.mark_paid_s)
 
         address = budy.Address(
-            first_name = "first name",
-            last_name = "last name",
-            address = "address",
-            city = "city"
+            first_name="first name",
+            last_name="last name",
+            address="address",
+            city="city",
         )
         address.save()
 
@@ -148,7 +145,7 @@ class OrderTest(unittest.TestCase):
         order = budy.Order()
         order.save()
 
-        referral = budy.Referral(name = "name")
+        referral = budy.Referral(name="name")
         referral.save()
 
         order.set_referral_s(referral)
@@ -157,17 +154,13 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.referrals[0].name, "name")
 
     def test_store(self):
-        product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0
-        )
+        product = budy.Product(short_description="product", gender="Male", price=10.0)
         product.save()
 
         order = budy.Order()
         order.save()
 
-        order_line = budy.OrderLine(quantity = 2.0)
+        order_line = budy.OrderLine(quantity=2.0)
         order_line.product = product
         order_line.save()
         order.add_line_s(order_line)
@@ -176,22 +169,22 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.payment_currency, None)
 
         order.refresh_s(
-            currency = order.payment_currency or order.currency,
-            country = order.shipping_country or order.country
+            currency=order.payment_currency or order.currency,
+            country=order.shipping_country or order.country,
         )
 
         self.assertEqual(order.currency, None)
         self.assertEqual(order.payment_currency, None)
 
-        store = budy.Store(name = "store", currency_code = "GBP")
+        store = budy.Store(name="store", currency_code="GBP")
         store.save()
 
         account = budy.BudyAccount(
-            username = "account",
-            email = "account@account.com",
-            password = "password",
-            password_confirm = "password",
-            store = store
+            username="account",
+            email="account@account.com",
+            password="password",
+            password_confirm="password",
+            store=store,
         )
         account.save()
 
@@ -203,8 +196,8 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.payment_currency, "GBP")
 
         order.refresh_s(
-            currency = order.payment_currency or order.currency,
-            country = order.shipping_country or order.country
+            currency=order.payment_currency or order.currency,
+            country=order.shipping_country or order.country,
         )
 
         self.assertEqual(order.currency, "GBP")
@@ -213,10 +206,10 @@ class OrderTest(unittest.TestCase):
         self.assertRaises(appier.AssertionError, order.verify_store)
 
         address = budy.Address(
-            first_name = "first name",
-            last_name = "last name",
-            address = "address",
-            city = "city"
+            first_name="first name",
+            last_name="last name",
+            address="address",
+            city="city",
         )
         address.save()
         store.address = address
@@ -227,17 +220,13 @@ class OrderTest(unittest.TestCase):
         order.verify_store()
 
     def test_voucher(self):
-        product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0
-        )
+        product = budy.Product(short_description="product", gender="Male", price=10.0)
         product.save()
 
         order = budy.Order()
         order.save()
 
-        order_line = budy.OrderLine(quantity = 2.0)
+        order_line = budy.OrderLine(quantity=2.0)
         order_line.product = product
         order_line.save()
         order.add_line_s(order_line)
@@ -248,10 +237,10 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(len(order.lines), 1)
 
         address = budy.Address(
-            first_name = "first name",
-            last_name = "last name",
-            address = "address",
-            city = "city"
+            first_name="first name",
+            last_name="last name",
+            address="address",
+            city="city",
         )
         address.save()
 
@@ -260,7 +249,7 @@ class OrderTest(unittest.TestCase):
         order.email = "username@email.com"
         order.save()
 
-        voucher = budy.Voucher(amount = 5.0)
+        voucher = budy.Voucher(amount=5.0)
         voucher.save()
 
         order.add_voucher_s(voucher)
@@ -285,7 +274,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(voucher.open_amount, 0.0)
         self.assertEqual(voucher.usage_count, 1)
 
-        small_voucher = budy.Voucher(amount = 1.0)
+        small_voucher = budy.Voucher(amount=1.0)
         small_voucher.save()
 
         order.set_voucher_s(small_voucher)
@@ -300,7 +289,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(isinstance(order.total, commons.Decimal), True)
         self.assertEqual(isinstance(order.payable, commons.Decimal), True)
 
-        large_voucher = budy.Voucher(amount = 100.0)
+        large_voucher = budy.Voucher(amount=100.0)
         large_voucher.save()
 
         order.set_voucher_s(large_voucher)
@@ -322,7 +311,7 @@ class OrderTest(unittest.TestCase):
 
         order.unmark_paid_s()
 
-        percent_voucher = budy.Voucher(percentage = 10.0)
+        percent_voucher = budy.Voucher(percentage=10.0)
         percent_voucher.save()
 
         order.set_voucher_s(percent_voucher)
@@ -344,17 +333,13 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(voucher.usage_count, 1)
 
     def test_duplicate_pay(self):
-        product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0
-        )
+        product = budy.Product(short_description="product", gender="Male", price=10.0)
         product.save()
 
         order = budy.Order()
         order.save()
 
-        order_line = budy.OrderLine(quantity = 2.0)
+        order_line = budy.OrderLine(quantity=2.0)
         order_line.product = product
         order_line.save()
         order.add_line_s(order_line)
@@ -365,10 +350,10 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(len(order.lines), 1)
 
         address = budy.Address(
-            first_name = "first name",
-            last_name = "last name",
-            address = "address",
-            city = "city"
+            first_name="first name",
+            last_name="last name",
+            address="address",
+            city="city",
         )
         address.save()
 
@@ -378,13 +363,10 @@ class OrderTest(unittest.TestCase):
         order.save()
 
         def _pay_dummy(payment_data):
-            order.payment_data = dict(method = "dummy")
+            order.payment_data = dict(method="dummy")
             return False
 
-        order.pay_s(
-            payment_data = dict(type = "simple"),
-            payment_function = _pay_dummy
-        )
+        order.pay_s(payment_data=dict(type="simple"), payment_function=_pay_dummy)
 
         self.assertEqual(order.is_valid(), True)
         self.assertEqual(order_line.is_valid_quantity(), True)
@@ -395,24 +377,20 @@ class OrderTest(unittest.TestCase):
         self.assertRaises(
             appier.SecurityError,
             lambda: order.pay_s(
-                payment_data = dict(type = "simple"),
-                payment_function = _pay_dummy
-            )
+                payment_data=dict(type="simple"), payment_function=_pay_dummy
+            ),
         )
 
     def test_voucher_use(self):
         product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0,
-            quantity_hand = 5.0
+            short_description="product", gender="Male", price=10.0, quantity_hand=5.0
         )
         product.save()
 
         order = budy.Order()
         order.save()
 
-        order_line = budy.OrderLine(quantity = 2.0)
+        order_line = budy.OrderLine(quantity=2.0)
         order_line.product = product
         order_line.save()
         order.add_line_s(order_line)
@@ -423,10 +401,10 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(len(order.lines), 1)
 
         address = budy.Address(
-            first_name = "first name",
-            last_name = "last name",
-            address = "address",
-            city = "city"
+            first_name="first name",
+            last_name="last name",
+            address="address",
+            city="city",
         )
         address.save()
 
@@ -435,15 +413,12 @@ class OrderTest(unittest.TestCase):
         order.email = "username@email.com"
         order.save()
 
-        voucher = budy.Voucher(amount = 1.0)
+        voucher = budy.Voucher(amount=1.0)
         voucher.save()
 
         order.set_voucher_s(voucher)
 
-        order.pay_s(
-            payment_data = dict(type = "simple"),
-            strict = False
-        )
+        order.pay_s(payment_data=dict(type="simple"), strict=False)
 
         self.assertEqual(voucher.is_valid(), False)
         self.assertEqual(voucher.amount, 1.0)
@@ -457,10 +432,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.inventory_decremented, False)
         self.assertEqual(order.status, "waiting_payment")
 
-        order.end_pay_s(
-            payment_data = dict(type = "simple"),
-            strict = False
-        )
+        order.end_pay_s(payment_data=dict(type="simple"), strict=False)
 
         self.assertEqual(voucher.is_valid(), False)
         self.assertEqual(voucher.amount, 1.0)
@@ -482,15 +454,12 @@ class OrderTest(unittest.TestCase):
         order.status = "created"
         order.unmark_paid_s()
 
-        voucher = budy.Voucher(amount = 1.0)
+        voucher = budy.Voucher(amount=1.0)
         voucher.save()
 
         order.set_voucher_s(voucher)
 
-        order.pay_s(
-            payment_data = dict(type = "simple"),
-            strict = False
-        )
+        order.pay_s(payment_data=dict(type="simple"), strict=False)
 
         self.assertEqual(voucher.is_valid(), False)
         self.assertEqual(voucher.amount, 1.0)
@@ -524,20 +493,14 @@ class OrderTest(unittest.TestCase):
         order.status = "created"
         order.unmark_paid_s()
 
-        voucher = budy.Voucher(amount = 1.0)
+        voucher = budy.Voucher(amount=1.0)
         voucher.save()
 
         order.set_voucher_s(voucher)
 
-        order.pay_s(
-            payment_data = dict(type = "simple"),
-            strict = False
-        )
+        order.pay_s(payment_data=dict(type="simple"), strict=False)
 
-        order.end_pay_s(
-            payment_data = dict(type = "simple"),
-            strict = False
-        )
+        order.end_pay_s(payment_data=dict(type="simple"), strict=False)
 
         self.assertEqual(voucher.is_valid(), False)
         self.assertEqual(voucher.amount, 1.0)
@@ -572,17 +535,13 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.status, "canceled")
 
     def test_discount(self):
-        product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0
-        )
+        product = budy.Product(short_description="product", gender="Male", price=10.0)
         product.save()
 
         order = budy.Order()
         order.save()
 
-        order_line = budy.OrderLine(quantity = 2.0)
+        order_line = budy.OrderLine(quantity=2.0)
         order_line.product = product
         order_line.save()
         order.add_line_s(order_line)
@@ -602,7 +561,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.payable, 0.0)
         self.assertEqual(order.discountable, 20.0)
 
-        voucher = budy.Voucher(amount = 5.0)
+        voucher = budy.Voucher(amount=5.0)
         voucher.save()
 
         order.discount_fixed = 18.0
@@ -624,20 +583,13 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(voucher.usage_count, 1)
 
     def test_discountable_full(self):
-        product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0
-        )
+        product = budy.Product(short_description="product", gender="Male", price=10.0)
         product.save()
 
-        order = budy.Order(
-            discountable_full = True,
-            shipping_fixed = 10.0
-        )
+        order = budy.Order(discountable_full=True, shipping_fixed=10.0)
         order.save()
 
-        order_line = budy.OrderLine(quantity = 2.0)
+        order_line = budy.OrderLine(quantity=2.0)
         order_line.product = product
         order_line.save()
         order.add_line_s(order_line)
@@ -680,20 +632,14 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.discountable, 20.0)
 
         product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0,
-            price_compare = 12.0
+            short_description="product", gender="Male", price=10.0, price_compare=12.0
         )
         product.save()
 
-        order = budy.Order(
-            discountable_full = True,
-            shipping_fixed = 10.0
-        )
+        order = budy.Order(discountable_full=True, shipping_fixed=10.0)
         order.save()
 
-        order_line = budy.OrderLine(quantity = 2.0)
+        order_line = budy.OrderLine(quantity=2.0)
         order_line.product = product
         order_line.save()
         order.add_line_s(order_line)
@@ -737,19 +683,14 @@ class OrderTest(unittest.TestCase):
 
     def test_non_discountable(self):
         product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0,
-            discountable = False
+            short_description="product", gender="Male", price=10.0, discountable=False
         )
         product.save()
 
-        order = budy.Order(
-            shipping_fixed = 10.0
-        )
+        order = budy.Order(shipping_fixed=10.0)
         order.save()
 
-        order_line = budy.OrderLine(quantity = 2.0)
+        order_line = budy.OrderLine(quantity=2.0)
         order_line.product = product
         order_line.save()
         order.add_line_s(order_line)
@@ -773,17 +714,14 @@ class OrderTest(unittest.TestCase):
 
     def test_taxes(self):
         product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0,
-            taxes = 3.0
+            short_description="product", gender="Male", price=10.0, taxes=3.0
         )
         product.save()
 
         order = budy.Order()
         order.save()
 
-        order_line = budy.OrderLine(quantity = 2.0)
+        order_line = budy.OrderLine(quantity=2.0)
         order_line.product = product
         order_line.save()
         order.add_line_s(order_line)
@@ -797,17 +735,14 @@ class OrderTest(unittest.TestCase):
 
     def test_quantity(self):
         product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0,
-            quantity_hand = 1.0
+            short_description="product", gender="Male", price=10.0, quantity_hand=1.0
         )
         product.save()
 
         order = budy.Order()
         order.save()
 
-        order_line = budy.OrderLine(quantity = 2.0)
+        order_line = budy.OrderLine(quantity=2.0)
         order_line.product = product
 
         self.assertRaises(appier.AssertionError, order_line.save)
@@ -853,10 +788,10 @@ class OrderTest(unittest.TestCase):
         product.save()
 
         address = budy.Address(
-            first_name = "first name",
-            last_name = "last name",
-            address = "address",
-            city = "city"
+            first_name="first name",
+            last_name="last name",
+            address="address",
+            city="city",
         )
         address.save()
 
@@ -886,20 +821,17 @@ class OrderTest(unittest.TestCase):
 
     def test_measurements(self):
         product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0,
-            quantity_hand = None
+            short_description="product", gender="Male", price=10.0, quantity_hand=None
         )
         product.save()
 
         measurement = budy.Measurement(
-            name = "size",
-            value = 12,
-            value_s = "12",
-            price = 12.0,
-            quantity_hand = None,
-            product = product
+            name="size",
+            value=12,
+            value_s="12",
+            price=12.0,
+            quantity_hand=None,
+            product=product,
         )
         measurement.save()
 
@@ -909,7 +841,7 @@ class OrderTest(unittest.TestCase):
         order = budy.Order()
         order.save()
 
-        order_line = budy.OrderLine(quantity = 2.0)
+        order_line = budy.OrderLine(quantity=2.0)
         order_line.product = product
 
         self.assertRaises(appier.AssertionError, order_line.save)
@@ -918,12 +850,7 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order_line.is_valid_price(), True)
         self.assertEqual(order_line.is_valid_size(), False)
 
-        order_line = budy.OrderLine(
-            price = 12.0,
-            quantity = 2.0,
-            size = 12,
-            scale = 1
-        )
+        order_line = budy.OrderLine(price=12.0, quantity=2.0, size=12, scale=1)
         order_line.product = product
 
         self.assertEqual(order_line.is_valid(), True)
@@ -944,17 +871,14 @@ class OrderTest(unittest.TestCase):
 
     def test_free(self):
         product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0,
-            quantity_hand = 5.0
+            short_description="product", gender="Male", price=10.0, quantity_hand=5.0
         )
         product.save()
 
         order = budy.Order()
         order.save()
 
-        order_line = budy.OrderLine(quantity = 2.0)
+        order_line = budy.OrderLine(quantity=2.0)
         order_line.product = product
         order_line.save()
         order.add_line_s(order_line)
@@ -965,10 +889,10 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(len(order.lines), 1)
 
         address = budy.Address(
-            first_name = "first name",
-            last_name = "last name",
-            address = "address",
-            city = "city"
+            first_name="first name",
+            last_name="last name",
+            address="address",
+            city="city",
         )
         address.save()
 
@@ -977,7 +901,7 @@ class OrderTest(unittest.TestCase):
         order.email = "username@email.com"
         order.save()
 
-        voucher = budy.Voucher(amount = 20.0)
+        voucher = budy.Voucher(amount=20.0)
         voucher.save()
 
         order.add_voucher_s(voucher)
@@ -1019,23 +943,19 @@ class OrderTest(unittest.TestCase):
         order = budy.Order()
         order.save()
 
-        product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0
-        )
+        product = budy.Product(short_description="product", gender="Male", price=10.0)
         product.save()
 
-        order_line = budy.OrderLine(quantity = 2.0)
+        order_line = budy.OrderLine(quantity=2.0)
         order_line.product = product
         order_line.save()
         order.add_line_s(order_line)
 
         address = budy.Address(
-            first_name = "first name",
-            last_name = "last name",
-            address = "address",
-            city = "city"
+            first_name="first name",
+            last_name="last name",
+            address="address",
+            city="city",
         )
         address.save()
 
@@ -1054,17 +974,14 @@ class OrderTest(unittest.TestCase):
 
     def test_payment_method(self):
         product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0,
-            quantity_hand = 5.0
+            short_description="product", gender="Male", price=10.0, quantity_hand=5.0
         )
         product.save()
 
         order = budy.Order()
         order.save()
 
-        order_line = budy.OrderLine(quantity = 2.0)
+        order_line = budy.OrderLine(quantity=2.0)
         order_line.product = product
         order_line.save()
         order.add_line_s(order_line)
@@ -1075,10 +992,10 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(len(order.lines), 1)
 
         address = budy.Address(
-            first_name = "first name",
-            last_name = "last name",
-            address = "address",
-            city = "city"
+            first_name="first name",
+            last_name="last name",
+            address="address",
+            city="city",
         )
         address.save()
 
@@ -1094,14 +1011,10 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.status, "created")
 
         self.assertRaises(
-            appier.SecurityError,
-            lambda: order.pay_s(payment_data = dict(type = "simple"))
+            appier.SecurityError, lambda: order.pay_s(payment_data=dict(type="simple"))
         )
 
-        order.pay_s(
-            payment_data = dict(type = "simple"),
-            strict = False
-        )
+        order.pay_s(payment_data=dict(type="simple"), strict=False)
 
         self.assertEqual(order.is_valid(), True)
         self.assertEqual(order_line.is_valid_quantity(), True)
@@ -1111,15 +1024,10 @@ class OrderTest(unittest.TestCase):
 
         self.assertRaises(
             appier.SecurityError,
-            lambda: order.end_pay_s(
-                payment_data = dict(type = "simple"),
-                strict = True
-            )
+            lambda: order.end_pay_s(payment_data=dict(type="simple"), strict=True),
         )
 
-        order.end_pay_s(
-            payment_data = dict(type = "simple")
-        )
+        order.end_pay_s(payment_data=dict(type="simple"))
 
         self.assertEqual(order.is_valid(), True)
         self.assertEqual(order_line.is_valid_quantity(), True)
@@ -1132,17 +1040,13 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(product.quantity_hand, 3.0)
 
     def test__build_notes(self):
-        product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0
-        )
+        product = budy.Product(short_description="product", gender="Male", price=10.0)
         product.save()
 
         order = budy.Order()
         order.save()
 
-        order_line = budy.OrderLine(quantity = 2.0)
+        order_line = budy.OrderLine(quantity=2.0)
         order_line.product = product
         order_line.save()
         order.add_line_s(order_line)
@@ -1156,21 +1060,26 @@ class OrderTest(unittest.TestCase):
 
         self.assertEqual(notes, "Budy order - BD-000001")
 
-        order_line.attributes = json.dumps(dict(initials = "IN"))
+        order_line.attributes = json.dumps(dict(initials="IN"))
         order_line.save()
 
         order = order.reload()
         notes = order._build_notes()
 
-        self.assertEqual(notes, "Budy order - BD-000001\nOrder line - product | initials = IN")
+        self.assertEqual(
+            notes, "Budy order - BD-000001\nOrder line - product | initials = IN"
+        )
 
-        order_line.attributes = json.dumps(dict(initials = "IN", engraving = "gold"))
+        order_line.attributes = json.dumps(dict(initials="IN", engraving="gold"))
         order_line.save()
 
         order = order.reload()
         notes = order._build_notes()
 
-        self.assertEqual(notes, "Budy order - BD-000001\nOrder line - product | engraving = gold\nOrder line - product | initials = IN")
+        self.assertEqual(
+            notes,
+            "Budy order - BD-000001\nOrder line - product | engraving = gold\nOrder line - product | initials = IN",
+        )
 
         order_line.attributes = "INVALID STRING"
         order_line.save()

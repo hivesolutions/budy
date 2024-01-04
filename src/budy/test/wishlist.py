@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -36,10 +36,10 @@ import appier
 
 import budy
 
-class WishlistTest(unittest.TestCase):
 
+class WishlistTest(unittest.TestCase):
     def setUp(self):
-        self.app = budy.BudyApp(level = logging.ERROR)
+        self.app = budy.BudyApp(level=logging.ERROR)
 
     def tearDown(self):
         self.app.unload()
@@ -47,11 +47,7 @@ class WishlistTest(unittest.TestCase):
         adapter.drop_db()
 
     def test_basic(self):
-        product = budy.Product(
-            short_description = "product",
-            gender = "Male",
-            price = 10.0
-        )
+        product = budy.Product(short_description="product", gender="Male", price=10.0)
         product.save()
 
         self.assertEqual(product.short_description, "product")
@@ -67,9 +63,7 @@ class WishlistTest(unittest.TestCase):
         self.assertEqual(wishlist.currency, None)
         self.assertEqual(wishlist.total >= 0.0, True)
 
-        wishlist_line = budy.WishlistLine(
-            quantity = 2.0
-        )
+        wishlist_line = budy.WishlistLine(quantity=2.0)
         wishlist_line.product = product
         wishlist_line.save()
         wishlist.add_line_s(wishlist_line)
@@ -85,9 +79,7 @@ class WishlistTest(unittest.TestCase):
         self.assertEqual(len(wishlist.lines), 1)
 
         product_expensive = budy.Product(
-            short_description = "product_expensive",
-            gender = "Female",
-            price = 100.0
+            short_description="product_expensive", gender="Female", price=100.0
         )
         product_expensive.save()
 

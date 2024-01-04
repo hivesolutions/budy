@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -32,12 +32,9 @@ import appier
 
 from . import base
 
-class Referral(base.BudyBase):
 
-    name = appier.field(
-        index = True,
-        default = True
-    )
+class Referral(base.BudyBase):
+    name = appier.field(index=True, default=True)
 
     @classmethod
     def validate(cls):
@@ -46,7 +43,7 @@ class Referral(base.BudyBase):
             appier.not_empty("name"),
             appier.string_gt("name", 3),
             appier.string_lt("name", 64),
-            appier.not_duplicate("name", cls._name())
+            appier.not_duplicate("name", cls._name()),
         ]
 
     @classmethod
@@ -59,20 +56,19 @@ class Referral(base.BudyBase):
 
     @classmethod
     @appier.operation(
-        name = "Import CSV",
-        parameters = (
+        name="Import CSV",
+        parameters=(
             ("CSV File", "file", "file"),
-            ("Empty source", "empty", bool, False)
-        )
+            ("Empty source", "empty", bool, False),
+        ),
     )
     def import_csv_s(cls, file, empty):
         def callback(line):
             store, name = line
             composed_name = "%s|%s" % (name, store)
-            referral = cls(
-                name = composed_name
-            )
+            referral = cls(name=composed_name)
             referral.save()
 
-        if empty: cls.delete_c()
+        if empty:
+            cls.delete_c()
         cls._csv_import(file, callback)

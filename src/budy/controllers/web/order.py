@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -32,27 +32,22 @@ import appier
 
 import budy
 
-class OrderController(appier.Controller):
 
+class OrderController(appier.Controller):
     @appier.route("/orders/me", "GET")
     @appier.route("/orders/me/<str:status>", "GET")
-    @appier.ensure(token = "user")
-    def me(self, status = "waiting_payment"):
+    @appier.ensure(token="user")
+    def me(self, status="waiting_payment"):
         account = budy.BudyAccount.from_session()
-        orders = account.get_store_orders(status = status)
-        return self.template(
-            "order/me.html.tpl",
-            orders = orders
-        )
+        orders = account.get_store_orders(status=status)
+        return self.template("order/me.html.tpl", orders=orders)
 
     @appier.route("/orders/<str:key>/mark_paid", "GET")
-    @appier.ensure(token = "user")
+    @appier.ensure(token="user")
     def mark_paid(self, key):
-        order = budy.Order.get(key = key)
+        order = budy.Order.get(key=key)
         account = budy.BudyAccount.from_session()
         order.verify_account(account)
         order.mark_paid_s()
         order.notify_s()
-        return self.redirect(
-            self.url_for("order.me")
-        )
+        return self.redirect(self.url_for("order.me"))

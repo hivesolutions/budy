@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -45,203 +45,127 @@ from . import voucher
 from . import currency
 from . import order_line
 
-COUNTRIES_MAP = dict(
-    ES = "Spain",
-    PT = "Portugal"
-)
+COUNTRIES_MAP = dict(ES="Spain", PT="Portugal")
 """ Map that associates ISO alpha-2 country codes with
 their corresponding full text version to be used in Omni """
 
-GENDERS_MAP = dict(
-    Male = 1,
-    Female = 2
-)
+GENDERS_MAP = dict(Male=1, Female=2)
 """ Map that associates the internal string based gender
 enumeration with the Omni's numeric one """
 
-class Order(bundle.Bundle):
 
+class Order(bundle.Bundle):
     STATUS_S = dict(
-        created = "created",
-        waiting_payment = "waiting_payment",
-        paid = "paid",
-        invoiced = "invoiced",
-        sent = "sent",
-        received = "received",
-        returned = "returned",
-        canceled = "canceled",
-        completed = "completed"
+        created="created",
+        waiting_payment="waiting_payment",
+        paid="paid",
+        invoiced="invoiced",
+        sent="sent",
+        received="received",
+        returned="returned",
+        canceled="canceled",
+        completed="completed",
     )
 
     STATUS_C = dict(
-        created = "grey",
-        waiting_payment = "orange",
-        paid = "purple",
-        invoiced = "orange",
-        sent = "blue",
-        received = "green",
-        returned = "red",
-        canceled = "red",
-        completed = "green"
+        created="grey",
+        waiting_payment="orange",
+        paid="purple",
+        invoiced="orange",
+        sent="blue",
+        received="green",
+        returned="red",
+        canceled="red",
+        completed="green",
     )
 
     status = appier.field(
-        initial = "created",
-        index = True,
-        safe = True,
-        meta = "enum",
-        enum = STATUS_S,
-        colors = STATUS_C
+        initial="created",
+        index=True,
+        safe=True,
+        meta="enum",
+        enum=STATUS_S,
+        colors=STATUS_C,
     )
 
-    reference = appier.field(
-        index = "hashed",
-        default = True,
-        safe = True
-    )
+    reference = appier.field(index="hashed", default=True, safe=True)
 
-    reference_f = appier.field(
-        index = "hashed",
-        safe = True
-    )
+    reference_f = appier.field(index="hashed", safe=True)
 
-    paid = appier.field(
-        type = bool,
-        index = "hashed",
-        initial = False,
-        safe = True
-    )
+    paid = appier.field(type=bool, index="hashed", initial=False, safe=True)
 
-    date = appier.field(
-        type = int,
-        index = True,
-        safe = True,
-        meta = "datetime"
-    )
+    date = appier.field(type=int, index=True, safe=True, meta="datetime")
 
-    delivery_date = appier.field(
-        type = int,
-        index = True,
-        safe = True,
-        meta = "datetime"
-    )
+    delivery_date = appier.field(type=int, index=True, safe=True, meta="datetime")
 
     email = appier.field(
-        index = "hashed",
-        safe = True,
-        observations = """The email of the entity owner of the current
-        order, typically a personal email address of the buyer"""
+        index="hashed",
+        safe=True,
+        observations="""The email of the entity owner of the current
+        order, typically a personal email address of the buyer""",
     )
 
-    gift_wrap = appier.field(
-        type = bool,
-        index = "hashed",
-        initial = False,
-        safe = True
-    )
+    gift_wrap = appier.field(type=bool, index="hashed", initial=False, safe=True)
 
     tracking_number = appier.field(
-        index = "hashed",
+        index="hashed",
     )
 
-    tracking_url = appier.field(
-        index = "hashed",
-        meta = "url",
-        description = "Tracking URL"
-    )
+    tracking_url = appier.field(index="hashed", meta="url", description="Tracking URL")
 
-    payment_data = appier.field(
-        type = dict
-    )
+    payment_data = appier.field(type=dict)
 
-    cancel_data = appier.field(
-        type = dict
-    )
+    cancel_data = appier.field(type=dict)
 
-    discount_data = appier.field(
-        type = dict
-    )
+    discount_data = appier.field(type=dict)
 
-    notifications = appier.field(
-        type = list,
-        initial = [],
-        safe = True
-    )
+    notifications = appier.field(type=list, initial=[], safe=True)
 
     discount_voucher = appier.field(
-        type = commons.Decimal,
-        index = "hashed",
-        initial = commons.Decimal(0.0),
-        safe = True,
-        observations = """The discount value that is related with
+        type=commons.Decimal,
+        index="hashed",
+        initial=commons.Decimal(0.0),
+        safe=True,
+        observations="""The discount value that is related with
         the vouchers to be redeemed (or already redeemed) for the
-        current order"""
+        current order""",
     )
 
     discount_used = appier.field(
-        type = commons.Decimal,
-        index = "hashed",
-        initial = commons.Decimal(0.0),
-        safe = True,
-        observations = """The total value already used via the
-        redeeming of the vouchers associated with the current order"""
+        type=commons.Decimal,
+        index="hashed",
+        initial=commons.Decimal(0.0),
+        safe=True,
+        observations="""The total value already used via the
+        redeeming of the vouchers associated with the current order""",
     )
 
     inventory_decremented = appier.field(
-        type = bool,
-        observations = """Controls if the inventory stock levels
-        have been decrement according to current order's lines"""
+        type=bool,
+        observations="""Controls if the inventory stock levels
+        have been decrement according to current order's lines""",
     )
 
-    lines = appier.field(
-        type = appier.references(
-            "OrderLine",
-            name = "id"
-        ),
-        eager = True
-    )
+    lines = appier.field(type=appier.references("OrderLine", name="id"), eager=True)
 
-    vouchers = appier.field(
-        type = appier.references(
-            "Voucher",
-            name = "id"
-        ),
-        eager = True
-    )
+    vouchers = appier.field(type=appier.references("Voucher", name="id"), eager=True)
 
-    account = appier.field(
-        type = appier.reference(
-            "BudyAccount",
-            name = "id"
-        ),
-        eager = True
-    )
+    account = appier.field(type=appier.reference("BudyAccount", name="id"), eager=True)
 
     store = appier.field(
-        type = appier.reference(
-            "Store",
-            name = "id"
-        ),
-        eager = True,
-        observations = """If set defines the store in which
+        type=appier.reference("Store", name="id"),
+        eager=True,
+        observations="""If set defines the store in which
         the order should be delivered, in principle the shipping
-        address should be set to the address of the store"""
+        address should be set to the address of the store""",
     )
 
     shipping_address = appier.field(
-        type = appier.reference(
-            "Address",
-            name = "id"
-        ),
-        eager = True
+        type=appier.reference("Address", name="id"), eager=True
     )
 
     billing_address = appier.field(
-        type = appier.reference(
-            "Address",
-            name = "id"
-        ),
-        eager = True
+        type=appier.reference("Address", name="id"), eager=True
     )
 
     @classmethod
@@ -263,122 +187,106 @@ class Order(bundle.Bundle):
 
     @classmethod
     @appier.link(
-        name = "Export Complex",
-        parameters = (
-            ("Start ID", "start", int),
-            ("End ID", "end", int)
-        )
+        name="Export Complex",
+        parameters=(("Start ID", "start", int), ("End ID", "end", int)),
     )
-    def complex_csv_url(cls, start = None, end = None, absolute = False):
+    def complex_csv_url(cls, start=None, end=None, absolute=False):
         return appier.get_app().url_for(
-            "order_api.complex_csv",
-            start = start,
-            end = end,
-            absolute = absolute
+            "order_api.complex_csv", start=start, end=end, absolute=absolute
         )
 
     @classmethod
     @appier.link(
-        name = "Export CTT",
-        parameters = (
-            ("Start ID", "start", int),
-            ("End ID", "end", int)
-        )
+        name="Export CTT",
+        parameters=(("Start ID", "start", int), ("End ID", "end", int)),
     )
-    def ctt_csv_url(cls, start = None, end = None, absolute = False):
+    def ctt_csv_url(cls, start=None, end=None, absolute=False):
         return appier.get_app().url_for(
-            "order_api.ctt_csv",
-            start = start,
-            end = end,
-            absolute = absolute
+            "order_api.ctt_csv", start=start, end=end, absolute=absolute
         )
 
     @classmethod
-    @appier.link(name = "Export CTT Context", context = True)
-    def ctt_csv_context_url(cls, view = None, context = None, absolute = False):
+    @appier.link(name="Export CTT Context", context=True)
+    def ctt_csv_context_url(cls, view=None, context=None, absolute=False):
         return appier.get_app().url_for(
-            "order_api.ctt_csv",
-            view = view,
-            context = context,
-            absolute = absolute
+            "order_api.ctt_csv", view=view, context=context, absolute=absolute
         )
 
     @classmethod
     @appier.operation(
-        name = "Import CTT",
-        parameters = (
+        name="Import CTT",
+        parameters=(
             ("CSV File", "file", "file"),
-            ("Base URL", "base_url", str, "http://www.ctt.pt/feapl_2/app/open/cttexpresso/objectSearch/objectSearch.jspx?objects=%s"),
-            ("Force", "force", bool, False)
-        )
+            (
+                "Base URL",
+                "base_url",
+                str,
+                "http://www.ctt.pt/feapl_2/app/open/cttexpresso/objectSearch/objectSearch.jspx?objects=%s",
+            ),
+            ("Force", "force", bool, False),
+        ),
     )
     def import_ctt_csv_s(cls, file, base_url, force):
-
         def callback(line):
-            _date,\
-            _ctt_ref,\
-            _ctt_id,\
-            reference,\
-            tracking_number,\
-            _quantity,\
-            _customer,\
-            _weight,\
-            _price = line
-
-            order = cls.get(reference = reference, raise_e = False)
-            if not order: return
-            if not force and order.tracking_number: return
-            if not force and order.tracking_url: return
-
-            order.set_tracking_s(
+            (
+                _date,
+                _ctt_ref,
+                _ctt_id,
+                reference,
                 tracking_number,
-                base_url % tracking_number
-            )
+                _quantity,
+                _customer,
+                _weight,
+                _price,
+            ) = line
 
-        cls._csv_import(
-            file,
-            callback,
-            header = False,
-            delimiter = "+",
-            encoding = "Cp1252"
-        )
+            order = cls.get(reference=reference, raise_e=False)
+            if not order:
+                return
+            if not force and order.tracking_number:
+                return
+            if not force and order.tracking_url:
+                return
+
+            order.set_tracking_s(tracking_number, base_url % tracking_number)
+
+        cls._csv_import(file, callback, header=False, delimiter="+", encoding="Cp1252")
 
     @classmethod
     @appier.operation(
-        name = "Generate Dummy",
-        parameters = (
+        name="Generate Dummy",
+        parameters=(
             ("Product Description", "short_description", str, "product"),
             ("Product Gender", "gender", str, "Male"),
             ("Product Price", "price", float, 10.0),
             ("Quantity", "quantity", float, 1.0),
-            ("Set Account", "set_account", bool, True)
+            ("Set Account", "set_account", bool, True),
         ),
-        devel = True
+        devel=True,
     )
     def generate_dummy_s(
         cls,
-        short_description = "product",
-        gender = "Male",
-        price = 10.0,
-        quantity = 1.0,
-        set_account = True
+        short_description="product",
+        gender="Male",
+        price=10.0,
+        quantity=1.0,
+        set_account=True,
     ):
         _product = product.Product(
-            short_description = short_description,
-            gender = gender,
-            price = price
+            short_description=short_description, gender=gender, price=price
         )
         _product.save()
 
         order = cls()
         order.save()
 
-        _order_line = order_line.OrderLine(quantity = quantity)
+        _order_line = order_line.OrderLine(quantity=quantity)
         _order_line.product = _product
         _order_line.save()
         order.add_line_s(_order_line)
 
-        if not set_account: return
+        if not set_account:
+            return
 
         from . import account
 
@@ -386,10 +294,10 @@ class Order(bundle.Bundle):
         email = "%s@account.com" % username
 
         _account = account.BudyAccount(
-            username = username,
-            email = email,
-            password = "password",
-            password_confirm = "password"
+            username=username,
+            email=email,
+            password="password",
+            password_confirm="password",
         )
         _account.save()
 
@@ -397,68 +305,78 @@ class Order(bundle.Bundle):
 
     @classmethod
     @appier.operation(
-        name = "Multiple Dummy",
-        parameters = (
-            ("Quantity", "quantity", int, 10),
-        ),
-        devel = True
+        name="Multiple Dummy",
+        parameters=(("Quantity", "quantity", int, 10),),
+        devel=True,
     )
     def multiple_dummy_s(cls, quantity):
-        for _index in range(quantity): cls.generate_dummy_s()
+        for _index in range(quantity):
+            cls.generate_dummy_s()
 
     @classmethod
-    @appier.view(name = "Paid")
+    @appier.view(name="Paid")
     def paid_v(cls, *args, **kwargs):
         kwargs["sort"] = kwargs.get("sort", [("id", -1)])
-        kwargs.update(paid = True)
+        kwargs.update(paid=True)
         return appier.lazy_dict(
-            model = cls,
-            kwargs = kwargs,
-            entities = appier.lazy(lambda: cls.find(*args, **kwargs)),
-            page = appier.lazy(lambda: cls.paginate(*args, **kwargs))
+            model=cls,
+            kwargs=kwargs,
+            entities=appier.lazy(lambda: cls.find(*args, **kwargs)),
+            page=appier.lazy(lambda: cls.paginate(*args, **kwargs)),
         )
 
     @classmethod
-    @appier.view(
-        name = "Status",
-        parameters = (
-            ("Status", "status", str, "paid"),
-        )
-    )
+    @appier.view(name="Status", parameters=(("Status", "status", str, "paid"),))
     def status_v(cls, status, *args, **kwargs):
         kwargs["sort"] = kwargs.get("sort", [("id", -1)])
-        kwargs.update(status = status)
+        kwargs.update(status=status)
         return appier.lazy_dict(
-            model = cls,
-            kwargs = kwargs,
-            entities = appier.lazy(lambda: cls.find(*args, **kwargs)),
-            page = appier.lazy(lambda: cls.paginate(*args, **kwargs))
+            model=cls,
+            kwargs=kwargs,
+            entities=appier.lazy(lambda: cls.find(*args, **kwargs)),
+            page=appier.lazy(lambda: cls.paginate(*args, **kwargs)),
         )
 
     @classmethod
-    @appier.view(name = "To Store")
+    @appier.view(name="To Store")
     def to_store_v(cls, *args, **kwargs):
         kwargs["sort"] = kwargs.get("sort", [("id", -1)])
-        kwargs.update(store = {"$ne" : None})
+        kwargs.update(store={"$ne": None})
         return appier.lazy_dict(
-            model = cls,
-            kwargs = kwargs,
-            entities = appier.lazy(lambda: cls.find(*args, **kwargs)),
-            page = appier.lazy(lambda: cls.paginate(*args, **kwargs)),
-            names = ["reference", "store", "total", "currency", "email", "created", "status"]
+            model=cls,
+            kwargs=kwargs,
+            entities=appier.lazy(lambda: cls.find(*args, **kwargs)),
+            page=appier.lazy(lambda: cls.paginate(*args, **kwargs)),
+            names=[
+                "reference",
+                "store",
+                "total",
+                "currency",
+                "email",
+                "created",
+                "status",
+            ],
         )
 
     @classmethod
-    @appier.view(name = "To Store Paid")
+    @appier.view(name="To Store Paid")
     def to_store_paid_v(cls, *args, **kwargs):
         kwargs["sort"] = kwargs.get("sort", [("id", -1)])
-        kwargs.update(store = {"$ne" : None}, paid = True)
+        kwargs.update(store={"$ne": None}, paid=True)
         return appier.lazy_dict(
-            model = cls,
-            kwargs = kwargs,
-            entities = appier.lazy(lambda: cls.find(*args, **kwargs)),
-            page = appier.lazy(lambda: cls.paginate(*args, **kwargs)),
-            names = ["reference", "store", "total", "currency", "email", "created", "status"]
+            model=cls,
+            kwargs=kwargs,
+            entities=appier.lazy(lambda: cls.find(*args, **kwargs)),
+            page=appier.lazy(lambda: cls.paginate(*args, **kwargs)),
+            names=[
+                "reference",
+                "store",
+                "total",
+                "currency",
+                "email",
+                "created",
+                "status",
+            ],
         )
 
     @classmethod
@@ -472,11 +390,7 @@ class Order(bundle.Bundle):
 
     @classmethod
     def _pmethods_stripe(cls):
-        return (
-            "visa",
-            "mastercard",
-            "american_express"
-        )
+        return ("visa", "mastercard", "american_express")
 
     @classmethod
     def _pmethods_easypay(cls):
@@ -492,20 +406,26 @@ class Order(bundle.Bundle):
 
     @classmethod
     def _get_api_stripe(cls):
-        try: import stripe
-        except ImportError: return None
+        try:
+            import stripe
+        except ImportError:
+            return None
         return stripe.API.singleton()
 
     @classmethod
     def _get_api_easypay(cls):
-        try: import easypay
-        except ImportError: return None
-        return easypay.ShelveAPI.singleton(scallback = cls._on_api_easypay)
+        try:
+            import easypay
+        except ImportError:
+            return None
+        return easypay.ShelveAPI.singleton(scallback=cls._on_api_easypay)
 
     @classmethod
     def _get_api_paypal(cls):
-        try: import paypal
-        except ImportError: return None
+        try:
+            import paypal
+        except ImportError:
+            return None
         return paypal.API.singleton()
 
     @classmethod
@@ -517,22 +437,25 @@ class Order(bundle.Bundle):
     @classmethod
     def _on_paid_easypay(cls, reference, details):
         identifier = reference["identifier"]
-        order = cls.get(key = identifier, raise_e = False)
-        if order.is_payable(): order.end_pay_s(notify = True)
+        order = cls.get(key=identifier, raise_e=False)
+        if order.is_payable():
+            order.end_pay_s(notify=True)
 
     @classmethod
     def _on_canceled_easypay(cls, reference):
         identifier = reference["identifier"]
-        order = cls.get(key = identifier, raise_e = False)
-        order.cancel_s(notify = True)
+        order = cls.get(key=identifier, raise_e=False)
+        order.cancel_s(notify=True)
 
     def pre_validate(self):
         bundle.Bundle.pre_validate(self)
-        if self.is_open(): self.try_valid()
+        if self.is_open():
+            self.try_valid()
 
     def pre_delete(self):
         bundle.Bundle.pre_delete(self)
-        for line in self.lines: line.delete()
+        for line in self.lines:
+            line.delete()
 
     def post_create(self):
         bundle.Bundle.post_create(self)
@@ -546,7 +469,8 @@ class Order(bundle.Bundle):
         # in case the current status of the current order is the
         # first one (created) the order is considered to be open
         # and so the validation process must occur
-        if self.is_open(): return bundle.Bundle.is_valid(self)
+        if self.is_open():
+            return bundle.Bundle.is_valid(self)
 
         # returns the true value on all other cases as the order lines
         # are considered to be valid at all times and don't require
@@ -554,10 +478,12 @@ class Order(bundle.Bundle):
         return True
 
     def build_discount(self):
-        join = appier.conf("BUDY_JOIN_DISCOUNT", True, cast = bool)
+        join = appier.conf("BUDY_JOIN_DISCOUNT", True, cast=bool)
         base_discount = bundle.Bundle.build_discount(self)
-        if join: return base_discount + self.discount_voucher
-        if self.discount_voucher > base_discount: return self.discount_voucher
+        if join:
+            return base_discount + self.discount_voucher
+        if self.discount_voucher > base_discount:
+            return self.discount_voucher
         return base_discount
 
     def set_account_s(self, account):
@@ -568,17 +494,18 @@ class Order(bundle.Bundle):
         self.save()
 
     def add_voucher_s(self, voucher):
-        join = appier.conf("BUDY_JOIN_DISCOUNT", True, cast = bool)
-        appier.verify(voucher.is_valid(currency = self.currency))
-        discount = voucher.discount(self.discountable, currency = self.currency)
+        join = appier.conf("BUDY_JOIN_DISCOUNT", True, cast=bool)
+        appier.verify(voucher.is_valid(currency=self.currency))
+        discount = voucher.discount(self.discountable, currency=self.currency)
         base_discount = bundle.Bundle.build_discount(self)
-        if not join and discount <= base_discount: return
+        if not join and discount <= base_discount:
+            return
         self.discount_voucher += discount
         self.vouchers.append(voucher)
         self.save()
 
     def set_voucher_s(self, voucher):
-        appier.verify(voucher.is_valid(currency = self.currency))
+        appier.verify(voucher.is_valid(currency=self.currency))
         self.empty_vouchers_s()
         self.add_voucher_s(voucher)
 
@@ -590,52 +517,54 @@ class Order(bundle.Bundle):
     def refresh_vouchers_s(self):
         vouchers = self.vouchers
         self.empty_vouchers_s()
-        for voucher in vouchers: self.add_voucher_s(voucher)
+        for voucher in vouchers:
+            self.add_voucher_s(voucher)
 
     def set_meta_s(self, name, value):
         self.meta[name] = value
         self.save()
 
     def refresh_s(self, *args, **kwargs):
-        if self.paid: return
+        if self.paid:
+            return
         refreshed = bundle.Bundle.refresh_s(self, *args, **kwargs)
-        if refreshed: self.refresh_vouchers_s()
+        if refreshed:
+            self.refresh_vouchers_s()
 
-    def wait_payment_s(self, notify = False):
+    def wait_payment_s(self, notify=False):
         self.verify_waiting_payment()
         self.mark_waiting_payment_s()
-        if notify: self.notify_s()
+        if notify:
+            self.notify_s()
 
     def pay_s(
         self,
-        payment_data = None,
-        payment_function = None,
-        vouchers = True,
-        strict = True,
-        notify = False,
-        ensure_waiting = True
+        payment_data=None,
+        payment_function=None,
+        vouchers=True,
+        strict=True,
+        notify=False,
+        ensure_waiting=True,
     ):
         payment_data = payment_data or dict()
-        if ensure_waiting: self.ensure_waiting_s()
+        if ensure_waiting:
+            self.ensure_waiting_s()
         self.verify_paid()
         result = self._pay(
-            payment_data,
-            payment_function = payment_function,
-            strict = strict
+            payment_data, payment_function=payment_function, strict=strict
         )
         confirmed = result == True
         self.save()
-        if vouchers: self.use_vouchers_s()
-        if confirmed: self.end_pay_s()
-        if notify: self.notify_s()
+        if vouchers:
+            self.use_vouchers_s()
+        if confirmed:
+            self.end_pay_s()
+        if notify:
+            self.notify_s()
         return result
 
     def end_pay_s(
-        self,
-        payment_data = None,
-        payment_function = None,
-        strict = False,
-        notify = False
+        self, payment_data=None, payment_function=None, strict=False, notify=False
     ):
         # joins the payment data passed as parameter and then
         # one currently stored as part of the order, these
@@ -648,15 +577,14 @@ class Order(bundle.Bundle):
         # a concrete operation has been executed or an invalid
         # value in case nothing has been done
         result = self._end_pay(
-            payment_data,
-            payment_function = payment_function,
-            strict = strict
+            payment_data, payment_function=payment_function, strict=strict
         )
 
         # marks the current order as completely paid and in case
         # the notify flag is set notifies the event handlers
         self.mark_paid_s()
-        if notify: self.notify_s()
+        if notify:
+            self.notify_s()
 
         # returns the result value from the end pay operation to
         # the caller method (for post-processing)
@@ -664,25 +592,25 @@ class Order(bundle.Bundle):
 
     def cancel_s(
         self,
-        cancel_data = None,
-        cancel_function = None,
-        vouchers = True,
-        strict = False,
-        notify = False
+        cancel_data=None,
+        cancel_function=None,
+        vouchers=True,
+        strict=False,
+        notify=False,
     ):
         cancel_data = cancel_data or dict()
         cancel_data.update(self.cancel_data)
         result = self._cancel(
-            cancel_data,
-            cancel_function = cancel_function,
-            strict = strict
+            cancel_data, cancel_function=cancel_function, strict=strict
         )
         self.mark_canceled_s()
-        if vouchers: self.disuse_vouchers_s()
-        if notify: self.notify_s()
+        if vouchers:
+            self.disuse_vouchers_s()
+        if notify:
+            self.notify_s()
         return result
 
-    def use_vouchers_s(self, reset = True):
+    def use_vouchers_s(self, reset=True):
         """
         Runs the use/redeem operation on the vouchers currently associated
         with the order, note that in case the reset flag is set the values
@@ -707,7 +635,8 @@ class Order(bundle.Bundle):
         # value is already zero
         discount = self.calculate_discount()
         pending = discount - self.discount_base - self.discount_used
-        if pending <= 0.0: return
+        if pending <= 0.0:
+            return
 
         # iterates over the complete set of vouchers currently associated
         # with the order (both value and percentage) to try to retrieve
@@ -715,16 +644,14 @@ class Order(bundle.Bundle):
         for voucher in self.vouchers:
             # in case there's no more discount pending/allowed to be
             # applied breaks the current loop (no more usage allowed)
-            if pending == 0.0: break
+            if pending == 0.0:
+                break
 
             # retrieves the "possible" discount value from the voucher
             # according to the order's currency (this value may be calculated
             # as a percentage of the discountable value or a fixed value
             # depending on the nature of the voucher, value vs percentage)
-            discount = voucher.discount(
-                self.discountable,
-                currency = self.currency
-            )
+            discount = voucher.discount(self.discountable, currency=self.currency)
 
             # determines the concrete amount of discount to be used by
             # comparing it with the pending value (lowest wins)
@@ -733,7 +660,7 @@ class Order(bundle.Bundle):
             # runs the concrete voucher usage operation taking into account
             # the "target" discount amount and the currency and decrements
             # the pending value by the amount one
-            voucher.use_s(amount, currency = self.currency)
+            voucher.use_s(amount, currency=self.currency)
             pending -= commons.Decimal(amount)
 
             # updates the discount used and the discount data value according
@@ -746,7 +673,7 @@ class Order(bundle.Bundle):
         appier.verify(pending == 0.0)
         self.save()
 
-    def disuse_vouchers_s(self, force = False):
+    def disuse_vouchers_s(self, force=False):
         """
         Disuses the complete set of voucher associated with the current
         order, note that only vouchers set in the discount data will be
@@ -761,86 +688,97 @@ class Order(bundle.Bundle):
         # in case the order is already paid and the force flag is not
         # set the disuse of the voucher is skipped, otherwise it would
         # "return vouchers" for an already paid order
-        if self.paid and not force: return
+        if self.paid and not force:
+            return
 
         # in case the discount data is not valid there's no voucher
         # value to be reverted/discounted, should return immediately
-        if not self.discount_data: return
+        if not self.discount_data:
+            return
 
         # iterates over the complete set of vouchers and associated amount
         # to disuse the associated amount in the related vouchers
         for voucher_id, amount in appier.legacy.items(self.discount_data):
             voucher_id = int(voucher_id)
-            _voucher = voucher.Voucher.get(id = voucher_id)
-            _voucher.disuse_s(amount, currency = self.currency)
+            _voucher = voucher.Voucher.get(id=voucher_id)
+            _voucher.disuse_s(amount, currency=self.currency)
 
     def ensure_waiting_s(self):
-        if not self.status == "created": return
+        if not self.status == "created":
+            return
         self.mark_waiting_payment_s()
 
     def close_lines_s(self):
-        for line in self.lines: line.close_s()
+        for line in self.lines:
+            line.close_s()
 
-    def get_paypal(self, return_url = None, cancel_url = None):
+    def get_paypal(self, return_url=None, cancel_url=None):
         items = []
         for line in self.lines:
             items.append(
                 dict(
-                    name = line.product.short_description,
-                    price = currency.Currency.format(line.price, line.currency),
-                    currency = line.currency,
-                    quantity = line.quantity
+                    name=line.product.short_description,
+                    price=currency.Currency.format(line.price, line.currency),
+                    currency=line.currency,
+                    quantity=line.quantity,
                 )
             )
-        if self.discount: items.append(
-            dict(
-                name = "Discount",
-                price = currency.Currency.format(self.discount * -1, self.currency),
-                currency = self.currency,
-                quantity = 1
+        if self.discount:
+            items.append(
+                dict(
+                    name="Discount",
+                    price=currency.Currency.format(self.discount * -1, self.currency),
+                    currency=self.currency,
+                    quantity=1,
+                )
             )
-        )
         transaction = dict(
-            item_list = dict(
-                items = items,
-                shipping_address = dict(
-                    recipient_name = self.shipping_address.full_name,
-                    line1 = self.shipping_address.address,
-                    line2 = self.shipping_address.address_extra,
-                    city = self.shipping_address.city,
-                    country_code = self.shipping_address.country,
-                    postal_code = self.shipping_address.postal_code,
-                    state = self.shipping_address.state
-                )
+            item_list=dict(
+                items=items,
+                shipping_address=dict(
+                    recipient_name=self.shipping_address.full_name,
+                    line1=self.shipping_address.address,
+                    line2=self.shipping_address.address_extra,
+                    city=self.shipping_address.city,
+                    country_code=self.shipping_address.country,
+                    postal_code=self.shipping_address.postal_code,
+                    state=self.shipping_address.state,
+                ),
             ),
-            amount = dict(
-                total = currency.Currency.format(self.total, self.currency),
-                currency = self.currency,
-                details = dict(
-                    subtotal = currency.Currency.format(self.sub_total - self.discount, self.currency),
-                    shipping = currency.Currency.format(self.shipping_cost, self.currency)
-                )
+            amount=dict(
+                total=currency.Currency.format(self.total, self.currency),
+                currency=self.currency,
+                details=dict(
+                    subtotal=currency.Currency.format(
+                        self.sub_total - self.discount, self.currency
+                    ),
+                    shipping=currency.Currency.format(
+                        self.shipping_cost, self.currency
+                    ),
+                ),
             ),
-            soft_descriptor = self.reference
+            soft_descriptor=self.reference,
         )
         return dict(
-            payer = dict(payment_method = "paypal"),
-            transactions = [transaction],
-            redirect_urls = dict(
-                return_url = return_url,
-                cancel_url = cancel_url
-            )
+            payer=dict(payment_method="paypal"),
+            transactions=[transaction],
+            redirect_urls=dict(return_url=return_url, cancel_url=cancel_url),
         )
 
     def is_payable(self):
-        if not self.status in ("waiting_payment",): return False
-        if self.paid: return False
-        if self.date: return False
+        if not self.status in ("waiting_payment",):
+            return False
+        if self.paid:
+            return False
+        if self.date:
+            return False
         return True
 
     def is_open(self):
-        if not self.status in ("created",): return False
-        if self.paid: return False
+        if not self.status in ("created",):
+            return False
+        if self.paid:
+            return False
         return True
 
     def is_closed(self):
@@ -909,7 +847,9 @@ class Order(bundle.Bundle):
 
     def verify_canceled(self):
         self.verify_base()
-        appier.verify(not self.status in ("created", "canceled", "received", "completed"))
+        appier.verify(
+            not self.status in ("created", "canceled", "received", "completed")
+        )
 
     def verify_completed(self):
         self.verify_base()
@@ -918,17 +858,17 @@ class Order(bundle.Bundle):
     def verify_vouchers(self):
         discount = self.calculate_discount()
         pending = discount - self.discount_base - self.discount_used
-        if pending <= 0.0: return
+        if pending <= 0.0:
+            return
         for voucher in self.vouchers:
-            if pending == 0.0: break
-            open_amount = voucher.open_amount_r(currency = self.currency)
+            if pending == 0.0:
+                break
+            open_amount = voucher.open_amount_r(currency=self.currency)
             overflows = open_amount > pending
             amount = pending if overflows else pending
-            result = voucher.is_valid(
-                amount = amount,
-                currency = self.currency
-            )
-            if not result: continue
+            result = voucher.is_valid(amount=amount, currency=self.currency)
+            if not result:
+                continue
             pending -= commons.Decimal(amount)
         appier.verify(pending == 0.0)
 
@@ -945,44 +885,37 @@ class Order(bundle.Bundle):
         The raised exception should contain proper english messages.
         """
 
-        appier.verify(
-            not self.store == None,
-            message = "No store is set for order"
-        )
+        appier.verify(not self.store == None, message="No store is set for order")
         appier.verify(
             not self.store.address == None,
-            message = "Address is not set for order's store"
+            message="Address is not set for order's store",
         )
 
-    @appier.operation(name = "Notify")
-    def notify_s(self, name = None, *args, **kwargs):
+    @appier.operation(name="Notify")
+    def notify_s(self, name=None, *args, **kwargs):
         name = name or "order.%s" % self.status
-        order = self.reload(map = True)
+        order = self.reload(map=True)
         receiver = order.get("email", None)
         receiver = kwargs.get("email", receiver)
         appier_extras.admin.Event.notify_g(
             name,
-            arguments = dict(
-                params = dict(
-                    payload = order,
-                    order = order,
-                    receiver = receiver,
-                    extra = kwargs
-                )
-            )
+            arguments=dict(
+                params=dict(payload=order, order=order, receiver=receiver, extra=kwargs)
+            ),
         )
         exists = name in self.notifications
-        if not exists: self.notifications.append(name)
+        if not exists:
+            self.notifications.append(name)
         self.save()
 
-    @appier.operation(name = "Mark Waiting Payment")
+    @appier.operation(name="Mark Waiting Payment")
     def mark_waiting_payment_s(self):
         self.verify_waiting_payment()
         self.status = "waiting_payment"
         self.set_reference_f_s()
         self.save()
 
-    @appier.operation(name = "Mark Paid")
+    @appier.operation(name="Mark Paid")
     def mark_paid_s(self):
         self.verify_paid()
         self.status = "paid"
@@ -992,204 +925,211 @@ class Order(bundle.Bundle):
         self.decrement_inventory_s()
         self.save()
 
-    @appier.operation(name = "Unmark Paid")
+    @appier.operation(name="Unmark Paid")
     def unmark_paid_s(self):
         self.status = "waiting_payment"
         self.paid = False
         self.increment_inventory_s()
         self.save()
 
-    @appier.operation(name = "Mark Invoiced")
+    @appier.operation(name="Mark Invoiced")
     def mark_invoiced_s(self):
         self.verify_invoiced()
         self.status = "invoiced"
         self.save()
 
-    @appier.operation(name = "Mark Sent")
+    @appier.operation(name="Mark Sent")
     def mark_sent_s(self):
         self.verify_sent()
         self.status = "sent"
         self.save()
 
-    @appier.operation(name = "Mark Received")
+    @appier.operation(name="Mark Received")
     def mark_received_s(self):
         self.verify_received()
         self.status = "received"
         self.save()
 
-    @appier.operation(name = "Mark Canceled")
+    @appier.operation(name="Mark Canceled")
     def mark_canceled_s(self):
         self.verify_canceled()
         self.status = "canceled"
         self.save()
 
-    @appier.operation(name = "Mark Completed")
+    @appier.operation(name="Mark Completed")
     def mark_completed_s(self):
         self.verify_completed()
         self.status = "completed"
         self.save()
 
-    @appier.operation(name = "Garbage Collect")
+    @appier.operation(name="Garbage Collect")
     def collect_s(self):
-        if self.paid: return
+        if self.paid:
+            return
         self.delete()
 
     @appier.operation(
-        name = "Set Tracking",
-        parameters = (
+        name="Set Tracking",
+        parameters=(
             ("Tracking Number", "tracking_number", str),
-            ("Tracking URL", "tracking_url", str)
-        )
+            ("Tracking URL", "tracking_url", str),
+        ),
     )
     def set_tracking_s(self, tracking_number, tracking_url):
-        if not tracking_number and not tracking_url: return
+        if not tracking_number and not tracking_url:
+            return
         self.tracking_number = tracking_number
         self.tracking_url = tracking_url
         self.save()
 
-    @appier.operation(name = "Set Reference")
-    def set_reference_s(self, force = False):
-        if self.reference and not force: return
+    @appier.operation(name="Set Reference")
+    def set_reference_s(self, force=False):
+        if self.reference and not force:
+            return
         prefix = appier.conf("BUDY_ORDER_REF", "BD-%06d")
         self.reference = prefix % self.id
         self.save()
 
-    @appier.operation(name = "Set Reference Final")
-    def set_reference_f_s(self, force = False):
-        if self.reference_f and not force: return
+    @appier.operation(name="Set Reference Final")
+    def set_reference_f_s(self, force=False):
+        if self.reference_f and not force:
+            return
         cls = self.__class__
         prefix = appier.conf("BUDY_ORDER_REF_F", "BDF-%06d")
         self.reference_f = prefix % cls._increment("reference_f")
         self.save()
 
-    @appier.operation(name = "Fix Orphans")
+    @appier.operation(name="Fix Orphans")
     def fix_orphans_s(self):
         for line in self.lines:
             line.order = self
             line.save()
 
-    @appier.operation(name = "Fix Shipping")
+    @appier.operation(name="Fix Shipping")
     def fix_shipping_s(self):
-        if self.shipping_address: return
-        if not self.store: return
-        if not self.store.address: return
+        if self.shipping_address:
+            return
+        if not self.store:
+            return
+        if not self.store.address:
+            return
         address = self.store.address.clone()
         address.save()
         self.shipping_address = address
         self.save()
 
-    @appier.operation(name = "Fix Store")
+    @appier.operation(name="Fix Store")
     def fix_store_s(self):
-        if self.store: return
-        if not self.account: return
+        if self.store:
+            return
+        if not self.account:
+            return
         self.store = self.account.store
         self.save()
 
-    @appier.operation(name = "Fix Closed Lines")
+    @appier.operation(name="Fix Closed Lines")
     def fix_closed_s(self):
-        if not self.is_closed(): return
+        if not self.is_closed():
+            return
         self.close_lines_s()
 
     @appier.operation(
-        name = "Decrement Inventory",
-        description = """Decrements the inventory stock levels
+        name="Decrement Inventory",
+        description="""Decrements the inventory stock levels
         according to order lines""",
-        parameters = (("Force", "force", bool, False),),
-        level = 2
+        parameters=(("Force", "force", bool, False),),
+        level=2,
     )
-    def decrement_inventory_s(self, force = False):
-        if self.inventory_decremented and not force: return
+    def decrement_inventory_s(self, force=False):
+        if self.inventory_decremented and not force:
+            return
         for line in self.lines:
-            if line.merchandise.quantity_hand == None: continue
-            line.merchandise.quantity_hand =\
-                max(line.merchandise.quantity_hand - line.quantity, 0)
+            if line.merchandise.quantity_hand == None:
+                continue
+            line.merchandise.quantity_hand = max(
+                line.merchandise.quantity_hand - line.quantity, 0
+            )
             line.merchandise.save()
         self.inventory_decremented = True
         self.save()
 
     @appier.operation(
-        name = "Increment Inventory",
-        description = """Increments the inventory stock levels
+        name="Increment Inventory",
+        description="""Increments the inventory stock levels
         according to order lines (reverses the decrement stock
         operation, restoring the stock back)""",
-        parameters = (("Force", "force", bool, False),),
-        level = 2
+        parameters=(("Force", "force", bool, False),),
+        level=2,
     )
-    def increment_inventory_s(self, force = False):
-        if not self.inventory_decremented and not force: return
+    def increment_inventory_s(self, force=False):
+        if not self.inventory_decremented and not force:
+            return
         for line in self.lines:
-            if line.merchandise.quantity_hand == None: continue
+            if line.merchandise.quantity_hand == None:
+                continue
             line.merchandise.quantity_hand += line.quantity
             line.merchandise.save()
         self.inventory_decremented = False
         self.save()
 
     @appier.operation(
-        name = "Import Omni",
-        parameters = (
+        name="Import Omni",
+        parameters=(
             ("Invoice", "invoice", bool, True),
             ("Strict", "strict", bool, True),
-            ("Sync Prices", "sync_prices", bool, True)
+            ("Sync Prices", "sync_prices", bool, True),
         ),
-        level = 2
+        level=2,
     )
     def import_omni_s(
-        self,
-        invoice = False,
-        strict = True,
-        sync_prices = True,
-        use_discount = True
+        self, invoice=False, strict=True, sync_prices=True, use_discount=True
     ):
         api = self.owner.get_omni_api()
-        appier.verify(
-            self.paid,
-            message = "Order is not yet paid"
-        )
+        appier.verify(self.paid, message="Order is not yet paid")
 
         # verifies if the current order is already "marked" with the
         # Omni import timestamp, if that's the case and the strict mode
         # is enabled then an operation error is raised
         omni_timestamp = self.meta.get("omni_timestamp", None)
-        if strict and omni_timestamp: raise appier.OperationalError(
-            message = "Order already imported in Omni"
-        )
+        if strict and omni_timestamp:
+            raise appier.OperationalError(message="Order already imported in Omni")
 
         # retrieves via configuration the store from which the
         # sale is going to be performed (affects inventory)
-        store_id = appier.conf("OMNI_BOT_STORE", None, cast = int)
+        store_id = appier.conf("OMNI_BOT_STORE", None, cast=int)
 
         # gather using configuration the object ID of the services
         # that represents the presence of the shipping and gift wrap
-        shipping_id = appier.conf("OMNI_BOT_SHIPPING", None, cast = int)
-        gift_wrap_id = appier.conf("OMNI_BOT_GIFT_WRAP", None, cast = int)
+        shipping_id = appier.conf("OMNI_BOT_SHIPPING", None, cast=int)
+        gift_wrap_id = appier.conf("OMNI_BOT_GIFT_WRAP", None, cast=int)
 
         # builds the "unique" description of the order from which
         # a duplicates are going to be avoided by explicit checking
         description = "budy:order:%s" % self.reference
         orders = api.list_sales(
-            number_records = 1,
-            **{
-                "filters[]" : [
-                    "description:equals:%s" % description
-                ]
-            }
+            number_records=1, **{"filters[]": ["description:equals:%s" % description]}
         )
-        if strict and orders: raise appier.OperationalError(
-            message = "Duplicated order '%s' in Omni" % description
-        )
+        if strict and orders:
+            raise appier.OperationalError(
+                message="Duplicated order '%s' in Omni" % description
+            )
 
         # tries to obtain at least one of the customers that match
         # the email associated with the order in Omni's data source
         # in case a match then this customer is going to be used as
         # the owner of the sale otherwise a fallback must be performed
-        customers = api.list_customers(
-            number_records = 1,
-            **{
-                "filters[]" : [
-                    "primary_contact_information.email:equals:%s" % self.email
-                ]
-            }
-        ) if self.email else []
+        customers = (
+            api.list_customers(
+                number_records=1,
+                **{
+                    "filters[]": [
+                        "primary_contact_information.email:equals:%s" % self.email
+                    ]
+                }
+            )
+            if self.email
+            else []
+        )
 
         if customers:
             # "gathers" the first customer of the sequence as the
@@ -1200,24 +1140,21 @@ class Order(bundle.Bundle):
             # its VAT number with the new one, this way a possible
             # invoice for the new sale will be "printed" with the
             # expected new VAT number
-            if self.billing_address.vat_number and\
-                not existing["tax_number"] == self.billing_address.vat_number:
+            if (
+                self.billing_address.vat_number
+                and not existing["tax_number"] == self.billing_address.vat_number
+            ):
                 api.update_person(
                     existing["object_id"],
                     dict(
-                        customer_person = dict(
-                            tax_number = self.billing_address.vat_number
-                        )
-                    )
+                        customer_person=dict(tax_number=self.billing_address.vat_number)
+                    ),
                 )
 
             # sets the customer as an existing one by referencing its
             # object ID and marking parameters as existing
             customer = dict(
-                object_id = existing["object_id"],
-                _parameters = dict(
-                    type = "existing"
-                )
+                object_id=existing["object_id"], _parameters=dict(type="existing")
             )
         elif self.account and self.billing_address and self.email:
             # determines if the account name was auto generated, probably
@@ -1236,32 +1173,25 @@ class Order(bundle.Bundle):
             # from the appropriate data sources related with the order and
             # the associated account information
             customer = dict(
-                name = name,
-                surname = surname,
-                gender = GENDERS_MAP.get(self.account.gender, None),
-                birth_date = self.account.birth_date,
-                primary_contact_information = dict(
-                    phone_number = self.billing_address.phone_number,
-                    email = self.email
+                name=name,
+                surname=surname,
+                gender=GENDERS_MAP.get(self.account.gender, None),
+                birth_date=self.account.birth_date,
+                primary_contact_information=dict(
+                    phone_number=self.billing_address.phone_number, email=self.email
                 ),
-                primary_address = dict(
-                    street_name = self.billing_address.address,
-                    zip_code = self.billing_address.postal_code,
-                    zip_code_name = self.billing_address.city,
-                    country = COUNTRIES_MAP.get(self.billing_address.country, None)
+                primary_address=dict(
+                    street_name=self.billing_address.address,
+                    zip_code=self.billing_address.postal_code,
+                    zip_code_name=self.billing_address.city,
+                    country=COUNTRIES_MAP.get(self.billing_address.country, None),
                 ),
-                tax_number = self.billing_address.vat_number,
-                observations = "created by Budy",
-                _parameters = dict(
-                    type = "new"
-                )
+                tax_number=self.billing_address.vat_number,
+                observations="created by Budy",
+                _parameters=dict(type="new"),
             )
         else:
-            customer = dict(
-                _parameters = dict(
-                    type = "anonymous"
-                )
-            )
+            customer = dict(_parameters=dict(type="anonymous"))
 
         # allocates space for both the list that will contain the
         # complete set of sales lines and to the map that will associate
@@ -1279,7 +1209,7 @@ class Order(bundle.Bundle):
             # issue and an exception should be raised
             appier.verify(
                 "object_id" in line.merchandise.meta,
-                message = "Product was not imported from Omni, no object ID"
+                message="Product was not imported from Omni, no object ID",
             )
 
             # obtains the object ID of the product that identifies
@@ -1297,33 +1227,36 @@ class Order(bundle.Bundle):
                 sale_line["quantity"] += line.quantity
                 if line.attributes:
                     metadata = sale_line.get("metadata", {})
-                    try: attributes = json.loads(line.attributes)
-                    except ValueError: attributes = dict()
-                    except TypeError: attributes = dict()
+                    try:
+                        attributes = json.loads(line.attributes)
+                    except ValueError:
+                        attributes = dict()
+                    except TypeError:
+                        attributes = dict()
 
-                    def merger(first, second, separator = " | "):
-                        if appier.legacy.is_string(first) and\
-                            appier.legacy.is_string(second):
+                    def merger(first, second, separator=" | "):
+                        if appier.legacy.is_string(first) and appier.legacy.is_string(
+                            second
+                        ):
                             return "%s%s%s" % (first, separator, second)
                         return second
 
                     sale_line["metadata"] = appier.dict_merge(
-                        metadata,
-                        attributes,
-                        recursive = True,
-                        callback = merger
+                        metadata, attributes, recursive=True, callback=merger
                     )
             else:
                 # creates the standard sale line structure for the sale line using
                 # merchandise object ID (from Omni) and the associated quantity
                 sale_line = dict(
-                    merchandise = dict(object_id = line_object_id),
-                    quantity = line.quantity
+                    merchandise=dict(object_id=line_object_id), quantity=line.quantity
                 )
                 if line.attributes:
-                    try: attributes = json.loads(line.attributes)
-                    except ValueError: attributes = dict()
-                    except TypeError: attributes = dict()
+                    try:
+                        attributes = json.loads(line.attributes)
+                    except ValueError:
+                        attributes = dict()
+                    except TypeError:
+                        attributes = dict()
                     sale_line["metadata"] = attributes
                 sale_lines.append(sale_line)
                 sale_lines_m[line_object_id] = sale_line
@@ -1338,7 +1271,7 @@ class Order(bundle.Bundle):
                 store_merchandise = api.list_store_merchandise(
                     store_id,
                     **{
-                        "filters[]" : [
+                        "filters[]": [
                             "object_id:equals:%d" % line.merchandise.meta["object_id"]
                         ]
                     }
@@ -1346,13 +1279,13 @@ class Order(bundle.Bundle):
 
                 appier.verify(
                     len(store_merchandise) > 0,
-                    message = "Inventory line not found in Omni"
+                    message="Inventory line not found in Omni",
                 )
                 store_merchandise = store_merchandise[0]
 
                 appier.verify(
                     line.price <= store_merchandise["retail_price"],
-                    message = "Trying to sell item at higher value"
+                    message="Trying to sell item at higher value",
                 )
 
                 # verifies if the price for which we're trying to sell the
@@ -1364,53 +1297,50 @@ class Order(bundle.Bundle):
                     # line is changed to reflect the delta between the price stored
                     # in Omni and the price for which we're trying to sell the product
                     if use_discount:
-                        sale_line["unit_discount_vat"] = store_merchandise["retail_price"] - line.price
+                        sale_line["unit_discount_vat"] = (
+                            store_merchandise["retail_price"] - line.price
+                        )
 
                     # otherwise other strategy is used where the price of the product
                     # is effectively changed for the store in question (e-commerce store)
                     else:
-                        api.prices_merchandise([
-                            dict(
-                                object_id = line.merchandise.meta["object_id"],
-                                retail_price = line.price,
-                                functional_units = [store_id]
-                            )
-                        ])
+                        api.prices_merchandise(
+                            [
+                                dict(
+                                    object_id=line.merchandise.meta["object_id"],
+                                    retail_price=line.price,
+                                    functional_units=[store_id],
+                                )
+                            ]
+                        )
 
         if self.shipping_cost > 0.0 and shipping_id:
-            sale_line = dict(
-                merchandise = dict(object_id = shipping_id),
-                quantity = 1
-            )
+            sale_line = dict(merchandise=dict(object_id=shipping_id), quantity=1)
             sale_lines.append(sale_line)
 
         if self.gift_wrap and gift_wrap_id:
-            sale_line = dict(
-                merchandise = dict(object_id = gift_wrap_id),
-                quantity = 1
-            )
+            sale_line = dict(merchandise=dict(object_id=gift_wrap_id), quantity=1)
             sale_lines.append(sale_line)
 
         primary_payment = dict(
-            payment_lines = [
+            payment_lines=[
                 dict(
-                    payment_method = dict(_class = "CardPayment"),
-                    amount = dict(value = self.payable)
+                    payment_method=dict(_class="CardPayment"),
+                    amount=dict(value=self.payable),
                 )
             ]
         )
         transaction = dict(
-            description = description,
-            sale_lines = sale_lines,
-            primary_payment = primary_payment
+            description=description,
+            sale_lines=sale_lines,
+            primary_payment=primary_payment,
         )
-        if store_id: transaction["owner"] = dict(object_id = store_id)
-        if self.discount: transaction["discount_vat"] = self.discount
+        if store_id:
+            transaction["owner"] = dict(object_id=store_id)
+        if self.discount:
+            transaction["discount_vat"] = self.discount
 
-        payload = dict(
-            transaction = transaction,
-            customer = customer
-        )
+        payload = dict(transaction=transaction, customer=customer)
 
         try:
             sale = api.create_sale(payload)
@@ -1424,13 +1354,13 @@ class Order(bundle.Bundle):
         if invoice:
             # verifies that the current order is "invoiceable" so that
             # no inconsistent information is going to be "created"
-            if strict: self.verify_invoiced()
+            if strict:
+                self.verify_invoiced()
 
             # issues the money sale slip in the Omni system, this is
             # an expensive server-to-server operation
             api.issue_money_sale_slip_sale(
-                sale["object_id"],
-                metadata = dict(notes = self._build_notes())
+                sale["object_id"], metadata=dict(notes=self._build_notes())
             )
 
             # "marks" the current order as invoiced, properly avoiding
@@ -1441,29 +1371,25 @@ class Order(bundle.Bundle):
         # import operation so that the order is properly "marked" and
         # the linking can be properly "explorer"
         self.meta.update(
-            omni_timestamp = time.time(),
-            omni_sale = sale["object_id"],
-            omni_sale_identifier = sale["identifier"],
-            omni_url = api.base_url + "omni_sam/sales/%s" % sale["object_id"]
+            omni_timestamp=time.time(),
+            omni_sale=sale["object_id"],
+            omni_sale_identifier=sale["identifier"],
+            omni_url=api.base_url + "omni_sam/sales/%s" % sale["object_id"],
         )
         self.save()
 
     @appier.operation(
-        name = "Import Seeplus",
-        parameters = (
+        name="Import Seeplus",
+        parameters=(
             ("Fulfilment", "fulfilment", str),
             ("Delivery", "delivery", str),
             ("Origin", "origin", str),
-            ("Strict", "strict", bool, True)
+            ("Strict", "strict", bool, True),
         ),
-        level = 2
+        level=2,
     )
     def import_seeplus_s(
-        self,
-        fulfilment = None,
-        delivery = None,
-        origin = None,
-        strict = True
+        self, fulfilment=None, delivery=None, origin=None, strict=True
     ):
         # defaults the origin value to the one present in the global
         # configuration, expected default behaviour
@@ -1472,61 +1398,41 @@ class Order(bundle.Bundle):
         # in case there's no fulfilment defined then the default
         # store is used to retrieve the fulfilment identifier
         if not fulfilment:
-            fulfilment_id = appier.conf("SEEPLUS_FULFILMENT_ID", None, cast = int)
+            fulfilment_id = appier.conf("SEEPLUS_FULFILMENT_ID", None, cast=int)
             appier.verify(
-                not fulfilment_id == None,
-                message = "No default fulfilment is defined"
+                not fulfilment_id == None, message="No default fulfilment is defined"
             )
-            fulfilment_store = store.Store.get(id = fulfilment_id)
+            fulfilment_store = store.Store.get(id=fulfilment_id)
             fulfilment = fulfilment_store.meta.get("seeplus_id", None)
 
         # if no explicit delivery is defined then the store for the
         # delivery is used to obtain the Seeplus identifier
         if not delivery:
-            appier.verify(
-                self.store,
-                message = "No store defined for order"
-            )
+            appier.verify(self.store, message="No store defined for order")
             delivery = self.store.meta.get("seeplus_id", None)
 
         # ensures that the complete set of required parameters for the
         # Seeplus import are defined and valid, otherwise an exception
         # is raised indicating the problem
-        appier.verify(
-            fulfilment,
-            message = "No fulfilment is set for order"
-        )
-        appier.verify(
-            delivery,
-            message = "No delivery is set for order"
-        )
-        appier.verify(
-            origin,
-            message = "No origin is set for order"
-        )
+        appier.verify(fulfilment, message="No fulfilment is set for order")
+        appier.verify(delivery, message="No delivery is set for order")
+        appier.verify(origin, message="No origin is set for order")
 
         # obtains the reference to the Seeplus API instance and
         # validates that the order is ready to be imported
         api = self.owner.get_seeplus_api()
-        appier.verify(
-            self.paid,
-            message = "Order is not yet paid"
-        )
+        appier.verify(self.paid, message="Order is not yet paid")
 
         # verifies if the current order is already "marked" with the
         # Seeplus import timestamp, if that's the case and the strict mode
         # is enabled then an operation error is raised
         seeplus_timestamp = self.meta.get("seeplus_timestamp", None)
-        if strict and seeplus_timestamp: raise appier.OperationalError(
-            message = "Order already imported in Seeplus"
-        )
+        if strict and seeplus_timestamp:
+            raise appier.OperationalError(message="Order already imported in Seeplus")
 
         customer = dict()
         if self.account:
-            customer = dict(
-                code = str(self.account.id),
-                name = self.account.full_name
-            )
+            customer = dict(code=str(self.account.id), name=self.account.full_name)
             if self.account.email:
                 customer["email"] = self.account.email
             if self.account.phone_number:
@@ -1539,27 +1445,29 @@ class Order(bundle.Bundle):
         for line in self.lines:
             products.append(
                 dict(
-                    product = line.merchandise.product_id,
-                    qty = int(line.quantity),
-                    comment = line.description or "-"
+                    product=line.merchandise.product_id,
+                    qty=int(line.quantity),
+                    comment=line.description or "-",
                 )
             )
 
         order_payload = dict(
-            origin = origin,
-            code = self.reference,
-            orderDate = datetime.datetime.utcfromtimestamp(self.created).strftime("%Y-%m-%dT%H:%M:%SZ"),
-            customer = customer,
-            products = products,
-            fulfilment = dict(
-                location = fulfilment,
-                expectedAt = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
+            origin=origin,
+            code=self.reference,
+            orderDate=datetime.datetime.utcfromtimestamp(self.created).strftime(
+                "%Y-%m-%dT%H:%M:%SZ"
             ),
-            deliveryPickup = dict(
-                location = delivery,
-                scheduledAt = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
+            customer=customer,
+            products=products,
+            fulfilment=dict(
+                location=fulfilment,
+                expectedAt=datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
             ),
-            comment = self.description or "-"
+            deliveryPickup=dict(
+                location=delivery,
+                scheduledAt=datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
+            ),
+            comment=self.description or "-",
         )
 
         # imports the order into the Seeplus infrastructure and obtains
@@ -1572,65 +1480,55 @@ class Order(bundle.Bundle):
 
         # sets the initial Seeplus updates sequence with the initial
         # status update operation, this will be used as a log
-        seeplus_updates = [
-            dict(
-                status = order["status"],
-                timestamp = status_timestamp
-            )
-        ]
+        seeplus_updates = [dict(status=order["status"], timestamp=status_timestamp)]
 
         # updates the complete set of metadata related with the Seeplus
         # import operation so that the order is properly "marked" and
         # the linking can be properly "explorer"
         self.meta.update(
-            seeplus_id = order["id"],
-            seeplus_status = order["status"],
-            seeplus_timestamp = status_timestamp,
-            seeplus_update = status_timestamp,
-            seeplus_updates = seeplus_updates
+            seeplus_id=order["id"],
+            seeplus_status=order["status"],
+            seeplus_timestamp=status_timestamp,
+            seeplus_update=status_timestamp,
+            seeplus_updates=seeplus_updates,
         )
         self.save()
 
-    @appier.link(name = "Export Lines CSV")
-    def lines_csv_url(self, absolute = False):
+    @appier.link(name="Export Lines CSV")
+    def lines_csv_url(self, absolute=False):
         return appier.get_app().url_for(
-            "order_api.lines_csv",
-            key = self.key,
-            absolute = absolute
+            "order_api.lines_csv", key=self.key, absolute=absolute
         )
 
-    @appier.view(name = "Lines")
+    @appier.view(name="Lines")
     def lines_v(self, *args, **kwargs):
         return appier.lazy_dict(
-            model = self.lines._target,
-            kwargs = kwargs,
-            entities = appier.lazy(lambda: self.lines.find(*args, **kwargs)),
-            page = appier.lazy(lambda: self.lines.paginate(*args, **kwargs)),
-            names = [
+            model=self.lines._target,
+            kwargs=kwargs,
+            entities=appier.lazy(lambda: self.lines.find(*args, **kwargs)),
+            page=appier.lazy(lambda: self.lines.paginate(*args, **kwargs)),
+            names=[
                 "id",
                 "product.product_id",
                 "product",
                 "size_s",
                 "quantity",
                 "total",
-                "currency"
-            ]
+                "currency",
+            ],
         )
 
     @appier.view(
-        name = "Lines Currency",
-        parameters = (
-            ("Currency", "currency", str, "EUR"),
-        )
+        name="Lines Currency", parameters=(("Currency", "currency", str, "EUR"),)
     )
     def lines_currency_v(self, currency, *args, **kwargs):
-        kwargs.update(currency = currency)
+        kwargs.update(currency=currency)
         return appier.lazy_dict(
-            model = self.lines._target,
-            kwargs = kwargs,
-            entities = appier.lazy(lambda: self.lines.find(*args, **kwargs)),
-            page = appier.lazy(lambda: self.lines.paginate(*args, **kwargs)),
-            names = ["id", "product", "quantity", "total", "currency"]
+            model=self.lines._target,
+            kwargs=kwargs,
+            entities=appier.lazy(lambda: self.lines.find(*args, **kwargs)),
+            page=appier.lazy(lambda: self.lines.paginate(*args, **kwargs)),
+            names=["id", "product", "quantity", "total", "currency"],
         )
 
     @property
@@ -1640,43 +1538,48 @@ class Order(bundle.Bundle):
     @property
     def shipping_country(self):
         has_shipping = hasattr(self, "shipping_address")
-        if not has_shipping: return None
-        if not self.shipping_address: return None
+        if not has_shipping:
+            return None
+        if not self.shipping_address:
+            return None
         return self.shipping_address.country
 
     @property
     def shipping_currency(self):
         currency = appier.conf("BUDY_CURRENCY", None)
-        if currency: return currency
-        if not self.shipping_country: return None
+        if currency:
+            return currency
+        if not self.shipping_country:
+            return None
         shipping_country = country.Country.get_by_code(self.shipping_country)
         return shipping_country.currency_code
 
     @property
     def payment_currency(self):
         currency = appier.conf("BUDY_CURRENCY", None)
-        if currency: return currency
+        if currency:
+            return currency
         has_store_currency = self.store and self.store.currency_code
-        if has_store_currency: return self.store.currency_code
+        if has_store_currency:
+            return self.store.currency_code
         return self.shipping_currency
 
-    def _pay(self, payment_data, payment_function = None, strict = True):
+    def _pay(self, payment_data, payment_function=None, strict=True):
         cls = self.__class__
-        if self.payable == 0.0: return True
+        if self.payable == 0.0:
+            return True
         methods = cls._pmethods()
         type = payment_data.get("type", None)
         method = methods.get(type, type)
-        if not method: raise appier.SecurityError(
-            message = "No payment method defined"
-        )
+        if not method:
+            raise appier.SecurityError(message="No payment method defined")
         has_function = bool(payment_function) or hasattr(self, "_pay_" + method)
-        if not has_function and not strict: return
-        if not has_function: raise appier.SecurityError(
-            message = "Invalid payment method"
-        )
-        if self.payment_data and strict: raise appier.SecurityError(
-            message = "Payment data has already been issued"
-        )
+        if not has_function and not strict:
+            return
+        if not has_function:
+            raise appier.SecurityError(message="Invalid payment method")
+        if self.payment_data and strict:
+            raise appier.SecurityError(message="Payment data has already been issued")
         function = payment_function or getattr(self, "_pay_" + method)
         return function(payment_data)
 
@@ -1684,9 +1587,9 @@ class Order(bundle.Bundle):
         cls = self.__class__
         api = cls._get_api_stripe()
 
-        stripe_legacy = appier.conf("BUDY_STRIPE_LEGACY", False, cast = bool)
-        three_d_enable = appier.conf("BUDY_3D_SECURE", False, cast = bool)
-        three_d_ensure = appier.conf("BUDY_3D_ENSURE", False, cast = bool)
+        stripe_legacy = appier.conf("BUDY_STRIPE_LEGACY", False, cast=bool)
+        three_d_enable = appier.conf("BUDY_3D_SECURE", False, cast=bool)
+        three_d_ensure = appier.conf("BUDY_3D_ENSURE", False, cast=bool)
 
         type = payment_data["type"]
         number = payment_data["card_number"]
@@ -1696,21 +1599,24 @@ class Order(bundle.Bundle):
         name = payment_data.get("card_name", None)
         return_url = payment_data.get("return_url", None)
         return_url = payment_data.get("stripe_return_url", return_url)
-        if number: number = number.replace(" ", "")
-        if cvc: cvc = cvc.replace(" ", "")
-        if name: name = name.strip()
+        if number:
+            number = number.replace(" ", "")
+        if cvc:
+            cvc = cvc.replace(" ", "")
+        if name:
+            name = name.strip()
 
         token = api.create_token(
             exp_month,
             exp_year,
             number,
-            cvc = cvc,
-            name = name,
-            address_country = self.shipping_address.country,
-            address_city = self.shipping_address.city,
-            address_zip = self.shipping_address.postal_code,
-            address_line1 = self.shipping_address.address,
-            address_line2 = self.shipping_address.address_extra
+            cvc=cvc,
+            name=name,
+            address_country=self.shipping_address.country,
+            address_city=self.shipping_address.city,
+            address_zip=self.shipping_address.postal_code,
+            address_line1=self.shipping_address.address,
+            address_line2=self.shipping_address.address_extra,
         )
 
         token_id = token["id"]
@@ -1724,10 +1630,7 @@ class Order(bundle.Bundle):
         if use_secure:
             if stripe_legacy:
                 secure = api.create_3d_secure(
-                    int(self.payable * 100),
-                    self.currency,
-                    return_url,
-                    token_id
+                    int(self.payable * 100), self.currency, return_url, token_id
                 )
                 redirect = secure.get("redirect_url", None)
             else:
@@ -1735,19 +1638,19 @@ class Order(bundle.Bundle):
                     exp_month,
                     exp_year,
                     number,
-                    cvc = cvc,
-                    name = name,
-                    address_country = self.shipping_address.country,
-                    address_city = self.shipping_address.city,
-                    address_zip = self.shipping_address.postal_code,
-                    address_line1 = self.shipping_address.address,
-                    address_line2 = self.shipping_address.address_extra
+                    cvc=cvc,
+                    name=name,
+                    address_country=self.shipping_address.country,
+                    address_city=self.shipping_address.city,
+                    address_zip=self.shipping_address.postal_code,
+                    address_line1=self.shipping_address.address,
+                    address_line2=self.shipping_address.address_extra,
                 )
                 source = api.create_3d_secure_source(
                     int(self.payable * 100),
                     self.currency,
                     return_url,
-                    card = source["id"]
+                    card=source["id"],
                 )
                 redirect = source.get("redirect", {})
                 redirect_u = redirect.get("url", None)
@@ -1760,30 +1663,29 @@ class Order(bundle.Bundle):
         if use_secure:
             if stripe_legacy:
                 redirect_url = appier.get_app().url_for(
-                    "stripe.redirect",
-                    redirect_url = redirect,
-                    absolute = True
+                    "stripe.redirect", redirect_url=redirect, absolute=True
                 )
             else:
                 redirect_url = redirect
 
             self.payment_data = dict(
-                engine = "stripe",
-                type = type,
-                number = "*" * 12 + number[-4:],
-                exp_month = exp_month,
-                exp_year = exp_year,
-                token = token_id,
-                redirect = redirect,
-                redirect_url = redirect_url,
-                secure = True
+                engine="stripe",
+                type=type,
+                number="*" * 12 + number[-4:],
+                exp_month=exp_month,
+                exp_year=exp_year,
+                token=token_id,
+                redirect=redirect,
+                redirect_url=redirect_url,
+                secure=True,
             )
 
             return redirect_url
         else:
-            if three_d_ensure: raise appier.SecurityError(
-                message = "No 3-D Secure enabled for provided card"
-            )
+            if three_d_ensure:
+                raise appier.SecurityError(
+                    message="No 3-D Secure enabled for provided card"
+                )
 
             api.create_charge(
                 int(self.payable * 100),
@@ -1791,45 +1693,45 @@ class Order(bundle.Bundle):
                 exp_month,
                 exp_year,
                 number,
-                cvc = cvc,
-                name = name,
-                description = self.reference,
-                address_country = self.shipping_address.country,
-                address_city = self.shipping_address.city,
-                address_zip = self.shipping_address.postal_code,
-                address_line1 = self.shipping_address.address,
-                address_line2 = self.shipping_address.address_extra,
-                metadata = dict(
-                    order = self.reference,
-                    email = self.email,
-                    ip_address = self.ip_address,
-                    ip_country = self.ip_country,
-                    first_name = self.shipping_address.first_name,
-                    last_name = self.shipping_address.last_name
-                )
+                cvc=cvc,
+                name=name,
+                description=self.reference,
+                address_country=self.shipping_address.country,
+                address_city=self.shipping_address.city,
+                address_zip=self.shipping_address.postal_code,
+                address_line1=self.shipping_address.address,
+                address_line2=self.shipping_address.address_extra,
+                metadata=dict(
+                    order=self.reference,
+                    email=self.email,
+                    ip_address=self.ip_address,
+                    ip_country=self.ip_country,
+                    first_name=self.shipping_address.first_name,
+                    last_name=self.shipping_address.last_name,
+                ),
             )
 
             self.payment_data = dict(
-                engine = "stripe",
-                type = type,
-                number = "*" * 12 + number[-4:],
-                exp_month = exp_month,
-                exp_year = exp_year,
-                token = token_id,
-                secure = False
+                engine="stripe",
+                type=type,
+                number="*" * 12 + number[-4:],
+                exp_month=exp_month,
+                exp_year=exp_year,
+                token=token_id,
+                secure=False,
             )
 
             return True
 
-    def _pay_easypay(self, payment_data, warning_d = 172800, cancel_d = 259200):
+    def _pay_easypay(self, payment_data, warning_d=172800, cancel_d=259200):
         cls = self.__class__
         api = cls._get_api_easypay()
         type = payment_data["type"]
         mb = api.generate_mb(
             self.payable,
-            key = self.key,
-            warning = int(time.time() + warning_d) if warning_d else None,
-            cancel = int(time.time() + cancel_d) if cancel_d else None
+            key=self.key,
+            warning=int(time.time() + warning_d) if warning_d else None,
+            cancel=int(time.time() + cancel_d) if cancel_d else None,
         )
         entity = mb["entity"]
         reference = mb["reference"]
@@ -1838,14 +1740,14 @@ class Order(bundle.Bundle):
         warning = mb["warning"]
         cancel = mb["cancel"]
         self.payment_data = dict(
-            engine = "easypay",
-            type = type,
-            entity = entity,
-            reference = reference,
-            cin = cin,
-            identifier = identifier,
-            warning = warning,
-            cancel = cancel
+            engine="easypay",
+            type=type,
+            entity=entity,
+            reference=reference,
+            cin=cin,
+            identifier=identifier,
+            warning=warning,
+            cancel=cancel,
         )
         return False
 
@@ -1856,18 +1758,15 @@ class Order(bundle.Bundle):
         return_url = payment_data.get("paypal_return_url", return_url)
         cancel_url = payment_data.get("cancel_url", None)
         cancel_url = payment_data.get("paypal_cancel_url", cancel_url)
-        paypal_order = self.get_paypal(
-            return_url = return_url,
-            cancel_url = cancel_url
-        )
+        paypal_order = self.get_paypal(return_url=return_url, cancel_url=cancel_url)
         payment = api.create_payment(**paypal_order)
         payment_id = payment["id"]
         approval_url = api.get_url(payment["links"], "approval_url")
         self.payment_data = dict(
-            engine = "paypal",
-            type = "paypal",
-            payment_id = payment_id,
-            approval_url = approval_url
+            engine="paypal",
+            type="paypal",
+            payment_id=payment_id,
+            approval_url=approval_url,
         )
         return approval_url
 
@@ -1881,49 +1780,49 @@ class Order(bundle.Bundle):
         intent = api.create_intent(
             int(self.payable * 100),
             self.currency,
-            description = self.reference,
-            metadata = dict(
-                order = self.reference,
-                email = self.email,
-                ip_address = self.ip_address,
-                ip_country = self.ip_country,
-                first_name = self.shipping_address.first_name,
-                last_name = self.shipping_address.last_name
-            )
+            description=self.reference,
+            metadata=dict(
+                order=self.reference,
+                email=self.email,
+                ip_address=self.ip_address,
+                ip_country=self.ip_country,
+                first_name=self.shipping_address.first_name,
+                last_name=self.shipping_address.last_name,
+            ),
         )
         identifier = intent["id"]
         secret = intent["client_secret"]
         query = "secret=%s&return_url=%s" % (
             appier.quote(secret),
-            appier.quote(return_url)
+            appier.quote(return_url),
         )
         pay_secret_url = pay_url + ("&" if "?" in pay_url else "?") + query
         self.payment_data = dict(
-            engine = "stripe_sca",
-            type = "stripe_sca",
-            identifier = identifier,
-            secret = secret,
-            pay_url = pay_url,
-            return_url = return_url,
-            pay_secret_url = pay_secret_url
+            engine="stripe_sca",
+            type="stripe_sca",
+            identifier=identifier,
+            secret=secret,
+            pay_url=pay_url,
+            return_url=return_url,
+            pay_secret_url=pay_secret_url,
         )
         return pay_secret_url
 
-    def _end_pay(self, payment_data, payment_function = None, strict = False):
+    def _end_pay(self, payment_data, payment_function=None, strict=False):
         cls = self.__class__
-        if self.payable == 0.0: return
+        if self.payable == 0.0:
+            return
         methods = cls._pmethods()
         type = payment_data.get("engine", None)
         type = payment_data.get("type", type)
         method = methods.get(type, type)
-        if not method: raise appier.SecurityError(
-            message = "No payment method defined"
-        )
+        if not method:
+            raise appier.SecurityError(message="No payment method defined")
         has_function = payment_function or hasattr(self, "_end_pay_" + method)
-        if not has_function and not strict: return
-        if not has_function: raise appier.SecurityError(
-            message = "Invalid payment method"
-        )
+        if not has_function and not strict:
+            return
+        if not has_function:
+            raise appier.SecurityError(message="Invalid payment method")
         function = payment_function or getattr(self, "_end_pay_" + method)
         return function(payment_data)
 
@@ -1941,7 +1840,8 @@ class Order(bundle.Bundle):
 
         # in case the current payment stream is not the (3D) secure
         # one then returns immediately
-        if not secure: return
+        if not secure:
+            return
 
         # tries to obtain the source associated with the return
         # so that the proper course of action may be taken
@@ -1952,10 +1852,8 @@ class Order(bundle.Bundle):
         # the cancel operation is run instead to cancel the current
         # order and a security exception is raised for the failure
         if status == "failed":
-            self.cancel_s(notify = True)
-            raise appier.SecurityError(
-                message = "Security verification failed"
-            )
+            self.cancel_s(notify=True)
+            raise appier.SecurityError(message="Security verification failed")
 
         # (otherwise) runs the charging operation using the token
         # for the source as the source is considered to be valid
@@ -1963,15 +1861,15 @@ class Order(bundle.Bundle):
             int(self.payable * 100),
             self.currency,
             token_return,
-            description = self.reference,
-            metadata = dict(
-                order = self.reference,
-                email = self.email,
-                ip_address = self.ip_address,
-                ip_country = self.ip_country,
-                first_name = self.shipping_address.first_name,
-                last_name = self.shipping_address.last_name
-            )
+            description=self.reference,
+            metadata=dict(
+                order=self.reference,
+                email=self.email,
+                ip_address=self.ip_address,
+                ip_country=self.ip_country,
+                first_name=self.shipping_address.first_name,
+                last_name=self.shipping_address.last_name,
+            ),
         )
 
         # returns a valid value to the caller method indicating that
@@ -1996,73 +1894,75 @@ class Order(bundle.Bundle):
                 int(self.payable * 100),
                 self.currency,
                 token,
-                description = self.reference,
-                metadata = dict(
-                    order = self.reference,
-                    email = self.email,
-                    ip_address = self.ip_address,
-                    ip_country = self.ip_country,
-                    first_name = self.shipping_address.first_name,
-                    last_name = self.shipping_address.last_name
-                )
+                description=self.reference,
+                metadata=dict(
+                    order=self.reference,
+                    email=self.email,
+                    ip_address=self.ip_address,
+                    ip_country=self.ip_country,
+                    first_name=self.shipping_address.first_name,
+                    last_name=self.shipping_address.last_name,
+                ),
             )
         else:
-            charges = api.list_charges(
-                payment_intent = identifier,
-                limit = 1
-            )
+            charges = api.list_charges(payment_intent=identifier, limit=1)
             items = charges.get("data", [])
-            appier.verify(
-                items,
-                message = "No valid charge found"
-            )
+            appier.verify(items, message="No valid charge found")
             charge = items[0]
             appier.verify(
-                charge.get("status", "succeeded"),
-                message = "Charge was not successful"
+                charge.get("status", "succeeded"), message="Charge was not successful"
             )
             appier.verify(
-                charge.get("captured", False),
-                message = "Charge was not captured"
+                charge.get("captured", False), message="Charge was not captured"
             )
         return True
 
-    def _cancel(self, cancel_data, cancel_function = None, strict = False):
+    def _cancel(self, cancel_data, cancel_function=None, strict=False):
         cls = self.__class__
-        if self.payable == 0.0: return
+        if self.payable == 0.0:
+            return
         methods = cls._pmethods()
         type = cancel_data.get("engine", None)
         type = cancel_data.get("type", type)
         method = methods.get(type, type)
-        if not method: return
+        if not method:
+            return
         has_function = cancel_function or hasattr(self, "_cancel_" + method)
-        if not has_function and not strict: return
+        if not has_function and not strict:
+            return
         function = cancel_function or getattr(self, "_cancel_" + method)
         return function(cancel_data)
 
-    def _build_notes(self, split = "|", separator = "="):
+    def _build_notes(self, split="|", separator="="):
         # creates the list of notes that are going to be representing
         # the current order in a text fashion, this should include the product
         # attributes for every single order line
         notes_l = []
         notes_l.append("Budy order - %s" % self.reference)
         for line in self.lines:
-            if not line.product: continue
-            if not line.attributes: continue
-            try: attributes = json.loads(line.attributes)
-            except ValueError: continue
-            except TypeError: continue
-            if not isinstance(attributes, dict): continue
+            if not line.product:
+                continue
+            if not line.attributes:
+                continue
+            try:
+                attributes = json.loads(line.attributes)
+            except ValueError:
+                continue
+            except TypeError:
+                continue
+            if not isinstance(attributes, dict):
+                continue
             attributes_l = appier.legacy.items(attributes)
             attributes_l.sort()
             for key, value in attributes_l:
                 notes_l.append(
-                    "Order line - %s %s %s %s %s" % (
+                    "Order line - %s %s %s %s %s"
+                    % (
                         line.product.product_id or line.product.short_description,
                         split,
                         key,
                         separator,
-                        str(value)
+                        str(value),
                     )
                 )
         notes = "\n".join(notes_l)

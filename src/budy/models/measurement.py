@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -35,85 +35,56 @@ import appier
 from . import base
 from . import currency as _currency
 
+
 class Measurement(base.BudyBase):
+    name = appier.field(index=True, default=True)
 
-    name = appier.field(
-        index = True,
-        default = True
-    )
+    value = appier.field(type=int, index=True)
 
-    value = appier.field(
-        type = int,
-        index = True
-    )
-
-    value_s = appier.field(
-        index = True
-    )
+    value_s = appier.field(index=True)
 
     weight = appier.field(
-        type = commons.Decimal,
-        index = True,
-        observations = """The weight of the current measurement in
-        a unit defined by convention (defined before-hand)"""
+        type=commons.Decimal,
+        index=True,
+        observations="""The weight of the current measurement in
+        a unit defined by convention (defined before-hand)""",
     )
 
-    quantity_hand = appier.field(
-        type = commons.Decimal,
-        index = True
-    )
+    quantity_hand = appier.field(type=commons.Decimal, index=True)
 
-    quantity_reserved = appier.field(
-        type = commons.Decimal,
-        index = True
-    )
+    quantity_reserved = appier.field(type=commons.Decimal, index=True)
 
     price = appier.field(
-        type = commons.Decimal,
-        index = True,
-        initial = commons.Decimal(0.0),
-        observations = """Main retail price to be used for
-        a possible sale transaction of the measurement (includes taxes)"""
+        type=commons.Decimal,
+        index=True,
+        initial=commons.Decimal(0.0),
+        observations="""Main retail price to be used for
+        a possible sale transaction of the measurement (includes taxes)""",
     )
 
     price_compare = appier.field(
-        type = commons.Decimal,
-        index = True,
-        initial = commons.Decimal(0.0),
-        observations = """The price that is going to be used
-        as the base for discount calculation purposes"""
+        type=commons.Decimal,
+        index=True,
+        initial=commons.Decimal(0.0),
+        observations="""The price that is going to be used
+        as the base for discount calculation purposes""",
     )
 
-    taxes = appier.field(
-        type = commons.Decimal,
-        index = True,
-        initial = commons.Decimal(0.0)
-    )
+    taxes = appier.field(type=commons.Decimal, index=True, initial=commons.Decimal(0.0))
 
-    currency = appier.field(
-        index = True
-    )
+    currency = appier.field(index=True)
 
-    product = appier.field(
-        type = appier.reference(
-            "Product",
-            name = "id"
-        )
-    )
+    product = appier.field(type=appier.reference("Product", name="id"))
 
     @classmethod
     def validate(cls):
         return super(Measurement, cls).validate() + [
             appier.not_null("name"),
             appier.not_empty("name"),
-
             appier.not_null("value"),
-
             appier.gte("price", 0.0),
-
             appier.gte("taxes", 0.0),
-
-            appier.not_null("product")
+            appier.not_null("product"),
         ]
 
     @classmethod
@@ -128,14 +99,14 @@ class Measurement(base.BudyBase):
     def from_omni(
         cls,
         merchandise,
-        sub_product = None,
-        inventory_line = None,
-        inventory_lines = None,
-        name = "size",
-        currency = "EUR",
-        strip = True,
-        path = True,
-        force = False
+        sub_product=None,
+        inventory_line=None,
+        inventory_lines=None,
+        name="size",
+        currency="EUR",
+        strip=True,
+        path=True,
+        force=False,
     ):
         from . import product
 
@@ -157,20 +128,22 @@ class Measurement(base.BudyBase):
         # taking into account also the modification date of its inventory line
         if inventory_line:
             modify_date_line = inventory_line["modify_date"]
-            if modify_date_line > modify_date: modify_date = modify_date_line
+            if modify_date_line > modify_date:
+                modify_date = modify_date_line
 
         # tries to retrieve the parent product for this measurement using the
         # associated company product code as reference if there's no such parent
         # product then it's not possible to continue with the import operation
         _product = product.Product.get(
-            product_id = parent["company_product_code"],
-            raise_e = False
+            product_id=parent["company_product_code"], raise_e=False
         )
-        if not _product: return None
+        if not _product:
+            return None
 
         # in case the discount at a merchandise level is not defined
         # then tries to use the one coming from the (parent) product
-        if discount == None: discount = _product.meta.get("discount", None)
+        if discount == None:
+            discount = _product.meta.get("discount", None)
 
         # creates the stocks list in case there are valid inventory lines being
         # passed on the current measurement update/creation
@@ -187,15 +160,16 @@ class Measurement(base.BudyBase):
             functional_unit = inventory_line.get("functional_unit", None)
 
             is_valid = functional_unit and functional_unit.get("status") == 1
-            if not is_valid: continue
+            if not is_valid:
+                continue
 
             stock_m = dict(
-                store_id = functional_unit["object_id"],
-                store_name = functional_unit["name"],
-                stock_on_hand = stock_on_hand,
-                stock_reserved = stock_reserved,
-                stock_in_transit = stock_in_transit,
-                retail_price = retail_price
+                store_id=functional_unit["object_id"],
+                store_name=functional_unit["name"],
+                stock_on_hand=stock_on_hand,
+                stock_reserved=stock_reserved,
+                stock_in_transit=stock_in_transit,
+                retail_price=retail_price,
             )
             stocks.append(stock_m)
 
@@ -211,19 +185,19 @@ class Measurement(base.BudyBase):
 
         # tries converts the value into an integer value, falling back
         # to the absolute hash value of it in case there's an error
-        try: value = int(value)
-        except ValueError: value = cls._hash(value)
+        try:
+            value = int(value)
+        except ValueError:
+            value = cls._hash(value)
 
         # tries to retrieve a measurement that is considered to be equivalent
         # to the one described by the associated subproduct in case it does
         # not exists creates a new instance that is going to be populate
         measurement = cls.get(
-            product = _product.id,
-            name = name,
-            value = value,
-            raise_e = False
+            product=_product.id, name=name, value=value, raise_e=False
         )
-        if not measurement: measurement = cls()
+        if not measurement:
+            measurement = cls()
 
         measurement.name = name
         measurement.value = value
@@ -234,14 +208,17 @@ class Measurement(base.BudyBase):
         measurement.product = _product
 
         meta = dict(
-            object_id = object_id,
-            company_product_code = company_product_code,
-            modify_date = modify_date,
-            discount = discount
+            object_id=object_id,
+            company_product_code=company_product_code,
+            modify_date=modify_date,
+            discount=discount,
         )
-        if hasattr(measurement, "meta") and measurement.meta: measurement.meta.update(meta)
-        else: measurement.meta = meta
-        if not stocks == None: measurement.meta["stocks"] = stocks
+        if hasattr(measurement, "meta") and measurement.meta:
+            measurement.meta.update(meta)
+        else:
+            measurement.meta = meta
+        if not stocks == None:
+            measurement.meta["stocks"] = stocks
 
         if "stock_on_hand" in merchandise or force:
             measurement.quantity_hand = merchandise.get("stock_on_hand", 0.0)
@@ -266,14 +243,22 @@ class Measurement(base.BudyBase):
         # in case all of the required "original" financial information (prices)
         # is available then the price, taxes and price compare are calculated
         if "retail_price" in measurement.meta and "untaxed_price" in measurement.meta:
-            untaxed_price = _currency.Currency.round(
-                measurement.meta["untaxed_price"] * ((100.0 - discount) / 100.0),
-                currency
-            ) if discount else measurement.meta["untaxed_price"]
-            measurement.price = _currency.Currency.round(
-                measurement.meta["retail_price"] * ((100.0 - discount) / 100.0),
-                currency
-            ) if discount else measurement.meta["retail_price"]
+            untaxed_price = (
+                _currency.Currency.round(
+                    measurement.meta["untaxed_price"] * ((100.0 - discount) / 100.0),
+                    currency,
+                )
+                if discount
+                else measurement.meta["untaxed_price"]
+            )
+            measurement.price = (
+                _currency.Currency.round(
+                    measurement.meta["retail_price"] * ((100.0 - discount) / 100.0),
+                    currency,
+                )
+                if discount
+                else measurement.meta["retail_price"]
+            )
             measurement.taxes = measurement.price - untaxed_price
             if not measurement.price_compare and discount:
                 measurement.price_compare = measurement.meta["retail_price"]
@@ -283,49 +268,44 @@ class Measurement(base.BudyBase):
         return measurement
 
     @classmethod
-    def _hash(cls, value, max_size = 8):
+    def _hash(cls, value, max_size=8):
         counter = 0
         for index in range(len(value)):
             value_i = appier.legacy.ord(value[index])
             counter += value_i * pow(256, index)
-        if not max_size: return counter
+        if not max_size:
+            return counter
         modulus = pow(256, max_size)
         counter = counter % modulus
         return counter
 
     def pre_delete(self):
         base.BudyBase.pre_delete(self)
-        if not self.product: return
-        if not hasattr(self.product, "measurements") : return
-        if not self in self.product.measurements: return
+        if not self.product:
+            return
+        if not hasattr(self.product, "measurements"):
+            return
+        if not self in self.product.measurements:
+            return
         self.product.measurements.remove(self)
         self.product.save()
 
-    def get_price(
-        self,
-        currency = None,
-        country = None,
-        attributes = None
-    ):
+    def get_price(self, currency=None, country=None, attributes=None):
         return self.price
 
-    def get_taxes(
-        self,
-        currency = None,
-        country = None,
-        attributes = None
-    ):
+    def get_taxes(self, currency=None, country=None, attributes=None):
         return self.taxes
 
-    def get_currency(self, currency = None):
+    def get_currency(self, currency=None):
         return currency
 
-    def get_size(self, currency = None, country = None, attributes = None):
+    def get_size(self, currency=None, country=None, attributes=None):
         return None, None
 
     @property
     def product_id(self):
-        if self._product_id_meta: return self._product_id_meta
+        if self._product_id_meta:
+            return self._product_id_meta
         return None
 
     @property
@@ -338,13 +318,16 @@ class Measurement(base.BudyBase):
 
     @property
     def discount(self):
-        if not self.price: return commons.Decimal(0.0)
-        if not self.price_compare: return commons.Decimal(0.0)
+        if not self.price:
+            return commons.Decimal(0.0)
+        if not self.price_compare:
+            return commons.Decimal(0.0)
         return self.price_compare - self.price
 
     @property
     def discount_percent(self):
-        if not self.discount: return commons.Decimal(0.0)
+        if not self.discount:
+            return commons.Decimal(0.0)
         return self.discount / self.price_compare * commons.Decimal(100.0)
 
     @property
@@ -359,23 +342,24 @@ class Measurement(base.BudyBase):
     def is_price_provided(self):
         return False
 
-    @appier.operation(name = "Fix")
+    @appier.operation(name="Fix")
     def fix_s(self):
-        if not self.exists(): return
+        if not self.exists():
+            return
         self._fix_value_s()
 
-    @appier.operation(name = "Duplicate", factory = True)
+    @appier.operation(name="Duplicate", factory=True)
     def duplicate_s(self):
         cls = self.__class__
         measurement = cls(
-            product = self.product.id,
-            name = self.name,
-            value = self.value,
-            value_s = self.value_s,
-            quantity_hand = self.quantity_hand,
-            price = self.price,
-            currency = self.currency,
-            meta = self.meta
+            product=self.product.id,
+            name=self.name,
+            value=self.value,
+            value_s=self.value_s,
+            quantity_hand=self.quantity_hand,
+            price=self.price,
+            currency=self.currency,
+            meta=self.meta,
         )
         measurement.save()
         self.product.measurements.append(measurement)
@@ -384,16 +368,20 @@ class Measurement(base.BudyBase):
 
     @property
     def _product_id_meta(self):
-        if not self.meta: return None
+        if not self.meta:
+            return None
         return self.meta.get("company_product_code", None)
 
     def _fix_value_s(self):
         cls = self.__class__
-        try: self.value = int(self.value)
-        except ValueError: self.value = self._hash(self.value)
+        try:
+            self.value = int(self.value)
+        except ValueError:
+            self.value = self._hash(self.value)
         self.save()
 
     def _fix_invalid_s(self):
         is_valid = hasattr(self, "parent") and not self.parent == None
-        if is_valid: return
+        if is_valid:
+            return
         self.delete()

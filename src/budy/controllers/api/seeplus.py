@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -36,19 +36,16 @@ import budy
 
 from . import root
 
-class SeeplusAPIController(root.RootAPIController):
 
-    @appier.route("/api/seeplus/update", "POST", json = True)
+class SeeplusAPIController(root.RootAPIController):
+    @appier.route("/api/seeplus/update", "POST", json=True)
     def update(self):
         key = self.field("token", None)
         key = self.field("key", key)
         key = self.request.get_header("X-Seeplus-Key", key)
         _key = appier.conf("SEEPLUS_KEY", None)
         if _key and not _key == key:
-            raise appier.SecurityError(
-                message = "Mismatch in Seeplus key",
-                code = 401
-            )
+            raise appier.SecurityError(message="Mismatch in Seeplus key", code=401)
         object = appier.get_object()
         event = object.get("event", "OrderManagement.StatusChanged")
         data = object.get("data", {})
@@ -56,31 +53,26 @@ class SeeplusAPIController(root.RootAPIController):
         if event == "OrderManagement.StatusChanged":
             self._status_change_s(data)
             result = "Handled"
-        return dict(result = result)
+        return dict(result=result)
 
     def _status_change_s(self, data):
         reference = data["code"]
         status = data["status"]
-        order = budy.Order.get(reference = reference)
+        order = budy.Order.get(reference=reference)
         seeplus_status = order.meta.get("seeplus_status", None)
         seeplus_timestamp = order.meta.get("seeplus_timestamp", None)
         seeplus_updates = order.meta.get("seeplus_updates", [])
-        if not seeplus_timestamp: raise appier.OperationalError(
-            message = "Order not imported in Seeplus"
-        )
-        if status == seeplus_status: raise appier.OperationalError(
-            message = "Order already in status '%s'" % status
-        )
-        status_timestamp = time.time()
-        seeplus_updates.append(
-            dict(
-                status = status,
-                timestamp = status_timestamp
+        if not seeplus_timestamp:
+            raise appier.OperationalError(message="Order not imported in Seeplus")
+        if status == seeplus_status:
+            raise appier.OperationalError(
+                message="Order already in status '%s'" % status
             )
-        )
+        status_timestamp = time.time()
+        seeplus_updates.append(dict(status=status, timestamp=status_timestamp))
         order.meta.update(
-            seeplus_status = status,
-            seeplus_update = status_timestamp,
-            seeplus_updates = seeplus_updates
+            seeplus_status=status,
+            seeplus_update=status_timestamp,
+            seeplus_updates=seeplus_updates,
         )
         order.save()

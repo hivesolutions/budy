@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -36,10 +36,10 @@ import appier
 
 import budy
 
-class ExchangeRateTest(unittest.TestCase):
 
+class ExchangeRateTest(unittest.TestCase):
     def setUp(self):
-        self.app = budy.BudyApp(level = logging.ERROR)
+        self.app = budy.BudyApp(level=logging.ERROR)
 
     def tearDown(self):
         self.app.unload()
@@ -47,11 +47,7 @@ class ExchangeRateTest(unittest.TestCase):
         adapter.drop_db()
 
     def test_basic(self):
-        exchange_rate = budy.ExchangeRate(
-            base = "EUR",
-            target = "USD",
-            rate = 1.138
-        )
+        exchange_rate = budy.ExchangeRate(base="EUR", target="USD", rate=1.138)
         exchange_rate.save()
 
         result = budy.ExchangeRate.convert(10.0, "EUR", "USD")

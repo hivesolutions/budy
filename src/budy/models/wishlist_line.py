@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -32,14 +32,9 @@ import appier
 
 from . import bundle_line
 
-class WishlistLine(bundle_line.BundleLine):
 
-    wishlist = appier.field(
-        type = appier.reference(
-            "Wishlist",
-            name = "id"
-        )
-    )
+class WishlistLine(bundle_line.BundleLine):
+    wishlist = appier.field(type=appier.reference("Wishlist", name="id"))
 
     @classmethod
     def list_names(cls):
@@ -53,7 +48,8 @@ class WishlistLine(bundle_line.BundleLine):
         bundle_line.BundleLine.pre_validate(self)
         self.try_valid()
 
-    @appier.operation(name = "Garbage Collect")
+    @appier.operation(name="Garbage Collect")
     def collect_s(self):
-        if appier.is_unset(self.bag): return
+        if appier.is_unset(self.bag):
+            return
         self.delete()

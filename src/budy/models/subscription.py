@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -32,12 +32,9 @@ import appier
 
 from . import base
 
-class Subscription(base.BudyBase):
 
-    email = appier.field(
-        index = True,
-        default = True
-    )
+class Subscription(base.BudyBase):
+    email = appier.field(index=True, default=True)
 
     @classmethod
     def validate(cls):
@@ -45,7 +42,7 @@ class Subscription(base.BudyBase):
             appier.not_null("email"),
             appier.not_empty("email"),
             appier.is_email("email"),
-            appier.not_duplicate("email", cls._name())
+            appier.not_duplicate("email", cls._name()),
         ]
 
     @classmethod
@@ -55,4 +52,5 @@ class Subscription(base.BudyBase):
     def pre_validate(self):
         base.BudyBase.pre_validate(self)
 
-        if hasattr(self, "email"): self.email = self.email.lower()
+        if hasattr(self, "email"):
+            self.email = self.email.lower()

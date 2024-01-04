@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -34,9 +34,9 @@ import budy
 
 from . import root
 
-class EasypayAPIController(root.RootAPIController):
 
-    @appier.route("/api/easypay/notification", "GET", json = True)
+class EasypayAPIController(root.RootAPIController):
+    @appier.route("/api/easypay/notification", "GET", json=True)
     def notification(self):
         cin = self.field("ep_cin")
         username = self.field("ep_user")
@@ -47,21 +47,21 @@ class EasypayAPIController(root.RootAPIController):
         return result
 
     @appier.route("/api/easypay/cancel", ("GET", "POST"))
-    @appier.ensure(token = "admin")
+    @appier.ensure(token="admin")
     def cancel(self):
-        identifier = self.field("identifier", mandatory = True)
+        identifier = self.field("identifier", mandatory=True)
         api = budy.Order._get_api_easypay()
         return api.cancel_mb(identifier)
 
     @appier.route("/api/easypay/delete", ("GET", "POST"))
-    @appier.ensure(token = "admin")
+    @appier.ensure(token="admin")
     def delete(self):
-        identifier = self.field("identifier", mandatory = True)
+        identifier = self.field("identifier", mandatory=True)
         api = budy.Order._get_api_easypay()
         return api.del_reference(identifier)
 
     @appier.route("/api/easypay/diagnostics", "GET")
-    @appier.ensure(token = "admin")
+    @appier.ensure(token="admin")
     def diagnostics(self):
         api = budy.Order._get_api_easypay()
         return api.diagnostics()

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -32,14 +32,9 @@ import appier
 
 from . import bundle_line
 
-class OrderLine(bundle_line.BundleLine):
 
-    order = appier.field(
-        type = appier.reference(
-            "Order",
-            name = "id"
-        )
-    )
+class OrderLine(bundle_line.BundleLine):
+    order = appier.field(type=appier.reference("Order", name="id"))
 
     @classmethod
     def list_names(cls):
@@ -49,17 +44,20 @@ class OrderLine(bundle_line.BundleLine):
     def is_visible(cls):
         return False
 
-    def is_valid_quantity(self, reload = True):
+    def is_valid_quantity(self, reload=True):
         order = self.order and self.order.reload() if reload else self.order
-        if order and order.is_closed(): return True
-        return bundle_line.BundleLine.is_valid_quantity(self, reload = reload)
+        if order and order.is_closed():
+            return True
+        return bundle_line.BundleLine.is_valid_quantity(self, reload=reload)
 
-    def is_valid_price(self, reload = True):
+    def is_valid_price(self, reload=True):
         order = self.order and self.order.reload() if reload else self.order
-        if order and order.is_closed(): return True
-        return bundle_line.BundleLine.is_valid_price(self, reload = reload)
+        if order and order.is_closed():
+            return True
+        return bundle_line.BundleLine.is_valid_price(self, reload=reload)
 
-    @appier.operation(name = "Garbage Collect")
+    @appier.operation(name="Garbage Collect")
     def collect_s(self):
-        if appier.is_unset(self.bag): return
+        if appier.is_unset(self.bag):
+            return
         self.delete()

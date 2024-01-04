@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -35,23 +35,12 @@ from . import order
 from . import bundle
 from . import bag_line
 
-class Bag(bundle.Bundle):
 
-    lines = appier.field(
-        type = appier.references(
-            "BagLine",
-            name = "id"
-        ),
-        eager = True
-    )
+class Bag(bundle.Bundle):
+    lines = appier.field(type=appier.references("BagLine", name="id"), eager=True)
 
     account = appier.field(
-        type = appier.reference(
-            "BudyAccount",
-            name = "id"
-        ),
-        index = "hashed",
-        eager = True
+        type=appier.reference("BudyAccount", name="id"), index="hashed", eager=True
     )
 
     @classmethod
@@ -63,26 +52,32 @@ class Bag(bundle.Bundle):
         return bag_line.BagLine
 
     @classmethod
-    def from_session(cls, ensure = True, raise_e = False):
+    def from_session(cls, ensure=True, raise_e=False):
         from . import BudyAccount
-        account = BudyAccount.from_session(raise_e = raise_e)
-        if account: return account.ensure_bag_s()
+
+        account = BudyAccount.from_session(raise_e=raise_e)
+        if account:
+            return account.ensure_bag_s()
         session = appier.get_session()
         key = session.get("bag", None)
-        bag = cls.get(key = key, raise_e = raise_e) if key else None
-        if bag: return bag
-        if not ensure: return None
+        bag = cls.get(key=key, raise_e=raise_e) if key else None
+        if bag:
+            return bag
+        if not ensure:
+            return None
         bag = cls()
         bag.save()
         session["bag"] = bag.key
         return bag
 
     @classmethod
-    def ensure_s(cls, key = None):
+    def ensure_s(cls, key=None):
         from . import BudyAccount
-        account = BudyAccount.from_session(raise_e = False)
-        if account: return account.ensure_bag_s(key = key)
-        bag = cls(key = key)
+
+        account = BudyAccount.from_session(raise_e=False)
+        if account:
+            return account.ensure_bag_s(key=key)
+        bag = cls(key=key)
         bag.save()
         return bag
 
@@ -92,28 +87,31 @@ class Bag(bundle.Bundle):
 
     def pre_delete(self):
         bundle.Bundle.pre_delete(self)
-        for line in self.lines: line.delete()
+        for line in self.lines:
+            line.delete()
 
     def add_line_s(self, line):
         line.bag = self
         return bundle.Bundle.add_line_s(self, line)
 
-    def to_order_s(self, verify = True, try_valid = True):
+    def to_order_s(self, verify=True, try_valid=True):
         self.refresh_s()
-        if try_valid: self.try_valid_s()
-        if verify: self.verify_order()
+        if try_valid:
+            self.try_valid_s()
+        if verify:
+            self.verify_order()
         _order = order.Order(
-            currency = self.currency,
-            country = self.country,
-            sub_total = self.sub_total,
-            discounted_sub_total = self.discounted_sub_total,
-            undiscounted_sub_total = self.undiscounted_sub_total,
-            discount = self.discount,
-            shipping_cost = self.shipping_cost,
-            taxes = self.taxes,
-            total = self.total,
-            account = self.account,
-            store = self.account and self.account.store
+            currency=self.currency,
+            country=self.country,
+            sub_total=self.sub_total,
+            discounted_sub_total=self.discounted_sub_total,
+            undiscounted_sub_total=self.undiscounted_sub_total,
+            discount=self.discount,
+            shipping_cost=self.shipping_cost,
+            taxes=self.taxes,
+            total=self.total,
+            account=self.account,
+            store=self.account and self.account.store,
         )
         _order.save()
         _order.lines = []
@@ -121,7 +119,8 @@ class Bag(bundle.Bundle):
             order_line = line.to_order_line_s(_order)
             _order.lines.append(order_line)
         _order.save()
-        if verify: _order.verify_base()
+        if verify:
+            _order.verify_base()
         return _order
 
     def verify_order(self):
@@ -134,47 +133,42 @@ class Bag(bundle.Bundle):
         for line in self.lines:
             appier.verify(line.is_valid())
 
-    @appier.operation(name = "Garbage Collect")
+    @appier.operation(name="Garbage Collect")
     def collect_s(self):
         self.delete()
 
-    @appier.operation(name = "Fix Orphans")
+    @appier.operation(name="Fix Orphans")
     def fix_orphans_s(self):
         for line in self.lines:
             line.bag = self
             line.save()
 
-    @appier.operation(name = "Notify")
-    def notify(self, name = None, *args, **kwargs):
+    @appier.operation(name="Notify")
+    def notify(self, name=None, *args, **kwargs):
         name = name or "bag.new"
-        bag = self.reload(map = True)
+        bag = self.reload(map=True)
         account = bag.get("account", {})
         account = kwargs.get("email", account)
         receiver = account.get("email", None)
         receiver = kwargs.get("email", receiver)
         appier_extras.admin.Event.notify_g(
             name,
-            arguments = dict(
-                params = dict(
-                    payload = bag,
-                    bag = bag,
-                    receiver = receiver,
-                    extra = kwargs
-                )
-            )
+            arguments=dict(
+                params=dict(payload=bag, bag=bag, receiver=receiver, extra=kwargs)
+            ),
         )
 
-    @appier.operation(name = "Remind")
+    @appier.operation(name="Remind")
     def remind(self, *args, **kwargs):
-        self.notify(name = "bag.remind", *args, **kwargs)
+        self.notify(name="bag.remind", *args, **kwargs)
 
-    @appier.view(name = "Lines")
+    @appier.view(name="Lines")
     def lines_v(self, *args, **kwargs):
         kwargs["sort"] = kwargs.get("sort", [("created", -1)])
         return appier.lazy_dict(
-            model = self.lines._target,
-            kwargs = kwargs,
-            entities = appier.lazy(lambda: self.lines.find(*args, **kwargs)),
-            page = appier.lazy(lambda: self.lines.paginate(*args, **kwargs)),
-            names = ["product", "quantity", "total", "currency"]
+            model=self.lines._target,
+            kwargs=kwargs,
+            entities=appier.lazy(lambda: self.lines.find(*args, **kwargs)),
+            page=appier.lazy(lambda: self.lines.paginate(*args, **kwargs)),
+            names=["product", "quantity", "total", "currency"],
         )

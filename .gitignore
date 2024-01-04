@@ -8,6 +8,8 @@ easypay.shelve*
 
 /.vscode/settings.json
 
+/.venv
+
 /dist
 /build
 /src/budy.egg-info

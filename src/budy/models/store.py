@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 # Hive Budy
-# Copyright (c) 2008-2020 Hive Solutions Lda.
+# Copyright (c) 2008-2024 Hive Solutions Lda.
 #
 # This file is part of Hive Budy.
 #
@@ -22,7 +22,7 @@
 __author__ = "João Magalhães <joamag@hive.pt>"
 """ The author(s) of the module """
 
-__copyright__ = "Copyright (c) 2008-2020 Hive Solutions Lda."
+__copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 """ The copyright for the module """
 
 __license__ = "Apache License, Version 2.0"
@@ -32,6 +32,7 @@ import appier
 
 from . import base
 
+
 class Store(base.BudyBase):
     """
     Represents a physical store entity that can be used
@@ -39,40 +40,22 @@ class Store(base.BudyBase):
     the checkout process.
     """
 
-    name = appier.field(
-        index = True,
-        default = True
-    )
+    name = appier.field(index=True, default=True)
 
-    address = appier.field(
-        type = appier.reference(
-            "Address",
-            name = "id"
-        ),
-        eager = True
-    )
+    address = appier.field(type=appier.reference("Address", name="id"), eager=True)
 
-    currency_code = appier.field(
-        index = True
-    )
+    currency_code = appier.field(index=True)
 
-    checkout_mode = appier.field(
-        index = True
-    )
+    checkout_mode = appier.field(index=True)
 
-    restrict_mode = appier.field(
-        type = bool,
-        index = True,
-        initial = True
-    )
+    restrict_mode = appier.field(type=bool, index=True, initial=True)
 
     @classmethod
     def validate(cls):
         return super(Store, cls).validate() + [
             appier.not_null("name"),
             appier.not_empty("name"),
-
-            appier.string_eq("currency_code", 3)
+            appier.string_eq("currency_code", 3),
         ]
 
     @classmethod
