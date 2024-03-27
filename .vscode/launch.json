@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [{
         "name": "Python",
-        "type": "python",
+        "type": "debugpy",
         "request": "launch",
         "python": "python",
         "program": "${workspaceRoot}/src/budy/main.py",
@@ -12,7 +12,7 @@
         }
     }, {
         "name": "Python3",
-        "type": "python",
+        "type": "debugpy",
         "request": "launch",
         "python": "python3",
         "program": "${workspaceRoot}/src/budy/main.py",
