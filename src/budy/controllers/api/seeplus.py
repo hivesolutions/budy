@@ -56,8 +56,13 @@ class SeeplusAPIController(root.RootAPIController):
         return dict(result=result)
 
     def _status_change_s(self, data):
-        reference = data["code"]
-        status = data["status"]
+        for key in ("code", "status"):
+            appier.verify(
+                key in data,
+                message="Missing '%s' in Seeplus data payload (OrderManagement.StatusChanged)" % key,
+                code=400,
+            )
+        reference, status = data["code"], data["status"]
         order = budy.Order.get(reference=reference)
         seeplus_status = order.meta.get("seeplus_status", None)
         seeplus_timestamp = order.meta.get("seeplus_timestamp", None)
