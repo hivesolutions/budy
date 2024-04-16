@@ -59,7 +59,7 @@ class SeeplusAPIController(root.RootAPIController):
         for key in ("code", "status"):
             appier.verify(
                 key in data,
-                message="Missing '%s' in Seeplus data payload (OrderManagement.StatusChanged)" % key,
+                message="Missing '%s' in Seeplus data payload" % key,
                 code=400,
             )
         reference, status = data["code"], data["status"]
