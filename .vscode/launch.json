@@ -4,22 +4,10 @@
         "name": "Python",
         "type": "debugpy",
         "request": "launch",
-        "python": "python",
-        "program": "${workspaceRoot}/src/budy/main.py",
+        "module": "budy.main",
         "justMyCode": false,
         "env": {
-            "PYTHONPATH": "${workspaceRoot}/src:{env.PYTHONPATH}",
-            "OMNI_BOT_ENABLED": "0"
-        }
-    }, {
-        "name": "Python3",
-        "type": "debugpy",
-        "request": "launch",
-        "python": "python3",
-        "program": "${workspaceRoot}/src/budy/main.py",
-        "justMyCode": false,
-        "env": {
-            "PYTHONPATH": "${workspaceRoot}/src:{env.PYTHONPATH}",
+            "PYTHONPATH": "src",
             "OMNI_BOT_ENABLED": "0"
         }
     }]
