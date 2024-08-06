@@ -18,10 +18,19 @@ jobs:
           latest,
           rc
         ]
+        adapter: ["tiny", "mongo"]
     runs-on: ubuntu-latest
     container: python:${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v4
+      - run: |    
+          curl -fsSL https://pgp.mongodb.com/server-7.0.asc | gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor
+          echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] http://repo.mongodb.org/apt/debian $(. /etc/os-release && echo "$VERSION_CODENAME")/mongodb-org/7.0 main" | tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+          apt-get update && apt-get install -y mongodb-org mongodb-org-server mongodb-org-database\
+            mongodb-org-mongos mongodb-org-shell mongodb-org-tools && mkdir -p /data/db
+        if: matrix.adapter == 'mongo'
+      - run: mongod &
+        if: matrix.adapter == 'mongo'
       - run: python --version
       - run: |
           pip install -r requirements.txt
@@ -35,16 +44,29 @@ jobs:
           pip install black
           black . --check
         if: matrix.python-version == '3.12'
-      - run: ADAPTER=tiny python setup.py test
+      - run: |
+          pip install pytest
+          ADAPTER=${{ matrix.adapter }} pytest
+      - run: ADAPTER=${{ matrix.adapter }} python setup.py test
+        if: matrix.python-version != '3.12' && matrix.python-version != 'latest'
   build-pypy:
     name: Build PyPy
     strategy:
       matrix:
         python-version: [2.7, 3.6]
+        adapter: ["tiny", "mongo"]
     runs-on: ubuntu-latest
     container: pypy:${{ matrix.python-version }}
     steps:
       - uses: actions/checkout@v4
+      - run: |    
+          curl -fsSL https://pgp.mongodb.com/server-7.0.asc | gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor
+          echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] http://repo.mongodb.org/apt/debian $(. /etc/os-release && echo "$VERSION_CODENAME")/mongodb-org/7.0 main" | tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+          apt-get update && apt-get install -y mongodb-org mongodb-org-server mongodb-org-database\
+            mongodb-org-mongos mongodb-org-shell mongodb-org-tools && mkdir -p /data/db
+        if: matrix.adapter == 'mongo'
+      - run: mongod &
+        if: matrix.adapter == 'mongo'
       - run: pypy --version
       - run: |
           pip install -r requirements.txt
@@ -58,4 +80,8 @@ jobs:
           pip install black
           black . --check
         if: matrix.python-version == '3.12'
-      - run: ADAPTER=tiny pypy setup.py test
+      - run: |
+          pip install pytest
+          ADAPTER=${{ matrix.adapter }} pytest
+      - run: ADAPTER=${{ matrix.adapter }} pypy setup.py test
+        if: matrix.python-version != '3.12' && matrix.python-version != 'latest'
