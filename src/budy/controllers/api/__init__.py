@@ -36,6 +36,7 @@ from . import color
 from . import country
 from . import currency
 from . import easypay
+from . import easypay_v2
 from . import media
 from . import order
 from . import product
@@ -58,6 +59,7 @@ from .color import ColorAPIController
 from .country import CountryAPIController
 from .currency import CurrencyAPIController
 from .easypay import EasypayAPIController
+from .easypay_v2 import EasypayV2APIController
 from .media import MediaAPIController
 from .order import OrderAPIController
 from .product import ProductAPIController

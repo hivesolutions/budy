@@ -171,7 +171,8 @@ class Order(bundle.Bundle):
     @classmethod
     def setup(cls):
         super(Order, cls).setup()
-        cls._get_api_easypay()
+        if "easypay" in cls._pproviders():
+            cls._get_api_easypay()
 
     @classmethod
     def list_names(cls):
@@ -380,9 +381,17 @@ class Order(bundle.Bundle):
         )
 
     @classmethod
+    def _pproviders(cls):
+        return appier.conf(
+            "BUDY_PAYMENT_PROVIDERS",
+            ["stripe", "easypay_v2", "paypal", "stripe_sca"],
+            cast=list,
+        )
+
+    @classmethod
     def _pmethods(cls):
         methods = dict()
-        for engine in ("stripe", "easypay", "paypal", "stripe_sca"):
+        for engine in cls._pproviders():
             function = getattr(cls, "_pmethods_" + engine)
             engine_m = [(value, engine) for value in function()]
             methods.update(engine_m)
@@ -395,6 +404,10 @@ class Order(bundle.Bundle):
     @classmethod
     def _pmethods_easypay(cls):
         return ("multibanco",)
+
+    @classmethod
+    def _pmethods_easypay_v2(cls):
+        return ("multibanco", "mbway")
 
     @classmethod
     def _pmethods_paypal(cls):
@@ -1731,8 +1744,12 @@ class Order(bundle.Bundle):
 
             return True
 
-    def _pay_easypay(self, payment_data, warning_d=172800, cancel_d=259200):
+    def _pay_easypay(self, payment_data, warning_d=None, cancel_d=259200):
         cls = self.__class__
+        if warning_d == None:
+            warning_d = appier.conf("BUDY_MB_WARNING", cast=float, default=172800)
+        if cancel_d == None:
+            cancel_d = appier.conf("BUDY_MB_CANCEL", cast=float, default=259200)
         api = cls._get_api_easypay()
         type = payment_data["type"]
         mb = api.generate_mb(
@@ -1756,6 +1773,23 @@ class Order(bundle.Bundle):
             identifier=identifier,
             warning=warning,
             cancel=cancel,
+        )
+        return False
+
+    def _pay_easypay_v2(self, payment_data, warning_d=None, cancel_d=None):
+        cls = self.__class__
+        if warning_d == None:
+            warning_d = appier.conf("BUDY_MB_WARNING", cast=float, default=172800)
+        if cancel_d == None:
+            cancel_d = appier.conf("BUDY_MB_CANCEL", cast=float, default=259200)
+        api = cls._get_api_easypay_v2()
+        type = payment_data["type"]
+        payment = api.create_payment(self.payable, method="mb", key=self.key)
+        mb = payment["method"]
+        entity = mb["entity"]
+        reference = mb["reference"]
+        self.payment_data = dict(
+            engine="easypay_v2", type=type, entity=entity, reference=reference
         )
         return False
 
