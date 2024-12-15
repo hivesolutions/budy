@@ -36,8 +36,12 @@ from . import root
 
 
 class EasypayV2APIController(root.RootAPIController):
-    @appier.route("/api/easypay_v2/notification", "GET", json=True)
-    def notification(self):
-        #@TODO: check implement proper handling logic for payment information
+    @appier.route("/api/easypay_v2/generic_notification", "POST", json=True)
+    def generic_notification(self):
+        pass
+
+    @appier.route("/api/easypay_v2/payment_notification", "POST", json=True)
+    def payment_notification(self):
+        # @TODO: check implement proper handling logic for payment information
         # take into consideration the multiple possible payment events (capture, cancel, etc)
         pass
