@@ -439,7 +439,7 @@ class Order(bundle.Bundle):
             import easypay
         except ImportError:
             return None
-        return easypay.APIv2()
+        return easypay.ShelveAPIv2(scallback=cls._on_api_easypay_v2)
 
     @classmethod
     def _get_api_paypal(cls):
@@ -466,6 +466,25 @@ class Order(bundle.Bundle):
     def _on_canceled_easypay(cls, reference):
         identifier = reference["identifier"]
         order = cls.get(key=identifier, raise_e=False)
+        order.cancel_s(notify=True)
+
+    @classmethod
+    def _on_api_easypay_v2(cls, api):
+        api.bind("paid", cls._on_paid_easypay_v2)
+        api.bind("canceled", cls._on_canceled_easypay_v2)
+        api.start_scheduler()
+
+    @classmethod
+    def _on_paid_easypay_v2(cls, payment):
+        key = payment["key"]
+        order = cls.get(key=key, raise_e=False)
+        if order.is_payable():
+            order.end_pay_s(notify=True)
+
+    @classmethod
+    def _on_canceled_easypay_v2(cls, payment):
+        key = payment["key"]
+        order = cls.get(key=key, raise_e=False)
         order.cancel_s(notify=True)
 
     def pre_validate(self):
@@ -1784,12 +1803,26 @@ class Order(bundle.Bundle):
             cancel_d = appier.conf("BUDY_MB_CANCEL", cast=float, default=259200)
         api = cls._get_api_easypay_v2()
         type = payment_data["type"]
-        payment = api.create_payment(self.payable, method="mb", key=self.key)
-        mb = payment["method"]
-        entity = mb["entity"]
-        reference = mb["reference"]
+        payment = api.generate_payment(
+            self.payable,
+            method="mb",
+            key=self.key,
+            warning=int(time.time() + warning_d) if warning_d else None,
+            cancel=int(time.time() + cancel_d) if cancel_d else None,
+        )
+        entity = payment["entity"]
+        reference = payment["reference"]
+        identifier = payment["identifier"]
+        warning = payment["warning"]
+        cancel = payment["cancel"]
         self.payment_data = dict(
-            engine="easypay_v2", type=type, entity=entity, reference=reference
+            engine="easypay_v2",
+            type=type,
+            entity=entity,
+            reference=reference,
+            identifier=identifier,
+            warning=warning,
+            cancel=cancel,
         )
         return False
 

@@ -38,10 +38,30 @@ from . import root
 class EasypayV2APIController(root.RootAPIController):
     @appier.route("/api/easypay_v2/generic_notification", "POST", json=True)
     def generic_notification(self):
-        pass
+        data = appier.request_json()
+        api = budy.Order._get_api_easypay_v2()
+        api.notify_payment(data)
 
     @appier.route("/api/easypay_v2/payment_notification", "POST", json=True)
     def payment_notification(self):
-        # @TODO: check implement proper handling logic for payment information
-        # take into consideration the multiple possible payment events (capture, cancel, etc)
         pass
+
+    @appier.route("/api/easypay_v2/cancel", ("GET", "POST"), json=True)
+    @appier.ensure(token="admin")
+    def cancel(self):
+        identifier = self.field("identifier", mandatory=True)
+        api = budy.Order._get_api_easypay_v2()
+        return api.cancel_payment(identifier)
+
+    @appier.route("/api/easypay_v2/delete", ("GET", "POST"), json=True)
+    @appier.ensure(token="admin")
+    def delete(self):
+        identifier = self.field("identifier", mandatory=True)
+        api = budy.Order._get_api_easypay_v2()
+        return api.del_payment(identifier)
+
+    @appier.route("/api/easypay_v2/diagnostics", "GET", json=True)
+    @appier.ensure(token="admin")
+    def diagnostics(self):
+        api = budy.Order._get_api_easypay_v2()
+        return api.diagnostics()
