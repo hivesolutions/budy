@@ -1763,7 +1763,7 @@ class Order(bundle.Bundle):
 
             return True
 
-    def _pay_easypay(self, payment_data, warning_d=None, cancel_d=259200):
+    def _pay_easypay(self, payment_data, warning_d=None, cancel_d=None):
         cls = self.__class__
         if warning_d == None:
             warning_d = appier.conf("BUDY_MB_WARNING", cast=float, default=172800)
