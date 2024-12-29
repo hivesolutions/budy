@@ -173,6 +173,8 @@ class Order(bundle.Bundle):
         super(Order, cls).setup()
         if "easypay" in cls._pproviders():
             cls._get_api_easypay()
+        if "easypay_v2" in cls._pproviders():
+            cls._get_api_easypay_v2()
 
     @classmethod
     def list_names(cls):
