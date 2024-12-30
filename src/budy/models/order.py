@@ -441,7 +441,7 @@ class Order(bundle.Bundle):
             import easypay
         except ImportError:
             return None
-        return easypay.ShelveAPIv2(scallback=cls._on_api_easypay_v2)
+        return easypay.ShelveAPIv2.singleton(scallback=cls._on_api_easypay_v2)
 
     @classmethod
     def _get_api_paypal(cls):
