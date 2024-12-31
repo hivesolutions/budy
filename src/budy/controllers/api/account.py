@@ -94,7 +94,7 @@ class AccountAPIController(root.RootAPIController):
     @appier.route("/api/accounts/me/orders", "GET", json=True)
     @appier.ensure(token="user")
     def orders_me(self):
-        object = appier.get_object(alias=True, find=True, sort=[("id", -1)])
+        object = appier.get_object(alias=True, find=True, limit=0, sort=[("id", -1)])
         account = budy.BudyAccount.from_session()
         orders = budy.Order.find(
             account=account.id, paid=True, eager=("lines",), map=True, **object
