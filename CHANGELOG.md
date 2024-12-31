@@ -9,16 +9,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+*
+
+### Changed
+
+*
+
+### Fixed
+
+*
+
+## [0.8.11] - 2024-12-31
+
+### Added
+
 * Additional validation to status changed in order for Seeplus, more pedantic
 * Support for Easypay V2 integration
 
 ### Changed
 
 * Made code compliant with black
-
-### Fixed
-
-*
 
 ## [0.8.10] - 2024-01-04
 
