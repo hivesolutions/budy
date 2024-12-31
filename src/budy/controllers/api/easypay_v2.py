@@ -35,33 +35,33 @@ import budy
 from . import root
 
 
-class EasypayAPIController(root.RootAPIController):
-    @appier.route("/api/easypay/notification", "GET", json=True)
-    def notification(self):
-        cin = self.field("ep_cin")
-        username = self.field("ep_user")
-        doc = self.field("ep_doc")
-        api = budy.Order._get_api_easypay()
-        result = api.notify_mb(cin, username, doc)
-        self.content_type("application/xml")
-        return result
+class EasypayV2APIController(root.RootAPIController):
+    @appier.route("/api/easypay_v2/generic_notification", "POST", json=True)
+    def generic_notification(self):
+        data = appier.request_json()
+        api = budy.Order._get_api_easypay_v2()
+        api.notify_payment(data)
 
-    @appier.route("/api/easypay/cancel", ("GET", "POST"), json=True)
+    @appier.route("/api/easypay_v2/payment_notification", "POST", json=True)
+    def payment_notification(self):
+        pass
+
+    @appier.route("/api/easypay_v2/cancel", ("GET", "POST"), json=True)
     @appier.ensure(token="admin")
     def cancel(self):
         identifier = self.field("identifier", mandatory=True)
-        api = budy.Order._get_api_easypay()
-        return api.cancel_mb(identifier)
+        api = budy.Order._get_api_easypay_v2()
+        return api.cancel_payment(identifier)
 
-    @appier.route("/api/easypay/delete", ("GET", "POST"), json=True)
+    @appier.route("/api/easypay_v2/delete", ("GET", "POST"), json=True)
     @appier.ensure(token="admin")
     def delete(self):
         identifier = self.field("identifier", mandatory=True)
-        api = budy.Order._get_api_easypay()
-        return api.del_reference(identifier)
+        api = budy.Order._get_api_easypay_v2()
+        return api.del_payment(identifier)
 
-    @appier.route("/api/easypay/diagnostics", "GET", json=True)
+    @appier.route("/api/easypay_v2/diagnostics", "GET", json=True)
     @appier.ensure(token="admin")
     def diagnostics(self):
-        api = budy.Order._get_api_easypay()
+        api = budy.Order._get_api_easypay_v2()
         return api.diagnostics()

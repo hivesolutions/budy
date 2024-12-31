@@ -171,7 +171,10 @@ class Order(bundle.Bundle):
     @classmethod
     def setup(cls):
         super(Order, cls).setup()
-        cls._get_api_easypay()
+        if "easypay" in cls._pproviders():
+            cls._get_api_easypay()
+        if "easypay_v2" in cls._pproviders():
+            cls._get_api_easypay_v2()
 
     @classmethod
     def list_names(cls):
@@ -380,9 +383,17 @@ class Order(bundle.Bundle):
         )
 
     @classmethod
+    def _pproviders(cls):
+        return appier.conf(
+            "BUDY_PAYMENT_PROVIDERS",
+            ["stripe", "easypay_v2", "paypal", "stripe_sca"],
+            cast=list,
+        )
+
+    @classmethod
     def _pmethods(cls):
         methods = dict()
-        for engine in ("stripe", "easypay", "paypal", "stripe_sca"):
+        for engine in cls._pproviders():
             function = getattr(cls, "_pmethods_" + engine)
             engine_m = [(value, engine) for value in function()]
             methods.update(engine_m)
@@ -395,6 +406,10 @@ class Order(bundle.Bundle):
     @classmethod
     def _pmethods_easypay(cls):
         return ("multibanco",)
+
+    @classmethod
+    def _pmethods_easypay_v2(cls):
+        return ("multibanco", "mbway")
 
     @classmethod
     def _pmethods_paypal(cls):
@@ -421,6 +436,14 @@ class Order(bundle.Bundle):
         return easypay.ShelveAPI.singleton(scallback=cls._on_api_easypay)
 
     @classmethod
+    def _get_api_easypay_v2(cls):
+        try:
+            import easypay
+        except ImportError:
+            return None
+        return easypay.ShelveAPIv2.singleton(scallback=cls._on_api_easypay_v2)
+
+    @classmethod
     def _get_api_paypal(cls):
         try:
             import paypal
@@ -445,6 +468,25 @@ class Order(bundle.Bundle):
     def _on_canceled_easypay(cls, reference):
         identifier = reference["identifier"]
         order = cls.get(key=identifier, raise_e=False)
+        order.cancel_s(notify=True)
+
+    @classmethod
+    def _on_api_easypay_v2(cls, api):
+        api.bind("paid", cls._on_paid_easypay_v2)
+        api.bind("canceled", cls._on_canceled_easypay_v2)
+        api.start_scheduler()
+
+    @classmethod
+    def _on_paid_easypay_v2(cls, payment):
+        key = payment["key"]
+        order = cls.get(key=key, raise_e=False)
+        if order.is_payable():
+            order.end_pay_s(notify=True)
+
+    @classmethod
+    def _on_canceled_easypay_v2(cls, payment):
+        key = payment["key"]
+        order = cls.get(key=key, raise_e=False)
         order.cancel_s(notify=True)
 
     def pre_validate(self):
@@ -1723,8 +1765,12 @@ class Order(bundle.Bundle):
 
             return True
 
-    def _pay_easypay(self, payment_data, warning_d=172800, cancel_d=259200):
+    def _pay_easypay(self, payment_data, warning_d=None, cancel_d=None):
         cls = self.__class__
+        if warning_d == None:
+            warning_d = appier.conf("BUDY_MB_WARNING", cast=float, default=172800)
+        if cancel_d == None:
+            cancel_d = appier.conf("BUDY_MB_CANCEL", cast=float, default=259200)
         api = cls._get_api_easypay()
         type = payment_data["type"]
         mb = api.generate_mb(
@@ -1745,6 +1791,37 @@ class Order(bundle.Bundle):
             entity=entity,
             reference=reference,
             cin=cin,
+            identifier=identifier,
+            warning=warning,
+            cancel=cancel,
+        )
+        return False
+
+    def _pay_easypay_v2(self, payment_data, warning_d=None, cancel_d=None):
+        cls = self.__class__
+        if warning_d == None:
+            warning_d = appier.conf("BUDY_MB_WARNING", cast=float, default=172800)
+        if cancel_d == None:
+            cancel_d = appier.conf("BUDY_MB_CANCEL", cast=float, default=259200)
+        api = cls._get_api_easypay_v2()
+        type = payment_data["type"]
+        payment = api.generate_payment(
+            self.payable,
+            method="mb",
+            key=self.key,
+            warning=int(time.time() + warning_d) if warning_d else None,
+            cancel=int(time.time() + cancel_d) if cancel_d else None,
+        )
+        entity = payment["entity"]
+        reference = payment["reference"]
+        identifier = payment["identifier"]
+        warning = payment["warning"]
+        cancel = payment["cancel"]
+        self.payment_data = dict(
+            engine="easypay_v2",
+            type=type,
+            entity=entity,
+            reference=reference,
             identifier=identifier,
             warning=warning,
             cancel=cancel,

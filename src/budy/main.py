@@ -65,6 +65,7 @@ class BudyApp(appier.WebApp):
             easypay = None
         if easypay:
             easypay.ShelveAPI.cleanup()
+            easypay.ShelveAPIv2.cleanup()
         appier.WebApp.stop(self)
 
     def get_omni_api(self):
