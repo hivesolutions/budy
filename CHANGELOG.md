@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 * Additional validation to status changed in order for Seeplus, more pedantic
+* Support for Easypay V2 integration
 
 ### Changed
 
