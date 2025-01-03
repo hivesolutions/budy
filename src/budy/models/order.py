@@ -53,6 +53,13 @@ GENDERS_MAP = dict(Male=1, Female=2)
 """ Map that associates the internal string based gender
 enumeration with the Omni's numeric one """
 
+EASYPAY_METHODS_MAP = dict(
+    multibanco="mb",
+    mbway="mbw",
+)
+""" Map that associates the internal string based payment
+method with the Easypay's one """
+
 
 class Order(bundle.Bundle):
     STATUS_S = dict(
@@ -1805,10 +1812,13 @@ class Order(bundle.Bundle):
             cancel_d = appier.conf("BUDY_MB_CANCEL", cast=float, default=259200)
         api = cls._get_api_easypay_v2()
         type = payment_data["type"]
+        phone = payment_data.get("phone", None)
+        method = EASYPAY_METHODS_MAP[type]
         payment = api.generate_payment(
             self.payable,
-            method="mb",
+            method=method,
             key=self.key,
+            customer=dict(phone=phone) if phone else None,
             warning=int(time.time() + warning_d) if warning_d else None,
             cancel=int(time.time() + cancel_d) if cancel_d else None,
         )
