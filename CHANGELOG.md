@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 *
 
+## [0.8.14] - 2025-01-03
+
+### Fixed
+
+* Added more customer info to MBWay
+
 ## [0.8.13] - 2025-01-03
 
 ### Fixed
