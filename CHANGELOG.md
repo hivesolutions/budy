@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 *
 
+## [0.8.16] - 2025-01-03
+
+### Added
+
+* Support for payment entity information (`BUDY_PAYMENT_ENTITY`) in `Order`
+
 ## [0.8.15] - 2025-01-03
 
 ### Added
