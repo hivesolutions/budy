@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 *
 
+## [0.8.17] - 2025-01-03
+
+### Fixed
+
+* Issue with cancel for mbway
+
 ## [0.8.16] - 2025-01-03
 
 ### Added

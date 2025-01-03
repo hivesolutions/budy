@@ -1872,7 +1872,12 @@ class Order(bundle.Bundle):
             cancel = payment["cancel"]
             customer = payment.get("customer", None)
             self.payment_data = dict(
-                engine="easypay_v2", type=type, identifier=identifier, customer=customer
+                engine="easypay_v2",
+                type=type,
+                identifier=identifier,
+                customer=customer,
+                warning=warning,
+                cancel=cancel,
             )
         return False
 
