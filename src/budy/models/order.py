@@ -1819,6 +1819,7 @@ class Order(bundle.Bundle):
             method=method,
             key=self.key,
             type="sale" if type == "mbway" else None,
+            capture=dict(descriptive=self.reference, transaction_key=self.reference),
             customer=(
                 dict(
                     name=self.shipping_address.full_name, email=self.email, phone=phone
@@ -1835,6 +1836,7 @@ class Order(bundle.Bundle):
             identifier = payment["identifier"]
             warning = payment["warning"]
             cancel = payment["cancel"]
+            capture = payment.get("capture", None)
             customer = payment.get("customer", None)
             self.payment_data = dict(
                 engine="easypay_v2",
@@ -1842,6 +1844,7 @@ class Order(bundle.Bundle):
                 entity=entity,
                 reference=reference,
                 identifier=identifier,
+                capture=capture,
                 customer=customer,
                 warning=warning,
                 cancel=cancel,
