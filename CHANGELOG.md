@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 *
 
+## [0.8.18] - 2025-01-03
+
+### Changed
+
+* Bumped easypay-api dependency
+
 ## [0.8.17] - 2025-01-03
 
 ### Fixed
