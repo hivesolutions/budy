@@ -1822,7 +1822,12 @@ class Order(bundle.Bundle):
             capture=dict(descriptive=self.reference, transaction_key=self.reference),
             customer=(
                 dict(
-                    name=self.shipping_address.full_name, email=self.email, phone=phone
+                    name=self.shipping_address.full_name,
+                    email=self.email,
+                    phone=phone,
+                    phone_indicative=(
+                        phone.split(" ", 1)[0] if phone.startswith("+") else "+351"
+                    ),
                 )
                 if phone
                 else None
