@@ -1818,7 +1818,14 @@ class Order(bundle.Bundle):
             self.payable,
             method=method,
             key=self.key,
-            customer=dict(phone=phone) if phone else None,
+            type="sale" if type == "mbway" else None,
+            customer=(
+                dict(
+                    name=self.shipping_address.full_name, email=self.email, phone=phone
+                )
+                if phone
+                else None
+            ),
             warning=int(time.time() + warning_d) if warning_d else None,
             cancel=int(time.time() + cancel_d) if cancel_d else None,
         )
