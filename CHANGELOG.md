@@ -13,11 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* Minimal support for MBWay
+*
 
 ### Fixed
 
 *
+
+## [0.8.12] - 2025-01-03
+
+### Changed
+
+* Minimal support for MBWay
 
 ## [0.8.11] - 2024-12-31
 
