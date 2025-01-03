@@ -1806,14 +1806,18 @@ class Order(bundle.Bundle):
 
     def _pay_easypay_v2(self, payment_data, warning_d=None, cancel_d=None):
         cls = self.__class__
-        if warning_d == None:
-            warning_d = appier.conf("BUDY_MB_WARNING", cast=float, default=172800)
-        if cancel_d == None:
-            cancel_d = appier.conf("BUDY_MB_CANCEL", cast=float, default=259200)
         api = cls._get_api_easypay_v2()
         type = payment_data["type"]
         phone = payment_data.get("phone", None)
         method = EASYPAY_METHODS_MAP[type]
+        if warning_d == None:
+            if type == "multibanco":
+                warning_d = appier.conf("BUDY_MB_WARNING", cast=float, default=172800)
+        if cancel_d == None:
+            if type == "multibanco":
+                cancel_d = appier.conf("BUDY_MB_CANCEL", cast=float, default=259200)
+            else:
+                cancel_d = 300
         payment = api.generate_payment(
             self.payable,
             method=method,
