@@ -1818,12 +1818,20 @@ class Order(bundle.Bundle):
                 cancel_d = appier.conf("BUDY_MB_CANCEL", cast=float, default=259200)
             else:
                 cancel_d = 300
+        payment_entity = appier.conf("BUDY_PAYMENT_ENTITY", None)
+        payment_description = (
+            "%s - %s" % (payment_entity, self.reference)
+            if payment_entity
+            else self.reference
+        )
         payment = api.generate_payment(
             self.payable,
             method=method,
             key=self.key,
             type="sale" if type == "mbway" else None,
-            capture=dict(descriptive=self.reference, transaction_key=self.reference),
+            capture=dict(
+                descriptive=payment_description, transaction_key=payment_description
+            ),
             customer=(
                 dict(
                     name=self.shipping_address.full_name,
