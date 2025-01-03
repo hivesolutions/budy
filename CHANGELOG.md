@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-*
+* Issues with the processing of MBWay
 
 ## [0.8.12] - 2025-01-03
 

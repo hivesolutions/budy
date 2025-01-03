@@ -1822,20 +1822,31 @@ class Order(bundle.Bundle):
             warning=int(time.time() + warning_d) if warning_d else None,
             cancel=int(time.time() + cancel_d) if cancel_d else None,
         )
-        entity = payment["entity"]
-        reference = payment["reference"]
-        identifier = payment["identifier"]
-        warning = payment["warning"]
-        cancel = payment["cancel"]
-        self.payment_data = dict(
-            engine="easypay_v2",
-            type=type,
-            entity=entity,
-            reference=reference,
-            identifier=identifier,
-            warning=warning,
-            cancel=cancel,
-        )
+        if type == "multibanco":
+            entity = payment["entity"]
+            reference = payment["reference"]
+            identifier = payment["identifier"]
+            warning = payment["warning"]
+            cancel = payment["cancel"]
+            customer = payment.get("customer", None)
+            self.payment_data = dict(
+                engine="easypay_v2",
+                type=type,
+                entity=entity,
+                reference=reference,
+                identifier=identifier,
+                customer=customer,
+                warning=warning,
+                cancel=cancel,
+            )
+        elif type == "mbway":
+            identifier = payment["identifier"]
+            warning = payment["warning"]
+            cancel = payment["cancel"]
+            customer = payment.get("customer", None)
+            self.payment_data = dict(
+                engine="easypay_v2", type=type, identifier=identifier, customer=customer
+            )
         return False
 
     def _pay_paypal(self, payment_data):
