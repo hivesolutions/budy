@@ -62,10 +62,10 @@ class BaseController(appier.Controller):
 
         account._set_account()
 
-        return self.redirect(next or self.url_for(self.login_redirect))
+        return self.redirect(next or self.url_for(self.login_redirect), relative=True)
 
     @appier.route("/signout", "GET")
     def signout(self):
         next = self.field("next")
         budy.BudyAccount._unset_account()
-        return self.redirect(next or self.url_for(self.logout_redirect))
+        return self.redirect(next or self.url_for(self.logout_redirect), relative=True)
