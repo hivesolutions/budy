@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* Relative redirect fix
+* Relative redirect fix when using a `next` param
 
 ## [0.8.18] - 2025-01-03
 
