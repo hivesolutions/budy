@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 *
 
+## [0.8.20] - 2025-02-18
+
+### Fixed
+
+* Version number for the package
+
 ## [0.8.19] - 2025-02-18
 
 ### Fixed
