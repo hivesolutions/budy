@@ -1901,6 +1901,29 @@ class Order(bundle.Bundle):
         return approval_url
 
     def _pay_stripe_sca(self, payment_data):
+        """
+        Starts the payment process for the current order using the
+        Stripe SCA (Strong Customer Authentication), this is a 3D Secure
+        payment method that is used to verify the identity of the customer
+        and ensure that the payment is secure.
+
+        The payment process is as follows:
+        1. The customer is redirected to the Stripe SCA payment page
+        (may be a page in host system with an iFrame).
+        2. The customer enters their payment details and confirms the
+        payment in payment page.
+        3. The customer is redirected back to the return URL with the
+        payment result.
+
+        :type payment_data: dict
+        :param payment_data: The payment data received that is going to be used
+        to control the payment process.
+        :rtype: String
+        :return: The payment (secret) URL for the Stripe SCA payment page, the front-end
+        should redirect the customer to this URL so that the payment can be completed. This
+        URL can be used independently to capture the payment data.
+        """
+
         cls = self.__class__
         api = cls._get_api_stripe()
         pay_url = payment_data.get("pay_url", None)
@@ -2015,6 +2038,20 @@ class Order(bundle.Bundle):
         return True
 
     def _end_pay_stripe_sca(self, payment_data):
+        """
+        Ends the payment process for the current order using the
+        Stripe SCA (Strong Customer Authentication) payment method.
+
+        This is the part of the process that should be called upon
+        the Webhook event from Stripe is received (return URL callback).
+
+        :type payment_data: dict
+        :param payment_data: The payment data received (including the Stripe Webhook
+        data), should be a dictionary with structured payment related data.
+        :rtype: bool
+        :return: True if the payment was successfully processed, False otherwise.
+        """
+
         cls = self.__class__
         api = cls._get_api_stripe()
         identifier = payment_data["identifier"]
