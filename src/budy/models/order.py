@@ -1961,6 +1961,37 @@ class Order(bundle.Bundle):
         )
         return pay_secret_url
 
+    def _pay_stripe_klarna(self, payment_data):
+        cls = self.__class__
+        api = cls._get_api_stripe()
+        return_url = payment_data.get("return_url", None)
+        return_url = payment_data.get("stripe_klarna_return_url", return_url)
+        intent = api.create_intent(
+            int(self.payable * 100),
+            self.currency,
+            description=self.reference,
+            return_url=return_url,
+            payment_method_types=["klarna"],
+            metadata=dict(
+                order=self.reference,
+                email=self.email,
+                ip_address=self.ip_address,
+                ip_country=self.ip_country,
+                first_name=self.shipping_address.first_name,
+                last_name=self.shipping_address.last_name,
+            ),
+        )
+        identifier = intent["id"]
+        redirect_url = intent["next_action"]["redirect_to_url"]["url"]
+        self.payment_data = dict(
+            engine="stripe_klarna",
+            type="stripe_klarna",
+            identifier=identifier,
+            redirect_url=redirect_url,
+            return_url=return_url,
+        )
+        return redirect_url
+
     def _end_pay(self, payment_data, payment_function=None, strict=False):
         cls = self.__class__
         if self.payable == 0.0:
