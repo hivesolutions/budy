@@ -2115,6 +2115,20 @@ class Order(bundle.Bundle):
             )
         return True
 
+    def _end_pay_stripe_klarna(self, payment_data):
+        cls = self.__class__
+        api = cls._get_api_stripe()
+        identifier = payment_data["identifier"]
+        charges = api.list_charges(payment_intent=identifier, limit=1)
+        items = charges.get("data", [])
+        appier.verify(items, message="No valid charge found")
+        charge = items[0]
+        appier.verify(
+            charge.get("status", "succeeded"), message="Charge was not successful"
+        )
+        appier.verify(charge.get("captured", False), message="Charge was not captured")
+        return True
+
     def _cancel(self, cancel_data, cancel_function=None, strict=False):
         cls = self.__class__
         if self.payable == 0.0:
