@@ -1961,6 +1961,46 @@ class Order(bundle.Bundle):
         )
         return pay_secret_url
 
+    def _pay_stripe_klarna(self, payment_data):
+        cls = self.__class__
+        api = cls._get_api_stripe()
+        pay_url = payment_data.get("pay_url", None)
+        pay_url = payment_data.get("stripe_klarna_pay_url", pay_url)
+        return_url = payment_data.get("return_url", None)
+        return_url = payment_data.get("stripe_klarna_return_url", return_url)
+        intent = api.create_intent(
+            int(self.payable * 100),
+            self.currency,
+            description=self.reference,
+            payment_method_types=["klarna"],
+            payment_method_options=dict(klarna=dict(preferred_locale="en-GB")),
+            metadata=dict(
+                order=self.reference,
+                email=self.email,
+                ip_address=self.ip_address,
+                ip_country=self.ip_country,
+                first_name=self.shipping_address.first_name,
+                last_name=self.shipping_address.last_name,
+            ),
+        )
+        identifier = intent["id"]
+        secret = intent["client_secret"]
+        query = "secret=%s&return_url=%s" % (
+            appier.quote(secret),
+            appier.quote(return_url),
+        )
+        pay_secret_url = pay_url + ("&" if "?" in pay_url else "?") + query
+        self.payment_data = dict(
+            engine="stripe_klarna",
+            type="stripe_klarna",
+            identifier=identifier,
+            secret=secret,
+            pay_url=pay_url,
+            return_url=return_url,
+            pay_secret_url=pay_secret_url,
+        )
+        return pay_secret_url
+
     def _end_pay(self, payment_data, payment_function=None, strict=False):
         cls = self.__class__
         if self.payable == 0.0:
@@ -2043,11 +2083,11 @@ class Order(bundle.Bundle):
         Stripe SCA (Strong Customer Authentication) payment method.
 
         This is the part of the process that should be called upon
-        the Webhook event from Stripe is received (return URL callback).
+        URL redirection from Stripe (return URL callback).
 
         :type payment_data: dict
-        :param payment_data: The payment data received (including the Stripe Webhook
-        data), should be a dictionary with structured payment related data.
+        :param payment_data: The payment data received (including the Stripe redirect
+        URL data), should be a dictionary with structured payment related data.
         :rtype: bool
         :return: True if the payment was successfully processed, False otherwise.
         """
@@ -2082,6 +2122,20 @@ class Order(bundle.Bundle):
             appier.verify(
                 charge.get("captured", False), message="Charge was not captured"
             )
+        return True
+
+    def _end_pay_stripe_klarna(self, payment_data):
+        cls = self.__class__
+        api = cls._get_api_stripe()
+        identifier = payment_data["identifier"]
+        charges = api.list_charges(payment_intent=identifier, limit=1)
+        items = charges.get("data", [])
+        appier.verify(items, message="No valid charge found")
+        charge = items[0]
+        appier.verify(
+            charge.get("status", "succeeded"), message="Charge was not successful"
+        )
+        appier.verify(charge.get("captured", False), message="Charge was not captured")
         return True
 
     def _cancel(self, cancel_data, cancel_function=None, strict=False):
