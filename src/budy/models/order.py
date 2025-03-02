@@ -1989,7 +1989,6 @@ class Order(bundle.Bundle):
             appier.quote(secret),
             appier.quote(return_url),
         )
-        print(secret)
         pay_secret_url = pay_url + ("&" if "?" in pay_url else "?") + query
         self.payment_data = dict(
             engine="stripe_klarna",
