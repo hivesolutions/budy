@@ -1964,14 +1964,16 @@ class Order(bundle.Bundle):
     def _pay_stripe_klarna(self, payment_data):
         cls = self.__class__
         api = cls._get_api_stripe()
+        pay_url = payment_data.get("pay_url", None)
+        pay_url = payment_data.get("stripe_klarna_pay_url", pay_url)
         return_url = payment_data.get("return_url", None)
         return_url = payment_data.get("stripe_klarna_return_url", return_url)
         intent = api.create_intent(
             int(self.payable * 100),
             self.currency,
             description=self.reference,
-            return_url=return_url,
             payment_method_types=["klarna"],
+            payment_method_options=dict(klarna=dict(preferred_locale="en-GB")),
             metadata=dict(
                 order=self.reference,
                 email=self.email,
@@ -1982,15 +1984,23 @@ class Order(bundle.Bundle):
             ),
         )
         identifier = intent["id"]
-        redirect_url = intent["next_action"]["redirect_to_url"]["url"]
+        secret = intent["client_secret"]
+        query = "secret=%s&return_url=%s" % (
+            appier.quote(secret),
+            appier.quote(return_url),
+        )
+        print(secret)
+        pay_secret_url = pay_url + ("&" if "?" in pay_url else "?") + query
         self.payment_data = dict(
             engine="stripe_klarna",
             type="stripe_klarna",
             identifier=identifier,
-            redirect_url=redirect_url,
+            secret=secret,
+            pay_url=pay_url,
             return_url=return_url,
+            pay_secret_url=pay_secret_url,
         )
-        return redirect_url
+        return pay_secret_url
 
     def _end_pay(self, payment_data, payment_function=None, strict=False):
         cls = self.__class__
