@@ -2074,11 +2074,11 @@ class Order(bundle.Bundle):
         Stripe SCA (Strong Customer Authentication) payment method.
 
         This is the part of the process that should be called upon
-        the Webhook event from Stripe is received (return URL callback).
+        URL redirection from Stripe (return URL callback).
 
         :type payment_data: dict
-        :param payment_data: The payment data received (including the Stripe Webhook
-        data), should be a dictionary with structured payment related data.
+        :param payment_data: The payment data received (including the Stripe redirect
+        URL data), should be a dictionary with structured payment related data.
         :rtype: bool
         :return: True if the payment was successfully processed, False otherwise.
         """
