@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Support for Stripe Klarna payment method
+*
 
 ### Changed
 
@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 *
+
+## [0.8.21] - 2025-03-02
+
+### Added
+
+* Support for Stripe Klarna payment method
 
 ## [0.8.20] - 2025-02-18
 
