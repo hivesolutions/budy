@@ -54,7 +54,7 @@ class Bundle(base.BudyBase):
         safe=True,
         observations="""The total amount for the bundle resulting
         from the sum of the line values, this value should not include
-        the discount and the shipping costs """,
+        the discount and the shipping costs""",
     )
 
     discounted_sub_total = appier.field(
@@ -444,6 +444,13 @@ class Bundle(base.BudyBase):
         for line in empty:
             self.lines.remove(line)
 
+    def merchandise_quantity(self, merchandise):
+        quantity = 0.0
+        for line in self.lines:
+            if line.product.id == merchandise.id:
+                quantity += line.quantity
+        return quantity
+
     def try_valid(self):
         # unsets the fixed flag meaning that by default no
         # fixing operation has occurred
@@ -453,7 +460,7 @@ class Bundle(base.BudyBase):
         # to try to fix them and make them valid in case
         # none of them has to be fixed returns immediately
         for line in self.lines:
-            fixed |= line.try_valid_s()
+            fixed |= line.try_valid_s(bundle=self)
         if not fixed:
             return fixed
 

@@ -45,9 +45,9 @@ class BagLine(bundle_line.BundleLine):
     def is_visible(cls):
         return False
 
-    def pre_validate(self):
-        bundle_line.BundleLine.pre_validate(self)
-        self.try_valid()
+    #def pre_validate(self):
+    #    bundle_line.BundleLine.pre_validate(self)
+    #    self.try_valid()
 
     def to_order_line_s(self, order=None):
         _order_line = order_line.OrderLine(

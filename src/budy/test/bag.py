@@ -324,6 +324,77 @@ class BagTest(unittest.TestCase):
 
         self.assertEqual(len(bag.lines), 0)
 
+    def test_quantity_multiple_lines(self):
+        product = budy.Product(
+            short_description="product", gender="Male", price=10.0, quantity_hand=3.0
+        )
+        product.save()
+
+        bag = budy.Bag()
+        bag.save()
+
+        bag_line_red = budy.BagLine(quantity=2.0)
+        bag_line_red.product = product
+        bag_line_red.attributes = "{\"color\": \"red\"}"
+        bag_line_red.save()
+        bag.add_line_s(bag_line_red)
+
+        bag_line_yellow = budy.BagLine(quantity=1.0)
+        bag_line_yellow.product = product
+        bag_line_yellow.attributes = "{\"color\": \"yellow\"}"
+        bag_line_yellow.save()
+        bag.add_line_s(bag_line_yellow)
+
+        self.assertEqual(bag_line_red.quantity, 2.0)
+        self.assertEqual(bag_line_red.total, 20.0)
+        self.assertEqual(bag_line_yellow.quantity, 1.0)
+        self.assertEqual(bag_line_yellow.total, 10.0)
+        self.assertEqual(bag.total, 30.0)
+        self.assertEqual(len(bag.lines), 2)
+
+        bag.reload()
+        bag.save()
+
+        bag.add_product_s(product, quantity=1.0, attributes="{\"color\": \"yellow\"}")
+
+        bag = bag.reload()
+        bag_line_yellow.reload()
+        bag_line_red.reload()
+
+        self.assertEqual(bag_line_red.quantity, 2.0)
+        self.assertEqual(bag_line_red.total, 20.0)
+        self.assertEqual(bag_line_yellow.quantity, 1.0)
+        self.assertEqual(bag_line_yellow.total, 10.0)
+        self.assertEqual(bag.total, 30.0)
+        self.assertEqual(len(bag.lines), 2)
+
+        product.quantity_hand = 4.0
+        product.save()
+
+        bag.reload()
+        bag.save()
+
+        bag.add_product_s(product, quantity=1.0, attributes="{\"color\": \"yellow\"}")
+
+        bag = bag.reload()
+        bag_line_yellow.reload()
+        bag_line_red.reload()
+
+        self.assertEqual(bag_line_red.quantity, 2.0)
+        self.assertEqual(bag_line_red.total, 20.0)
+        self.assertEqual(bag_line_yellow.quantity, 2.0)
+        self.assertEqual(bag_line_yellow.total, 20.0)
+        self.assertEqual(bag.total, 40.0)
+        self.assertEqual(len(bag.lines), 2)
+
+        product.quantity_hand = 0.0
+        product.save()
+
+        bag = bag.reload()
+        bag.save()
+
+        self.assertEqual(len(bag.lines), 0)
+
     def test_product_discounted(self):
         product = budy.Product(
             short_description="product",
