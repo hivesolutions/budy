@@ -335,50 +335,83 @@ class BagTest(unittest.TestCase):
 
         bag_line_red = budy.BagLine(quantity=2.0)
         bag_line_red.product = product
-        bag_line_red.attributes = "{\"color\": \"red\"}"
+        bag_line_red.attributes = '{"color": "red"}'
         bag_line_red.save()
         bag.add_line_s(bag_line_red)
 
         bag_line_yellow = budy.BagLine(quantity=1.0)
         bag_line_yellow.product = product
-        bag_line_yellow.attributes = "{\"color\": \"yellow\"}"
+        bag_line_yellow.attributes = '{"color": "yellow"}'
         bag_line_yellow.save()
         bag.add_line_s(bag_line_yellow)
 
+        bag = bag.reload()
+        bag_line_red = bag_line_red.reload()
+        bag_line_yellow = bag_line_yellow.reload()
+
         self.assertEqual(bag_line_red.quantity, 2.0)
         self.assertEqual(bag_line_red.total, 20.0)
+        self.assertEqual(bag_line_red.attributes, '{"color": "red"}')
         self.assertEqual(bag_line_yellow.quantity, 1.0)
         self.assertEqual(bag_line_yellow.total, 10.0)
+        self.assertEqual(bag_line_yellow.attributes, '{"color": "yellow"}')
         self.assertEqual(bag.total, 30.0)
         self.assertEqual(len(bag.lines), 2)
-
-        bag.reload()
-        bag.save()
-
-        bag.add_product_s(product, quantity=1.0, attributes="{\"color\": \"yellow\"}")
+        self.assertEqual(bag.lines[0].attributes, '{"color": "red"}')
+        self.assertEqual(bag.lines[0].quantity, 2.0)
+        self.assertEqual(bag.lines[1].attributes, '{"color": "yellow"}')
+        self.assertEqual(bag.lines[1].quantity, 1.0)
 
         bag = bag.reload()
-        bag_line_yellow.reload()
-        bag_line_red.reload()
+        bag.save()
+
+        bag.add_product_s(product, quantity=1.0, attributes='{"color": "yellow"}')
+
+        bag = bag.reload()
+        bag_line_red = bag_line_red.reload()
+        bag_line_yellow = bag_line_yellow.reload()
 
         self.assertEqual(bag_line_red.quantity, 2.0)
         self.assertEqual(bag_line_red.total, 20.0)
+        self.assertEqual(bag_line_red.attributes, '{"color": "red"}')
         self.assertEqual(bag_line_yellow.quantity, 1.0)
         self.assertEqual(bag_line_yellow.total, 10.0)
+        self.assertEqual(bag_line_yellow.attributes, '{"color": "yellow"}')
         self.assertEqual(bag.total, 30.0)
         self.assertEqual(len(bag.lines), 2)
+        self.assertEqual(bag.lines[0].attributes, '{"color": "red"}')
+        self.assertEqual(bag.lines[0].quantity, 2.0)
+        self.assertEqual(bag.lines[1].attributes, '{"color": "yellow"}')
+        self.assertEqual(bag.lines[1].quantity, 1.0)
 
         product.quantity_hand = 4.0
         product.save()
 
-        bag.reload()
+        bag = bag.reload()
         bag.save()
 
-        bag.add_product_s(product, quantity=1.0, attributes="{\"color\": \"yellow\"}")
+        bag = bag.reload()
+        bag_line_red = bag_line_red.reload()
+        bag_line_yellow = bag_line_yellow.reload()
+
+        self.assertEqual(bag_line_red.quantity, 2.0)
+        self.assertEqual(bag_line_red.total, 20.0)
+        self.assertEqual(bag_line_red.attributes, '{"color": "red"}')
+        self.assertEqual(bag_line_yellow.quantity, 1.0)
+        self.assertEqual(bag_line_yellow.total, 10.0)
+        self.assertEqual(bag_line_yellow.attributes, '{"color": "yellow"}')
+        self.assertEqual(bag.total, 30.0)
+        self.assertEqual(len(bag.lines), 2)
+        self.assertEqual(bag.lines[0].attributes, '{"color": "red"}')
+        self.assertEqual(bag.lines[0].quantity, 2.0)
+        self.assertEqual(bag.lines[1].attributes, '{"color": "yellow"}')
+        self.assertEqual(bag.lines[1].quantity, 1.0)
+
+        bag.add_product_s(product, quantity=1.0, attributes='{"color": "yellow"}')
 
         bag = bag.reload()
-        bag_line_yellow.reload()
-        bag_line_red.reload()
+        bag_line_red = bag_line_red.reload()
+        bag_line_yellow = bag_line_yellow.reload()
 
         self.assertEqual(bag_line_red.quantity, 2.0)
         self.assertEqual(bag_line_red.total, 20.0)
@@ -386,6 +419,10 @@ class BagTest(unittest.TestCase):
         self.assertEqual(bag_line_yellow.total, 20.0)
         self.assertEqual(bag.total, 40.0)
         self.assertEqual(len(bag.lines), 2)
+        self.assertEqual(bag.lines[0].attributes, '{"color": "red"}')
+        self.assertEqual(bag.lines[0].quantity, 2.0)
+        self.assertEqual(bag.lines[1].attributes, '{"color": "yellow"}')
+        self.assertEqual(bag.lines[1].quantity, 2.0)
 
         product.quantity_hand = 0.0
         product.save()

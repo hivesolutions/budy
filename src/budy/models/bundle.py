@@ -250,6 +250,7 @@ class Bundle(base.BudyBase):
         self.save()
 
     def add_line_s(self, line):
+        line.try_valid(bundle=self)
         line.save()
         self.lines.append(line)
         self.save()
@@ -299,6 +300,7 @@ class Bundle(base.BudyBase):
             if not increment:
                 return _line
             _line.quantity += quantity
+            _line.try_valid(bundle=self)
             _line.save()
             self.save()
             return _line
@@ -348,6 +350,7 @@ class Bundle(base.BudyBase):
             if not is_dirty:
                 continue
             line.calculate(currency=currency, country=country)
+            line.try_valid(bundle=self)
             line.save()
         self.currency = currency
         self.country = country

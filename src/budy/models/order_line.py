@@ -61,3 +61,7 @@ class OrderLine(bundle_line.BundleLine):
         if appier.is_unset(self.bag):
             return
         self.delete()
+
+    @property
+    def bundle(self):
+        return self.order

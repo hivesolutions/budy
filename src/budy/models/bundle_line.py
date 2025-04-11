@@ -196,7 +196,9 @@ class BundleLine(base.BudyBase):
 
     def try_valid_quantity(self, bundle=None):
         fixed = False
-        quantity = bundle.merchandise_quantity(self.merchandise) if bundle else self.quantity
+        quantity = (
+            bundle.merchandise_quantity(self.merchandise) if bundle else self.quantity
+        )
         if quantity <= 0.0:
             quantity = 0.0
         if self.merchandise.quantity_hand == None:
@@ -204,7 +206,9 @@ class BundleLine(base.BudyBase):
         if quantity <= self.merchandise.quantity_hand:
             return fixed
         other_quantity = quantity - self.quantity
-        self.quantity = max(min(self.quantity, self.merchandise.quantity_hand - other_quantity), 0)
+        self.quantity = max(
+            min(self.quantity, self.merchandise.quantity_hand - other_quantity), 0
+        )
         self.calculate(force=True)
         fixed |= True
         return fixed
