@@ -181,33 +181,39 @@ class BundleLine(base.BudyBase):
     def ensure_valid(self):
         appier.verify(self.is_valid())
 
-    def try_valid(self):
+    def try_valid(self, bundle=None):
         fixed = False
-        fixed |= self.try_valid_quantity()
-        fixed |= self.try_valid_price()
+        fixed |= self.try_valid_quantity(bundle=bundle)
+        fixed |= self.try_valid_price(bundle=bundle)
         return fixed
 
-    def try_valid_s(self):
-        fixed = self.try_valid()
+    def try_valid_s(self, bundle=None):
+        fixed = self.try_valid(bundle=bundle)
         if not fixed:
             return fixed
         self.save()
         return fixed
 
-    def try_valid_quantity(self):
+    def try_valid_quantity(self, bundle=None):
         fixed = False
-        if self.quantity <= 0.0:
-            self.quantity = 0.0
+        quantity = (
+            bundle.merchandise_quantity(self.merchandise) if bundle else self.quantity
+        )
+        if quantity <= 0.0:
+            quantity = 0.0
         if self.merchandise.quantity_hand == None:
             return fixed
-        if self.quantity <= self.merchandise.quantity_hand:
+        if quantity <= self.merchandise.quantity_hand:
             return fixed
-        self.quantity = min(self.quantity, self.merchandise.quantity_hand)
+        other_quantity = quantity - self.quantity
+        self.quantity = max(
+            min(self.quantity, self.merchandise.quantity_hand - other_quantity), 0
+        )
         self.calculate(force=True)
         fixed |= True
         return fixed
 
-    def try_valid_price(self):
+    def try_valid_price(self, bundle):
         fixed = False
         if self.merchandise.is_price_provided:
             return fixed
