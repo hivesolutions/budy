@@ -450,7 +450,7 @@ class Bundle(base.BudyBase):
     def merchandise_quantity(self, merchandise):
         quantity = 0.0
         for line in self.lines:
-            if line.product.id == merchandise.id:
+            if line.merchandise.id == merchandise.id:
                 quantity += line.quantity
         return quantity
 

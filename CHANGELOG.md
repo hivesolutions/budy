@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-*
+* Issue with multiple lines with different attributes for same merchandise not accounting properly for quantity - [#41](https://github.com/hivesolutions/budy/issues/41)]
 
 ## [0.8.21] - 2025-03-02
 
