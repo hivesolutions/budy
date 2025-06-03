@@ -126,7 +126,14 @@ class Order(bundle.Bundle):
 
     discount_data = appier.field(type=dict)
 
-    notifications = appier.field(type=list, initial=[], safe=True)
+    notifications = appier.field(
+        type=list,
+        initial=[],
+        safe=True,
+        observations="""The list of notifications that have
+        already been sent for the current order, this is used to
+        prevent the same notification from being sent multiple times""",
+    )
 
     discount_voucher = appier.field(
         type=commons.Decimal,
