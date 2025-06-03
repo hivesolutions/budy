@@ -112,13 +112,31 @@ class Order(bundle.Bundle):
         order, typically a personal email address of the buyer""",
     )
 
-    gift_wrap = appier.field(type=bool, index="hashed", initial=False, safe=True)
+    gift_wrap = appier.field(
+        type=bool,
+        index="hashed",
+        initial=False,
+        safe=True,
+        observations="""Controls if the current order
+        should be gift wrapped, this is typically used to provide
+        a more appealing presentation of the order to the user""",
+    )
 
     tracking_number = appier.field(
         index="hashed",
+        observations="""The tracking number that can be used to
+        track the current order, this is typically used to provide
+        the user with a way to track the order in the shipping""",
     )
 
-    tracking_url = appier.field(index="hashed", meta="url", description="Tracking URL")
+    tracking_url = appier.field(
+        index="hashed",
+        meta="url",
+        description="Tracking URL",
+        observations="""The URL that can be used to track the
+        current order, this is typically used to provide the user with
+        a way to track the order in the shipping courier website""",
+    )
 
     payment_data = appier.field(type=dict)
 
