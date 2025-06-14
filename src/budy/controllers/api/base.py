@@ -40,7 +40,15 @@ class BaseAPIController(root.RootAPIController):
     def login(self):
         username = self.field("username")
         password = self.field("password")
-        account = budy.BudyAccount.login(username, password)
+        secret_key = self.field("secret_key")
+        if secret_key:
+            account = budy.BudyAccount.login_key(secret_key)
+        else:
+            account = budy.BudyAccount.login(username, password)
+            if account.two_factor_enabled:
+                raise appier.SecurityError(
+                    message="2FA is enabled for the user", code=403
+                )
         account._set_account()
         sid = self.session.sid
         return dict(sid=sid, session_id=sid, username=username, tokens=account.tokens())
