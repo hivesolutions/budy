@@ -42,3 +42,45 @@ class VoucherAPIController(root.RootAPIController):
         object = appier.get_object(alias=True, find=True, sort=[("id", -1)])
         vouchers = budy.Voucher.find(map=True, **object)
         return vouchers
+
+    @appier.route("/api/vouchers", "POST", json=True)
+    @appier.ensure(token="admin")
+    def create(self):
+        voucher = budy.Voucher.new(fill_safe=True)
+        voucher.save()
+        voucher = voucher.map()
+        return voucher
+
+    @appier.route("/api/vouchers/<int:id>", "GET", json=True)
+    @appier.ensure(token="admin")
+    def show(self, id):
+        voucher = budy.Voucher.get_e(id=id, map=True)
+        return voucher
+
+    @appier.route("/api/vouchers/value", "POST", json=True)
+    @appier.ensure(token="admin")
+    def create_value(self):
+        object = appier.get_object()
+        key = object.get("key", None)
+        amount = object.get("amount", None)
+        currency = object.get("currency", None)
+        unlimited = object.get("unlimited", None)
+        key = self.field("key", key)
+        amount = self.field("amount", amount, cast=float)
+        currency = self.field("currency", currency, cast=str)
+        unlimited = self.field("unlimited", unlimited, cast=bool)
+        voucher = budy.Voucher.create_value_s(key, amount, currency, unlimited)
+        voucher = voucher.map()
+        return voucher
+
+    @appier.route("/api/vouchers/percentage", "POST", json=True)
+    @appier.ensure(token="admin")
+    def create_percentage(self):
+        object = appier.get_object()
+        key = object.get("key", None)
+        percentage = object.get("percentage", None)
+        key = self.field("key", key)
+        percentage = self.field("percentage", percentage, cast=float)
+        voucher = budy.Voucher.create_percentage_s(key, percentage)
+        voucher = voucher.map()
+        return voucher
