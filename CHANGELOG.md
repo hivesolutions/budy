@@ -9,15 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+*
+
+### Changed
+
+*
+
+### Fixed
+
+*
+
+## [0.8.25] - 2025-06-14
+
+### Added
+
 * Support for more API methods in Voucher API
 
 ### Changed
 
 * Bumped dependencies
-
-### Fixed
-
-*
 
 ## [0.8.24] - 2025-06-03
 
