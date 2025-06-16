@@ -54,6 +54,12 @@ class VoucherUse(base.BudyBase):
         observations="""The amount used from the voucher""",
     )
 
+    currency = appier.field(
+        type=str,
+        safe=True,
+        observations="""Currency in which the amount was expressed""",
+    )
+
     justification = appier.field(
         type=str,
         safe=True,

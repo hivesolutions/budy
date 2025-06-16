@@ -51,7 +51,7 @@ class VoucherAPIController(root.RootAPIController):
         voucher = voucher.map()
         return voucher
 
-    @appier.route("/api/vouchers/<int:key>", "GET", json=True)
+    @appier.route("/api/vouchers/<str:key>", "GET", json=True)
     @appier.ensure(token="admin")
     def show(self, key):
         voucher = budy.Voucher.get_e(key=key, map=True)
