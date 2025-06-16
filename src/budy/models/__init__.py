@@ -84,5 +84,6 @@ from .section import Section
 from .store import Store
 from .subscription import Subscription
 from .voucher import Voucher
+from .voucher_use import VoucherUse
 from .wishlist_line import WishlistLine
 from .wishlist import Wishlist

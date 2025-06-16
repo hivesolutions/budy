@@ -51,10 +51,10 @@ class VoucherAPIController(root.RootAPIController):
         voucher = voucher.map()
         return voucher
 
-    @appier.route("/api/vouchers/<int:id>", "GET", json=True)
+    @appier.route("/api/vouchers/<str:key>", "GET", json=True)
     @appier.ensure(token="admin")
-    def show(self, id):
-        voucher = budy.Voucher.get_e(id=id, map=True)
+    def show(self, key):
+        voucher = budy.Voucher.get_e(key=key, map=True)
         return voucher
 
     @appier.route("/api/vouchers/value", "POST", json=True)
@@ -64,12 +64,22 @@ class VoucherAPIController(root.RootAPIController):
         key = object.get("key", None)
         amount = object.get("amount", None)
         currency = object.get("currency", None)
-        unlimited = object.get("unlimited", None)
-        key = self.field("key", key)
+        usage_limit = object.get("usage_limit", 0)
+        unlimited = object.get("unlimited", False)
+        start = object.get("start", None)
+        expiration = object.get("expiration", None)
+        meta = object.get("meta", {})
+        key = self.field("key", key, cast=str)
         amount = self.field("amount", amount, cast=float)
         currency = self.field("currency", currency, cast=str)
+        usage_limit = self.field("usage_limit", usage_limit, cast=int)
         unlimited = self.field("unlimited", unlimited, cast=bool)
-        voucher = budy.Voucher.create_value_s(key, amount, currency, unlimited)
+        start = self.field("start", start, cast=int)
+        expiration = self.field("expiration", expiration, cast=int)
+        meta = self.field("meta", meta, cast=dict)
+        voucher = budy.Voucher.create_value_s(
+            key, amount, currency, usage_limit, unlimited, start, expiration, meta
+        )
         voucher = voucher.map()
         return voucher
 
@@ -79,8 +89,45 @@ class VoucherAPIController(root.RootAPIController):
         object = appier.get_object()
         key = object.get("key", None)
         percentage = object.get("percentage", None)
-        key = self.field("key", key)
+        usage_limit = object.get("usage_limit", 0)
+        start = object.get("start", None)
+        expiration = object.get("expiration", None)
+        meta = object.get("meta", {})
+        unlimited = object.get("unlimited", None)
+        key = self.field("key", key, cast=str)
         percentage = self.field("percentage", percentage, cast=float)
-        voucher = budy.Voucher.create_percentage_s(key, percentage)
+        usage_limit = self.field("usage_limit", usage_limit, cast=int)
+        start = self.field("start", start, cast=int)
+        expiration = self.field("expiration", expiration, cast=int)
+        meta = self.field("meta", meta, cast=dict)
+        unlimited = self.field("unlimited", unlimited, cast=bool)
+        voucher = budy.Voucher.create_percentage_s(
+            key, percentage, usage_limit, start, expiration, meta
+        )
+        voucher = voucher.map()
+        return voucher
+
+    @appier.route("/api/vouchers/<str:key>/use", "POST", json=True)
+    @appier.ensure(token="admin")
+    def use(self, key):
+        object = appier.get_object()
+        amount = object.get("amount", None)
+        currency = object.get("currency", None)
+        justification = object.get("justification", None)
+        save_use = object.get("save_use", True)
+        voucher = budy.Voucher.get_e(key=key)
+        voucher_use = voucher.use_s(
+            amount, currency=currency, justification=justification, save_use=save_use
+        )
+        voucher = voucher.map()
+        if voucher_use:
+            voucher["use"] = voucher_use.map()
+        return voucher
+
+    @appier.route("/api/vouchers/<str:key>/disuse", "POST", json=True)
+    @appier.ensure(token="admin")
+    def disuse(self, key):
+        voucher = budy.Voucher.get_e(key=key)
+        voucher.disuse_s()
         voucher = voucher.map()
         return voucher

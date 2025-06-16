@@ -343,3 +343,36 @@ class VoucherTest(unittest.TestCase):
         self.assertEqual(voucher.is_percent, True)
         self.assertEqual(isinstance(voucher.amount, commons.Decimal), True)
         self.assertEqual(isinstance(voucher.open_amount, commons.Decimal), True)
+
+    def test_voucher_use(self):
+        voucher = budy.Voucher(key="TESTKEY", amount=50.0)
+        voucher.save()
+
+        voucher_use = voucher.use_s(25.0, justification="Test usage", save_use=True)
+
+        self.assertEqual(voucher.is_valid(), True)
+        self.assertEqual(voucher.is_valid(amount=25.0), True)
+        self.assertEqual(voucher.is_valid(amount=50.0), False)
+        self.assertEqual(voucher.key, "TESTKEY")
+        self.assertEqual(voucher.used, False)
+        self.assertEqual(voucher.amount, 50.0)
+        self.assertEqual(voucher.open_amount, 25.0)
+        self.assertEqual(voucher.used_amount, 25.0)
+
+        self.assertEqual(voucher_use.usage_type, "value")
+        self.assertEqual(voucher_use.amount, 25.0)
+        self.assertEqual(voucher_use.justification, "Test usage")
+        self.assertEqual(voucher_use.voucher.id, voucher.id)
+        self.assertIsNone(voucher_use.account)
+
+        voucher_use_db = budy.VoucherUse.get(id=voucher_use.id)
+
+        self.assertEqual(voucher_use_db.usage_type, "value")
+        self.assertEqual(voucher_use_db.amount, 25.0)
+        self.assertEqual(voucher_use_db.justification, "Test usage")
+        self.assertEqual(voucher_use_db.voucher.id, voucher.id)
+        self.assertIsNone(voucher_use_db.account)
+
+        self.assertIsInstance(voucher_use_db.amount, float)
+        self.assertIsInstance(voucher_use_db.usage_type, str)
+        self.assertIsInstance(voucher_use_db.justification, str)
