@@ -64,12 +64,14 @@ class VoucherAPIController(root.RootAPIController):
         key = object.get("key", None)
         amount = object.get("amount", None)
         currency = object.get("currency", None)
+        usage_limit = object.get("usage_limit", 0)
         unlimited = object.get("unlimited", False)
-        key = self.field("key", key)
-        amount = self.field("amount", amount, cast=float)
-        currency = self.field("currency", currency, cast=str)
-        unlimited = self.field("unlimited", unlimited, cast=bool)
-        voucher = budy.Voucher.create_value_s(key, amount, currency, unlimited)
+        start = object.get("start", None)
+        expiration = object.get("expiration", None)
+        meta = object.get("meta", {})
+        voucher = budy.Voucher.create_value_s(
+            key, amount, currency, usage_limit, unlimited, start, expiration, meta
+        )
         voucher = voucher.map()
         return voucher
 
@@ -79,9 +81,13 @@ class VoucherAPIController(root.RootAPIController):
         object = appier.get_object()
         key = object.get("key", None)
         percentage = object.get("percentage", None)
-        key = self.field("key", key)
-        percentage = self.field("percentage", percentage, cast=float)
-        voucher = budy.Voucher.create_percentage_s(key, percentage)
+        usage_limit = object.get("usage_limit", 0)
+        start = object.get("start", None)
+        expiration = object.get("expiration", None)
+        meta = object.get("meta", {})
+        voucher = budy.Voucher.create_percentage_s(
+            key, percentage, usage_limit, start, expiration, meta
+        )
         voucher = voucher.map()
         return voucher
 

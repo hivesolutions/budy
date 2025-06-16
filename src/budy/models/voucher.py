@@ -197,12 +197,27 @@ class Voucher(base.BudyBase):
             ("Key", "key", str),
             ("Amount", "amount", commons.Decimal),
             ("Currency", "currency", str),
+            ("Usage Limit", "usage_limit", int, 0),
             ("Unlimited", "unlimited", bool, False),
+            ("Start", "start", int, None),
+            ("Expiration", "expiration", int, None),
+            ("Metadata", "meta", dict, {}),
         ),
         factory=True,
     )
-    def create_value_s(cls, key, amount, currency, unlimited):
-        voucher = cls(key=key, amount=amount, currency=currency, unlimited=unlimited)
+    def create_value_s(
+        cls, key, amount, currency, usage_limit, unlimited, start, expiration, meta
+    ):
+        voucher = cls(
+            key=key,
+            amount=amount,
+            currency=currency,
+            usage_limit=usage_limit,
+            unlimited=unlimited,
+            start=start,
+            expiration=expiration,
+            meta=meta,
+        )
         voucher.save()
         return voucher
 
@@ -213,29 +228,62 @@ class Voucher(base.BudyBase):
             ("Key", "key", str),
             ("Amount", "amount", commons.Decimal),
             ("Currency", "currency", str),
+            ("Usage Limit", "usage_limit", int, 0),
             ("Unlimited", "unlimited", bool, False),
+            ("Start", "start", int, None),
+            ("Expiration", "expiration", int, None),
+            ("Metadata", "meta", dict, {}),
             ("Count", "count", int, 1),
         ),
     )
-    def create_value_multiple_s(cls, key, amount, currency, unlimited, count):
+    def create_value_multiple_s(
+        cls,
+        key,
+        amount,
+        currency,
+        usage_limit,
+        unlimited,
+        start,
+        expiration,
+        meta,
+        count,
+    ):
         key = key or cls.secret_g()
         for index in appier.legacy.xrange(count):
             voucher = cls(
                 key=key + "-" + str(index),
                 amount=amount,
                 currency=currency,
+                usage_limit=usage_limit,
                 unlimited=unlimited,
+                start=start,
+                expiration=expiration,
+                meta=meta,
             )
             voucher.save()
 
     @classmethod
     @appier.operation(
         name="Create Percentage",
-        parameters=(("Key", "key", str), ("Percentage", "percentage", commons.Decimal)),
+        parameters=(
+            ("Key", "key", str),
+            ("Percentage", "percentage", commons.Decimal),
+            ("Usage Limit", "usage_limit", int, 0),
+            ("Start", "start", int, None),
+            ("Expiration", "expiration", int, None),
+            ("Metadata", "meta", dict, {}),
+        ),
         factory=True,
     )
-    def create_percentage_s(cls, key, percentage):
-        voucher = cls(key=key, percentage=percentage)
+    def create_percentage_s(cls, key, percentage, usage_limit, start, expiration, meta):
+        voucher = cls(
+            key=key,
+            percentage=percentage,
+            usage_limit=usage_limit,
+            start=start,
+            expiration=expiration,
+            meta=meta,
+        )
         voucher.save()
         return voucher
 
@@ -245,13 +293,26 @@ class Voucher(base.BudyBase):
         parameters=(
             ("Key", "key", str),
             ("Percentage", "percentage", commons.Decimal),
+            ("Usage Limit", "usage_limit", int, 0),
+            ("Start", "start", int, None),
+            ("Expiration", "expiration", int, None),
+            ("Metadata", "meta", dict, {}),
             ("Count", "count", int, 1),
         ),
     )
-    def create_percentage_multiple_s(cls, key, percentage, count):
+    def create_percentage_multiple_s(
+        cls, key, percentage, usage_limit, start, expiration, meta, count
+    ):
         key = key or cls.secret_g()
         for index in appier.legacy.xrange(count):
-            voucher = cls(key=key + "-" + str(index), percentage=percentage)
+            voucher = cls(
+                key=key + "-" + str(index),
+                percentage=percentage,
+                usage_limit=usage_limit,
+                start=start,
+                expiration=expiration,
+                meta=meta,
+            )
             voucher.save()
 
     def pre_create(self):
