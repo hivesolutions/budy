@@ -68,9 +68,23 @@ class Voucher(base.BudyBase):
         will be performed using proper exchange rate conversion""",
     )
 
-    start = appier.field(type=int, index=True, safe=True, meta="datetime")
+    start = appier.field(
+        type=int,
+        index=True,
+        safe=True,
+        meta="datetime",
+        observations="""The start date of the voucher, meaning
+        that the voucher is only valid after this date""",
+    )
 
-    expiration = appier.field(type=int, index=True, safe=True, meta="datetime")
+    expiration = appier.field(
+        type=int,
+        index=True,
+        safe=True,
+        meta="datetime",
+        observations="""The expiration date of the voucher, meaning
+        that the voucher is no longer valid after this date""",
+    )
 
     usage_count = appier.field(
         type=int,
