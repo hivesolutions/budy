@@ -336,11 +336,13 @@ class Voucher(base.BudyBase):
         self.usage_count += 1
         self.save()
         if save_use:
+            usage_type = "value" if self.is_value else "percentage"
             voucher_use_ = voucher_use.VoucherUse(
-                voucher=self,
+                usage_type=usage_type,
                 amount=amount,
                 currency=currency,
                 justification=justification,
+                voucher=self,
             )
             voucher_use_.save()
             return voucher_use_
