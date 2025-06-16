@@ -503,6 +503,20 @@ class Voucher(base.BudyBase):
             names=["reference", "created", "total", "currency", "status"],
         )
 
+    @appier.view(name="Uses")
+    def uses_v(self, *args, **kwargs):
+        from . import voucher_use
+
+        kwargs["sort"] = kwargs.get("sort", [("created", -1)])
+        kwargs.update(voucher={"$in": (self.id,)})
+        return appier.lazy_dict(
+            model=voucher_use.VoucherUse,
+            kwargs=kwargs,
+            entities=appier.lazy(lambda: voucher_use.VoucherUse.find(*args, **kwargs)),
+            page=appier.lazy(lambda: voucher_use.VoucherUse.paginate(*args, **kwargs)),
+            names=["id", "usage_type", "amount", "currency", "justification"],
+        )
+
     @property
     def open_amount(self):
         return self.open_amount_r()
