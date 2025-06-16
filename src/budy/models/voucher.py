@@ -35,10 +35,18 @@ import appier
 import appier_extras
 
 from . import base
+from . import voucher_use
 
 
 class Voucher(base.BudyBase):
-    key = appier.field(index=True, safe=True, immutable=True)
+    key = appier.field(
+        index=True,
+        safe=True,
+        immutable=True,
+        observations="""The (secret) key of the voucher, considered to be
+        the unique identifier of the voucher, this is the key that will
+        be used to identify the voucher when it is used""",
+    )
 
     amount = appier.field(
         type=commons.Decimal,
@@ -46,10 +54,22 @@ class Voucher(base.BudyBase):
         initial=commons.Decimal(0.0),
         safe=True,
         immutable=True,
+        observations="""The amount of the voucher, meaning the total
+        amount of the voucher that can be used, this is the amount
+        that will be deducted from the order total when the voucher
+        is used, if this value is set to zero the voucher is considered
+        to be a percentage based voucher""",
     )
 
     used_amount = appier.field(
-        type=commons.Decimal, initial=commons.Decimal(0.0), index=True, safe=True
+        type=commons.Decimal,
+        initial=commons.Decimal(0.0),
+        index=True,
+        safe=True,
+        observations="""The amount of the voucher that has been used,
+        meaning that the remaining amount of the voucher that can be
+        used can be calculated by subtracting the used amount from the
+        amount""",
     )
 
     percentage = appier.field(
@@ -58,6 +78,8 @@ class Voucher(base.BudyBase):
         index=True,
         safe=True,
         immutable=True,
+        observations="""The percentage of discount to be applied when
+        using the voucher, meaning the voucher is percentage based""",
     )
 
     currency = appier.field(
@@ -245,13 +267,22 @@ class Voucher(base.BudyBase):
         if self.used and not self.is_used():
             self.used = False
 
-    def use_s(self, amount, currency=None):
+    def use_s(self, amount, currency=None, justification=None, save_use=True):
         amount_l = self.to_local(amount, currency)
         appier.verify(self.is_valid(amount=amount, currency=currency))
         if self.is_value and not self.unlimited:
             self.used_amount += commons.Decimal(amount_l)
         self.usage_count += 1
         self.save()
+        if save_use:
+            voucher_use_ = voucher_use.VoucherUse(
+                voucher=self,
+                amount=amount,
+                currency=currency,
+                justification=justification,
+            )
+            voucher_use_.save()
+            return voucher_use_
 
     def disuse_s(self, amount, currency=None):
         appier.verify(self.usage_count > 0)

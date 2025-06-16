@@ -51,10 +51,10 @@ class VoucherAPIController(root.RootAPIController):
         voucher = voucher.map()
         return voucher
 
-    @appier.route("/api/vouchers/<int:id>", "GET", json=True)
+    @appier.route("/api/vouchers/<int:key>", "GET", json=True)
     @appier.ensure(token="admin")
-    def show(self, id):
-        voucher = budy.Voucher.get_e(id=id, map=True)
+    def show(self, key):
+        voucher = budy.Voucher.get_e(key=key, map=True)
         return voucher
 
     @appier.route("/api/vouchers/value", "POST", json=True)
@@ -64,7 +64,7 @@ class VoucherAPIController(root.RootAPIController):
         key = object.get("key", None)
         amount = object.get("amount", None)
         currency = object.get("currency", None)
-        unlimited = object.get("unlimited", None)
+        unlimited = object.get("unlimited", False)
         key = self.field("key", key)
         amount = self.field("amount", amount, cast=float)
         currency = self.field("currency", currency, cast=str)
@@ -82,5 +82,30 @@ class VoucherAPIController(root.RootAPIController):
         key = self.field("key", key)
         percentage = self.field("percentage", percentage, cast=float)
         voucher = budy.Voucher.create_percentage_s(key, percentage)
+        voucher = voucher.map()
+        return voucher
+
+    @appier.route("/api/vouchers/<str:key>/use", "POST", json=True)
+    @appier.ensure(token="admin")
+    def use(self, key):
+        object = appier.get_object()
+        amount = object.get("amount", None)
+        currency = object.get("currency", None)
+        justification = object.get("justification", None)
+        save_use = object.get("save_use", True)
+        voucher = budy.Voucher.get_e(key=key)
+        voucher_use = voucher.use_s(
+            amount, currency=currency, justification=justification, save_use=save_use
+        )
+        voucher = voucher.map()
+        if voucher_use:
+            voucher["use"] = voucher_use.map()
+        return voucher
+
+    @appier.route("/api/vouchers/<str:key>/disuse", "POST", json=True)
+    @appier.ensure(token="admin")
+    def disuse(self, key):
+        voucher = budy.Voucher.get_e(key=key)
+        voucher.disuse_s()
         voucher = voucher.map()
         return voucher
