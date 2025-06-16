@@ -69,6 +69,14 @@ class VoucherAPIController(root.RootAPIController):
         start = object.get("start", None)
         expiration = object.get("expiration", None)
         meta = object.get("meta", {})
+        key = self.field("key", key, cast=str)
+        amount = self.field("amount", amount, cast=float)
+        currency = self.field("currency", currency, cast=str)
+        usage_limit = self.field("usage_limit", usage_limit, cast=int)
+        unlimited = self.field("unlimited", unlimited, cast=bool)
+        start = self.field("start", start, cast=int)
+        expiration = self.field("expiration", expiration, cast=int)
+        meta = self.field("meta", meta, cast=dict)
         voucher = budy.Voucher.create_value_s(
             key, amount, currency, usage_limit, unlimited, start, expiration, meta
         )
@@ -85,6 +93,14 @@ class VoucherAPIController(root.RootAPIController):
         start = object.get("start", None)
         expiration = object.get("expiration", None)
         meta = object.get("meta", {})
+        unlimited = object.get("unlimited", None)
+        key = self.field("key", key, cast=str)
+        percentage = self.field("percentage", percentage, cast=float)
+        usage_limit = self.field("usage_limit", usage_limit, cast=int)
+        start = self.field("start", start, cast=int)
+        expiration = self.field("expiration", expiration, cast=int)
+        meta = self.field("meta", meta, cast=dict)
+        unlimited = self.field("unlimited", unlimited, cast=bool)
         voucher = budy.Voucher.create_percentage_s(
             key, percentage, usage_limit, start, expiration, meta
         )

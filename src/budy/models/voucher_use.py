@@ -63,7 +63,7 @@ class VoucherUse(base.BudyBase):
     justification = appier.field(
         type=str,
         safe=True,
-        observations="""Justification or reason for the usage of the voucher,m
+        observations="""Justification or reason for the usage of the voucher,
         may contain external ID references""",
     )
 
