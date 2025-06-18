@@ -506,7 +506,7 @@ class Voucher(base.BudyBase):
             names=["reference", "created", "total", "currency", "status"],
         )
 
-    @appier.view(name="Uses")
+    @appier.view(name="Usages")
     def usages_v(self, *args, **kwargs):
         from . import voucher_usage
 
