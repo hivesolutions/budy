@@ -9,15 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+*
+
+### Changed
+
+*
+
+### Fixed
+
+*
+
+## [0.8.28] - 2025-06-18
+
+### Added
+
 * Support for use listing in Voucher API
 
 ### Changed
 
 * Naming of `VoucherUse` into `VoucherUsage`
-
-### Fixed
-
-*
 
 ## [0.8.27] - 2025-06-17
 
