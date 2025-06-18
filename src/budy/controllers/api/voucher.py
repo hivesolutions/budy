@@ -131,3 +131,10 @@ class VoucherAPIController(root.RootAPIController):
         voucher.disuse_s()
         voucher = voucher.map()
         return voucher
+
+    @appier.route("/api/vouchers/<str:key>/uses", "GET", json=True)
+    @appier.ensure(token="admin")
+    def uses(self, key):
+        voucher = budy.Voucher.get_e(key=key)
+        uses = voucher.uses(map=True)
+        return uses
