@@ -455,8 +455,6 @@ class Voucher(base.BudyBase):
         return _currency.Currency.round(open_amount, currency)
 
     def uses(self, *args, **kwargs):
-        from . import voucher_use
-
         return voucher_use.VoucherUse.find(voucher=self.id, *args, **kwargs)
 
     @appier.operation(name="Notify", parameters=(("Email", "email", str),))
