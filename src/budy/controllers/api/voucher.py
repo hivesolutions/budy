@@ -114,14 +114,17 @@ class VoucherAPIController(root.RootAPIController):
         amount = object.get("amount", None)
         currency = object.get("currency", None)
         justification = object.get("justification", None)
-        save_use = object.get("save_use", True)
+        save_usage = object.get("save_usage", True)
         voucher = budy.Voucher.get_e(key=key)
-        voucher_use = voucher.use_s(
-            amount, currency=currency, justification=justification, save_use=save_use
+        voucher_usage = voucher.use_s(
+            amount,
+            currency=currency,
+            justification=justification,
+            save_usage=save_usage,
         )
         voucher = voucher.map()
-        if voucher_use:
-            voucher["use"] = voucher_use.map()
+        if voucher_usage:
+            voucher["usage"] = voucher_usage.map()
         return voucher
 
     @appier.route("/api/vouchers/<str:key>/disuse", "POST", json=True)
@@ -132,9 +135,9 @@ class VoucherAPIController(root.RootAPIController):
         voucher = voucher.map()
         return voucher
 
-    @appier.route("/api/vouchers/<str:key>/uses", "GET", json=True)
+    @appier.route("/api/vouchers/<str:key>/usages", "GET", json=True)
     @appier.ensure(token="admin")
-    def uses(self, key):
+    def usages(self, key):
         voucher = budy.Voucher.get_e(key=key)
-        uses = voucher.uses(map=True)
-        return uses
+        usages = voucher.usages(map=True)
+        return usages

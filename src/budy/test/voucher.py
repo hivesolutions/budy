@@ -348,7 +348,7 @@ class VoucherTest(unittest.TestCase):
         voucher = budy.Voucher(key="TESTKEY", amount=50.0)
         voucher.save()
 
-        voucher_use = voucher.use_s(25.0, justification="Test usage", save_use=True)
+        voucher_usage = voucher.use_s(25.0, justification="Test usage", save_usage=True)
 
         self.assertEqual(voucher.is_valid(), True)
         self.assertEqual(voucher.is_valid(amount=25.0), True)
@@ -359,13 +359,13 @@ class VoucherTest(unittest.TestCase):
         self.assertEqual(voucher.open_amount, 25.0)
         self.assertEqual(voucher.used_amount, 25.0)
 
-        self.assertEqual(voucher_use.usage_type, "value")
-        self.assertEqual(voucher_use.amount, 25.0)
-        self.assertEqual(voucher_use.justification, "Test usage")
-        self.assertEqual(voucher_use.voucher.id, voucher.id)
-        self.assertIsNone(voucher_use.account)
+        self.assertEqual(voucher_usage.usage_type, "value")
+        self.assertEqual(voucher_usage.amount, 25.0)
+        self.assertEqual(voucher_usage.justification, "Test usage")
+        self.assertEqual(voucher_usage.voucher.id, voucher.id)
+        self.assertIsNone(voucher_usage.account)
 
-        voucher_use_db = budy.VoucherUse.get(id=voucher_use.id)
+        voucher_use_db = budy.VoucherUsage.get(id=voucher_usage.id)
 
         self.assertEqual(voucher_use_db.usage_type, "value")
         self.assertEqual(voucher_use_db.amount, 25.0)

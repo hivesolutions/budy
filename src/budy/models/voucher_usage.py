@@ -33,7 +33,11 @@ import appier
 from . import base
 
 
-class VoucherUse(base.BudyBase):
+class VoucherUsage(base.BudyBase):
+    """
+    Represents a usage of a voucher, this is used to track
+    the usage of a voucher over time and the amount used.
+    """
 
     USAGE_TYPE_S = dict(
         percentage="percentage",
@@ -81,7 +85,7 @@ class VoucherUse(base.BudyBase):
 
     @classmethod
     def validate(cls):
-        return super(VoucherUse, cls).validate() + [
+        return super(VoucherUsage, cls).validate() + [
             appier.not_null("voucher"),
         ]
 

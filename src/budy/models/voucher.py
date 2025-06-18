@@ -35,7 +35,7 @@ import appier
 import appier_extras
 
 from . import base
-from . import voucher_use
+from . import voucher_usage
 
 
 class Voucher(base.BudyBase):
@@ -328,16 +328,16 @@ class Voucher(base.BudyBase):
         if self.used and not self.is_used():
             self.used = False
 
-    def use_s(self, amount, currency=None, justification=None, save_use=True):
+    def use_s(self, amount, currency=None, justification=None, save_usage=True):
         amount_l = self.to_local(amount, currency)
         appier.verify(self.is_valid(amount=amount, currency=currency))
         if self.is_value and not self.unlimited:
             self.used_amount += commons.Decimal(amount_l)
         self.usage_count += 1
         self.save()
-        if save_use:
+        if save_usage:
             usage_type = "value" if self.is_value else "percentage"
-            voucher_use_ = voucher_use.VoucherUse(
+            voucher_use_ = voucher_usage.VoucherUsage(
                 usage_type=usage_type,
                 amount=amount,
                 currency=currency,
@@ -454,8 +454,8 @@ class Voucher(base.BudyBase):
             return open_amount
         return _currency.Currency.round(open_amount, currency)
 
-    def uses(self, *args, **kwargs):
-        return voucher_use.VoucherUse.find(voucher=self.id, *args, **kwargs)
+    def usages(self, *args, **kwargs):
+        return voucher_usage.VoucherUsage.find(voucher=self.id, *args, **kwargs)
 
     @appier.operation(name="Notify", parameters=(("Email", "email", str),))
     def notify(self, name=None, *args, **kwargs):
@@ -507,16 +507,20 @@ class Voucher(base.BudyBase):
         )
 
     @appier.view(name="Uses")
-    def uses_v(self, *args, **kwargs):
-        from . import voucher_use
+    def usages_v(self, *args, **kwargs):
+        from . import voucher_usage
 
         kwargs["sort"] = kwargs.get("sort", [("created", -1)])
         kwargs.update(voucher={"$in": (self.id,)})
         return appier.lazy_dict(
-            model=voucher_use.VoucherUse,
+            model=voucher_usage.VoucherUsage,
             kwargs=kwargs,
-            entities=appier.lazy(lambda: voucher_use.VoucherUse.find(*args, **kwargs)),
-            page=appier.lazy(lambda: voucher_use.VoucherUse.paginate(*args, **kwargs)),
+            entities=appier.lazy(
+                lambda: voucher_usage.VoucherUsage.find(*args, **kwargs)
+            ),
+            page=appier.lazy(
+                lambda: voucher_usage.VoucherUsage.paginate(*args, **kwargs)
+            ),
             names=["id", "usage_type", "amount", "currency", "justification"],
         )
 
