@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+*
+
+## [0.8.29] - 2025-06-28
+
+### Fixed
+
 * Removed `unlimited` field from the create percentage API endpoint
 
 ## [0.8.28] - 2025-06-18
