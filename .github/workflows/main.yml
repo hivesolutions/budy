@@ -19,6 +19,11 @@ jobs:
           rc
         ]
         adapter: ["tiny", "mongo"]
+        exclude:
+          - python-version: 2.7
+            adapter: mongo
+          - python-version: 3.5
+            adapter: mongo
     env:
       MONGO_URL: mongodb://host.docker.internal
     runs-on: ubuntu-latest
@@ -58,8 +63,13 @@ jobs:
     name: Build PyPy
     strategy:
       matrix:
-        python-version: [2.7, 3.6]
+        python-version: [2.7, 3.6, 3.9, "3.10"]
         adapter: ["tiny", "mongo"]
+        exclude:
+          - python-version: 2.7
+            adapter: mongo
+          - python-version: 3.6
+            adapter: mongo
     env:
       MONGO_URL: mongodb://host.docker.internal
     runs-on: ubuntu-latest
