@@ -87,7 +87,7 @@ jobs:
           docker version
           docker run -d --name mongo -p 27017:27017 mongo:7
         if: matrix.adapter == 'mongo'
-      - run: pypy --version
+      - run: python --version
       - run: |
           pip install -r requirements.txt
           pip install -r extra.txt
