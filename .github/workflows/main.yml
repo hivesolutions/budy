@@ -63,7 +63,7 @@ jobs:
     name: Build PyPy
     strategy:
       matrix:
-        python-version: [2.7, 3.6, 3.9, "3.10"]
+        python-version: [2.7, 3.6, 3.9, "3.10", "3.11"]
         adapter: ["tiny", "mongo"]
         exclude:
           - python-version: 2.7
