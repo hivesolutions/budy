@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+*
+
+## [0.9.0] - 2025-12-02
+
+### Fixed
+
 * Added `global_discount_vat` reference to the sale
 
 ## [0.8.29] - 2025-06-28
