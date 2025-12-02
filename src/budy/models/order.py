@@ -1395,6 +1395,7 @@ class Order(bundle.Bundle):
             transaction["owner"] = dict(object_id=store_id)
         if self.discount:
             transaction["discount_vat"] = self.discount
+            transaction["global_discount_vat"] = self.discount
 
         payload = dict(transaction=transaction, customer=customer)
 
