@@ -58,7 +58,7 @@ jobs:
           pip install pytest
           ADAPTER=${{ matrix.adapter }} pytest
       - run: ADAPTER=${{ matrix.adapter }} python setup.py test
-        if: ${{ !contains(fromJson('["3.9", "3.10", "3.11", "3.12","latest"]'), matrix.python-version) }}
+        if: ${{ !contains(fromJson('["3.9", "3.10", "3.11", "3.12", "latest"]'), matrix.python-version) }}
   build-pypy:
     name: Build PyPy
     strategy:
@@ -104,4 +104,4 @@ jobs:
           pip install pytest
           ADAPTER=${{ matrix.adapter }} pytest
       - run: ADAPTER=${{ matrix.adapter }} python setup.py test
-        if: ${{ !contains(fromJson('["3.9", "3.10", "3.11", "3.12","latest"]'), matrix.python-version) }}
+        if: ${{ !contains(fromJson('["3.9", "3.10", "3.11", "3.12", "latest"]'), matrix.python-version) }}
