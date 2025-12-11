@@ -1437,6 +1437,8 @@ class Order(bundle.Bundle):
 
     @appier.operation(
         name="Import Seeplus",
+        description="""Imports the order into Seeplus, allowing internal
+        stock movement management and in-store fulfilment""",
         parameters=(
             ("Fulfilment", "fulfilment", str),
             ("Delivery", "delivery", str),
