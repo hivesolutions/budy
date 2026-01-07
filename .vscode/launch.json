@@ -4,7 +4,7 @@
         "name": "Python",
         "type": "debugpy",
         "request": "launch",
-        "module": "budy.main",
+        "module": "budy",
         "justMyCode": false,
         "env": {
             "PYTHONPATH": "src",
