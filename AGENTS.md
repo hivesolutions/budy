@@ -102,7 +102,7 @@ Before committing, ensure that the following operations items check:
 To create a new release follow the following steps:
 
 - Make sure that both the tests pass and the code formatting are valid.
-- Increment (look at `CHANGELOG.md` for semver changes) the `version` value in `setup.py`, and then the `def _version(self):` return value in `src/budy`.
+- Increment (look at `CHANGELOG.md` for semver changes) the `version` value in `setup.py`, and then the `def _version(self):` return value in `src/budy/main.py`.
 - Move all the `CHANGELOG.md` Unreleased items that have at least one non empty item the into a new section with the new version number and date, and then create new empty sub-sections (Added, Changed and Fixed) for the Unreleased section with a single empty item.
 - Create a commit with the following message `version: $VERSION_NUMBER`.
 - Push the commit.
