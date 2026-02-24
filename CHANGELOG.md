@@ -9,11 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
+* Support for Python 3.13 and 3.14 in CI
 
 ### Changed
 
-*
+* Upgraded `actions/checkout` from v4 to v6 in CI workflows
+* Updated black check and setup.py test conditions to Python 3.14
+* Replaced `setup.py sdist bdist_wheel` with `python -m build` in deploy workflow
+* Replaced `twine wheel` dependency with `twine build` in deploy workflow
 
 ### Fixed
 
