@@ -22,11 +22,13 @@ jobs:
           pip install -r requirements.py2.txt
           pip install -r extra.py2.txt
         if: matrix.python-version == '2.7'
-      - run: ADAPTER=tiny python setup.py test
       - run: |
           pip install black
           black . --check
         if: matrix.python-version == '3.14'
+      - run: |
+          pip install pytest
+          ADAPTER=tiny pytest
       - run: |
           pip install twine build
           python -m build
