@@ -230,6 +230,13 @@ class Order(bundle.Bundle):
         )
 
     @classmethod
+    @appier.link(name="Inventory Report", context=True)
+    def inventory_url(cls, view=None, context=None, absolute=False):
+        return appier.get_app().url_for(
+            "order_api.inventory", view=view, context=context, absolute=absolute
+        )
+
+    @classmethod
     @appier.operation(
         name="Import CTT",
         parameters=(

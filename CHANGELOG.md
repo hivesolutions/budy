@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* Inventory HTML report for selected orders at `/api/orders/inventory`, available from the admin via the "Inventory Report" context link
+* Reusable `report/base.html.tpl` template with a typographic, mailog-inspired look and a dedicated `report.css` stylesheet
+* A4 portrait print stylesheet for the inventory report, with a per-row tick box column, repeating table header and `Page X of Y` numbering
+* `scripts/load_inventory_demo.py` utility for populating a local Budy instance with sample products and orders to exercise the inventory report
+* Packaging of the `static/css`, `templates/report` assets via `setup.py`
 * Support for Python 3.13 and 3.14 in CI
 
 ### Changed
