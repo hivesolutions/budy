@@ -282,7 +282,9 @@ class OrderAPIController(root.RootAPIController):
                 rows.append(row)
         orders_count = len(orders)
         order_references = [order.reference for order in orders]
-        total_units = self._format_quantity(sum(line.quantity for order in orders for line in order.lines))
+        total_units = self._format_quantity(
+            sum(line.quantity for order in orders for line in order.lines)
+        )
         generated_at = datetime.datetime.utcnow().strftime("%B %d, %Y at %H:%M:%S UTC")
         generated_by = self.session.get("username")
         return self.template(
