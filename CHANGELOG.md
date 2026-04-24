@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+*
+
+### Changed
+
+*
+
+### Fixed
+
+*
+
+## [0.10.0] - 2026-04-24
+
+### Added
+
 * Inventory HTML report for selected orders at `/api/orders/inventory`, available from the admin via the "Inventory Report" context link
 * Per-order HTML report at `/api/orders/<id>/report`, available from the admin via the "Report" link and cross-linked from the inventory report rows
 * Inventory PDF export at `/api/orders/inventory.pdf` that renders the inventory report via the Headless service and streams the resulting PDF inline; admin-only and reachable via the new "Inventory PDF" context link. Requires `BASE_URL`, `BUDY_HEADLESS_URL` and `BUDY_HEADLESS_KEY` configuration
@@ -24,10 +38,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Updated black check and setup.py test conditions to Python 3.14
 * Replaced `setup.py sdist bdist_wheel` with `python -m build` in deploy workflow
 * Replaced `twine wheel` dependency with `twine build` in deploy workflow
-
-### Fixed
-
-*
 
 ## [0.9.0] - 2025-12-02
 
