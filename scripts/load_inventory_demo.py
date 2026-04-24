@@ -12,24 +12,39 @@ order, including the same product with different sizes and the same
 product across different orders, so that the row explosion and
 ordering behavior of the inventory report can be verified end-to-end.
 
-Run from the project root:
-
-    python scripts/load_inventory_demo.py --verbose
-
 The script appends to the currently configured MongoDB database. No
 existing data is removed.
+
+Run from the project root with:
+    python scripts/load_inventory_demo.py [options]
+
+Options:
+    --orders=N          Number of orders to create (default: 12)
+    --paid-ratio=R      Fraction of orders that should be marked paid
+                        (default: 0.75)
+    --seed=N            Seed for the pseudo random generator
+                        (default: 42)
+    --verbose, -v       Enable verbose output
+
+Examples:
+    python scripts/load_inventory_demo.py
+    python scripts/load_inventory_demo.py -v
+    python scripts/load_inventory_demo.py --orders=30 -v
+    python scripts/load_inventory_demo.py --orders=20 --paid-ratio=0.5 -v
+    python scripts/load_inventory_demo.py --seed=1234 -v
+
+Requires:
+    Python 3.10+
 """
 
-import logging
-import random
-
+from argparse import ArgumentParser, Namespace
+from logging import ERROR
+from random import Random
 from sys import exit
 from traceback import print_exc
-from argparse import ArgumentParser, Namespace
+from typing import Any
 
-import appier
-
-import budy
+from budy import Address, BudyApp, Order, OrderLine, Product
 
 
 class InventoryDemoLoader:
@@ -38,7 +53,7 @@ class InventoryDemoLoader:
     of products and orders, tailored to exercise the inventory report.
     """
 
-    PRODUCTS = (
+    PRODUCTS: tuple[dict[str, Any], ...] = (
         dict(
             sku="SHIRT-BLUE",
             short_description="Blue Cotton Shirt",
@@ -97,17 +112,17 @@ class InventoryDemoLoader:
     """ The catalog of demo products, spread across the supported
     genders and with enough on-hand stock to absorb any order mix """
 
-    SIZES = (36, 38, 40, 42, 44)
+    SIZES: tuple[int, ...] = (36, 38, 40, 42, 44)
     """ The set of sizes randomly assigned to order lines, picked
     small enough so that collisions across lines are common """
 
     def __init__(
         self,
-        orders_count=12,
-        paid_ratio=0.75,
-        seed=42,
-        verbose=True,
-    ):
+        orders_count: int = 12,
+        paid_ratio: float = 0.75,
+        seed: int = 42,
+        verbose: bool = True,
+    ) -> None:
         """
         Initializes the inventory demo loader.
 
@@ -120,12 +135,12 @@ class InventoryDemoLoader:
 
         self.orders_count = orders_count
         self.paid_ratio = paid_ratio
-        self.random = random.Random(seed)
+        self.random = Random(seed)
         self.verbose = verbose
-        self.app = None
-        self.products = []
+        self.app: BudyApp | None = None
+        self.products: list[Product] = []
 
-    def log(self, message, level="INFO"):
+    def log(self, message: str, level: str = "INFO") -> None:
         """
         Logs a message if verbose mode is enabled.
 
@@ -136,30 +151,30 @@ class InventoryDemoLoader:
         if not self.verbose:
             return
         for part in message.split("\n"):
-            print("[%s] %s" % (level, part))
+            print(f"[{level}] {part}")
 
-    def init_app(self):
+    def init_app(self) -> None:
         """
         Initializes the underlying Budy application so that model
         operations can be executed against the configured database.
         """
 
         self.log("Initializing Budy application...")
-        self.app = budy.BudyApp(level=logging.ERROR)
+        self.app = BudyApp(level=ERROR)
         self.log("Budy application initialized successfully")
 
-    def stop_app(self):
+    def stop_app(self) -> None:
         """
         Unloads the Budy application, ensuring that any open
         resources (scheduler, database connection) are released.
         """
 
-        if self.app == None:
+        if self.app is None:
             return
         self.app.unload()
         self.app = None
 
-    def load_products(self):
+    def load_products(self) -> None:
         """
         Loads the demo products into the database.
         """
@@ -173,12 +188,12 @@ class InventoryDemoLoader:
                 for key, value in product_data.items()
                 if key not in ("thumbnail_url", "image_url")
             }
-            product = budy.Product(**base_data)
+            product = Product(**base_data)
             product.save()
             self.products.append(product)
-            self.log("  + Created Product: %s (%s)" % (product.sku, product.gender))
+            self.log(f"  + Created Product: {product.sku} ({product.gender})")
 
-    def load_orders(self):
+    def load_orders(self) -> None:
         """
         Loads the demo orders into the database, creating a mix of
         paid and unpaid orders and exploding multi-size product
@@ -193,7 +208,7 @@ class InventoryDemoLoader:
             paid = index < paid_count
             self._create_order(index, paid)
 
-    def load_product_images(self):
+    def load_product_images(self) -> None:
         """
         Applies the pre-defined thumbnail and full-size image URLs to
         each product by bypassing the normal save pipeline, so that
@@ -204,10 +219,10 @@ class InventoryDemoLoader:
         self.log("\n" + "=" * 60)
         self.log("Loading Product Images")
         self.log("=" * 60)
-        collection = budy.Product._collection()
-        by_sku = dict(
-            (product_data["sku"], product_data) for product_data in self.PRODUCTS
-        )
+        collection = Product._collection()
+        by_sku: dict[str, dict[str, Any]] = {
+            product_data["sku"]: product_data for product_data in self.PRODUCTS
+        }
         for product in self.products:
             data = by_sku.get(product.sku, {})
             thumbnail_url = data.get("thumbnail_url")
@@ -220,9 +235,9 @@ class InventoryDemoLoader:
             )
             product.thumbnail_url = thumbnail_url
             product.image_url = image_url
-            self.log("  + Applied Images: %s" % product.sku)
+            self.log(f"  + Applied Images: {product.sku}")
 
-    def _create_order(self, index, paid):
+    def _create_order(self, index: int, paid: bool) -> None:
         """
         Creates a single demo order with a random set of lines and,
         if requested, marks it as paid so that it shows up under the
@@ -233,7 +248,7 @@ class InventoryDemoLoader:
         :param paid: Whether the order should end up in the paid state.
         """
 
-        order = budy.Order()
+        order = Order()
         order.save()
 
         lines_count = self.random.randint(2, 4)
@@ -245,10 +260,10 @@ class InventoryDemoLoader:
             if self.random.random() < 0.35:
                 self._add_line(order, product)
 
-        address = budy.Address(
+        address = Address(
             first_name="Demo",
-            last_name="Customer %d" % (index + 1),
-            address="Rua Demo %d" % (index + 1),
+            last_name=f"Customer {index + 1}",
+            address=f"Rua Demo {index + 1}",
             city="Lisboa",
             postal_code="1000-001",
             country="PT",
@@ -258,24 +273,23 @@ class InventoryDemoLoader:
 
         order.shipping_address = address
         order.billing_address = address
-        order.email = "demo%d@budy.test" % (index + 1)
+        order.email = f"demo{index + 1}@budy.test"
         order.save()
 
         if not paid:
             self.log(
-                "  + Created Order: %s (%d lines, unpaid)"
-                % (order.reference, len(order.lines))
+                f"  + Created Order: {order.reference} "
+                f"({len(order.lines)} lines, unpaid)"
             )
             return
 
         order.mark_waiting_payment_s()
         order.mark_paid_s()
         self.log(
-            "  + Created Order: %s (%d lines, paid)"
-            % (order.reference, len(order.lines))
+            f"  + Created Order: {order.reference} " f"({len(order.lines)} lines, paid)"
         )
 
-    def _add_line(self, order, product):
+    def _add_line(self, order: Order, product: Product) -> None:
         """
         Appends a new order line for the given product into the
         provided order, assigning a random quantity and size.
@@ -284,14 +298,14 @@ class InventoryDemoLoader:
         :param product: The product associated with the new line.
         """
 
-        line = budy.OrderLine(quantity=float(self.random.randint(1, 3)))
+        line = OrderLine(quantity=float(self.random.randint(1, 3)))
         line.product = product
         line.size = self.random.choice(self.SIZES)
         line.size_s = str(line.size)
         line.save()
         order.add_line_s(line)
 
-    def load_all_data(self):
+    def load_all_data(self) -> bool:
         """
         Loads all demo data into the database, ensuring that
         dependencies are loaded in the correct order.
@@ -310,18 +324,18 @@ class InventoryDemoLoader:
             self.log("Demo Data Loading Complete!")
             self.log("=" * 60)
             self.log("\nSummary:")
-            self.log("  - Products created: %d" % len(self.products))
-            self.log("  - Orders created: %d" % self.orders_count)
+            self.log(f"  - Products created: {len(self.products)}")
+            self.log(f"  - Orders created: {self.orders_count}")
             return True
         except Exception as exception:
-            self.log("Error loading demo data: %s" % exception, "ERROR")
+            self.log(f"Error loading demo data: {exception}", "ERROR")
             print_exc()
             return False
         finally:
             self.stop_app()
 
 
-def parse_args():
+def parse_args() -> Namespace:
     """
     Parses command line arguments.
     """
@@ -353,7 +367,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
     """
     Main entry point for the CLI.
     """

@@ -32,7 +32,6 @@ body {
     padding: 60px 24px 80px 24px;
 }
 
-/* -- Header -- */
 .report-header {
     background: #ffffff;
     border: 1px solid #e8e8e8;
@@ -129,7 +128,6 @@ body {
     font-size: 13px;
 }
 
-/* -- Sections -- */
 .report-section {
     margin-bottom: 40px;
 }
@@ -160,7 +158,6 @@ body {
     text-transform: uppercase;
 }
 
-/* -- Definition list -- */
 .report-dl {
     display: grid;
     grid-column-gap: 16px;
@@ -198,7 +195,6 @@ body {
     text-align: right;
 }
 
-/* -- Paired definition lists -- */
 .report-dl-pair {
     display: grid;
     grid-column-gap: 24px;
@@ -222,7 +218,6 @@ body {
     margin-bottom: 12px;
 }
 
-/* -- Table -- */
 .report-table {
     background: #ffffff;
     border: 1px solid #e8e8e8;
@@ -312,7 +307,6 @@ body {
     font-weight: 600;
 }
 
-/* -- Thumbnail column -- */
 .report-table-thumbnail {
     padding: 8px 0px 8px 12px;
     vertical-align: middle;
@@ -334,7 +328,6 @@ body {
     width: 40px;
 }
 
-/* -- Check column (print only) -- */
 .report-table-check {
     display: none;
 }
@@ -343,7 +336,6 @@ body {
     display: none;
 }
 
-/* -- Footer -- */
 .report-footer {
     border-top: 1px solid #e0e0e0;
     color: #bdbdbd;
@@ -353,10 +345,7 @@ body {
     text-align: center;
 }
 
-/* -- Print (A4 portrait, high contrast B&W) -- */
 @page {
-    size: A4 portrait;
-    margin: 10mm 10mm 10mm 10mm;
     @bottom-right {
         color: #000000;
         content: "Page " counter(page) " of " counter(pages);
@@ -477,8 +466,8 @@ body {
     }
     .report-table thead th {
         background: transparent;
-        border-top: 1pt solid #000000;
         border-bottom: 1pt solid #000000;
+        border-top: 1pt solid #000000;
         color: #000000;
         font-size: 8pt;
         padding: 3pt 5pt 3pt 5pt;
@@ -504,8 +493,8 @@ body {
     }
     .report-table tfoot td {
         background: transparent;
-        border-top: 1pt solid #000000;
         border-bottom: 1pt solid #000000;
+        border-top: 1pt solid #000000;
         color: #000000;
         font-size: 9pt;
         padding: 3pt 5pt 3pt 5pt;
