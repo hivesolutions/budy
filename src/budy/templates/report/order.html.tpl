@@ -128,7 +128,7 @@
                         <td>{{ row.gender }}</td>
                         <td class="report-table-mono">{{ row.size }}</td>
                         <td class="report-table-quantity">{{ "%.2f" % row.price }} {{ row.currency or "" }}</td>
-                        <td class="report-table-quantity">{{ row.quantity }}</td>
+                        <td class="report-table-quantity">{{ row.quantity }} x</td>
                         <td class="report-table-quantity">{{ "%.2f" % row.total }} {{ row.currency or "" }}</td>
                     </tr>
                 {% endfor %}
@@ -136,7 +136,7 @@
             <tfoot>
                 <tr>
                     <td colspan="5">Total</td>
-                    <td class="report-table-quantity">{{ total_units }}</td>
+                    <td class="report-table-quantity">{{ total_units }} x</td>
                     <td class="report-table-quantity report-total-emph">{{ "%.2f" % order.total }} {{ order.currency or "" }}</td>
                 </tr>
             </tfoot>

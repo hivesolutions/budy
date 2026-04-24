@@ -237,6 +237,13 @@ class Order(bundle.Bundle):
         )
 
     @classmethod
+    @appier.link(name="Inventory PDF", context=True)
+    def inventory_pdf_url(cls, view=None, context=None, absolute=False):
+        return appier.get_app().url_for(
+            "order_api.inventory_pdf", view=view, context=context, absolute=absolute
+        )
+
+    @classmethod
     @appier.operation(
         name="Import CTT",
         parameters=(

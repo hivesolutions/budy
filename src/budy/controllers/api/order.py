@@ -335,6 +335,44 @@ class OrderAPIController(root.RootAPIController):
             generated_by=generated_by,
         )
 
+    @appier.route("/api/orders/inventory.pdf", "GET")
+    @appier.ensure(token="admin")
+    def inventory_pdf(self):
+        start = self.field("start", cast=int)
+        end = self.field("end", cast=int)
+        paid = self.field("paid", True, cast=bool)
+        thumbnail = self.field("thumbnail", True, cast=bool)
+        view = self.field("view")
+        context = self.field("context")
+        headless_url = appier.conf("BUDY_HEADLESS_URL", "https://headless.bemisc.com")
+        headless_key = appier.conf("BUDY_HEADLESS_KEY", None)
+        appier.verify(not headless_key == None)
+        account = self.admin_account.from_session()
+        account = account.reload(rules=False)
+        params = dict(paid=paid, thumbnail=thumbnail, skey=account.key)
+        if start:
+            params["start"] = start
+        if end:
+            params["end"] = end
+        if view:
+            params["view"] = view
+        if context:
+            params["context"] = context
+        report_url = appier.get_app().url_for(
+            "order_api.inventory", absolute=True, **params
+        )
+        return self.redirect(
+            headless_url,
+            params=dict(
+                url=report_url,
+                format="pdf",
+                page_format="A4",
+                wait_until="networkidle0",
+                timeout=60000,
+                key=headless_key,
+            ),
+        )
+
     def _format_quantity(self, quantity):
         quantity_int = int(quantity)
         if quantity_int == quantity:
