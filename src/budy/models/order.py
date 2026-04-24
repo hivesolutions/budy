@@ -1560,6 +1560,12 @@ class Order(bundle.Bundle):
         )
         self.save()
 
+    @appier.link(name="Report")
+    def report_url(self, absolute=False):
+        return appier.get_app().url_for(
+            "order_api.report", id=self.id, absolute=absolute
+        )
+
     @appier.link(name="Export Lines CSV")
     def lines_csv_url(self, absolute=False):
         return appier.get_app().url_for(

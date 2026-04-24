@@ -16,7 +16,7 @@
                 {% block report_header %}{% endblock %}
                 {% block report_timestamp %}{% endblock %}
             </header>
-            <section class="report-section">
+            <section class="report-section report-section-card">
                 <h2 class="report-section-title">{% block report_meta_title %}Metadata{% endblock %}</h2>
                 <dl class="report-dl">
                     {% block report_meta %}{% endblock %}

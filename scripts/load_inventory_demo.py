@@ -45,6 +45,8 @@ class InventoryDemoLoader:
             gender="Male",
             price=29.9,
             quantity_hand=100.0,
+            thumbnail_url="https://picsum.photos/seed/SHIRT-BLUE/120/120",
+            image_url="https://picsum.photos/seed/SHIRT-BLUE/600/600",
         ),
         dict(
             sku="JEANS-SLIM",
@@ -52,6 +54,8 @@ class InventoryDemoLoader:
             gender="Male",
             price=59.9,
             quantity_hand=100.0,
+            thumbnail_url="https://picsum.photos/seed/JEANS-SLIM/120/120",
+            image_url="https://picsum.photos/seed/JEANS-SLIM/600/600",
         ),
         dict(
             sku="DRESS-RED",
@@ -59,6 +63,8 @@ class InventoryDemoLoader:
             gender="Female",
             price=79.9,
             quantity_hand=100.0,
+            thumbnail_url="https://picsum.photos/seed/DRESS-RED/120/120",
+            image_url="https://picsum.photos/seed/DRESS-RED/600/600",
         ),
         dict(
             sku="SKIRT-BLACK",
@@ -66,6 +72,8 @@ class InventoryDemoLoader:
             gender="Female",
             price=49.9,
             quantity_hand=100.0,
+            thumbnail_url="https://picsum.photos/seed/SKIRT-BLACK/120/120",
+            image_url="https://picsum.photos/seed/SKIRT-BLACK/600/600",
         ),
         dict(
             sku="TSHIRT-KIDS",
@@ -73,6 +81,8 @@ class InventoryDemoLoader:
             gender="Child",
             price=14.9,
             quantity_hand=100.0,
+            thumbnail_url="https://picsum.photos/seed/TSHIRT-KIDS/120/120",
+            image_url="https://picsum.photos/seed/TSHIRT-KIDS/600/600",
         ),
         dict(
             sku="HOODIE-GREY",
@@ -80,6 +90,8 @@ class InventoryDemoLoader:
             gender="Both",
             price=39.9,
             quantity_hand=100.0,
+            thumbnail_url="https://picsum.photos/seed/HOODIE-GREY/120/120",
+            image_url="https://picsum.photos/seed/HOODIE-GREY/600/600",
         ),
     )
     """ The catalog of demo products, spread across the supported
@@ -156,7 +168,12 @@ class InventoryDemoLoader:
         self.log("Loading Products")
         self.log("=" * 60)
         for product_data in self.PRODUCTS:
-            product = budy.Product(**product_data)
+            base_data = {
+                key: value
+                for key, value in product_data.items()
+                if key not in ("thumbnail_url", "image_url")
+            }
+            product = budy.Product(**base_data)
             product.save()
             self.products.append(product)
             self.log("  + Created Product: %s (%s)" % (product.sku, product.gender))
@@ -175,6 +192,35 @@ class InventoryDemoLoader:
         for index in range(self.orders_count):
             paid = index < paid_count
             self._create_order(index, paid)
+
+    def load_product_images(self):
+        """
+        Applies the pre-defined thumbnail and full-size image URLs to
+        each product by bypassing the normal save pipeline, so that
+        the URLs survive the inventory decrement pass that re-saves
+        the referenced products and would otherwise clear them.
+        """
+
+        self.log("\n" + "=" * 60)
+        self.log("Loading Product Images")
+        self.log("=" * 60)
+        collection = budy.Product._collection()
+        by_sku = dict(
+            (product_data["sku"], product_data) for product_data in self.PRODUCTS
+        )
+        for product in self.products:
+            data = by_sku.get(product.sku, {})
+            thumbnail_url = data.get("thumbnail_url")
+            image_url = data.get("image_url")
+            if not thumbnail_url and not image_url:
+                continue
+            collection.update(
+                dict(id=product.id),
+                {"$set": dict(thumbnail_url=thumbnail_url, image_url=image_url)},
+            )
+            product.thumbnail_url = thumbnail_url
+            product.image_url = image_url
+            self.log("  + Applied Images: %s" % product.sku)
 
     def _create_order(self, index, paid):
         """
@@ -259,6 +305,7 @@ class InventoryDemoLoader:
             self.init_app()
             self.load_products()
             self.load_orders()
+            self.load_product_images()
             self.log("\n" + "=" * 60)
             self.log("Demo Data Loading Complete!")
             self.log("=" * 60)

@@ -45,6 +45,38 @@ class OrderAPIController(root.RootAPIController):
         orders = budy.Order.find(eager_l=True, map=True, **object)
         return orders
 
+    @appier.route("/api/orders/<int:id>/report", "GET")
+    @appier.ensure(token="admin")
+    def report(self, id):
+        order = budy.Order.get(id=id)
+        lines = sorted(order.lines, key=lambda line: line.product.sku or "")
+        rows = []
+        for line in lines:
+            row = dict(
+                product_reference=line.product.sku,
+                short_description=line.product.short_description,
+                gender=line.product.gender,
+                size=line.size_s,
+                quantity=self._format_quantity(line.quantity),
+                price=line.price,
+                total=line.total,
+                currency=line.currency,
+            )
+            rows.append(row)
+        total_units = self._format_quantity(sum(line.quantity for line in order.lines))
+        payment_type = (order.payment_data or {}).get("type")
+        generated_at = datetime.datetime.utcnow().strftime("%B %d, %Y at %H:%M:%S UTC")
+        generated_by = self.session.get("username")
+        return self.template(
+            "report/order.html.tpl",
+            order=order,
+            rows=rows,
+            total_units=total_units,
+            payment_type=payment_type,
+            generated_at=generated_at,
+            generated_by=generated_by,
+        )
+
     @appier.route("/api/orders/complex.csv", "GET")
     @appier.ensure(token="admin")
     def complex_csv(self):
@@ -255,6 +287,7 @@ class OrderAPIController(root.RootAPIController):
         start = self.field("start", cast=int)
         end = self.field("end", cast=int)
         paid = self.field("paid", True, cast=bool)
+        thumbnail = self.field("thumbnail", True, cast=bool)
         object = appier.get_object(alias=True, find=True, limit=0, sort=[("id", -1)])
         id = object.get("id", {})
         if start:
@@ -272,16 +305,20 @@ class OrderAPIController(root.RootAPIController):
             lines = sorted(order.lines, key=lambda line: line.product.sku or "")
             for line in lines:
                 row = dict(
+                    order_id=order.id,
                     order_reference=order.reference,
                     product_reference=line.product.sku,
                     short_description=line.product.short_description,
                     gender=line.product.gender,
                     size=line.size_s,
                     quantity=self._format_quantity(line.quantity),
+                    thumbnail_url=line.product.thumbnail_url,
                 )
                 rows.append(row)
         orders_count = len(orders)
-        order_references = [order.reference for order in orders]
+        order_references = [
+            dict(id=order.id, reference=order.reference) for order in orders
+        ]
         total_units = self._format_quantity(
             sum(line.quantity for order in orders for line in order.lines)
         )
@@ -293,6 +330,7 @@ class OrderAPIController(root.RootAPIController):
             orders_count=orders_count,
             order_references=order_references,
             total_units=total_units,
+            thumbnail=thumbnail,
             generated_at=generated_at,
             generated_by=generated_by,
         )
