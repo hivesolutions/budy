@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-*
+* Documented the `BUDY_HEADLESS_URL` and `BUDY_HEADLESS_KEY` configuration variables under a new `Headless` section in `README.md`
 
 ### Fixed
 

@@ -47,6 +47,13 @@ Code coverage of at least 75% of the code base should be considered a priority.
 | **BUDY_MB_WARNING**        | `float` | The amount of time (in seconds) until a Multibanco reference warning is sent (defaults to `172800`).                                                                                                                                                                   |
 | **BUDY_MB_CANCEL**         | `float` | The amount of time (in seconds) until a Multibanco reference is canceled due to lack of payment (defaults to `259200`).                                                                                                                                                |
 
+### Headless
+
+| Name                  | Type  | Description                                                                                                                                                                                                     |
+| --------------------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **BUDY_HEADLESS_URL** | `str` | The base URL of the Headless service used to render the inventory report into a PDF document (defaults to `https://headless.bemisc.com`).                                                                       |
+| **BUDY_HEADLESS_KEY** | `str` | The shared key used to authenticate with the Headless service when requesting the PDF rendering of the inventory report, required for the `/api/orders/inventory.pdf` endpoint to operate (defaults to `None`). |
+
 ### Omni Bot
 
 | Name                   | Type   | Description                                                                                     |
