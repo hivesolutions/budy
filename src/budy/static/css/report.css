@@ -346,6 +346,7 @@ body {
 }
 
 @page {
+    margin: 6mm 8mm 6mm 8mm;
     @bottom-right {
         color: #000000;
         content: "Page " counter(page) " of " counter(pages);

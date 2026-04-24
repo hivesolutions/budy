@@ -13,7 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-*
+* Inventory and order reports now render a `-` placeholder for unset gender, size and other optional fields instead of the literal `None`
+* Added `@page` margins to the report print stylesheet so PDF output keeps proper padding around content and page number footer
 
 ### Fixed
 
