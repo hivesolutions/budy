@@ -28,6 +28,8 @@ __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import datetime
+
 import appier
 
 import budy
@@ -42,6 +44,38 @@ class OrderAPIController(root.RootAPIController):
         object = appier.get_object(alias=True, find=True, sort=[("id", -1)])
         orders = budy.Order.find(eager_l=True, map=True, **object)
         return orders
+
+    @appier.route("/api/orders/<int:id>/report", "GET")
+    @appier.ensure(token="admin")
+    def report(self, id):
+        order = budy.Order.get(id=id)
+        lines = sorted(order.lines, key=lambda line: line.product.sku or "")
+        rows = []
+        for line in lines:
+            row = dict(
+                product_reference=line.product.sku,
+                short_description=line.product.short_description,
+                gender=line.product.gender,
+                size=line.size_s,
+                quantity=self._format_quantity(line.quantity),
+                price=line.price,
+                total=line.total,
+                currency=line.currency,
+            )
+            rows.append(row)
+        total_units = self._format_quantity(sum(line.quantity for line in order.lines))
+        payment_type = (order.payment_data or {}).get("type")
+        generated_at = datetime.datetime.utcnow().strftime("%B %d, %Y at %H:%M:%S UTC")
+        generated_by = self.session.get("username")
+        return self.template(
+            "report/order.html.tpl",
+            order=order,
+            rows=rows,
+            total_units=total_units,
+            payment_type=payment_type,
+            generated_at=generated_at,
+            generated_by=generated_by,
+        )
 
     @appier.route("/api/orders/complex.csv", "GET")
     @appier.ensure(token="admin")
@@ -246,6 +280,104 @@ class OrderAPIController(root.RootAPIController):
         result = appier.legacy.bytes(result, encoding="Cp1252", errors="ignore")
         self.content_type("text/csv")
         return result
+
+    @appier.route("/api/orders/inventory", "GET")
+    @appier.ensure(token="admin")
+    def inventory(self):
+        start = self.field("start", cast=int)
+        end = self.field("end", cast=int)
+        paid = self.field("paid", True, cast=bool)
+        thumbnail = self.field("thumbnail", True, cast=bool)
+        object = appier.get_object(alias=True, find=True, limit=0, sort=[("id", -1)])
+        id = object.get("id", {})
+        if start:
+            id["$gte"] = start
+        if end:
+            id["$lte"] = end
+        if start or end:
+            object["id"] = id
+        if paid:
+            object["paid"] = True
+        orders = self.admin_part._find_view(budy.Order, **object)
+        orders = sorted(orders, key=lambda order: order.id)
+        rows = []
+        for order in orders:
+            lines = sorted(order.lines, key=lambda line: line.product.sku or "")
+            for line in lines:
+                row = dict(
+                    order_id=order.id,
+                    order_reference=order.reference,
+                    product_reference=line.product.sku,
+                    short_description=line.product.short_description,
+                    gender=line.product.gender,
+                    size=line.size_s,
+                    quantity=self._format_quantity(line.quantity),
+                    thumbnail_url=line.product.thumbnail_url,
+                )
+                rows.append(row)
+        orders_count = len(orders)
+        order_references = [
+            dict(id=order.id, reference=order.reference) for order in orders
+        ]
+        total_units = self._format_quantity(
+            sum(line.quantity for order in orders for line in order.lines)
+        )
+        generated_at = datetime.datetime.utcnow().strftime("%B %d, %Y at %H:%M:%S UTC")
+        generated_by = self.session.get("username")
+        return self.template(
+            "report/inventory.html.tpl",
+            rows=rows,
+            orders_count=orders_count,
+            order_references=order_references,
+            total_units=total_units,
+            thumbnail=thumbnail,
+            generated_at=generated_at,
+            generated_by=generated_by,
+        )
+
+    @appier.route("/api/orders/inventory.pdf", "GET")
+    @appier.ensure(token="admin")
+    def inventory_pdf(self):
+        start = self.field("start", cast=int)
+        end = self.field("end", cast=int)
+        paid = self.field("paid", True, cast=bool)
+        thumbnail = self.field("thumbnail", True, cast=bool)
+        view = self.field("view")
+        context = self.field("context")
+        headless_url = appier.conf("BUDY_HEADLESS_URL", "https://headless.bemisc.com")
+        headless_key = appier.conf("BUDY_HEADLESS_KEY", None)
+        appier.verify(not headless_key == None)
+        account = self.admin_account.from_session()
+        account = account.reload(rules=False)
+        params = dict(paid=paid, thumbnail=thumbnail, skey=account.key)
+        if start:
+            params["start"] = start
+        if end:
+            params["end"] = end
+        if view:
+            params["view"] = view
+        if context:
+            params["context"] = context
+        report_url = appier.get_app().url_for(
+            "order_api.inventory", absolute=True, **params
+        )
+        return self.redirect(
+            headless_url,
+            params=dict(
+                url=report_url,
+                format="pdf",
+                page_format="A4",
+                wait_until="networkidle0",
+                timeout=60000,
+                key=headless_key,
+            ),
+        )
+
+    def _format_quantity(self, quantity):
+        quantity_int = int(quantity)
+        if quantity_int == quantity:
+            return quantity_int
+        return quantity
 
     @appier.route("/api/orders/<str:key>", "GET", json=True)
     def show(self, key):

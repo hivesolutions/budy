@@ -53,10 +53,12 @@ setuptools.setup(
     package_dir={"": os.path.normpath("src")},
     package_data={
         "budy": [
+            "static/css/*.css",
             "static/js/*.js",
             "templates/*.tpl",
             "templates/order/*.tpl",
             "templates/partials/*.tpl",
+            "templates/report/*.tpl",
         ]
     },
     install_requires=["appier", "appier-extras", "commons-py"],
