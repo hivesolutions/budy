@@ -13,12 +13,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* Documented the `BUDY_HEADLESS_URL` and `BUDY_HEADLESS_KEY` configuration variables under a new `Headless` section in `README.md`
-* Bumped base versions of dependencies
+*
 
 ### Fixed
 
 *
+
+## [0.10.2] - 2026-04-27
+
+### Changed
+
+* Documented the `BUDY_HEADLESS_URL` and `BUDY_HEADLESS_KEY` configuration variables under a new `Headless` section in `README.md`
+* Bumped base versions of dependencies
 
 ## [0.10.1] - 2026-04-24
 
