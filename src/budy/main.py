@@ -85,7 +85,7 @@ class BudyApp(appier.WebApp):
         return self.seeplus_api
 
     def _version(self):
-        return "0.10.2"
+        return "0.10.3"
 
     def _description(self):
         return "Budy"
