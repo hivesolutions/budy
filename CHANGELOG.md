@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* `By Product` parameter on the `Inventory Report` and `Inventory PDF` links that re-sorts the report rows by product SKU and swaps the `Product Reference` and `Order Reference` columns
+*
 
 ### Changed
 
@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 *
+
+## [0.11.0] - 2026-04-29
+
+### Added
+
+* `By Product` parameter on the `Inventory Report` and `Inventory PDF` links that re-sorts the report rows by product SKU and swaps the `Product Reference` and `Order Reference` columns
 
 ## [0.10.3] - 2026-04-27
 
