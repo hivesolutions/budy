@@ -288,6 +288,7 @@ class OrderAPIController(root.RootAPIController):
         end = self.field("end", cast=int)
         paid = self.field("paid", True, cast=bool)
         thumbnail = self.field("thumbnail", True, cast=bool)
+        by_product = self.field("by_product", False, cast=bool)
         object = appier.get_object(alias=True, find=True, limit=0, sort=[("id", -1)])
         id = object.get("id", {})
         if start:
@@ -315,6 +316,10 @@ class OrderAPIController(root.RootAPIController):
                     thumbnail_url=line.product.thumbnail_url,
                 )
                 rows.append(row)
+        if by_product:
+            rows = sorted(
+                rows, key=lambda row: (row["product_reference"] or "", row["order_id"])
+            )
         orders_count = len(orders)
         order_references = [
             dict(id=order.id, reference=order.reference) for order in orders
@@ -324,6 +329,7 @@ class OrderAPIController(root.RootAPIController):
         )
         generated_at = datetime.datetime.utcnow().strftime("%B %d, %Y at %H:%M:%S UTC")
         generated_by = self.session.get("username")
+        report_type = "product" if by_product else "order"
         return self.template(
             "report/inventory.html.tpl",
             rows=rows,
@@ -331,6 +337,7 @@ class OrderAPIController(root.RootAPIController):
             order_references=order_references,
             total_units=total_units,
             thumbnail=thumbnail,
+            report_type=report_type,
             generated_at=generated_at,
             generated_by=generated_by,
         )
@@ -342,6 +349,7 @@ class OrderAPIController(root.RootAPIController):
         end = self.field("end", cast=int)
         paid = self.field("paid", True, cast=bool)
         thumbnail = self.field("thumbnail", True, cast=bool)
+        by_product = self.field("by_product", False, cast=bool)
         view = self.field("view")
         context = self.field("context")
         headless_url = appier.conf("BUDY_HEADLESS_URL", "https://headless.bemisc.com")
@@ -349,7 +357,9 @@ class OrderAPIController(root.RootAPIController):
         appier.verify(not headless_key == None)
         account = self.admin_account.from_session()
         account = account.reload(rules=False)
-        params = dict(paid=paid, thumbnail=thumbnail, skey=account.key)
+        params = dict(
+            paid=paid, thumbnail=thumbnail, by_product=by_product, skey=account.key
+        )
         if start:
             params["start"] = start
         if end:

@@ -32,8 +32,13 @@
                 <tr>
                     <th class="report-table-check"><span class="report-check"></span></th>
                     {% if thumbnail %}<th class="report-table-thumbnail"></th>{% endif %}
-                    <th>Order Reference</th>
-                    <th>Product Reference</th>
+                    {% if report_type == "product" %}
+                        <th>Product Reference</th>
+                        <th>Order Reference</th>
+                    {% else %}
+                        <th>Order Reference</th>
+                        <th>Product Reference</th>
+                    {% endif %}
                     <th>Short Description</th>
                     <th>Gender</th>
                     <th>Size</th>
@@ -42,7 +47,7 @@
             </thead>
             <tbody>
                 {% for row in rows %}
-                    <tr{% if not loop.first and loop.previtem.order_id != row.order_id %} class="report-table-order-first"{% endif %}>
+                    <tr{% if not loop.first and ((report_type == "product" and not loop.previtem.product_reference == row.product_reference) or (report_type == "order" and not loop.previtem.order_id == row.order_id)) %} class="report-table-order-first"{% endif %}>
                         <td class="report-table-check"><span class="report-check"></span></td>
                         {% if thumbnail %}
                             <td class="report-table-thumbnail">
@@ -51,8 +56,13 @@
                                 {% endif %}
                             </td>
                         {% endif %}
-                        <td class="report-table-mono"><a href="{{ url_for('order_api.report', id = row.order_id) }}" target="_blank">{{ row.order_reference }}</a></td>
-                        <td class="report-table-mono">{{ row.product_reference }}</td>
+                        {% if report_type == "product" %}
+                            <td class="report-table-mono">{{ row.product_reference }}</td>
+                            <td class="report-table-mono"><a href="{{ url_for('order_api.report', id = row.order_id) }}" target="_blank">{{ row.order_reference }}</a></td>
+                        {% else %}
+                            <td class="report-table-mono"><a href="{{ url_for('order_api.report', id = row.order_id) }}" target="_blank">{{ row.order_reference }}</a></td>
+                            <td class="report-table-mono">{{ row.product_reference }}</td>
+                        {% endif %}
                         <td>{{ row.short_description }}</td>
                         <td>{{ row.gender|default("-", True) }}</td>
                         <td class="report-table-mono">{{ row.size|default("-", True) }}</td>

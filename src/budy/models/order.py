@@ -230,17 +230,35 @@ class Order(bundle.Bundle):
         )
 
     @classmethod
-    @appier.link(name="Inventory Report", context=True)
-    def inventory_url(cls, view=None, context=None, absolute=False):
+    @appier.link(
+        name="Inventory Report",
+        parameters=(("By Product", "by_product", bool, False),),
+        context=True,
+    )
+    def inventory_url(cls, by_product=False, view=None, context=None, absolute=False):
         return appier.get_app().url_for(
-            "order_api.inventory", view=view, context=context, absolute=absolute
+            "order_api.inventory",
+            by_product=by_product,
+            view=view,
+            context=context,
+            absolute=absolute,
         )
 
     @classmethod
-    @appier.link(name="Inventory PDF", context=True)
-    def inventory_pdf_url(cls, view=None, context=None, absolute=False):
+    @appier.link(
+        name="Inventory PDF",
+        parameters=(("By Product", "by_product", bool, False),),
+        context=True,
+    )
+    def inventory_pdf_url(
+        cls, by_product=False, view=None, context=None, absolute=False
+    ):
         return appier.get_app().url_for(
-            "order_api.inventory_pdf", view=view, context=context, absolute=absolute
+            "order_api.inventory_pdf",
+            by_product=by_product,
+            view=view,
+            context=context,
+            absolute=absolute,
         )
 
     @classmethod
