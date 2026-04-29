@@ -13,11 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-* Bump appier-extras version
+*
 
 ### Fixed
 
 *
+
+## [0.11.1] - 2026-04-29
+
+### Changed
+
+* Bump appier-extras version
 
 ## [0.11.0] - 2026-04-29
 
