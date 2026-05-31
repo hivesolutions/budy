@@ -33,7 +33,7 @@ import setuptools
 
 setuptools.setup(
     name="budy",
-    version="0.12.1",
+    version="0.12.2",
     author="Hive Solutions Lda.",
     author_email="development@hive.pt",
     description="Budy E-commerce System",
