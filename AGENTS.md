@@ -111,4 +111,4 @@ To create a new release follow the following steps:
 
 ## License
 
-Hive Budy is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/).
+Budy is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/).
