@@ -23,6 +23,7 @@ RUN pip3 install -r /requirements.txt && pip3 install -r /extra.txt && pip3 inst
 RUN addgroup -S -g 10001 budy && \
     adduser -S -u 10001 -G budy -h /src -H -s /sbin/nologin budy && \
     chown -R budy:budy /src
+WORKDIR /src
 USER budy
 
 CMD ["/usr/bin/python3", "/src/budy/main.py"]
