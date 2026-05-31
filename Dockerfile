@@ -20,4 +20,9 @@ ADD src /src
 RUN apk update && apk add libpng-dev libjpeg-turbo-dev libwebp-dev freetype-dev
 RUN pip3 install -r /requirements.txt && pip3 install -r /extra.txt && pip3 install --upgrade netius
 
+RUN groupadd --system budy && \
+    useradd --system --gid budy --home-dir /src --shell /usr/sbin/nologin budy && \
+    chown -R budy:budy /src
+USER budy
+
 CMD ["/usr/bin/python3", "/src/budy/main.py"]
