@@ -57,6 +57,12 @@ class BudyApp(appier.WebApp):
             note="Forcing scheduler may consume computer resources",
             level=3,
         )
+        self.admin_part.add_section_item(
+            "Easypay", "easypay_api.diagnostics", section="Payments"
+        )
+        self.admin_part.add_section_item(
+            "Easypay v2", "easypay_v2_api.diagnostics", section="Payments"
+        )
 
     def stop(self):
         try:
