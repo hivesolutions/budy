@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Easypay diagnostics links in the admin under a Payments section
+*
 
 ### Changed
 
@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 *
+
+## [0.12.0] - 2026-05-31
+
+### Added
+
+* Easypay diagnostics links in the admin under a Payments section
 
 ## [0.11.2] - 2026-05-31
 
