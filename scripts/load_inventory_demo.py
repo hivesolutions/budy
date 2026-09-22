@@ -186,7 +186,7 @@ class InventoryDemoLoader:
             base_data = {
                 key: value
                 for key, value in product_data.items()
-                if key not in ("thumbnail_url", "image_url")
+                if not key in ("thumbnail_url", "image_url")
             }
             product = Product(**base_data)
             product.save()
