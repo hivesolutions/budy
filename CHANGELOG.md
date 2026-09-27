@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-*
+* Skipped MongoDB tests in CI for Python images whose base system no longer receives updates
 
 ### Fixed
 
