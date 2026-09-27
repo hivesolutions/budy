@@ -26,6 +26,10 @@ jobs:
             adapter: mongo
           - python-version: 3.5
             adapter: mongo
+          - python-version: 3.6
+            adapter: mongo
+          - python-version: rc
+            adapter: mongo
     env:
       MONGO_URL: mongodb://host.docker.internal
     runs-on: ubuntu-latest
