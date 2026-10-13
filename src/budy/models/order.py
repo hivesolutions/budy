@@ -114,6 +114,8 @@ class Order(bundle.Bundle):
 
     gift_wrap = appier.field(type=bool, index="hashed", initial=False, safe=True)
 
+    gift_slip = appier.field(type=bool, index="hashed", initial=False, safe=True)
+
     tracking_number = appier.field(
         index="hashed",
     )
@@ -1187,9 +1189,11 @@ class Order(bundle.Bundle):
         store_id = appier.conf("OMNI_BOT_STORE", None, cast=int)
 
         # gather using configuration the object ID of the services
-        # that represents the presence of the shipping and gift wrap
+        # that represents the presence of the shipping, gift wrap
+        # and gift slip
         shipping_id = appier.conf("OMNI_BOT_SHIPPING", None, cast=int)
         gift_wrap_id = appier.conf("OMNI_BOT_GIFT_WRAP", None, cast=int)
+        gift_slip_id = appier.conf("OMNI_BOT_GIFT_SLIP", None, cast=int)
 
         # builds the "unique" description of the order from which
         # a duplicates are going to be avoided by explicit checking
@@ -1408,6 +1412,10 @@ class Order(bundle.Bundle):
 
         if self.gift_wrap and gift_wrap_id:
             sale_line = dict(merchandise=dict(object_id=gift_wrap_id), quantity=1)
+            sale_lines.append(sale_line)
+
+        if self.gift_slip and gift_slip_id:
+            sale_line = dict(merchandise=dict(object_id=gift_slip_id), quantity=1)
             sale_lines.append(sale_line)
 
         primary_payment = dict(
