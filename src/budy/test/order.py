@@ -1149,14 +1149,7 @@ class OrderTest(unittest.TestCase):
         order.gift_slip = True
         order.save()
 
-        try:
-            appier.conf_s("OMNI_BOT_GIFT_WRAP", 200)
-            appier.conf_s("OMNI_BOT_GIFT_SLIP", 300)
-
-            order.import_omni_s(sync_prices=False)
-        finally:
-            appier.conf_r("OMNI_BOT_GIFT_WRAP")
-            appier.conf_r("OMNI_BOT_GIFT_SLIP")
+        order.import_omni_s(sync_prices=False)
 
         self.assertEqual(len(payloads), 1)
         self.assertEqual(
@@ -1171,24 +1164,40 @@ class OrderTest(unittest.TestCase):
         )
         self.assertEqual(len(payloads), 1)
 
-        order.import_omni_s(invoice=True, strict=False, sync_prices=False)
+        try:
+            appier.conf_s("OMNI_BOT_GIFT_WRAP", 200)
+
+            order.import_omni_s(invoice=True, strict=False, sync_prices=False)
+        finally:
+            appier.conf_r("OMNI_BOT_GIFT_WRAP")
 
         self.assertEqual(len(payloads), 2)
         self.assertEqual(
             payloads[1]["transaction"]["sale_lines"],
-            [dict(merchandise=dict(object_id=100), quantity=2.0)],
+            [
+                dict(merchandise=dict(object_id=100), quantity=2.0),
+                dict(merchandise=dict(object_id=200), quantity=1),
+            ],
         )
-        self.assertEqual(
-            slips, [(2, dict(notes="Budy order - BD-000001\nGift wrap\nGift slip"))]
-        )
+        self.assertEqual(slips, [(2, dict(notes="Budy order - BD-000001\nGift slip"))])
         self.assertEqual(order.status, "invoiced")
 
         order.gift_wrap = False
         order.gift_slip = False
         order.save()
-        order.import_omni_s(invoice=True, strict=False, sync_prices=False)
+
+        try:
+            appier.conf_s("OMNI_BOT_GIFT_WRAP", 200)
+
+            order.import_omni_s(invoice=True, strict=False, sync_prices=False)
+        finally:
+            appier.conf_r("OMNI_BOT_GIFT_WRAP")
 
         self.assertEqual(len(payloads), 3)
+        self.assertEqual(
+            payloads[2]["transaction"]["sale_lines"],
+            [dict(merchandise=dict(object_id=100), quantity=2.0)],
+        )
         self.assertEqual(len(slips), 2)
         self.assertEqual(slips[1], (3, dict(notes="Budy order - BD-000001")))
 
@@ -1217,20 +1226,15 @@ class OrderTest(unittest.TestCase):
         order.save()
         notes = order._build_notes()
 
-        self.assertEqual(notes, "Budy order - BD-000001\nGift wrap")
+        self.assertEqual(notes, "Budy order - BD-000001")
 
         order.gift_slip = True
         order.save()
         notes = order._build_notes()
 
-        self.assertEqual(notes, "Budy order - BD-000001\nGift wrap\nGift slip")
-
-        order.gift_wrap = False
-        order.save()
-        notes = order._build_notes()
-
         self.assertEqual(notes, "Budy order - BD-000001\nGift slip")
 
+        order.gift_wrap = False
         order.gift_slip = False
         order.save()
 
@@ -1283,12 +1287,11 @@ class OrderTest(unittest.TestCase):
         order_line.save()
 
         order = order.reload()
-        order.gift_wrap = True
         order.gift_slip = True
         order.save()
         notes = order._build_notes()
 
         self.assertEqual(
             notes,
-            "Budy order - BD-000001\nGift wrap\nGift slip\nOrder line - product | initials = IN",
+            "Budy order - BD-000001\nGift slip\nOrder line - product | initials = IN",
         )

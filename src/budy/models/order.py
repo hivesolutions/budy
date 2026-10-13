@@ -1188,9 +1188,10 @@ class Order(bundle.Bundle):
         # sale is going to be performed (affects inventory)
         store_id = appier.conf("OMNI_BOT_STORE", None, cast=int)
 
-        # gather using configuration the object ID of the service
-        # that represents the presence of the shipping
+        # gather using configuration the object ID of the services
+        # that represents the presence of the shipping and gift wrap
         shipping_id = appier.conf("OMNI_BOT_SHIPPING", None, cast=int)
+        gift_wrap_id = appier.conf("OMNI_BOT_GIFT_WRAP", None, cast=int)
 
         # builds the "unique" description of the order from which
         # a duplicates are going to be avoided by explicit checking
@@ -1405,6 +1406,10 @@ class Order(bundle.Bundle):
 
         if self.shipping_cost > 0.0 and shipping_id:
             sale_line = dict(merchandise=dict(object_id=shipping_id), quantity=1)
+            sale_lines.append(sale_line)
+
+        if self.gift_wrap and gift_wrap_id:
+            sale_line = dict(merchandise=dict(object_id=gift_wrap_id), quantity=1)
             sale_lines.append(sale_line)
 
         primary_payment = dict(
@@ -2202,12 +2207,10 @@ class Order(bundle.Bundle):
     def _build_notes(self, split="|", separator="="):
         # creates the list of notes that are going to be representing
         # the current order in a text fashion, this should include the gift
-        # options of the order and the product attributes for every single
-        # order line
+        # slip option of the order and the product attributes for every
+        # single order line
         notes_l = []
         notes_l.append("Budy order - %s" % self.reference)
-        if self.gift_wrap:
-            notes_l.append("Gift wrap")
         if self.gift_slip:
             notes_l.append("Gift slip")
         for line in self.lines:
