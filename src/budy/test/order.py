@@ -1123,6 +1123,7 @@ class OrderTest(unittest.TestCase):
         order.add_line_s(order_line)
 
         payloads = []
+        slips = []
 
         def create_sale(payload):
             payloads.append(payload)
@@ -1133,6 +1134,9 @@ class OrderTest(unittest.TestCase):
             list_sales=lambda *args, **kwargs: [],
             list_customers=lambda *args, **kwargs: [],
             create_sale=create_sale,
+            issue_money_sale_slip_sale=lambda object_id, metadata=None: slips.append(
+                (object_id, metadata)
+            ),
         )
 
         self.assertRaises(
@@ -1141,6 +1145,8 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(len(payloads), 0)
 
         order.paid = True
+        order.gift_wrap = True
+        order.gift_slip = True
         order.save()
 
         try:
@@ -1148,61 +1154,43 @@ class OrderTest(unittest.TestCase):
             appier.conf_s("OMNI_BOT_GIFT_SLIP", 300)
 
             order.import_omni_s(sync_prices=False)
-
-            self.assertEqual(len(payloads), 1)
-            self.assertEqual(
-                payloads[0]["transaction"]["sale_lines"],
-                [dict(merchandise=dict(object_id=100), quantity=2.0)],
-            )
-            self.assertEqual(order.meta["omni_sale"], 1)
-
-            self.assertRaises(
-                appier.OperationalError, lambda: order.import_omni_s(sync_prices=False)
-            )
-            self.assertEqual(len(payloads), 1)
-
-            order.gift_slip = True
-            order.save()
-            order.import_omni_s(strict=False, sync_prices=False)
-
-            self.assertEqual(len(payloads), 2)
-            self.assertEqual(
-                payloads[1]["transaction"]["sale_lines"],
-                [
-                    dict(merchandise=dict(object_id=100), quantity=2.0),
-                    dict(merchandise=dict(object_id=300), quantity=1),
-                ],
-            )
-
-            order.gift_wrap = True
-            order.save()
-            order.import_omni_s(strict=False, sync_prices=False)
-
-            self.assertEqual(len(payloads), 3)
-            self.assertEqual(
-                payloads[2]["transaction"]["sale_lines"],
-                [
-                    dict(merchandise=dict(object_id=100), quantity=2.0),
-                    dict(merchandise=dict(object_id=200), quantity=1),
-                    dict(merchandise=dict(object_id=300), quantity=1),
-                ],
-            )
-
-            appier.conf_r("OMNI_BOT_GIFT_SLIP")
-
-            order.import_omni_s(strict=False, sync_prices=False)
-
-            self.assertEqual(len(payloads), 4)
-            self.assertEqual(
-                payloads[3]["transaction"]["sale_lines"],
-                [
-                    dict(merchandise=dict(object_id=100), quantity=2.0),
-                    dict(merchandise=dict(object_id=200), quantity=1),
-                ],
-            )
         finally:
             appier.conf_r("OMNI_BOT_GIFT_WRAP")
             appier.conf_r("OMNI_BOT_GIFT_SLIP")
+
+        self.assertEqual(len(payloads), 1)
+        self.assertEqual(
+            payloads[0]["transaction"]["sale_lines"],
+            [dict(merchandise=dict(object_id=100), quantity=2.0)],
+        )
+        self.assertEqual(len(slips), 0)
+        self.assertEqual(order.meta["omni_sale"], 1)
+
+        self.assertRaises(
+            appier.OperationalError, lambda: order.import_omni_s(sync_prices=False)
+        )
+        self.assertEqual(len(payloads), 1)
+
+        order.import_omni_s(invoice=True, strict=False, sync_prices=False)
+
+        self.assertEqual(len(payloads), 2)
+        self.assertEqual(
+            payloads[1]["transaction"]["sale_lines"],
+            [dict(merchandise=dict(object_id=100), quantity=2.0)],
+        )
+        self.assertEqual(
+            slips, [(2, dict(notes="Budy order - BD-000001\nGift wrap\nGift slip"))]
+        )
+        self.assertEqual(order.status, "invoiced")
+
+        order.gift_wrap = False
+        order.gift_slip = False
+        order.save()
+        order.import_omni_s(invoice=True, strict=False, sync_prices=False)
+
+        self.assertEqual(len(payloads), 3)
+        self.assertEqual(len(slips), 2)
+        self.assertEqual(slips[1], (3, dict(notes="Budy order - BD-000001")))
 
     def test__build_notes(self):
         product = budy.Product(short_description="product", gender="Male", price=10.0)
@@ -1224,6 +1212,27 @@ class OrderTest(unittest.TestCase):
         notes = order._build_notes()
 
         self.assertEqual(notes, "Budy order - BD-000001")
+
+        order.gift_wrap = True
+        order.save()
+        notes = order._build_notes()
+
+        self.assertEqual(notes, "Budy order - BD-000001\nGift wrap")
+
+        order.gift_slip = True
+        order.save()
+        notes = order._build_notes()
+
+        self.assertEqual(notes, "Budy order - BD-000001\nGift wrap\nGift slip")
+
+        order.gift_wrap = False
+        order.save()
+        notes = order._build_notes()
+
+        self.assertEqual(notes, "Budy order - BD-000001\nGift slip")
+
+        order.gift_slip = False
+        order.save()
 
         order_line.attributes = json.dumps(dict(initials="IN"))
         order_line.save()
@@ -1269,3 +1278,17 @@ class OrderTest(unittest.TestCase):
         notes = order._build_notes()
 
         self.assertEqual(notes, "Budy order - BD-000001")
+
+        order_line.attributes = json.dumps(dict(initials="IN"))
+        order_line.save()
+
+        order = order.reload()
+        order.gift_wrap = True
+        order.gift_slip = True
+        order.save()
+        notes = order._build_notes()
+
+        self.assertEqual(
+            notes,
+            "Budy order - BD-000001\nGift wrap\nGift slip\nOrder line - product | initials = IN",
+        )

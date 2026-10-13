@@ -61,8 +61,6 @@ Code coverage of at least 75% of the code base should be considered a priority.
 | **OMNI_BOT_ENABLED**   | `bool` | If the Omni bot should be enabled at startup.                                                   |
 | **OMNI_BOT_STORE**     | `int`  | Object ID of the store that is going to be used for the sync and import operations.             |
 | **OMNI_BOT_SHIPPING**  | `int`  | Object ID of the shipping service that is going to be used for the sync and import operations.  |
-| **OMNI_BOT_GIFT_WRAP** | `int`  | Object ID of the gift wrap service that is going to be used for the sync and import operations. |
-| **OMNI_BOT_GIFT_SLIP** | `int`  | Object ID of the gift slip service that is going to be used for the sync and import operations. |
 | **OMNI_BOT_RECORDS**   | `int`  | The number of records to be retrieved per each remote API call.                                 |
 
 ### Tracking Bot

@@ -9,10 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Gift slip option in orders, also sent to Omni as a sale line
+* Gift slip option in orders, sent to Omni in the notes of the sale
 
 ### Changed
 
+* Gift wrap is now sent to Omni in the notes of the sale instead of as a sale line
 * Skipped MongoDB tests in CI for Python images whose base system no longer receives updates
 
 ### Fixed
