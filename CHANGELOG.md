@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
+* Gift slip option in orders, sent to Omni in the notes of the sale
 
 ### Changed
 

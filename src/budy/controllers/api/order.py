@@ -501,6 +501,17 @@ class OrderAPIController(root.RootAPIController):
         order = order.reload(map=True)
         return order
 
+    @appier.route("/api/orders/<str:key>/gift_slip", "PUT", json=True)
+    @appier.ensure(token="user")
+    def set_gift_slip(self, key):
+        data = appier.request_json()
+        gift_slip = data["gift_slip"]
+        order = budy.Order.get(key=key, rules=False)
+        order.gift_slip = gift_slip
+        order.save()
+        order = order.reload(map=True)
+        return order
+
     @appier.route("/api/orders/<str:key>/referral", "PUT", json=True)
     @appier.ensure(token="user")
     def set_referral(self, key):

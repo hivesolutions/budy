@@ -114,6 +114,8 @@ class Order(bundle.Bundle):
 
     gift_wrap = appier.field(type=bool, index="hashed", initial=False, safe=True)
 
+    gift_slip = appier.field(type=bool, index="hashed", initial=False, safe=True)
+
     tracking_number = appier.field(
         index="hashed",
     )
@@ -2204,10 +2206,13 @@ class Order(bundle.Bundle):
 
     def _build_notes(self, split="|", separator="="):
         # creates the list of notes that are going to be representing
-        # the current order in a text fashion, this should include the product
-        # attributes for every single order line
+        # the current order in a text fashion, this should include the gift
+        # slip option of the order and the product attributes for every
+        # single order line
         notes_l = []
         notes_l.append("Budy order - %s" % self.reference)
+        if self.gift_slip:
+            notes_l.append("Gift slip")
         for line in self.lines:
             if not line.product:
                 continue

@@ -141,6 +141,76 @@ class OrderTest(unittest.TestCase):
 
         self.assertRaises(appier.AssertionError, order.mark_paid_s)
 
+    def test_gift_slip(self):
+        order = budy.Order()
+        order.save()
+
+        self.assertEqual(order.gift_wrap, False)
+        self.assertEqual(order.gift_slip, False)
+
+        order = order.reload()
+
+        self.assertEqual(order.gift_wrap, False)
+        self.assertEqual(order.gift_slip, False)
+
+        controller = self.app.get_controller("OrderAPIController")
+
+        request = appier.Request("PUT", "/api/orders/%s/gift_slip" % order.key)
+        request.set_data(json.dumps(dict(gift_slip=True)).encode("utf-8"))
+        self.app._request = request
+
+        self.assertRaises(
+            appier.AppierException, lambda: controller.set_gift_slip(order.key)
+        )
+
+        order = order.reload()
+
+        self.assertEqual(order.gift_slip, False)
+
+        request.session["username"] = "username"
+        request.session["tokens"] = ["user"]
+
+        result = controller.set_gift_slip(order.key)
+
+        self.assertEqual(result["gift_wrap"], False)
+        self.assertEqual(result["gift_slip"], True)
+
+        order = order.reload()
+
+        self.assertEqual(order.gift_wrap, False)
+        self.assertEqual(order.gift_slip, True)
+
+        self.assertRaises(
+            appier.NotFoundError, lambda: controller.set_gift_slip("invalid")
+        )
+
+        request = appier.Request("PUT", "/api/orders/%s/gift_slip" % order.key)
+        request.set_data(json.dumps(dict(gift_slip=False)).encode("utf-8"))
+        request.session["username"] = "username"
+        request.session["tokens"] = ["user"]
+        self.app._request = request
+
+        result = controller.set_gift_slip(order.key)
+
+        self.assertEqual(result["gift_slip"], False)
+
+        order = order.reload()
+
+        self.assertEqual(order.gift_slip, False)
+
+        request = appier.Request("PUT", "/api/orders/%s/gift_slip" % order.key)
+        request.set_data(json.dumps(dict(gift_wrap=True)).encode("utf-8"))
+        request.session["username"] = "username"
+        request.session["tokens"] = ["user"]
+        self.app._request = request
+
+        self.assertRaises(KeyError, lambda: controller.set_gift_slip(order.key))
+
+        order = order.reload()
+
+        self.assertEqual(order.gift_wrap, False)
+        self.assertEqual(order.gift_slip, False)
+
     def test_referral(self):
         order = budy.Order()
         order.save()
@@ -1039,6 +1109,98 @@ class OrderTest(unittest.TestCase):
 
         self.assertEqual(product.quantity_hand, 3.0)
 
+    def test_import_omni_s(self):
+        product = budy.Product(short_description="product", gender="Male", price=10.0)
+        product.meta = dict(object_id=100)
+        product.save()
+
+        order = budy.Order()
+        order.save()
+
+        order_line = budy.OrderLine(quantity=2.0)
+        order_line.product = product
+        order_line.save()
+        order.add_line_s(order_line)
+
+        payloads = []
+        slips = []
+
+        def create_sale(payload):
+            payloads.append(payload)
+            return dict(object_id=len(payloads), identifier="1/%d" % len(payloads))
+
+        self.app.omni_api = appier.MockObject(
+            base_url="http://localhost/",
+            list_sales=lambda *args, **kwargs: [],
+            list_customers=lambda *args, **kwargs: [],
+            create_sale=create_sale,
+            issue_money_sale_slip_sale=lambda object_id, metadata=None: slips.append(
+                (object_id, metadata)
+            ),
+        )
+
+        self.assertRaises(
+            appier.AssertionError, lambda: order.import_omni_s(sync_prices=False)
+        )
+        self.assertEqual(len(payloads), 0)
+
+        order.paid = True
+        order.gift_wrap = True
+        order.gift_slip = True
+        order.save()
+
+        order.import_omni_s(sync_prices=False)
+
+        self.assertEqual(len(payloads), 1)
+        self.assertEqual(
+            payloads[0]["transaction"]["sale_lines"],
+            [dict(merchandise=dict(object_id=100), quantity=2.0)],
+        )
+        self.assertEqual(len(slips), 0)
+        self.assertEqual(order.meta["omni_sale"], 1)
+
+        self.assertRaises(
+            appier.OperationalError, lambda: order.import_omni_s(sync_prices=False)
+        )
+        self.assertEqual(len(payloads), 1)
+
+        try:
+            appier.conf_s("OMNI_BOT_GIFT_WRAP", 200)
+
+            order.import_omni_s(invoice=True, strict=False, sync_prices=False)
+        finally:
+            appier.conf_r("OMNI_BOT_GIFT_WRAP")
+
+        self.assertEqual(len(payloads), 2)
+        self.assertEqual(
+            payloads[1]["transaction"]["sale_lines"],
+            [
+                dict(merchandise=dict(object_id=100), quantity=2.0),
+                dict(merchandise=dict(object_id=200), quantity=1),
+            ],
+        )
+        self.assertEqual(slips, [(2, dict(notes="Budy order - BD-000001\nGift slip"))])
+        self.assertEqual(order.status, "invoiced")
+
+        order.gift_wrap = False
+        order.gift_slip = False
+        order.save()
+
+        try:
+            appier.conf_s("OMNI_BOT_GIFT_WRAP", 200)
+
+            order.import_omni_s(invoice=True, strict=False, sync_prices=False)
+        finally:
+            appier.conf_r("OMNI_BOT_GIFT_WRAP")
+
+        self.assertEqual(len(payloads), 3)
+        self.assertEqual(
+            payloads[2]["transaction"]["sale_lines"],
+            [dict(merchandise=dict(object_id=100), quantity=2.0)],
+        )
+        self.assertEqual(len(slips), 2)
+        self.assertEqual(slips[1], (3, dict(notes="Budy order - BD-000001")))
+
     def test__build_notes(self):
         product = budy.Product(short_description="product", gender="Male", price=10.0)
         product.save()
@@ -1059,6 +1221,22 @@ class OrderTest(unittest.TestCase):
         notes = order._build_notes()
 
         self.assertEqual(notes, "Budy order - BD-000001")
+
+        order.gift_wrap = True
+        order.save()
+        notes = order._build_notes()
+
+        self.assertEqual(notes, "Budy order - BD-000001")
+
+        order.gift_slip = True
+        order.save()
+        notes = order._build_notes()
+
+        self.assertEqual(notes, "Budy order - BD-000001\nGift slip")
+
+        order.gift_wrap = False
+        order.gift_slip = False
+        order.save()
 
         order_line.attributes = json.dumps(dict(initials="IN"))
         order_line.save()
@@ -1104,3 +1282,16 @@ class OrderTest(unittest.TestCase):
         notes = order._build_notes()
 
         self.assertEqual(notes, "Budy order - BD-000001")
+
+        order_line.attributes = json.dumps(dict(initials="IN"))
+        order_line.save()
+
+        order = order.reload()
+        order.gift_slip = True
+        order.save()
+        notes = order._build_notes()
+
+        self.assertEqual(
+            notes,
+            "Budy order - BD-000001\nGift slip\nOrder line - product | initials = IN",
+        )
