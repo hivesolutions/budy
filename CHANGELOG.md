@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+*
+
+## [0.13.1] - 2026-10-14
+
+### Fixed
+
 * Boot failure of orders collections at the MongoDB limit of 64 indexes, by no longer indexing the money values of bundles
 
 ## [0.13.0] - 2026-10-14
