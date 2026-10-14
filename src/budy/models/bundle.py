@@ -49,7 +49,6 @@ class Bundle(base.BudyBase):
 
     sub_total = appier.field(
         type=commons.Decimal,
-        index=True,
         initial=commons.Decimal(0.0),
         safe=True,
         observations="""The total amount for the bundle resulting
@@ -59,7 +58,6 @@ class Bundle(base.BudyBase):
 
     discounted_sub_total = appier.field(
         type=commons.Decimal,
-        index=True,
         initial=commons.Decimal(0.0),
         safe=True,
         observations="""The sub total amount resolved from the bundle lines
@@ -68,7 +66,6 @@ class Bundle(base.BudyBase):
 
     undiscounted_sub_total = appier.field(
         type=commons.Decimal,
-        index=True,
         initial=commons.Decimal(0.0),
         safe=True,
         observations="""The sub total amount resolved from the bundle lines for
@@ -77,7 +74,6 @@ class Bundle(base.BudyBase):
 
     discountable_sub_total = appier.field(
         type=commons.Decimal,
-        index=True,
         initial=commons.Decimal(0.0),
         safe=True,
         observations="""The total amount of the sub total that is still discountable
@@ -86,7 +82,6 @@ class Bundle(base.BudyBase):
 
     discount = appier.field(
         type=commons.Decimal,
-        index=True,
         initial=commons.Decimal(0.0),
         safe=True,
         observations="""The total amount for the global discount applied to the
@@ -94,32 +89,28 @@ class Bundle(base.BudyBase):
     )
 
     discount_fixed = appier.field(
-        type=commons.Decimal, index=True, initial=commons.Decimal(0.0), safe=True
+        type=commons.Decimal, initial=commons.Decimal(0.0), safe=True
     )
 
     discount_dynamic = appier.field(
-        type=commons.Decimal, index=True, initial=commons.Decimal(0.0), safe=True
+        type=commons.Decimal, initial=commons.Decimal(0.0), safe=True
     )
 
     shipping_cost = appier.field(
-        type=commons.Decimal, index=True, initial=commons.Decimal(0.0), safe=True
+        type=commons.Decimal, initial=commons.Decimal(0.0), safe=True
     )
 
     shipping_fixed = appier.field(
-        type=commons.Decimal, index=True, initial=commons.Decimal(0.0), safe=True
+        type=commons.Decimal, initial=commons.Decimal(0.0), safe=True
     )
 
     shipping_dynamic = appier.field(
-        type=commons.Decimal, index=True, initial=commons.Decimal(0.0), safe=True
+        type=commons.Decimal, initial=commons.Decimal(0.0), safe=True
     )
 
-    taxes = appier.field(
-        type=commons.Decimal, index=True, initial=commons.Decimal(0.0), safe=True
-    )
+    taxes = appier.field(type=commons.Decimal, initial=commons.Decimal(0.0), safe=True)
 
-    total = appier.field(
-        type=commons.Decimal, index=True, initial=commons.Decimal(0.0), safe=True
-    )
+    total = appier.field(type=commons.Decimal, initial=commons.Decimal(0.0), safe=True)
 
     discountable_full = appier.field(
         type=bool,
