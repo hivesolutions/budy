@@ -211,6 +211,100 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(order.gift_wrap, False)
         self.assertEqual(order.gift_slip, False)
 
+    def test_notes(self):
+        order = budy.Order()
+        order.save()
+
+        self.assertEqual(order.notes, None)
+
+        order = order.reload()
+
+        self.assertEqual(order.notes, None)
+
+        controller = self.app.get_controller("OrderAPIController")
+
+        request = appier.Request("PUT", "/api/orders/%s/notes" % order.key)
+        request.set_data(json.dumps(dict(notes="Wrap separately")).encode("utf-8"))
+        self.app._request = request
+
+        self.assertRaises(
+            appier.AppierException, lambda: controller.set_notes(order.key)
+        )
+
+        order = order.reload()
+
+        self.assertEqual(order.notes, None)
+
+        request.session["username"] = "username"
+        request.session["tokens"] = ["user"]
+
+        result = controller.set_notes(order.key)
+
+        self.assertEqual(result["gift_slip"], False)
+        self.assertEqual(result["notes"], "Wrap separately")
+
+        order = order.reload()
+
+        self.assertEqual(order.gift_slip, False)
+        self.assertEqual(order.notes, "Wrap separately")
+
+        self.assertRaises(appier.NotFoundError, lambda: controller.set_notes("invalid"))
+
+        request = appier.Request("PUT", "/api/orders/%s/notes" % order.key)
+        request.set_data(json.dumps(dict(notes="N" * 2000)).encode("utf-8"))
+        request.session["username"] = "username"
+        request.session["tokens"] = ["user"]
+        self.app._request = request
+
+        result = controller.set_notes(order.key)
+
+        self.assertEqual(result["notes"], "N" * 2000)
+
+        order = order.reload()
+
+        self.assertEqual(order.notes, "N" * 2000)
+
+        request = appier.Request("PUT", "/api/orders/%s/notes" % order.key)
+        request.set_data(json.dumps(dict(notes="N" * 2001)).encode("utf-8"))
+        request.session["username"] = "username"
+        request.session["tokens"] = ["user"]
+        self.app._request = request
+
+        self.assertRaises(
+            appier.ValidationError, lambda: controller.set_notes(order.key)
+        )
+
+        order = order.reload()
+
+        self.assertEqual(order.notes, "N" * 2000)
+
+        request = appier.Request("PUT", "/api/orders/%s/notes" % order.key)
+        request.set_data(json.dumps(dict(notes="")).encode("utf-8"))
+        request.session["username"] = "username"
+        request.session["tokens"] = ["user"]
+        self.app._request = request
+
+        result = controller.set_notes(order.key)
+
+        self.assertEqual(result["notes"], "")
+
+        order = order.reload()
+
+        self.assertEqual(order.notes, "")
+
+        request = appier.Request("PUT", "/api/orders/%s/notes" % order.key)
+        request.set_data(json.dumps(dict(gift_slip=True)).encode("utf-8"))
+        request.session["username"] = "username"
+        request.session["tokens"] = ["user"]
+        self.app._request = request
+
+        self.assertRaises(KeyError, lambda: controller.set_notes(order.key))
+
+        order = order.reload()
+
+        self.assertEqual(order.gift_slip, False)
+        self.assertEqual(order.notes, "")
+
     def test_referral(self):
         order = budy.Order()
         order.save()
@@ -1147,6 +1241,7 @@ class OrderTest(unittest.TestCase):
         order.paid = True
         order.gift_wrap = True
         order.gift_slip = True
+        order.notes = "Wrap separately"
         order.save()
 
         order.import_omni_s(sync_prices=False)
@@ -1179,11 +1274,22 @@ class OrderTest(unittest.TestCase):
                 dict(merchandise=dict(object_id=200), quantity=1),
             ],
         )
-        self.assertEqual(slips, [(2, dict(notes="Budy order - BD-000001\nGift slip"))])
+        self.assertEqual(
+            slips,
+            [
+                (
+                    2,
+                    dict(
+                        notes="Budy order - BD-000001\nGift slip\nNotes - Wrap separately"
+                    ),
+                )
+            ],
+        )
         self.assertEqual(order.status, "invoiced")
 
         order.gift_wrap = False
         order.gift_slip = False
+        order.notes = None
         order.save()
 
         try:
@@ -1288,6 +1394,51 @@ class OrderTest(unittest.TestCase):
 
         order = order.reload()
         order.gift_slip = True
+        order.save()
+        notes = order._build_notes()
+
+        self.assertEqual(
+            notes,
+            "Budy order - BD-000001\nGift slip\nOrder line - product | initials = IN",
+        )
+
+        order.notes = "Wrap separately"
+        order.save()
+        notes = order._build_notes()
+
+        self.assertEqual(
+            notes,
+            "Budy order - BD-000001\nGift slip\nNotes - Wrap separately\nOrder line - product | initials = IN",
+        )
+
+        order.notes = "  Wrap separately\n"
+        order.save()
+        notes = order._build_notes()
+
+        self.assertEqual(
+            notes,
+            "Budy order - BD-000001\nGift slip\nNotes - Wrap separately\nOrder line - product | initials = IN",
+        )
+
+        order.notes = "Wrap separately\nThe earrings in a box"
+        order.save()
+        notes = order._build_notes()
+
+        self.assertEqual(
+            notes,
+            "Budy order - BD-000001\nGift slip\nNotes - Wrap separately\nThe earrings in a box\nOrder line - product | initials = IN",
+        )
+
+        order.notes = "   "
+        order.save()
+        notes = order._build_notes()
+
+        self.assertEqual(
+            notes,
+            "Budy order - BD-000001\nGift slip\nOrder line - product | initials = IN",
+        )
+
+        order.notes = ""
         order.save()
         notes = order._build_notes()
 

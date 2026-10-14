@@ -512,6 +512,17 @@ class OrderAPIController(root.RootAPIController):
         order = order.reload(map=True)
         return order
 
+    @appier.route("/api/orders/<str:key>/notes", "PUT", json=True)
+    @appier.ensure(token="user")
+    def set_notes(self, key):
+        data = appier.request_json()
+        notes = data["notes"]
+        order = budy.Order.get(key=key, rules=False)
+        order.notes = notes
+        order.save()
+        order = order.reload(map=True)
+        return order
+
     @appier.route("/api/orders/<str:key>/referral", "PUT", json=True)
     @appier.ensure(token="user")
     def set_referral(self, key):

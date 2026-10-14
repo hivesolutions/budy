@@ -116,6 +116,12 @@ class Order(bundle.Bundle):
 
     gift_slip = appier.field(type=bool, index="hashed", initial=False, safe=True)
 
+    notes = appier.field(
+        safe=True,
+        observations="""Free form notes left by the buyer for the
+        team that is going to prepare the order""",
+    )
+
     tracking_number = appier.field(
         index="hashed",
     )
@@ -191,6 +197,12 @@ class Order(bundle.Bundle):
             cls._get_api_easypay()
         if "easypay_v2" in cls._pproviders():
             cls._get_api_easypay_v2()
+
+    @classmethod
+    def validate(cls):
+        return super(Order, cls).validate() + [
+            appier.string_lt("notes", 2001),
+        ]
 
     @classmethod
     def list_names(cls):
@@ -2207,12 +2219,14 @@ class Order(bundle.Bundle):
     def _build_notes(self, split="|", separator="="):
         # creates the list of notes that are going to be representing
         # the current order in a text fashion, this should include the gift
-        # slip option of the order and the product attributes for every
-        # single order line
+        # slip option of the order, the notes left by the buyer and the
+        # product attributes for every single order line
         notes_l = []
         notes_l.append("Budy order - %s" % self.reference)
         if self.gift_slip:
             notes_l.append("Gift slip")
+        if self.notes and self.notes.strip():
+            notes_l.append("Notes - %s" % self.notes.strip())
         for line in self.lines:
             if not line.product:
                 continue
