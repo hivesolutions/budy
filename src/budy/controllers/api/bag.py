@@ -79,6 +79,15 @@ class BagAPIController(root.RootAPIController):
         bag = bag.reload(map=True)
         return bag
 
+    @appier.route("/api/bags/<str:key>/source", "PUT", json=True)
+    def set_source(self, key):
+        data = appier.request_json()
+        source = data["source"]
+        bag = budy.Bag.get(key=key)
+        bag.set_source_s(source)
+        bag = bag.reload(map=True)
+        return bag
+
     @appier.route("/api/bags/<str:key>/lines", "POST", json=True)
     def add_line(self, key):
         line = budy.BagLine.new()

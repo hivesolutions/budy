@@ -145,6 +145,30 @@ class Bundle(base.BudyBase):
         type=appier.references("Referral", name="name"), eager=True
     )
 
+    source = appier.field(
+        type=dict,
+        safe=True,
+        observations="""The marketing touch (channel, source, medium,
+        campaign, referer, landing page, etc.) that brought the visitor
+        that created the bundle, as classified by the storefront""",
+    )
+
+    channel = appier.field(
+        index="hashed",
+        safe=True,
+        observations="""The marketing channel of the touch that brought
+        the visitor (eg: organic_search, paid_social), copied from the
+        source so that the bundles may be filtered by it""",
+    )
+
+    reminded = appier.field(
+        type=int,
+        safe=True,
+        meta="datetime",
+        observations="""The date when the customer was last reminded
+        about the bundle, used to know if a sale was recovered""",
+    )
+
     def __init__(self, model=None, **kwargs):
         base.BudyBase.__init__(self, model=model, **kwargs)
         if not hasattr(self, "discountable_full"):
@@ -240,6 +264,11 @@ class Bundle(base.BudyBase):
         self.ip_country = ip_country
         self.save()
 
+    def set_source_s(self, source):
+        self.source = source
+        self.channel = source.get("channel", None) if source else None
+        self.save()
+
     def add_line_s(self, line):
         line.try_valid(bundle=self)
         line.save()
@@ -327,6 +356,13 @@ class Bundle(base.BudyBase):
         for line in bag.lines:
             line = line.clone()
             self.add_update_line_s(line, increment=increment)
+
+        # the source of the bag being merged is the one of the most
+        # recent touch (eg: the anonymous bag merged into the account's
+        # bag at sign in) so it replaces the current one when defined
+        if bag.source:
+            self.set_source_s(bag.source)
+
         self.refresh_s()
 
     def refresh_s(self, currency=None, country=None, force=False):

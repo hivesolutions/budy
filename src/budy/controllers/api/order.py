@@ -479,6 +479,16 @@ class OrderAPIController(root.RootAPIController):
         order = order.reload(map=True)
         return order
 
+    @appier.route("/api/orders/<str:key>/source", "PUT", json=True)
+    @appier.ensure(token="user")
+    def set_source(self, key):
+        data = appier.request_json()
+        source = data["source"]
+        order = budy.Order.get(key=key, rules=False)
+        order.set_source_s(source)
+        order = order.reload(map=True)
+        return order
+
     @appier.route("/api/orders/<str:key>/email", "PUT", json=True)
     @appier.ensure(token="user")
     def set_email(self, key):

@@ -317,6 +317,63 @@ class OrderTest(unittest.TestCase):
         self.assertEqual(len(order.referrals), 1)
         self.assertEqual(order.referrals[0].name, "name")
 
+    def test_source(self):
+        order = budy.Order()
+        order.save()
+
+        self.assertEqual(order.source, {})
+        self.assertEqual(order.channel, None)
+
+        order.set_source_s(
+            dict(
+                channel="paid_social",
+                source="facebook",
+                medium="paid_social",
+                campaign="6777381566382",
+            )
+        )
+
+        self.assertEqual(order.source["campaign"], "6777381566382")
+        self.assertEqual(order.channel, "paid_social")
+
+        order = order.reload()
+
+        self.assertEqual(order.source["source"], "facebook")
+        self.assertEqual(order.channel, "paid_social")
+        self.assertEqual(len(budy.Order.find(channel="paid_social")), 1)
+
+        order.set_source_s(dict(source="newsletter"))
+
+        self.assertEqual(order.source, dict(source="newsletter"))
+        self.assertEqual(order.channel, None)
+
+        order.set_source_s(None)
+
+        self.assertEqual(order.source, None)
+        self.assertEqual(order.channel, None)
+
+        controller = self.app.get_controller("OrderAPIController")
+
+        request = appier.Request("PUT", "/api/orders/%s/source" % order.key)
+        request.set_data(
+            json.dumps(dict(source=dict(channel="email", source="newsletter")))
+        )
+        self.app._request = request
+
+        self.assertRaises(appier.AppierException, controller.set_source, order.key)
+
+        request.session["username"] = "username"
+        request.session["tokens"] = ["user"]
+
+        result = controller.set_source(order.key)
+
+        self.assertEqual(result["channel"], "email")
+        self.assertEqual(result["source"]["source"], "newsletter")
+
+        order = order.reload()
+
+        self.assertEqual(order.channel, "email")
+
     def test_store(self):
         product = budy.Product(short_description="product", gender="Male", price=10.0)
         product.save()
