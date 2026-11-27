@@ -9,11 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
+* Storefront visits with their marketing channel and country, to measure conversion per channel - [#51](https://github.com/hivesolutions/budy/issues/51)
 
 ### Changed
 
-*
+* Python release candidate dropped from the CI, as the latest pytest fails on its image
 
 ### Fixed
 

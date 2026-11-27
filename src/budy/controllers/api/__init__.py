@@ -46,6 +46,7 @@ from . import section
 from . import seeplus
 from . import store
 from . import subscription
+from . import visit
 from . import voucher
 
 from .account import AccountAPIController
@@ -70,4 +71,5 @@ from .section import SectionAPIController
 from .seeplus import SeeplusAPIController
 from .store import StoreAPIController
 from .subscription import SubscriptionAPIController
+from .visit import VisitAPIController
 from .voucher import VoucherAPIController

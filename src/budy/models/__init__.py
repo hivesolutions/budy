@@ -52,6 +52,7 @@ from . import season
 from . import section
 from . import store
 from . import subscription
+from . import visit
 from . import voucher
 from . import wishlist_line
 from . import wishlist
@@ -83,6 +84,7 @@ from .season import Season
 from .section import Section
 from .store import Store
 from .subscription import Subscription
+from .visit import Visit
 from .voucher import Voucher
 from .voucher_usage import VoucherUsage
 from .wishlist_line import WishlistLine
