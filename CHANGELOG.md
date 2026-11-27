@@ -9,11 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-*
+* Marketing source of the visit behind each bag and order, and the time a bag reminder was sent - [#50](https://github.com/hivesolutions/budy/issues/50)
 
 ### Changed
 
-*
+* Python release candidate dropped from the CI, as the latest pytest fails on its image
 
 ### Fixed
 

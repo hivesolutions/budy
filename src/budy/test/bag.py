@@ -28,6 +28,8 @@ __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import json
+import time
 import commons
 import logging
 import unittest
@@ -160,6 +162,50 @@ class BagTest(unittest.TestCase):
 
         self.assertEqual(len(bag.lines), 0)
 
+    def test_source(self):
+        bag = budy.Bag()
+        bag.save()
+
+        self.assertEqual(bag.source, {})
+        self.assertEqual(bag.channel, None)
+
+        bag.set_source_s(
+            dict(
+                channel="organic_search",
+                source="google",
+                medium="organic",
+                referer="www.google.com",
+                landing="/",
+                touches=1,
+            )
+        )
+
+        self.assertEqual(bag.source["referer"], "www.google.com")
+        self.assertEqual(bag.channel, "organic_search")
+
+        bag = bag.reload()
+
+        self.assertEqual(bag.source["touches"], 1)
+        self.assertEqual(bag.channel, "organic_search")
+        self.assertEqual(len(budy.Bag.find(channel="organic_search")), 1)
+
+        controller = self.app.get_controller("BagAPIController")
+
+        request = appier.Request("PUT", "/api/bags/%s/source" % bag.key)
+        request.set_data(
+            json.dumps(dict(source=dict(channel="referral", source="kuantokusta.pt")))
+        )
+        self.app._request = request
+
+        result = controller.set_source(bag.key)
+
+        self.assertEqual(result["channel"], "referral")
+        self.assertEqual(result["source"]["source"], "kuantokusta.pt")
+
+        bag = bag.reload()
+
+        self.assertEqual(bag.channel, "referral")
+
     def test_merge(self):
         product = budy.Product(short_description="product", gender="Male", price=10.0)
         product.save()
@@ -202,6 +248,40 @@ class BagTest(unittest.TestCase):
         self.assertEqual(extra.total, 40.0)
         self.assertEqual(len(extra.lines), 1)
 
+    def test_merge_source(self):
+        bag = budy.Bag()
+        bag.save()
+        bag.set_source_s(dict(channel="paid_search", source="google", medium="cpc"))
+
+        extra = budy.Bag()
+        extra.save()
+
+        extra.merge_s(bag.id)
+
+        self.assertEqual(extra.source["medium"], "cpc")
+        self.assertEqual(extra.channel, "paid_search")
+
+        other = budy.Bag()
+        other.save()
+
+        extra.merge_s(other.id)
+
+        self.assertEqual(extra.channel, "paid_search")
+
+        other.set_source_s(dict(channel="email", source="newsletter"))
+        extra.merge_s(other.id)
+
+        self.assertEqual(extra.channel, "email")
+
+        extra = extra.reload()
+
+        self.assertEqual(extra.source["source"], "newsletter")
+        self.assertEqual(extra.channel, "email")
+
+        extra.merge_s(extra.id)
+
+        self.assertEqual(extra.channel, "email")
+
     def test_order(self):
         product = budy.Product(short_description="product", gender="Male", price=10.0)
         product.save()
@@ -241,6 +321,59 @@ class BagTest(unittest.TestCase):
         result = budy.Order.count()
 
         self.assertEqual(result, 1)
+
+    def test_order_source(self):
+        product = budy.Product(short_description="product", gender="Male", price=10.0)
+        product.save()
+
+        bag = budy.Bag()
+        bag.save()
+
+        bag_line = budy.BagLine(quantity=1.0)
+        bag_line.product = product
+        bag_line.save()
+        bag.add_line_s(bag_line)
+
+        order = bag.to_order_s()
+
+        self.assertEqual(order.source, {})
+        self.assertEqual(order.channel, None)
+        self.assertEqual(order.reminded, None)
+
+        bag.set_source_s(
+            dict(channel="paid_social", source="instagram", campaign="6777381566382")
+        )
+        bag.remind()
+
+        order = bag.to_order_s()
+
+        self.assertEqual(order.source["campaign"], "6777381566382")
+        self.assertEqual(order.channel, "paid_social")
+        self.assertEqual(order.reminded, bag.reminded)
+
+        order = order.reload()
+
+        self.assertEqual(order.source["source"], "instagram")
+        self.assertEqual(order.channel, "paid_social")
+        self.assertEqual(order.reminded, bag.reminded)
+
+    def test_remind(self):
+        bag = budy.Bag()
+        bag.save()
+
+        self.assertEqual(bag.reminded, None)
+
+        before = int(time.time())
+        bag.remind()
+        after = int(time.time())
+
+        self.assertEqual(type(bag.reminded), int)
+        self.assertEqual(before <= bag.reminded <= after, True)
+
+        reminded = bag.reminded
+        bag = bag.reload()
+
+        self.assertEqual(bag.reminded, reminded)
 
     def test_duplicate(self):
         bag = budy.Bag()

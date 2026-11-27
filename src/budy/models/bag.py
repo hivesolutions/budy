@@ -28,6 +28,8 @@ __copyright__ = "Copyright (c) 2008-2024 Hive Solutions Lda."
 __license__ = "Apache License, Version 2.0"
 """ The license for the module """
 
+import time
+
 import appier
 import appier_extras
 
@@ -112,6 +114,9 @@ class Bag(bundle.Bundle):
             total=self.total,
             account=self.account,
             store=self.account and self.account.store,
+            source=self.source,
+            channel=self.channel,
+            reminded=self.reminded,
         )
         _order.save()
         _order.lines = []
@@ -147,7 +152,7 @@ class Bag(bundle.Bundle):
     def notify(self, name=None, *args, **kwargs):
         name = name or "bag.new"
         bag = self.reload(map=True)
-        account = bag.get("account", {})
+        account = bag.get("account", None) or {}
         account = kwargs.get("email", account)
         receiver = account.get("email", None)
         receiver = kwargs.get("email", receiver)
@@ -161,6 +166,8 @@ class Bag(bundle.Bundle):
     @appier.operation(name="Remind")
     def remind(self, *args, **kwargs):
         self.notify(name="bag.remind", *args, **kwargs)
+        self.reminded = int(time.time())
+        self.save()
 
     @appier.view(name="Lines")
     def lines_v(self, *args, **kwargs):
